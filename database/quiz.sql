@@ -96,13 +96,13 @@ LOCK TABLES `rel_role_permission` WRITE;
 UNLOCK TABLES;
 
 --
--- Table structure for table `rel_student_examination`
+-- Table structure for table `t_mark`
 --
 
-DROP TABLE IF EXISTS `rel_student_examination`;
+DROP TABLE IF EXISTS `t_mark`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `rel_student_examination` (
+CREATE TABLE `t_mark` (
   `examination_id` int DEFAULT NULL,
   `score` int NOT NULL,
   `subject_id` int DEFAULT NULL,
@@ -110,21 +110,21 @@ CREATE TABLE `rel_student_examination` (
   `mark_id` int NOT NULL,
   PRIMARY KEY (`mark_id`),
   KEY `R_46` (`subject_id`),
-  KEY `fk_rel_student_examination_t_student_detail1_idx` (`user_id`),
-  KEY `rel_student_examination_ibfk_2` (`examination_id`),
-  CONSTRAINT `fk_rel_student_examination_t_student_detail1` FOREIGN KEY (`user_id`) REFERENCES `t_student_detail` (`user_id`),
-  CONSTRAINT `rel_student_examination_ibfk_2` FOREIGN KEY (`examination_id`) REFERENCES `t_examination` (`examination_id`),
-  CONSTRAINT `rel_student_examination_ibfk_3` FOREIGN KEY (`subject_id`) REFERENCES `t_subject` (`subject_id`)
+  KEY `fk_t_mark_t_student_detail1_idx` (`user_id`),
+  KEY `t_mark_ibfk_2` (`examination_id`),
+  CONSTRAINT `fk_t_mark_t_student_detail1` FOREIGN KEY (`user_id`) REFERENCES `t_student_detail` (`user_id`),
+  CONSTRAINT `t_mark_ibfk_2` FOREIGN KEY (`examination_id`) REFERENCES `t_examination` (`examination_id`),
+  CONSTRAINT `t_mark_ibfk_3` FOREIGN KEY (`subject_id`) REFERENCES `t_subject` (`subject_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `rel_student_examination`
+-- Dumping data for table `t_mark`
 --
 
-LOCK TABLES `rel_student_examination` WRITE;
-/*!40000 ALTER TABLE `rel_student_examination` DISABLE KEYS */;
-/*!40000 ALTER TABLE `rel_student_examination` ENABLE KEYS */;
+LOCK TABLES `t_mark` WRITE;
+/*!40000 ALTER TABLE `t_mark` DISABLE KEYS */;
+/*!40000 ALTER TABLE `t_mark` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -474,13 +474,12 @@ CREATE TABLE `t_student_answer` (
   `student_answer_id` int NOT NULL AUTO_INCREMENT,
   `select_option` varchar(255) NOT NULL,
   `question_record_id` int DEFAULT NULL,
-  `examination_id` int DEFAULT NULL,
-  `user_id` int DEFAULT NULL,
+  `mark_id` int DEFAULT NULL,
   PRIMARY KEY (`student_answer_id`),
   KEY `R_44` (`question_record_id`),
-  KEY `R_45` (`examination_id`,`user_id`),
+  KEY `R_45` (`mark_id`),
   CONSTRAINT `t_student_answer_ibfk_1` FOREIGN KEY (`question_record_id`) REFERENCES `t_question_record` (`question_record_id`),
-  CONSTRAINT `t_student_answer_ibfk_2` FOREIGN KEY (`examination_id`) REFERENCES `rel_student_examination` (`examination_id`)
+  CONSTRAINT `t_student_answer_ibfk_2` FOREIGN KEY (`mark_id`) REFERENCES `t_mark` (`mark_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
