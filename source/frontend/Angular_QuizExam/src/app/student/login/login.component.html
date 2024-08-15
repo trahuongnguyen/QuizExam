@@ -1,7 +1,7 @@
 <div class="body">
     <div class="container " id="container">
         <div class="sign-in">
-            <form action="">
+            <form (ngSubmit)="login()">
                 <h1>Sign In</h1>
                 <!-- <div class="icons">
                     <a href="#" class="icon"><fa-icon [icon]="facebook"></fa-icon></a>
@@ -10,10 +10,10 @@
                     <a href="#" class="icon"><fa-icon [icon]="youtube"></fa-icon></a>
                 </div>
                 <span>Or user email password</span> -->
-                <input type="text" placeholder="Email">
-                <input type="password" placeholder="Password">
+                <input type="text" placeholder="Email" id="email" [(ngModel)]="email" name="email" required>
+                <input type="text" placeholder="Password" id="password" [(ngModel)]="password" name="password" required>
                 <a href="#">Forgot password</a>
-                <button>Sign In</button>
+                <button type="submit">Sign In</button>
             </form>
             <div class="circle-sm-left"></div>
         </div>
