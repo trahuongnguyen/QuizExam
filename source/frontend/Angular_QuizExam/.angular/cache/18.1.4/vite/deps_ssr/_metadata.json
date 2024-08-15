@@ -1,37 +1,55 @@
 {
-  "hash": "54cc3c54",
-  "configHash": "9873b08a",
-  "lockfileHash": "5a5548bf",
-  "browserHash": "3c70d5af",
+  "hash": "7111276f",
+  "configHash": "fc8a23f4",
+  "lockfileHash": "41e7419f",
+  "browserHash": "905e7c73",
   "optimized": {
+    "@angular/common/http": {
+      "src": "../../../../../node_modules/@angular/common/fesm2022/http.mjs",
+      "file": "@angular_common_http.js",
+      "fileHash": "8b67ce2d",
+      "needsInterop": false
+    },
     "@angular/core": {
       "src": "../../../../../node_modules/@angular/core/fesm2022/core.mjs",
       "file": "@angular_core.js",
-      "fileHash": "9457b4b2",
+      "fileHash": "2381de17",
+      "needsInterop": false
+    },
+    "@angular/forms": {
+      "src": "../../../../../node_modules/@angular/forms/fesm2022/forms.mjs",
+      "file": "@angular_forms.js",
+      "fileHash": "08eeecb0",
       "needsInterop": false
     },
     "@angular/platform-browser": {
       "src": "../../../../../node_modules/@angular/platform-browser/fesm2022/platform-browser.mjs",
       "file": "@angular_platform-browser.js",
-      "fileHash": "23a28a23",
+      "fileHash": "929c0c29",
       "needsInterop": false
     },
     "@angular/platform-server": {
       "src": "../../../../../node_modules/@angular/platform-server/fesm2022/platform-server.mjs",
       "file": "@angular_platform-server.js",
-      "fileHash": "d340510e",
+      "fileHash": "0e2f61f9",
       "needsInterop": false
     },
     "@angular/router": {
       "src": "../../../../../node_modules/@angular/router/fesm2022/router.mjs",
       "file": "@angular_router.js",
-      "fileHash": "9ce10cbd",
+      "fileHash": "e999f839",
       "needsInterop": false
     }
   },
   "chunks": {
-    "chunk-RF5XW3G3": {
-      "file": "chunk-RF5XW3G3.js"
+    "chunk-FNHEC6XF": {
+      "file": "chunk-FNHEC6XF.js"
+    },
+    "chunk-VPQO6F3X": {
+      "file": "chunk-VPQO6F3X.js"
+    },
+    "chunk-PRX3FKKB": {
+      "file": "chunk-PRX3FKKB.js"
     },
     "chunk-JXNCHWAJ": {
       "file": "chunk-JXNCHWAJ.js"

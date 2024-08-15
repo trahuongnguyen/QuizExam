@@ -1,0 +1,67 @@
+body {
+    font-family: Arial, sans-serif;
+}
+
+.footer {
+    background-color: #AA1210;
+    color: white;
+    padding: 20px 0;
+    height: 425px;
+}
+
+.footer-container {
+    display: flex;
+    justify-content: space-between;
+    padding: 0 50px;
+}
+
+.contact, .resources, .map {
+    flex: 1;
+    margin-top: 10px;
+}
+
+.contact h3, .resources h3, .map h3 {
+    margin-bottom: 15px;
+    font-size: 18px;
+    margin-bottom: 30px;
+}
+
+.contact p, .resources ul, .footer-bottom p {
+    margin: 5px 0;
+    margin-bottom: 20px;
+}
+
+.resources ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.resources ul li {
+    margin-bottom: 10px;
+}
+
+.resources ul li a, .contact a {
+    color: white;
+    text-decoration: none;
+}
+
+.social-icons {
+    margin-top: 10px;
+}
+
+.social-icons a {
+    margin-right: 10px;
+}
+
+.map img {
+    max-width: 100%;
+    height: auto;
+}
+
+.footer-bottom {
+    text-align: center;
+    padding: 10px;
+    background-color: #990000;
+    margin-top: 40px;
+    height: 52px;
+}

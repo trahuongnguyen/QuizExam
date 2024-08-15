@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Navbar Example</title>
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="navbar-brand">
+            <img src="https://aptechvietnam.com.vn/wp-content/uploads/2021/06/default-thumbnail-share.png" alt="Logo">
+        </div>
+        <div class="navbar-container">
+            <ul class="navbar-menu">
+                <li><a href="#" class="nav-link">Home</a></li>
+                <li><a href="#" class="nav-link">Exam</a></li>
+                <li><a href="#" class="nav-link">About Us</a></li>
+                <li><a href="#" class="nav-link">Contact</a></li>
+            </ul>
+            <div class="toggle-switch">
+                <div class="toggle">
+                    <span>Light</span>
+                    <div class="slider"></div>
+                </div>
+            </div>
+        </div>
+        <div class="navbar-right">
+            <div class="user-greeting">
+                <span>Hi, Huy</span>
+                <img src="../../../../../../img/user.png">
+            </div>
+        </div>
+    </nav>
+    <script>
+        document.querySelector('.toggle-switch').addEventListener('click', function () {
+            this.classList.toggle('active');
+        });
+    </script>
+</body>
+
+</html>
