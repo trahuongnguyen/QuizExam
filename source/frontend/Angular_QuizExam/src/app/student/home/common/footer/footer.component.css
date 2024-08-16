@@ -14,6 +14,11 @@ body {
     display: flex;
     justify-content: space-between;
     padding: 0 50px;
+    margin-bottom: 40px;
+}
+
+.footer-bottom p {
+    margin: 0;
 }
 
 .contact, .resources, .map {
@@ -27,7 +32,7 @@ body {
     margin-bottom: 30px;
 }
 
-.contact p, .resources ul, .footer-bottom p {
+.contact p, .resources ul {
     margin: 5px 0;
     margin-bottom: 20px;
 }
@@ -61,8 +66,9 @@ body {
 
 .footer-bottom {
     text-align: center;
-    padding: 10px;
+    /* padding: 10px; */
     background-color: #990000;
-    margin-top: 40px;
+    /* margin-top: 40px; */
     height: 52px;
+    align-content: center;
 }
