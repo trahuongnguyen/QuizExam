@@ -5,7 +5,7 @@ import { HeaderComponent } from './student/home/common/header/header.component';
 import { FooterComponent } from './student/home/common/footer/footer.component';
 
 const routes: Routes = [
-  { path: '', redirectTo: '/footer', pathMatch: 'full' },
+  { path: '', redirectTo: '/header', pathMatch: 'full' },
   { path: 'login', component: LoginComponent },
   { path: 'header', component: HeaderComponent },
   { path: 'footer', component: FooterComponent}
