@@ -7,16 +7,20 @@ import { FormsModule } from '@angular/forms';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { LoginComponent } from './student/login/login.component';
+import {HeaderComponent} from './student/home/common/header/header.component';
+import {FooterComponent} from './student/home/common/footer/footer.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    LoginComponent
+    LoginComponent,
+    HeaderComponent,
+    FooterComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
-    FormsModule, 
+    FormsModule
   ],
   providers: [
     provideHttpClient(),
