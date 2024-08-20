@@ -1,26 +1,20 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule, provideClientHydration } from '@angular/platform-browser';
 import { provideHttpClient } from '@angular/common/http';
-import { FormsModule } from '@angular/forms'; 
 
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { LoginComponent } from './student/login/login.component';
-import {HeaderComponent} from './student/home/common/header/header.component';
-import {FooterComponent} from './student/home/common/footer/footer.component';
+import { StudentComponent } from './student/student.component';
+
 
 @NgModule({
   declarations: [
-    AppComponent,
-    LoginComponent,
-    HeaderComponent,
-    FooterComponent
+    AppComponent
   ],
   imports: [
     BrowserModule,
-    AppRoutingModule,
-    FormsModule
+    AppRoutingModule
   ],
   providers: [
     provideHttpClient(),
