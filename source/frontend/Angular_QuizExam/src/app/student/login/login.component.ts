@@ -14,10 +14,11 @@ export class LoginComponent {
   constructor(private authService: AuthService, private router: Router) {}
 
   login() {
-    this.authService.login({password: this.password, email: this.email}).subscribe(
+    const user = {password: this.password, email: this.email}
+    this.authService.login(user).subscribe(
       response  => {
         console.log('User logged in successfully', response );
-        localStorage.setItem('token', response.token);
+        this.router.navigate(['/header']);
       },
       error => {
         console.error('Error logging in user', error);
