@@ -9,8 +9,6 @@ import java.util.Set;
 @Entity
 @Table(name = "t_role")
 @NoArgsConstructor
-@RequiredArgsConstructor
-@AllArgsConstructor
 @Getter
 @Setter
 public class Role {

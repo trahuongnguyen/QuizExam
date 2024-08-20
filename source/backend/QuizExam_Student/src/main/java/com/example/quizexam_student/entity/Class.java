@@ -9,8 +9,6 @@ import java.util.Set;
 @Data
 @Table(name = "t_class")
 @NoArgsConstructor
-@RequiredArgsConstructor
-@AllArgsConstructor
 @Getter
 @Setter
 public class Class {

@@ -7,8 +7,6 @@ import lombok.*;
 @Entity
 @Table(name = "t_class_group")
 @NoArgsConstructor
-@RequiredArgsConstructor
-@AllArgsConstructor
 @Getter
 @Setter
 public class ClassGroup {
@@ -18,5 +16,4 @@ public class ClassGroup {
     private Class _class;
     @Column(name = "count", nullable = false)
     private int count;
-
 }
