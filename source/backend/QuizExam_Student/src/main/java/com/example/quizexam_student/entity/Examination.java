@@ -9,8 +9,6 @@ import java.util.Set;
 @Entity
 @Table(name = "t_examination")
 @Data
-@AllArgsConstructor
-@RequiredArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter

@@ -7,8 +7,6 @@ import lombok.*;
 @Table(name = "t_answer")
 @Data
 @NoArgsConstructor
-@RequiredArgsConstructor
-@AllArgsConstructor
 @Getter
 @Setter
 public class Answer {
