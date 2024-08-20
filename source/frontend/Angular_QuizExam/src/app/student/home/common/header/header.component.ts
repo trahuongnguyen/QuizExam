@@ -13,7 +13,7 @@ export class HeaderComponent  implements OnInit {
 
   ngOnInit(): void {
     const buttonSwitch = this.renderer.selectRootElement('#buttonSwitch', true);
-    const nav = this.renderer.selectRootElement('#switch', true);
+    const nav = this.renderer.selectRootElement('#nav-id', true);
 
     buttonSwitch.addEventListener('click', () => {
       this.darkModeEnabled = !this.darkModeEnabled;
