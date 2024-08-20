@@ -9,8 +9,6 @@ import java.util.Set;
 @Table(name = "t_question")
 @Data
 @NoArgsConstructor
-@RequiredArgsConstructor
-@AllArgsConstructor
 @Getter
 @Setter
 public class Question {

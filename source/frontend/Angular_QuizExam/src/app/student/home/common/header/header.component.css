@@ -92,7 +92,6 @@
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
-/* Add some cool effects */
 .slider:after {
     content: "Light";
     color: black;

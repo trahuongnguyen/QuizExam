@@ -8,9 +8,7 @@ import java.util.Set;
 @Entity
 @Table(name = "t_sem")
 @Data
-@RequiredArgsConstructor
 @NoArgsConstructor
-@AllArgsConstructor
 @Getter
 @Setter
 public class Sem {
