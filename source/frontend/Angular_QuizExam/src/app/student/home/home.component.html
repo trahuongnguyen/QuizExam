@@ -1,0 +1,5 @@
+<app-header></app-header>
+<a (scroll)="scrolled()" (click)="scrollToTop()" [ngClass]="!windowScrolled?'show-scrollTop':''" class="btn btn-danger btn-floating btn-lg btn-back-to-top" id="btn-back-to-top"><i class="fa fa-angle-double-up"></i></a>
+<router-outlet>
+</router-outlet>
+<app-footer></app-footer>

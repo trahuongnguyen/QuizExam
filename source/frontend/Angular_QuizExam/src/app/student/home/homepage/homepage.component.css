@@ -21,18 +21,14 @@
 }
 
 .carousel-item {
-    max-height: 600px;
-    height: 530px;
     overflow: hidden;
     position: relative;
 }
 
 .carousel-item img {
     width: 100%;
-    bottom: -5%;
     height: auto;
     display: block;
-    position: absolute;
 }
 
 .g-4 {
@@ -79,9 +75,25 @@ h3 {
     margin: auto;
     background-color: #ffc107;
     border-radius: 3px;
-    width: 850px;
     margin-bottom: 40px;
+}
 
+@media (min-width: 700px) {
+    .title{
+        width: 70%;
+    }
+}
+
+@media (max-width: 700px) {
+    .title{
+        width: 85%;
+    }
+}
+
+@media (max-width: 550px) {
+    .title{
+        width: 100%;
+    }
 }
 
 .title1 {
