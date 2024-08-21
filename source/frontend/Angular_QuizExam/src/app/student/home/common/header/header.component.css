@@ -12,6 +12,7 @@
 }
 
 .navbar-nav .nav-link {
+    margin-left: 10px;
     margin-right: 20px;
     text-decoration: none;
     color: #000;
@@ -31,9 +32,7 @@
 }
 
 /* toogle-switched */
-.btn {
-    margin-right: 100px;
-}
+
 
 .switch {
     font-size: 17px;
@@ -122,4 +121,33 @@
 .light {
     background-color: white;
     color: black;
+}
+
+.btn {
+    margin-right: 100px;
+}
+
+.navbar-nav {
+    margin-left: 20px;
+}
+
+@media (min-width: 820px) {
+    .navbar-expand-lg .navbar-nav {
+        flex-direction: row;
+    }
+    .navbar-expand-lg .navbar-collapse {
+        display: flex !important;
+        flex-basis: auto;
+    }
+}
+
+@media (min-width: 400px) {
+    .r-5{
+        position: absolute;
+        right: 50px;
+        display: flex !important;
+    }
+}
+.r-5:not(.show) {
+    display: none;
 }
