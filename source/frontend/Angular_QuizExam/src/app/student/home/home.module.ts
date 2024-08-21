@@ -6,18 +6,26 @@ import { AppRoutingModule } from '../../app-routing.module';
 import { HomepageComponent } from './homepage/homepage.component';
 import { ProfileComponent } from './profile/profile.component';
 import { MarkComponent } from './mark/mark.component';
+import { HomeComponent } from './home.component';
+import { FormsModule } from '@angular/forms';
+import { HeaderComponent } from './common/header/header.component';
+import { FooterComponent } from './common/footer/footer.component';
 
 
 @NgModule({
   declarations: [
     HomepageComponent,
     ProfileComponent,
-    MarkComponent
+    MarkComponent,
+    HomeComponent,
+    HeaderComponent,
+    FooterComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
-    CommonModule
+    CommonModule,
+    FormsModule
   ],
   providers: [
     provideHttpClient(),

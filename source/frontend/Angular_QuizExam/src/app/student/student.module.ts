@@ -4,23 +4,25 @@ import { AppRoutingModule } from '../app-routing.module';
 
 import { BrowserModule, provideClientHydration } from '@angular/platform-browser';
 import { provideHttpClient } from '@angular/common/http';
-import { FormsModule } from '@angular/forms'; 
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { StudentComponent } from './student.component'; 
 
 import { LoginComponent } from './login/login.component';
-import { HomeComponent } from './home/home.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import {ToastrModule} from 'ngx-toastr';
+import { ToastrModule } from 'ngx-toastr';
+import { HomeComponent } from './home/home.component';
 
 
 @NgModule({
   declarations: [
-    StudentComponent
+    StudentComponent,
+    LoginComponent,
   ],
   imports: [
     CommonModule,
     BrowserModule,
     FormsModule,
+    ReactiveFormsModule,
     BrowserAnimationsModule,
     ToastrModule,
     AppRoutingModule
