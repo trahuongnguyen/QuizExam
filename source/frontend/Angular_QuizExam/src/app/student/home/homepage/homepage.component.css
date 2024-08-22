@@ -149,13 +149,6 @@ p {
 
 }
 
-.d-flex {
-    width: 290px;
-    height: 195px;
-    border-radius: 5px;
-    background-color: ghostwhite;
-}
-
 /* switch light-dark */
 
 [data-bs-theme=light] {
@@ -171,7 +164,7 @@ p {
         background-color: #35393f;
     }
 
-    .container .row .col .d-flex, .container .g-4 .bg-card1, .container .bg-card {
+    .container .g-4 .bg-card1, .container .bg-card {
         background-color: #35393f;
     }
 

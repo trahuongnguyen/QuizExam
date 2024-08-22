@@ -1,10 +1,10 @@
 <nav class="navbar navbar-expand-lg navbar-light" id="nav-id">
-    <div class="container-fluid">
+    <div class="container-fluid d-flex">
         <a class="navbar-brand" href="#">
             <img src="../../../../../../img/logo.png" alt="Aptech Logo">
         </a>
-        <div class="collapse navbar-collapse">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <div class="collapse navbar-collapse me-2">
+            <ul class="navbar-nav me-auto align-items-center mb-lg-0">
                 <li class="nav-item">
                     <a class="nav-link active" aria-current="page" href="#">HOME</a>
                 </li>
@@ -18,6 +18,8 @@
                     <a class="nav-link" href="#">CONTACT</a>
                 </li>
             </ul>
+        </div>
+        <div class="r-5">
             <label class="switch">
                 <input type="checkbox" id="buttonSwitch" (click)="toggleTheme()">
                 <span class="slider"></span>
@@ -26,45 +28,17 @@
                 <div class="user-info" (click)="menuToggle()">
                     <span>Hi, User</span>
                     <i class="fa-solid fa-user"></i>
-
-    <nav class="navbar navbar-expand-lg navbar-light" id="nav-id">
-        <div class="container-fluid d-flex">
-            <a class="navbar-brand" href="#">
-                <img src="../../../../../../img/logo.png" alt="Aptech Logo">
-            </a>
-            <div class="collapse navbar-collapse me-2">
-                <ul class="navbar-nav me-auto align-items-center mb-lg-0">
-                    <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="#">HOME</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">EXAM</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">ABOUT US</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">CONTACT</a>
-                    </li>
-                </ul>
-            </div>
-            <div class="r-5">
-                <div class="btn">
-                    <label class="switch">
-                        <input type="checkbox" id="buttonSwitch">
-                        <span class="slider"></span>
-                    </label>
                 </div>
-                <div class="menu" id="menuToggle">
+                <div class="menu" id="menuToggle" (click)="menuToggle()">
                     <ul>
                         <li>
-                            <i class=""></i><a href="#">My profile</a>
+                            <i class="fa-regular fa-circle-user"></i><a href="#">My profile</a>
                         </li>
                         <li>
-                            <i class=""></i><a href="#">Mark</a>
+                            <i class="fa-solid fa-book"></i><a href="#">Mark</a>
                         </li>
                         <li>
-                            <i class=""></i><a href="#">Logout</a>
+                            <i class="fa-solid fa-arrow-right-from-bracket"></i><a href="#">Logout</a>
                         </li>
                     </ul>
                 </div>

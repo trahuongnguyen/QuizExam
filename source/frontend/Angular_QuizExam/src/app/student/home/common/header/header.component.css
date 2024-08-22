@@ -36,6 +36,10 @@
     margin-left: 8px;
 }
 
+.user-info:hover {
+    cursor: pointer;
+}
+
 /* toogle-switched */
 
 
@@ -95,8 +99,7 @@
     position: absolute;
     top: 60px;
     right: -10px;
-    padding: 10px 20px;
-    background: #fff;
+    background: #f3f3f3;
     width: 200px;
     box-sizing: 0 5px 25px rgba(0, 0, 0, 0.1);
     border-radius: 15px;
@@ -106,7 +109,6 @@
 }
 
 .d-flex .menu.active {
-    top: 80px;
     visibility: visible;
     opacity: 1;
 }
@@ -118,7 +120,8 @@
     right: 28px;
     width: 20px;
     height: 20px;
-    background: #fff;
+    background: #f3f3f3;
+    transition: 0.5s;
     transform: rotate(45deg);
 }
 
@@ -153,15 +156,12 @@
     color: #ff5d94;
 }
 
-/* switch light-dark */
-
-[data-bs-theme=light] {
-    background-color: white;
-    color: black;
-}
-
-.btn {
-    margin-right: 100px;
+.d-flex .menu ul li i {
+    width: 25px;
+    font-size: 25px;
+    margin-right: 10px;
+    color: #000;
+    transition: 0.5s;
 }
 
 .navbar-nav {
@@ -187,6 +187,13 @@
 }
 .r-5:not(.show) {
     display: none;
+}
+
+/* switch light-dark */
+
+[data-bs-theme=light] {
+    background-color: white;
+    color: black;
 
     .slider {
         background-color: #D9D9D9;
@@ -235,5 +242,17 @@
         content: "Dark";
         color: white;
         left: 0.5em;
+    }
+
+    .d-flex .menu, .d-flex .menu::before {
+        background: #35393F;
+    }
+
+    .d-flex .menu ul li a, .d-flex .menu ul li i {
+        color: white;
+    }
+
+    .d-flex .menu ul li:hover a {
+        color: #ff5d94;
     }
 }
