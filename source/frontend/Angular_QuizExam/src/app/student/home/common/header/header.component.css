@@ -12,11 +12,17 @@
 }
 
 .navbar-nav .nav-link {
+    margin-left: 10px;
     margin-right: 20px;
     text-decoration: none;
     color: #000;
     font-weight: bold;
     font-size: 14px;
+}
+
+.nav-item .active {
+    background-color: #f5f5f5;
+    border-radius: 8px;
 }
 
 .user-info {
@@ -30,10 +36,12 @@
     margin-left: 8px;
 }
 
-/* toogle-switched */
-.btn {
-    margin-right: 100px;
+.user-info:hover {
+    cursor: pointer;
 }
+
+/* toogle-switched */
+
 
 .switch {
     font-size: 17px;
@@ -41,6 +49,7 @@
     display: inline-block;
     width: 4em;
     height: 2em;
+    margin-right: 100px;
 }
 
 /* Hide default HTML checkbox */
@@ -73,30 +82,11 @@
     border-radius: 20px;
     left: 0.2em;
     bottom: 0.2em;
-    background-color: #ffffff;
     transition: 0.4s;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-}
-
-.switch input:checked+.slider {
-    background-color: #35393F;
-}
-
-.switch input:focus+.slider {
-    box-shadow: 0 0 1px #25292D;
-}
-
-.switch input:checked+.slider:before {
-    transform: translateX(2.3em);
-    background-color: #25292D;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .slider:after {
-    content: "Light";
-    color: black;
     position: absolute;
-    right: 0.5em;
     top: 50%;
     transform: translateY(-50%);
     font-size: 0.8em;
@@ -104,22 +94,165 @@
     opacity: 1;
 }
 
-.switch input:checked+.slider:after {
-    content: "Dark";
-    color: white;
-    left: 0.5em;
+/* menu-user-dropdown */
+.d-flex .menu {
+    position: absolute;
+    top: 60px;
+    right: -10px;
+    background: #f3f3f3;
+    width: 200px;
+    box-sizing: 0 5px 25px rgba(0, 0, 0, 0.1);
+    border-radius: 15px;
+    transition: 0.5s;
+    visibility: hidden;
+    opacity: 0;
+}
+
+.d-flex .menu.active {
+    visibility: visible;
     opacity: 1;
-    right: auto;
 }
 
-
-/* dark-mode */
-.dark {
-    background-color: #333;
-    color: #eeeeee;
+.d-flex .menu::before {
+    content: "";
+    position: absolute;
+    top: -5px;
+    right: 28px;
+    width: 20px;
+    height: 20px;
+    background: #f3f3f3;
+    transition: 0.5s;
+    transform: rotate(45deg);
 }
 
-.light {
+.d-flex .menu ul li {
+    list-style: none;
+    padding: 16px 0;
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
+    display: flex;
+    align-items: center;
+}
+
+.d-flex .menu ul li img {
+    max-width: 20px;
+    margin-right: 10px;
+    opacity: 0.5;
+    transition: 0.5s;
+}
+
+.d-flex .menu ul li:hover img {
+    opacity: 1;
+}
+
+.d-flex .menu ul li a {
+    display: inline-block;
+    text-decoration: none;
+    color: #555;
+    font-weight: 500;
+    transition: 0.5s;
+}
+
+.d-flex .menu ul li:hover a {
+    color: #ff5d94;
+}
+
+.d-flex .menu ul li i {
+    width: 25px;
+    font-size: 25px;
+    margin-right: 10px;
+    color: #000;
+    transition: 0.5s;
+}
+
+.navbar-nav {
+    margin-left: 20px;
+}
+
+@media (min-width: 820px) {
+    .navbar-expand-lg .navbar-nav {
+        flex-direction: row;
+    }
+    .navbar-expand-lg .navbar-collapse {
+        display: flex !important;
+        flex-basis: auto;
+    }
+}
+
+@media (min-width: 400px) {
+    .r-5{
+        position: absolute;
+        right: 50px;
+        display: flex !important;
+    }
+}
+.r-5:not(.show) {
+    display: none;
+}
+
+/* switch light-dark */
+
+[data-bs-theme=light] {
     background-color: white;
     color: black;
+
+    .slider {
+        background-color: #D9D9D9;
+    }
+
+    .slider:before {
+        background-color: #ffffff;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    .slider:after {
+        content: "Light";
+        color: black;
+        right: 0.5em;
+    }
+}
+
+[data-bs-theme=dark] {
+    background-color: #333;
+    color: #eeeeee;
+
+    .navbar {
+        background-color: #333;
+    }
+
+    .navbar-nav .nav-link {
+        color: #ffffff;
+    }
+
+    .navbar-nav .nav-item .active {
+        color: #000;
+    }
+
+    .slider {
+        background-color: #35393F;
+        box-shadow: 0 0 1px #25292D;
+    }
+
+    .slider:before {
+        transform: translateX(2.3em);
+        background-color: #25292D;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    .slider:after {
+        content: "Dark";
+        color: white;
+        left: 0.5em;
+    }
+
+    .d-flex .menu, .d-flex .menu::before {
+        background: #35393F;
+    }
+
+    .d-flex .menu ul li a, .d-flex .menu ul li i {
+        color: white;
+    }
+
+    .d-flex .menu ul li:hover a {
+        color: #ff5d94;
+    }
 }

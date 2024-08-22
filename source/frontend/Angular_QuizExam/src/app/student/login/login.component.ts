@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { AuthService } from '../service/auth.service';
 import { Router } from '@angular/router';
-import { ToastrService } from 'ngx-toastr'
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-login',
@@ -11,7 +11,6 @@ import { ToastrService } from 'ngx-toastr'
 export class LoginComponent {
 
   constructor(private authService: AuthService, private router: Router, public toastr: ToastrService) { }
-
   //Login
   password: string = '';
   email: string = '';
@@ -38,7 +37,7 @@ export class LoginComponent {
           timeOut: 2000,
         });
         console.log('User logged in successfully', response);
-        this.router.navigate(['/homepage']);
+        this.router.navigate(['/student/home']);
       },
       error => {
         if (error.status === 401) {  
