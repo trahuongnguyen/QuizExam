@@ -1,12 +1,25 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { StudentRoutingModule } from './student-routing.module';
 
+import { FormsModule, NgModel } from '@angular/forms';
+import {ToastrModule, ToastrService} from 'ngx-toastr';
+import { StudentComponent } from './student.component';
+import { LoginComponent } from './login/login.component';
 
 
 @NgModule({
-  declarations: [],
+  declarations: [
+    StudentComponent,
+    LoginComponent
+  ],
   imports: [
-    CommonModule
-  ]
+    ToastrModule,
+    StudentRoutingModule,
+    FormsModule,
+  ],
+  providers: [
+    NgModule
+  ],
+  bootstrap: []
 })
 export class StudentModule { }

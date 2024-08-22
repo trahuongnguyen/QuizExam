@@ -3,13 +3,6 @@
         <div class="sign-in">
             <form (ngSubmit)="login()" method="post">
                 <h1>Sign In</h1>
-                <!-- <div class="icons">
-                    <a href="#" class="icon"><fa-icon [icon]="facebook"></fa-icon></a>
-                    <a href="#" class="icon"><fa-icon [icon]="instagram"></fa-icon></a>
-                    <a href="#" class="icon"><fa-icon [icon]="tiktok"></fa-icon></a>
-                    <a href="#" class="icon"><fa-icon [icon]="youtube"></fa-icon></a>
-                </div>
-                <span>Or user email password</span> -->
                 <input type="text" placeholder="Email" id="email" [(ngModel)]="email" name="email" required>
                 <input type="password" placeholder="Password" id="password" [(ngModel)]="password" name="password" required>
                 <a href="#">Forgot password</a>
@@ -26,7 +19,6 @@
                 <div class="circle-lg"></div>
                 <div class="circle-md"></div>
                 <div class="circle-sm"></div>
-
             </div>
         </div>
     </div>
