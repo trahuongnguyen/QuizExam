@@ -3,6 +3,8 @@ package com.example.quizexam_student.service.impl;
 import com.example.quizexam_student.bean.request.UserRequest;
 import com.example.quizexam_student.entity.Role;
 import com.example.quizexam_student.entity.User;
+import com.example.quizexam_student.exception.DuplicatedException;
+import com.example.quizexam_student.exception.IncorrectEmailOrPassword;
 import com.example.quizexam_student.repository.RoleRepository;
 import com.example.quizexam_student.repository.UserRepository;
 import com.example.quizexam_student.service.UserService;
@@ -21,7 +23,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User findUserByEmail(String email) {
-        return userRepository.findByEmail(email).orElse(null);
+        return userRepository.findByEmail(email).orElseThrow(() -> new IncorrectEmailOrPassword("Your Email Not Found"));
     }
 
     @Override
@@ -33,7 +35,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public User saveUser(UserRequest userRequest) {
         if(existUserByEmail(userRequest.getEmail())){
-            return null;
+            throw new DuplicatedException("Email existed already");
         }
         User user = new User();
         user.setEmail(userRequest.getEmail());
