@@ -37,7 +37,7 @@ export class LoginComponent {
           timeOut: 2000,
         });
         console.log('User logged in successfully', response);
-        this.router.navigate(['/homepage']);
+        this.router.navigate(['/student/home']);
       },
       error => {
         if (error.status === 401) {  
