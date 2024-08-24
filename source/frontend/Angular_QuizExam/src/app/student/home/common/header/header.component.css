@@ -141,7 +141,6 @@
     border-top: 1px solid rgba(0, 0, 0, 0.05);
     display: flex;
     align-items: center;
-    cursor: pointer;
 }
 
 .d-flex .menu ul li img {
@@ -171,8 +170,7 @@
     transition: 0.5s;
 }
 
-.d-flex .menu ul li:hover a,
-.d-flex .menu ul li:hover i {
+.d-flex .menu ul li:hover a {
     color: #ff5d94;
 }
 

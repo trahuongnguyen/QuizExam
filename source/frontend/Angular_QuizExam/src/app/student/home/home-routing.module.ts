@@ -1,8 +1,9 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { MarkComponent } from './mark/mark.component';
 import { HomeComponent } from './home.component';
 import { HomepageComponent } from './homepage/homepage.component';
+import { ProfileComponent } from './profile/profile.component';
+import { MarkComponent } from './mark/mark.component';
 
 const routes: Routes = [
     {
@@ -17,6 +18,10 @@ const routes: Routes = [
         path: '',
         redirectTo: 'homepage',
         pathMatch: 'full'
+      },
+      {
+        path: 'profile',
+        component: ProfileComponent
       },
       {
         path: 'mark',
