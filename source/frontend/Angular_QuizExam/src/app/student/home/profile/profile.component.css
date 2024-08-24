@@ -1,0 +1,78 @@
+
+.profile-container {
+    max-width: 750px;
+    padding: 50px 0 50px 0;
+    
+}
+
+.profile-header {
+    margin-bottom: 30px;
+}
+
+.profile-header h1 {
+    font-size: 2rem;
+    border-bottom: 2px solid #ddd;
+    padding-bottom: 10px;
+}
+
+.profile-info {
+    margin-bottom: 20px;
+    margin-left: 40px;
+}
+
+.profile-info p {
+    font-size: 1.1rem;
+}
+
+.profile-info a {
+    margin-left: 200px;
+    text-decoration: none;
+}
+
+.profile-info input {
+    border: none !important;
+    cursor: pointer;
+    background-color: var(--color-background);
+    color: var(--color-text);
+}
+
+.profile-text {
+    width: 500px;
+}
+
+.change-password-form {
+    background-color: var(--color-change-password-form);
+    padding: 20px;
+    border-radius: 8px;
+}
+
+.container {
+    cursor: pointer;
+    
+}
+
+td {
+    padding-left: 25px;
+}
+
+.w-95 {
+    width: 95%;
+}
+
+.border-none {
+    border: none;
+}
+
+input:focus,
+input:active {
+    border: none;
+}
+
+:focus-visible {
+    outline: -webkit-focus-ring-color auto 0px !important;
+}
+
+.btn-profile {
+    margin-right: 20px;
+}
+

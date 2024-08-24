@@ -37,15 +37,12 @@ export class HeaderComponent implements OnInit {
 
   // Cập nhật lớp CSS
   updateBodyClass(isDarkMode: boolean): void {
-    const nav = document.getElementById('nav-id');
     const body = document.getElementById('body');
-    if (nav && body) {
+    if (body) {
       if (isDarkMode) {
-        nav.setAttribute('data-bs-theme', 'dark');
-        body.setAttribute('data-bs-theme', 'dark');
+        body.setAttribute('QuizTech-theme', 'dark');
       } else {
-        nav.setAttribute('data-bs-theme', 'light');
-        body.setAttribute('data-bs-theme', 'light');
+        body.setAttribute('QuizTech-theme', 'light');
       }
     }
   }

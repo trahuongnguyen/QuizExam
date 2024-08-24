@@ -1,9 +1,14 @@
 .navbar {
-    background-color: white;
+    color: var(--color-text);
+    background-color: var(--color-background);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     position: sticky;
     top: 0;
     z-index: 1000;
+}
+
+.navbar-nav {
+    margin-left: 20px;
 }
 
 .navbar-brand img {
@@ -15,12 +20,13 @@
     margin-left: 10px;
     margin-right: 20px;
     text-decoration: none;
-    color: #000;
+    color: var(--color-text);
     font-weight: bold;
     font-size: 14px;
 }
 
 .nav-item .active {
+    color: #000;
     background-color: #f5f5f5;
     border-radius: 8px;
 }
@@ -68,10 +74,10 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: #D9D9D9;
+    background-color: var(--color-switch);
     transition: 0.4s;
     border-radius: 30px;
-    box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.2);
+    box-shadow: var(--color-switch-shadow);
 }
 
 .slider:before {
@@ -83,9 +89,13 @@
     left: 0.2em;
     bottom: 0.2em;
     transition: 0.4s;
+    transform: var(--transform-switch-button);
+    background-color: var(--color-switch-button);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .slider:after {
+    content: var(--content-switch-button);
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
@@ -99,7 +109,7 @@
     position: absolute;
     top: 60px;
     right: -10px;
-    background: #f3f3f3;
+    background: var(--color-menu);
     width: 200px;
     box-sizing: 0 5px 25px rgba(0, 0, 0, 0.1);
     border-radius: 15px;
@@ -120,7 +130,7 @@
     right: 28px;
     width: 20px;
     height: 20px;
-    background: #f3f3f3;
+    background: var(--color-menu);
     transition: 0.5s;
     transform: rotate(45deg);
 }
@@ -147,25 +157,21 @@
 .d-flex .menu ul li a {
     display: inline-block;
     text-decoration: none;
-    color: #555;
+    color: var(--color-text);
     font-weight: 500;
     transition: 0.5s;
-}
-
-.d-flex .menu ul li:hover a {
-    color: #ff5d94;
 }
 
 .d-flex .menu ul li i {
     width: 25px;
     font-size: 25px;
     margin-right: 10px;
-    color: #000;
+    color: var(--color-text);
     transition: 0.5s;
 }
 
-.navbar-nav {
-    margin-left: 20px;
+.d-flex .menu ul li:hover a {
+    color: #ff5d94;
 }
 
 @media (min-width: 820px) {
@@ -187,72 +193,4 @@
 }
 .r-5:not(.show) {
     display: none;
-}
-
-/* switch light-dark */
-
-[data-bs-theme=light] {
-    background-color: white;
-    color: black;
-
-    .slider {
-        background-color: #D9D9D9;
-    }
-
-    .slider:before {
-        background-color: #ffffff;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    }
-
-    .slider:after {
-        content: "Light";
-        color: black;
-        right: 0.5em;
-    }
-}
-
-[data-bs-theme=dark] {
-    background-color: #333;
-    color: #eeeeee;
-
-    .navbar {
-        background-color: #333;
-    }
-
-    .navbar-nav .nav-link {
-        color: #ffffff;
-    }
-
-    .navbar-nav .nav-item .active {
-        color: #000;
-    }
-
-    .slider {
-        background-color: #35393F;
-        box-shadow: 0 0 1px #25292D;
-    }
-
-    .slider:before {
-        transform: translateX(2.3em);
-        background-color: #25292D;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    }
-
-    .slider:after {
-        content: "Dark";
-        color: white;
-        left: 0.5em;
-    }
-
-    .d-flex .menu, .d-flex .menu::before {
-        background: #35393F;
-    }
-
-    .d-flex .menu ul li a, .d-flex .menu ul li i {
-        color: white;
-    }
-
-    .d-flex .menu ul li:hover a {
-        color: #ff5d94;
-    }
 }
