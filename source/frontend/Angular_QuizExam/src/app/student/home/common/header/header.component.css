@@ -96,7 +96,6 @@
 
 .slider:after {
     content: var(--content-switch-button);
-    font-weight: 500;
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
