@@ -2,6 +2,8 @@ package com.example.quizexam_student.config;
 
 import com.example.quizexam_student.entity.Role;
 import com.example.quizexam_student.entity.User;
+import com.example.quizexam_student.exception.IncorrectEmailOrPassword;
+import com.example.quizexam_student.exception.NotFoundException;
 import com.example.quizexam_student.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
@@ -24,7 +26,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        User user = userRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("Your Email Not Found"));
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new NotFoundException("Your Email Not Found!"));
         return org.springframework.security.core.userdetails.User
                 .withUsername(user.getEmail())
                 .password(user.getPassword())
