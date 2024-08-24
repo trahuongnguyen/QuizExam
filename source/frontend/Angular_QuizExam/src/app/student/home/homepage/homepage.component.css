@@ -1,11 +1,11 @@
 .body {
-    background-color: var(--bs-body-bg);
-    color: var(--bs-body-color);
+    background-color: var(--color-background);
+    color: var(--color-text);
     margin: 0;
 }
 
 .bg-card {
-    background-color: var(--bs-white);
+    background-color: var(--color-card);
     border-radius: 0.5rem;
     padding: 1.5rem;
     box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.06);
@@ -14,10 +14,10 @@
 }
 
 .bg-card1 {
-    background-color: var(--bs-white);
+    background-color: var(--color-card);
     border-radius: 0.5rem;
     padding: 1.5rem;
-
+    box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.06);
 }
 
 .carousel-item {
@@ -49,7 +49,7 @@
 h1,
 h2,
 h3 {
-    color: var(--bs-black);
+    color: var(--color-text);
     padding: 1px;
 
 }
@@ -71,34 +71,36 @@ h3 {
     height: 400px;
 }
 
+.title, .title1 {
+    background-color: var(--color-title);
+}
+
 .title {
     margin: auto;
-    background-color: #ffc107;
     border-radius: 3px;
     margin-bottom: 40px;
 }
 
 @media (min-width: 700px) {
-    .title{
+    .title {
         width: 70%;
     }
 }
 
 @media (max-width: 700px) {
-    .title{
+    .title {
         width: 85%;
     }
 }
 
 @media (max-width: 550px) {
-    .title{
+    .title {
         width: 100%;
     }
 }
 
 .title1 {
     margin: auto;
-    background-color: #ffc107;
     border-radius: 3px;
     width: 400px;
     margin-bottom: 30px;
@@ -106,7 +108,7 @@ h3 {
 }
 
 .title p {
-    color: var(--bs-black);
+    color: var(--color-text);
     padding: 1px;
     font-family: 'Inter';
     font-weight: bold;
@@ -114,7 +116,7 @@ h3 {
 }
 
 .title1 p {
-    color: var(--bs-black);
+    color: var(--color-text);
     font-family: 'Inter';
     font-weight: bold;
     font-size: xx-large;
@@ -146,29 +148,4 @@ p {
 
 .carousel-item {
     transition: transform .4s ease-in-out !important;
-
-}
-
-/* switch light-dark */
-
-[data-bs-theme=light] {
-    background-color: white;
-    color: black;
-}
-
-[data-bs-theme=dark] {
-    background-color: #333;
-    color: #eeeeee;
-
-    .container .title, .container .title1 {
-        background-color: #35393f;
-    }
-
-    .container .g-4 .bg-card1, .container .bg-card {
-        background-color: #35393f;
-    }
-
-    p, h2, h3 {
-        color: #ffffff;
-    }
 }

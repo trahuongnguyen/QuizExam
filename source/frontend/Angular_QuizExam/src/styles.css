@@ -3,3 +3,46 @@ body {
     margin: 0;
     padding: 0;
 }
+
+/* region switch light-dark */
+
+:root, [QuizTech-theme=light] {
+    --color-background: #ffffff;
+    --color-text: #000000;
+    --color-card: #ffffff;
+    --color-title: #ffc107;
+
+    /* menu user */
+    --color-menu: #f3f3f3;
+    
+    /* switch button light-dark */
+    --content-switch-button: "Light";
+    --color-switch: #d9d9d9;
+    --color-switch-button: #ffffff;
+    --color-switch-shadow: inset 0 0 15px rgba(0, 0, 0, 0.2);
+    .slider:after {
+        right: 0.5em;
+    }
+}
+
+[QuizTech-theme=dark] {
+    --color-background: #333;
+    --color-text: #eeeeee;
+    --color-card: #35393f;
+    --color-title: #35393f;
+
+    /* menu user */
+    --color-menu: #25292d;
+    
+    /* switch button light-dark */
+    --content-switch-button: "Dark";
+    --color-switch: #35393f;
+    --color-switch-button: #25292d;
+    --color-switch-shadow: 0 0 1px #25292d;
+    --transform-switch-button: translateX(2.3em);
+    .slider:after {
+        left: 0.5em;
+    }
+}
+
+/* endregion switch light-dark */
