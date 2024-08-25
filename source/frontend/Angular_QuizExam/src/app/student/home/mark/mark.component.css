@@ -1,0 +1,21 @@
+.tab-content .table {
+    margin-top: 20px;
+}
+.nav-pills .nav-link.active {
+    background-color: #E6E6E6;
+    color: black;
+    font-weight: bold;
+}
+.nav-link {
+    color: black;
+}
+.table th, .table td {
+    text-align: center;
+}
+.table th {
+    background-color: #FFEDED;
+}
+hr {
+    border-top: 2px solid black;
+    margin-top: 0;
+}
