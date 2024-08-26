@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { AuthService } from '../../../service/auth.service';
 
 @Component({
   selector: 'app-header',
@@ -8,7 +9,7 @@ import { Component, OnInit } from '@angular/core';
 export class HeaderComponent implements OnInit {
   darkMode: boolean = false;
 
-  constructor() { }
+  constructor(public authService: AuthService) {}
 
   ngOnInit(): void {
     this.loadTheme();
@@ -55,5 +56,10 @@ export class HeaderComponent implements OnInit {
   menuToggle(): void {
     const toggleMenu = document.querySelector(".menu");
     toggleMenu?.classList.toggle("active");
+  }
+
+  // Logout process
+  onLogout() {
+    this.authService.logout(); // call method logout
   }
 }
