@@ -1,14 +1,8 @@
 package com.example.quizexam_student.handle;
 
 import com.example.quizexam_student.bean.response.ErrorResponse;
-import com.example.quizexam_student.exception.DuplicatedException;
-import com.example.quizexam_student.exception.EmptyException;
-import com.example.quizexam_student.exception.IncorrectEmailOrPassword;
-import com.example.quizexam_student.exception.NotFoundException;
+import com.example.quizexam_student.exception.*;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
-import org.springframework.http.ProblemDetail;
-import org.springframework.web.ErrorResponseException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -41,9 +35,9 @@ public class GlobalExceptionHandle {
         return errors;
     }
 
-    @ExceptionHandler(DuplicatedException.class)
+    @ExceptionHandler(DuplicatedEmailException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handDuplicatedException(DuplicatedException e) {
+    public ErrorResponse handDuplicatedEmailException(DuplicatedEmailException e) {
         return new ErrorResponse(HttpStatus.BAD_REQUEST, e.getMessage());
     }
 
@@ -53,5 +47,10 @@ public class GlobalExceptionHandle {
         return new ErrorResponse(HttpStatus.BAD_REQUEST, e.getMessage());
     }
 
+    @ExceptionHandler(DuplicatedPhoneException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handDuplicatedPhoneException(DuplicatedPhoneException e) {
+        return new ErrorResponse(HttpStatus.BAD_REQUEST, e.getMessage());
+    }
 
 }
