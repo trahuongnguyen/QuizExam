@@ -7,6 +7,6 @@ import lombok.Setter;
 @Getter
 @Setter
 @AllArgsConstructor
-public class DuplicatedException extends RuntimeException {
+public class DuplicatedEmailException extends RuntimeException {
     private final String message;
 }
