@@ -1,0 +1,32 @@
+.mt-6 {
+    padding-top: 50px;
+}
+.tab-content .table {
+    margin-top: 20px;
+}
+.nav-pills .nav-link.active {
+    background-color: #E6E6E6;
+    color: black;
+    font-weight: bold;
+}
+.nav-link {
+    color: var(--color-text);
+}
+.table th,
+.table td {
+    text-align: center;
+    border-right: none;
+    border-left: none;
+}
+.table th {
+    background-color: var(--color-nav);
+}
+
+.table td {
+    background-color: var(--color-card);
+    color: var(--color-text);
+}
+hr {
+    border-top: 2px solid var(--color-text);
+    margin-top: 0;
+}

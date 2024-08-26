@@ -9,14 +9,16 @@ import java.time.LocalDate;
 @Data
 public class UserRequest {
     @NotBlank(message = "Full Name is required")
-    @Pattern(regexp="^[a-zA-Z]+$", message = "Full name cannot have number or special character")
+    @Pattern(regexp="^[a-z A-Z]+$", message = "Full name cannot have number or special character")
     private String fullName;
     @NotBlank(message = "Email is required")
     @Email(message = "Email should be valid")
     private String email;
     @Size(min = 8, message = "Password must be at least 8 characters long")
-    //@Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$",
-    //        message = "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character")
+    @Pattern(
+            regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@#$%^&+=.]).{8,}$",
+            message = "Password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, one number, and one special character"
+    )
     private String password;
     @NotNull(message = "Date of Birth is required")
     //@Pattern(regexp = "^\\d{4}-\\d{2}-\\d{2}$", message = "Date of birth must be in the format yyyy-MM-dd")

@@ -9,6 +9,41 @@ body {
     margin: 0;
 }
 
+/* mark */
+/* .mt-6 {
+    padding-top: 50px;
+}
+.tab-content .table {
+    margin-top: 20px;
+}
+.nav-pills .nav-link.active {
+    background-color: #E6E6E6;
+    color: black;
+    font-weight: bold;
+}
+.nav-link {
+    color: var(--color-text);
+}
+.table th,
+.table td {
+    text-align: center;
+    border-right: none;
+    border-left: none;
+}
+.table th {
+    background-color: var(--color-nav);
+}
+
+.table td {
+    background-color: var(--color-card);
+    color: var(--color-text);
+}
+hr {
+    border-top: 2px solid var(--color-text);
+    margin-top: 0;
+} */
+
+
 /* region switch light-dark */
 
 :root, [QuizTech-theme=light] {
@@ -16,10 +51,13 @@ body {
     --color-text: #000000;
     --color-card: #ffffff;
     --color-title: #ffc107;
-
+    --color-nav: #FFEDED;
     /* menu user */
     --color-menu: #f3f3f3;
     
+    /* profile user */
+    --color-change-password-form: #ffe4e4;
+
     /* switch button light-dark */
     --content-switch-button: "Light";
     --color-switch: #d9d9d9;
@@ -28,8 +66,7 @@ body {
     .slider:after {
         right: 0.5em;
     }
-    /* profile user */
-    --color-change-password-form: #ffe4e4;
+    
 }
 
 [QuizTech-theme=dark] {
@@ -37,10 +74,14 @@ body {
     --color-text: #eeeeee;
     --color-card: #35393f;
     --color-title: #35393f;
+    --color-nav: #e6e6e6;
 
     /* menu user */
     --color-menu: #25292d;
     
+    /* profile user */
+    --color-change-password-form: #35393f;
+
     /* switch button light-dark */
     --content-switch-button: "Dark";
     --color-switch: #35393f;
@@ -50,8 +91,9 @@ body {
     .slider:after {
         left: 0.5em;
     }
-    /* profile user */
-    --color-change-password-form: #35393f;
+
+    /* mark user table */
+
 }
 
 /* endregion switch light-dark */
