@@ -1,8 +1,7 @@
-
 .profile-container {
     max-width: 750px;
     padding: 50px 0 50px 0;
-    
+
 }
 
 .profile-header {
@@ -17,7 +16,7 @@
 
 .profile-info {
     margin-bottom: 20px;
-    margin-left: 40px;
+    margin-left: 10%;
 }
 
 .profile-info p {
@@ -25,10 +24,24 @@
 }
 
 .profile-info a {
-    margin-left: 200px;
+    
     text-decoration: none;
 }
-
+.profile-info-span span {
+    margin-left: 15%;
+}
+.profile-info-span1 span {
+    margin-left: 15.4%;
+}
+.profile-info-span2 span {
+    margin-left: 16%;
+}
+.profile-info-span3 span {
+    margin-left: 6.3%;
+}
+.profile-info-span4 span {
+    margin-left: 25%;
+}
 .profile-info input {
     border: none !important;
     cursor: pointer;
@@ -44,16 +57,15 @@
     background-color: var(--color-change-password-form);
     padding: 20px;
     border-radius: 8px;
+    max-width: 600px;
+    margin-left: 10%;
 }
 
 .container {
     cursor: pointer;
-    
+
 }
 
-td {
-    padding-left: 25px;
-}
 
 .w-95 {
     width: 95%;
@@ -76,3 +88,15 @@ input:active {
     margin-right: 20px;
 }
 
+
+/* Responsive adjustments */
+@media (max-width: 750px) {
+    .profile-container {
+        width: 90%;
+        padding: 10px;
+    }
+
+    .profile-info p {
+        font-size: 1.1rem;
+    }
+}
