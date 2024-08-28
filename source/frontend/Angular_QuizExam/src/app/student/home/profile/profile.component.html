@@ -1,6 +1,6 @@
 <div class="body">
     <div class="container profile-container ">
-        <div class="profile-header text-center">
+        <div class="profile-header ">
             <h1>Profile</h1>
         </div>
         <form action="" method="post">
@@ -35,7 +35,7 @@
                         <input type="password" class="w-95 border-none" id="currentPassword"
                             placeholder="Enter current password">
                         <div class="toggle-password eye" id="togglecurrentPassword"
-                            (click)="visiblePassword('currentPassword')"><i class="fa-regular fa-eye"></i>
+                            (click)="visiblePassword('currentPassword', 'icon1')"><i id="icon1" class="fa-regular fa-eye-slash"></i>                           
                         </div>
                     </div>
                 </div>
@@ -45,8 +45,8 @@
                         <input type="password" class="w-95 border-none" id="newPassword"
                             placeholder="Enter new password">
                         <div class="toggle-newPassword eye" id="togglenewPassword"
-                            (click)="visiblePassword('newPassword')">
-                            <i class="fa-regular fa-eye"></i>
+                            (click)="visiblePassword('newPassword', 'icon3')">
+                            <i id="icon3" class="fa-regular fa-eye-slash"></i>
                         </div>
                     </div>
                 </div>
@@ -56,7 +56,7 @@
                         <input type="password" class="w-95 border-none" id="confirmPassword"
                             placeholder="Confirm new password">
                         <div class="toggle-confirmPassword eye" id="toggleconfirmPassword"
-                            (click)="visiblePassword('confirmPassword')"><i class="fa-regular fa-eye"></i>
+                            (click)="visiblePassword('confirmPassword', 'icon2')"><i id="icon2" class="fa-regular fa-eye-slash"></i>
                         </div>
                     </div>
 
