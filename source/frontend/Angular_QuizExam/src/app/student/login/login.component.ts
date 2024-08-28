@@ -36,6 +36,7 @@ export class LoginComponent {
         this.toastr.success('Login Successful!', 'Success', {
           timeOut: 2000,
         });
+        window.localStorage.setItem('jwtToken', JSON.stringify(response.token));
         console.log('User logged in successfully', response);
         this.router.navigate(['/student/home']);
       },
