@@ -126,9 +126,14 @@ tbody tr td {
     border-radius: 8px;
     padding: 5px 13px;
     margin: 5px;
+    transition: none
 }
 
-.pagination .page-item .active {
+.pagination .page-item .page-link:hover {
+    background-color: var(--color-page-hover);
+}
+
+.pagination .page-item .active, .pagination .page-item .active:hover {
     color: #fff;
     background-color: rgba(170, 18, 16, 0.93);
 }

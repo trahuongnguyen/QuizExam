@@ -61,6 +61,7 @@ hr {
     --color-sidebar-active: #eaeaea;
     --color-sidebar-hover: #eaeaea8a;
 
+    --color-page-hover: #e9e9e9;
     --color-disable: #dcdcdc;
 
     /* switch button light-dark */
@@ -92,6 +93,7 @@ hr {
     --color-sidebar-active: #0e0e0e88;
     --color-sidebar-hover: #0e0e0e39;
 
+    --color-page-hover: #3a3c3f;
     --color-disable: #dcdcdc66;
 
     /* switch button light-dark */

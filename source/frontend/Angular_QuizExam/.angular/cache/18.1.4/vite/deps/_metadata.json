@@ -1,55 +1,55 @@
 {
-  "hash": "93322650",
-  "configHash": "8f098693",
+  "hash": "829c9635",
+  "configHash": "aa3d6223",
   "lockfileHash": "dea0c8a1",
-  "browserHash": "4c72d974",
+  "browserHash": "ed6398a8",
   "optimized": {
     "@angular/common": {
       "src": "../../../../../node_modules/@angular/common/fesm2022/common.mjs",
       "file": "@angular_common.js",
-      "fileHash": "1f0f9855",
+      "fileHash": "22aec922",
       "needsInterop": false
     },
     "@angular/common/http": {
       "src": "../../../../../node_modules/@angular/common/fesm2022/http.mjs",
       "file": "@angular_common_http.js",
-      "fileHash": "6ed9f15f",
+      "fileHash": "2be1032f",
       "needsInterop": false
     },
     "@angular/core": {
       "src": "../../../../../node_modules/@angular/core/fesm2022/core.mjs",
       "file": "@angular_core.js",
-      "fileHash": "bf16c615",
+      "fileHash": "ce09e58c",
       "needsInterop": false
     },
     "@angular/forms": {
       "src": "../../../../../node_modules/@angular/forms/fesm2022/forms.mjs",
       "file": "@angular_forms.js",
-      "fileHash": "8b30ebd8",
+      "fileHash": "0fe47085",
       "needsInterop": false
     },
     "@angular/platform-browser": {
       "src": "../../../../../node_modules/@angular/platform-browser/fesm2022/platform-browser.mjs",
       "file": "@angular_platform-browser.js",
-      "fileHash": "2daebdb8",
+      "fileHash": "720b546a",
       "needsInterop": false
     },
     "@angular/platform-browser/animations": {
       "src": "../../../../../node_modules/@angular/platform-browser/fesm2022/animations.mjs",
       "file": "@angular_platform-browser_animations.js",
-      "fileHash": "94d276b0",
+      "fileHash": "5d92cc27",
       "needsInterop": false
     },
     "@angular/router": {
       "src": "../../../../../node_modules/@angular/router/fesm2022/router.mjs",
       "file": "@angular_router.js",
-      "fileHash": "8d97732d",
+      "fileHash": "6e201986",
       "needsInterop": false
     },
     "ngx-toastr": {
       "src": "../../../../../node_modules/ngx-toastr/fesm2022/ngx-toastr.mjs",
       "file": "ngx-toastr.js",
-      "fileHash": "2b4c6ef1",
+      "fileHash": "5e72075c",
       "needsInterop": false
     }
   },

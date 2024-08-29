@@ -24,7 +24,6 @@
     <table class="table">
         <thead>
             <tr>
-                <th>STT</th>
                 <th>Full Name</th>
                 <th>Email</th>
                 <th>Phone Number</th>
@@ -33,12 +32,11 @@
             </tr>
         </thead>
         <tbody>
-            <tr>
-                <td>1</td>
-                <td>Nguyen Quang Huy</td>
-                <td>huy.nq.2236&#64;aptechlearning.edu.vn</td>
-                <td>0987654321</td>
-                <td>Director</td>
+            <tr *ngFor="let item of responseData">
+                <td>{{ item.fullName }}</td>
+                <td>{{ item.email }}</td>
+                <td>{{ item.phoneNumber }}</td>
+                <td>{{ item.role.name }}</td>
                 <td class="action">
                     <a href="#" class="info-icon">
                         <span class="mdi mdi-information-outline"></span>
