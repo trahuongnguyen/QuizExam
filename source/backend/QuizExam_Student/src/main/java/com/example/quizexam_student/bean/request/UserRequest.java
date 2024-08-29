@@ -30,4 +30,6 @@ public class UserRequest {
     private String address;
     @NotNull(message = "Gender is required")
     private int gender;
+    @NotNull(message = "Role is required")
+    private int roleId;
 }

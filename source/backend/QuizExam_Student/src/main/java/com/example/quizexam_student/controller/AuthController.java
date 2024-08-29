@@ -9,6 +9,7 @@ import com.example.quizexam_student.exception.IncorrectEmailOrPassword;
 import com.example.quizexam_student.service.RoleService;
 import com.example.quizexam_student.service.UserService;
 import com.example.quizexam_student.util.JwtUtil;
+import jakarta.persistence.Id;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -18,8 +19,13 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.ui.Model;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -28,6 +34,7 @@ import org.springframework.web.bind.annotation.*;
 @Validated
 public class AuthController {
     private final UserService userService;
+    private final RoleService roleService;
     private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
 
@@ -40,9 +47,22 @@ public class AuthController {
         return ResponseEntity.ok(new LoginResponse(token, loginRequest.getEmail()));
     }
 
-    @PostMapping("/student")
-    public ResponseEntity<String> student(@RequestBody @Valid UserRequest userRequest) {
-        User user = userService.saveUser(userRequest);
-        return new ResponseEntity<>("Student registed successfully", HttpStatus.OK);
-    }
+//    @GetMapping("/register/{Id}")
+//    public String register(Model model, @PathVariable int Id) {
+//        List<Role> role = new ArrayList<>();
+//        if (roleService.findById(Id).getName().equals("DIRECTOR")){
+//            role = roleService.findAll();
+//        }
+//        if (roleService.findById(Id).getName().equals("SRO")){
+//            role = roleService.findByRoleName("STUDENT");
+//        }
+//        model.addAttribute("listRole", role);
+//        return "register";
+//    }
+//
+//    @PostMapping("/register")
+//    public ResponseEntity<String> register(@RequestBody @Valid UserRequest userRequest) {
+//        User user = userService.saveUser(userRequest);
+//        return new ResponseEntity<>("Student registed successfully", HttpStatus.OK);
+//    }
 }
