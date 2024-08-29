@@ -1,0 +1,133 @@
+/* Body */
+
+.content-wrapper {
+    padding: 20px;
+    margin: 80px 0 60px 200px;
+    width: calc(100% - 200px);
+    flex-grow: 1;
+}
+
+.top-actions {
+    margin-bottom: 15px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.search-section {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.search-section input[type="text"] {
+    width: 25%;
+    height: 40px;
+    border: 1px solid #d9d9d9;
+    border-radius: 8px;
+    padding: 12px 16px;
+}
+
+.search-section button {
+    background-color: #d9d9d9;
+    width: 40px;
+    height: 40px;
+    border: none;
+    border-radius: 0 8px 8px 0;
+    margin-left: -40px;
+}
+
+.search-section .search-icon {
+    font-size: 22px;
+    vertical-align: middle;
+}
+
+.search-section .action-select {
+    color: #fff;
+    background-color: #2382de;
+    border-radius: 8px;
+    border: 1px solid #d9d9d9;
+    padding: 9px 5px 9px 15px;
+    margin-left: 10px;
+    /* Khoảng cách giữa thanh tìm kiếm và select action */
+    cursor: pointer;
+}
+
+.bottom-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 15px;
+}
+
+.bottom-actions .button {
+    background-color: #aa1210;
+    border: none;
+    border-radius: 3px;
+}
+
+.bottom-actions .button:active {
+    background-color: #8f0a0a;
+}
+
+.bottom-actions .icon {
+    vertical-align: middle;
+    line-height: normal;
+    margin-right: 8px;
+}
+
+td {
+    font-size: 20px;
+    text-align: center;
+}
+
+.table {
+    font-size: 20px;
+    text-align: center;
+    filter: drop-shadow(0 4px 4px rgba(0, 0, 0, 0.25));
+}
+
+.table th {
+    font-size: 24px;
+    background-color: #eaeaea;
+}
+
+.table td {
+    padding: 11px;
+}
+
+.table .action {
+    padding: 0;
+}
+
+.table .info-icon {
+    color: #000;
+    font-size: 33px;
+    text-decoration: none;
+    vertical-align: middle;
+}
+
+.table .form-select {
+    width: 115px;
+    color: #fff;
+    background-color: #2382de;
+    border-radius: 8px;
+    border: 1px solid #d9d9d9;
+    cursor: pointer;
+}
+
+.pagination .page-item .page-link {
+    color: #000;
+    border: none;
+    border-radius: 8px;
+    padding: 5px 13px;
+    margin: 5px;
+}
+
+.pagination .page-item .active {
+    color: #fff;
+    background-color: rgba(170, 18, 16, 0.93);
+}
+
+.pagination .page-item .disabled {
+    color: gainsboro;
+    background-color: transparent;
+}
