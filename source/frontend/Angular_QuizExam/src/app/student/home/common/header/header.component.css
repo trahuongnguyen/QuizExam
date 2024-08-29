@@ -97,8 +97,7 @@
 .slider:after {
     content: var(--content-switch-button);
     position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
+    top: 23%;
     font-size: 0.8em;
     transition: opacity 0.4s;
     opacity: 1;
