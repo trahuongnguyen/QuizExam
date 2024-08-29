@@ -1,5 +1,6 @@
 /* You can add global styles to this file, and also import other style files */
-.body {
+#body {
+    font-family: Inter;
     background-color: var(--color-background);
     color: var(--color-text);
     margin: 0;
@@ -55,6 +56,13 @@ hr {
     /* profile user */
     --color-change-password-form: #ffe4e4;
 
+
+    --color-sidebar: #cacaca;
+    --color-sidebar-active: #eaeaea;
+    --color-sidebar-hover: #eaeaea8a;
+
+    --color-disable: #dcdcdc;
+
     /* switch button light-dark */
     --content-switch-button: "Light";
     --color-switch: #d9d9d9;
@@ -78,6 +86,13 @@ hr {
     
     /* profile user */
     --color-change-password-form: #35393f;
+
+
+    --color-sidebar: #35393f;
+    --color-sidebar-active: #0e0e0e88;
+    --color-sidebar-hover: #0e0e0e39;
+
+    --color-disable: #dcdcdc66;
 
     /* switch button light-dark */
     --content-switch-button: "Dark";

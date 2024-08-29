@@ -33,8 +33,12 @@ public class SecurityConfig {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
+//                .requestMatchers("/api/auth/register").hasRole("DIRECTOR")
+//                .requestMatchers("api/auth/register").hasRole("SRO")
                 .requestMatchers("/api/auth/**").permitAll()
+                .requestMatchers("/api/user/**").permitAll()
                 .anyRequest().authenticated()
+                
                 .and()
                 .httpBasic();
         http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);

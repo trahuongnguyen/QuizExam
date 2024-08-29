@@ -1,8 +1,8 @@
 <div class="header">
     <div class="toggle-switch">
         <label class="switch">
-            <input type="checkbox">
-            <span class="slider round"></span>
+            <input type="checkbox" id="buttonSwitch" (click)="app.toggleTheme()">
+            <span class="slider"></span>
         </label>
     </div>
     <div class="user-section">
@@ -13,8 +13,7 @@
 
 <div class="sidebar">
     <div class="block-wrapper">
-        <img class="block-image" alt=""
-            src="https://www.pikpng.com/pngl/b/89-893081_computer-education-logo-png-aptech-computer-education-logo.png" />
+        <img class="block-image" alt="" src="../../../../img/logo.png" />
     </div>
     <a href="#dashboard" class="sidebar-link"><span class="mdi mdi-chart-bar icon"></span>Dashboard</a>
     <a href="#subject" class="sidebar-link"><span class="mdi mdi-book-open-variant icon"></span>Subject</a>

@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { AppComponent } from '../../app.component';
 
 @Component({
   selector: 'app-home',
@@ -15,4 +16,6 @@ export class HomeComponent {
   scrolled() : void {
     this.windowScrolled = Math.round(window.scrollY) !=0;
   }
+
+  constructor(public app : AppComponent) {}
 }
