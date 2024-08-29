@@ -35,12 +35,12 @@ export class EmployeeComponent implements OnInit {
   phoneNumber: String = '';
   address: String = '';
   gender: number = 1;
-  role: number = 4;
+  roleId: number = 4;
   createEmployee(): void {
     const employee =
     { fullName: this.fullName, email: this.email, dob: this.dob,
       phoneNumber: this.phoneNumber, address: this.address,
-      gender: this.gender, role: this.role
+      gender: this.gender, roleId: this.roleId
     }
 
     this.http.post(`${this.authService.apiUrl}/user/register`, employee).subscribe(
@@ -52,7 +52,7 @@ export class EmployeeComponent implements OnInit {
         this.router.navigate(['/admin/home/employee']);
       },
       error => {
-        this.toastr.success('Error create Employee', 'Error', {
+        this.toastr.error('Error create Employee', 'Error', {
           timeOut: 2000,
         });
         console.log('Error', error);

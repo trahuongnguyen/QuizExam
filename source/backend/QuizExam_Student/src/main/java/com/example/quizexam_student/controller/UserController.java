@@ -52,7 +52,7 @@ public class UserController {
     @PostMapping("/register")
     public ResponseEntity<String> register(@RequestBody @Valid UserRequest userRequest) {
         userService.saveUser(userRequest);
-        return new ResponseEntity<>("User registed successfully", HttpStatus.OK);
+        return ResponseEntity.ok("success");
     }
 
     @GetMapping("/profile/{Id}")
