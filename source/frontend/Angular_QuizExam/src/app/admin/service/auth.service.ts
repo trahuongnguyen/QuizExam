@@ -15,13 +15,13 @@ interface User {
 })
 export class AuthService {
 
-  public apiUrl = 'http://localhost:8080/api/';
+  public apiUrl = 'http://localhost:8080/api';
 
   constructor(private http: HttpClient, private router: Router) { }
 
   // Login user
   login(user: User): Observable<any> {
-    return this.http.post(`${this.apiUrl}auth/login`, user, {responseType: 'json'});
+    return this.http.post(`${this.apiUrl}/auth/login`, user, {responseType: 'json'});
   }
 
   // Logout user

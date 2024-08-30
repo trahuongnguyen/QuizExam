@@ -13,7 +13,7 @@
     <!-- Bottom Actions (Create and Export) -->
     <div class="bottom-actions">
         <div>
-            <a href="" class="btn btn-primary button">Create</a>
+            <a class="btn btn-primary button" data-bs-toggle="modal" data-bs-target="#form">Create</a>
         </div>
         <div>
             <a href="" class="btn btn-primary button" style="margin-right: 5px;"><span class="mdi mdi-arrow-expand-up icon"></span>Export Excel</a>
@@ -38,7 +38,7 @@
                 <td>{{ item.phoneNumber }}</td>
                 <td>{{ item.role.name }}</td>
                 <td class="action">
-                    <a href="#" class="info-icon">
+                    <a class="info-icon" data-bs-toggle="modal" data-bs-target="#profile">
                         <span class="mdi mdi-information-outline"></span>
                     </a>
                     <a href="#" class="info-icon">
@@ -68,4 +68,107 @@
             </li>
         </ul>
     </nav>
+</div>
+
+<div class="modal" id="profile">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="employee-popup" id="employee-popup">
+                    <p class="user-name text-center">Nguyen Quang Huy</p>
+                    <table class="table-content">
+                        <tr>
+                            <td>Email</td>
+                            <td>nqhuy2092004&#64;gmail.com</td>
+                        </tr>
+                        <tr>
+                            <td>DOB</td>
+                            <td>20/09/2004</td>
+                        </tr>
+                        <tr>
+                            <td>Phone Number</td>
+                            <td>0377427523</td>
+                        </tr>
+                        <tr>
+                            <td>Address</td>
+                            <td>87 Linh Nam, Hoang Mai, Ha Noi</td>
+                        </tr>
+                        <tr>
+                            <td>Gender</td>
+                            <td>Nam</td>
+                        </tr>
+                        <tr>
+                            <td>Role</td>
+                            <td>Director</td>
+                        </tr>
+                        <tr>
+                            <td>Status</td>
+                            <td>Active</td>
+                        </tr>
+                    </table>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"><span class="mdi mdi-close icon-close"></span></button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal" id="form">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="employee-popup" id="employee-popup">
+                    <p class="user-name text-center">Create Employee</p>
+                    <form method="post" (ngSubmit)="createEmployee()">
+                        <table class="table-content">
+                            <tr>
+                                <td>Name</td>
+                                <td><input type="text" [(ngModel)]="fullName" name="fullName"></td>
+                            </tr>
+                            <tr>
+                                <td>Email</td>
+                                <td><input type="text" [(ngModel)]="email" name="email"></td>
+                            </tr>
+                            <tr>
+                                <td>DOB</td>
+                                <td><input type="date" id="birth" [(ngModel)]="dob" name="dob"></td>
+                            </tr>
+                            <tr>
+                                <td>Phone Number</td>
+                                <td><input type="text" [(ngModel)]="phoneNumber" name="phoneNumber"></td>
+                            </tr>
+                            <tr>
+                                <td>Address</td>
+                                <td><input type="text" [(ngModel)]="address" name="address"></td>
+                            </tr>
+                            <tr>
+                                <td>Gender</td>
+                                <td>
+                                    <input type="radio" value=1 [(ngModel)]="gender" name="gender" checked> Male
+                                    <input type="radio" value=0 [(ngModel)]="gender" name="gender"> Female
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Role</td>
+                                <td>
+                                    <select id="" [(ngModel)]="roleId" name="roleId">
+                                        <option value=2>Director</option>
+                                        <option value=3>Teacher</option>
+                                        <option value=4 selected>SRO</option>
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td>
+                                    <button type="submit" class="btn btn-primary button">Save</button>
+                                    <button class="btn btn-secondary" style="margin-left: 5px;" data-bs-dismiss="modal">Cancel</button>
+                                </td>
+                            </tr>
+                        </table>
+                    </form>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"><span class="mdi mdi-close icon-close"></span></button>
+            </div>
+        </div>
+    </div>
 </div>

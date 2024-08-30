@@ -22,7 +22,7 @@
     background: #fff;
     position: absolute;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
-    border-radius: 20px;
+    border-radius: 30px;
     overflow: hidden;
     cursor: pointer;
 
@@ -92,7 +92,7 @@
     width: 70%;
     position: relative;
     margin: 20px 0;
-    background: #000;
+    background: #aa1210;
     border-radius: 5px;
 }
 
@@ -126,13 +126,20 @@
     margin: 15px 0 10px;
 }
 
+.input-a a:hover {
+    color: blue;
+    font-size: 13px;
+    margin: 15px 0 10px;
+    text-decoration: underline;
+}
+
 .input-box input:focus~label,
 .input-box input:valid~label {
     top: -5px;
 }
 
 .btn-hover:hover {
-    background-color: #333;
+    background-color: #cb5353;
     color: #fff;
 
 }
