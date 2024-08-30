@@ -1,17 +1,21 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { CommonComponent } from './common/common.component';
+import { HomeRoutingModule } from './home-routing.module';
+
+
+import { HomeComponent } from './home.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { StudentComponent } from './student/student.component';
 import { ClassComponent } from './class/class.component';
 import { EmployeeComponent } from './employee/employee.component';
 import { ProfileComponent } from './profile/profile.component';
+import { FormsModule } from '@angular/forms';
 
 
 
 @NgModule({
   declarations: [
-    CommonComponent,
+    HomeComponent,
     DashboardComponent,
     StudentComponent,
     ClassComponent,
@@ -19,7 +23,9 @@ import { ProfileComponent } from './profile/profile.component';
     ProfileComponent
   ],
   imports: [
-    CommonModule
+    CommonModule,
+    HomeRoutingModule,
+    FormsModule
   ]
 })
 export class HomeModule { }

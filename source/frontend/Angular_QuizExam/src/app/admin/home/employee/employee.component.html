@@ -1,1 +1,174 @@
-<p>employee works!</p>
+<div class="content-wrapper">
+    <h2>Employee</h2>
+    <hr>
+
+    <!-- Search Section -->
+    <form class="search-section" method="post">
+        <input type="text" class="form-control" placeholder="Search">
+        <button type="submit">
+            <i class="fa-solid fa-magnifying-glass search-icon"></i>
+        </button>
+    </form>
+
+    <!-- Bottom Actions (Create and Export) -->
+    <div class="bottom-actions">
+        <div>
+            <a class="btn btn-primary button" data-bs-toggle="modal" data-bs-target="#form">Create</a>
+        </div>
+        <div>
+            <a href="" class="btn btn-primary button" style="margin-right: 5px;"><span class="mdi mdi-arrow-expand-up icon"></span>Export Excel</a>
+            <a href="" class="btn btn-primary button"><span class="mdi mdi-arrow-expand-up icon"></span>Export PDF</a>
+        </div>
+    </div>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Full Name</th>
+                <th>Email</th>
+                <th>Phone Number</th>
+                <th>Role</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let item of responseData">
+                <td>{{ item.fullName }}</td>
+                <td>{{ item.email }}</td>
+                <td>{{ item.phoneNumber }}</td>
+                <td>{{ item.role.name }}</td>
+                <td class="action">
+                    <a class="info-icon" data-bs-toggle="modal" data-bs-target="#profile">
+                        <span class="mdi mdi-information-outline"></span>
+                    </a>
+                    <a href="#" class="info-icon">
+                        <span class="mdi mdi-delete-forever"></span>
+                    </a>
+                </td>
+            </tr>
+            <!-- Add more rows as needed -->
+        </tbody>
+    </table>
+
+    <nav aria-label="Page navigation">
+        <ul class="pagination justify-content-center">
+            <li class="page-item">
+                <a class="page-link disabled" href="#" aria-label="Previous">
+                    <span aria-hidden="true">&laquo; Previous</span>
+                </a>
+            </li>
+            <li class="page-item"><a class="page-link active" href="#">1</a></li>
+            <li class="page-item"><a class="page-link" href="#">2</a></li>
+            <li class="page-item"><a class="page-link" href="#">3</a></li>
+            <!-- Add more pages as needed -->
+            <li class="page-item">
+                <a class="page-link" href="#" aria-label="Next">
+                    <span aria-hidden="true">Next &raquo;</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</div>
+
+<div class="modal" id="profile">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="employee-popup" id="employee-popup">
+                    <p class="user-name text-center">Nguyen Quang Huy</p>
+                    <table class="table-content">
+                        <tr>
+                            <td>Email</td>
+                            <td>nqhuy2092004&#64;gmail.com</td>
+                        </tr>
+                        <tr>
+                            <td>DOB</td>
+                            <td>20/09/2004</td>
+                        </tr>
+                        <tr>
+                            <td>Phone Number</td>
+                            <td>0377427523</td>
+                        </tr>
+                        <tr>
+                            <td>Address</td>
+                            <td>87 Linh Nam, Hoang Mai, Ha Noi</td>
+                        </tr>
+                        <tr>
+                            <td>Gender</td>
+                            <td>Nam</td>
+                        </tr>
+                        <tr>
+                            <td>Role</td>
+                            <td>Director</td>
+                        </tr>
+                        <tr>
+                            <td>Status</td>
+                            <td>Active</td>
+                        </tr>
+                    </table>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"><span class="mdi mdi-close icon-close"></span></button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal" id="form">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="employee-popup" id="employee-popup">
+                    <p class="user-name text-center">Create Employee</p>
+                    <form method="post" (ngSubmit)="createEmployee()">
+                        <table class="table-content">
+                            <tr>
+                                <td>Name</td>
+                                <td><input type="text" [(ngModel)]="fullName" name="fullName"></td>
+                            </tr>
+                            <tr>
+                                <td>Email</td>
+                                <td><input type="text" [(ngModel)]="email" name="email"></td>
+                            </tr>
+                            <tr>
+                                <td>DOB</td>
+                                <td><input type="date" id="birth" [(ngModel)]="dob" name="dob"></td>
+                            </tr>
+                            <tr>
+                                <td>Phone Number</td>
+                                <td><input type="text" [(ngModel)]="phoneNumber" name="phoneNumber"></td>
+                            </tr>
+                            <tr>
+                                <td>Address</td>
+                                <td><input type="text" [(ngModel)]="address" name="address"></td>
+                            </tr>
+                            <tr>
+                                <td>Gender</td>
+                                <td>
+                                    <input type="radio" value=1 [(ngModel)]="gender" name="gender" checked> Male
+                                    <input type="radio" value=0 [(ngModel)]="gender" name="gender"> Female
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Role</td>
+                                <td>
+                                    <select id="" [(ngModel)]="roleId" name="roleId">
+                                        <option value=2>Director</option>
+                                        <option value=3>Teacher</option>
+                                        <option value=4 selected>SRO</option>
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td>
+                                    <button type="submit" class="btn btn-primary button">Save</button>
+                                    <button class="btn btn-secondary" style="margin-left: 5px;" data-bs-dismiss="modal">Cancel</button>
+                                </td>
+                            </tr>
+                        </table>
+                    </form>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"><span class="mdi mdi-close icon-close"></span></button>
+            </div>
+        </div>
+    </div>
+</div>

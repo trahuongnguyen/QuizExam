@@ -27,20 +27,13 @@
     
     text-decoration: none;
 }
-.profile-info-span span {
-    margin-left: 15%;
+.profile-info-span {
+    font-size: 1.1rem;
+    margin-bottom: 20px;
 }
-.profile-info-span1 span {
-    margin-left: 15.4%;
-}
-.profile-info-span2 span {
-    margin-left: 16%;
-}
-.profile-info-span3 span {
-    margin-left: 6.3%;
-}
-.profile-info-span4 span {
-    margin-left: 25%;
+.profile-info-span .span {
+    display: inline-flex;
+    width: 150px;
 }
 .profile-info input {
     border: none !important;

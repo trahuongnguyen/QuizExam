@@ -1,0 +1,33 @@
+<div class="header">
+    <div class="toggle-switch">
+        <label class="switch">
+            <input type="checkbox" id="buttonSwitch" (click)="app.toggleTheme()">
+            <span class="slider"></span>
+        </label>
+    </div>
+    <div class="user-section">
+        <span class="mdi mdi-account-outline icon"></span>
+        <span>User</span>
+    </div>
+</div>
+
+<div class="sidebar">
+    <div class="block-wrapper">
+        <img class="block-image" alt="" src="../../../../img/logo.png" />
+    </div>
+    <a href="#dashboard" class="sidebar-link"><span class="mdi mdi-chart-bar icon"></span>Dashboard</a>
+    <a href="#subject" class="sidebar-link"><span class="mdi mdi-book-open-variant icon"></span>Subject</a>
+    <a href="#question" class="sidebar-link"><span class="mdi mdi-comment-question-outline icon"></span>Question</a>
+    <a href="#class" class="sidebar-link"><span class="mdi mdi-home-outline icon"></span>Class</a>
+    <a href="#student" class="sidebar-link"><span class="mdi mdi-account-multiple icon"></span>Student</a>
+    <a href="#exam" class="sidebar-link"><span class="mdi mdi-monitor icon"></span>Exam</a>
+    <a href="#authorize" class="sidebar-link"><span class="mdi mdi-clipboard-outline icon"></span>Authorize</a>
+    <a href="#employee" class="sidebar-link active"><span class="mdi mdi-account-multiple icon"></span>Employee</a>
+</div>
+
+<router-outlet>
+</router-outlet>
+
+<footer class="footer">
+    <b>Copyright © 2024</b>
+</footer>

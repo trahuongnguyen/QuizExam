@@ -1,0 +1,171 @@
+/* Header */
+
+.header {
+    color: var(--color-text);
+    background-color: var(--color-background);
+    padding: 10px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid var(--color-switch);
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: 200px;
+    z-index: 1000;
+    height: 80px;
+}
+
+.user-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-right: 20px;
+    /* Tạo khoảng cách giữa user-section và switch */
+}
+
+.user-section .icon {
+    height: 45px;
+    font-size: 45px;
+    /* Kích thước của icon */
+    margin-bottom: 10px;
+    /* Khoảng cách giữa icon và chữ "User" */
+}
+
+.user-section span {
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
+.toggle-switch {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    /* Canh phải cho toggle-switch */
+    flex-grow: 1;
+    margin-right: 100px;
+}
+
+.switch {
+    font-size: 17px;
+    position: relative;
+    display: inline-block;
+    width: 4em;
+    height: 2em;
+    margin-right: 100px;
+}
+
+/* Hide default HTML checkbox */
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+/* The slider */
+.slider {
+    position: absolute;
+    cursor: pointer;
+    width: 74px;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--color-switch);
+    transition: 0.4s;
+    border-radius: 30px;
+    box-shadow: var(--color-switch-shadow);
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 1.6em;
+    width: 1.6em;
+    border-radius: 20px;
+    left: 0.2em;
+    bottom: 0.2em;
+    transition: 0.4s;
+    transform: var(--transform-switch-button);
+    background-color: var(--color-switch-button);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.slider:after {
+    content: var(--content-switch-button);
+    position: absolute;
+    top: 23%;
+    font-size: 0.8em;
+    transition: opacity 0.4s;
+    opacity: 1;
+}
+
+
+
+/* Sidebar */
+
+.sidebar {
+    width: 200px;
+    background-color: var(--color-sidebar);
+    opacity: 80%;
+    border-right: 1px solid var(--color-sidebar);
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar .block-wrapper {
+    height: 80px;
+    text-align: center;
+    align-content: center;
+    border-bottom: 1px solid var(--color-sidebar);
+}
+
+.sidebar .block-image {
+    width: 130px;
+}
+
+.sidebar .sidebar-link {
+    text-decoration: none;
+    font-size: 16px;
+    padding: 10px;
+    color: var(--color-text);
+    display: block;
+}
+
+.sidebar .sidebar-link:hover {
+    background-color: var(--color-sidebar-hover);
+}
+
+.sidebar .active {
+    background-color: var(--color-sidebar-active);
+}
+
+.sidebar .sidebar-link .icon {
+    font-size: 30px;
+    vertical-align: middle;
+    margin: 0px 15px 0px 20px;
+}
+
+
+
+/* Footer */
+
+.footer {
+    background-color: var(--color-background);
+    padding: 21px 40px;
+    border-top: 2px solid var(--color-switch);
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    left: 200px;
+    z-index: 1000;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    font-size: 20px;
+    color: #c9c9c9;
+}
