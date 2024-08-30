@@ -31,7 +31,7 @@ export class LoginComponent implements OnInit {
 
   onSubmit() {
     if (this.loginForm.valid) {
-      const loginData = this.loginForm.value;
+      //const loginData = this.loginForm.value;
       this.authService.login({ email: this.loginForm.get('email')?.value, password: this.loginForm.get('password')?.value }).subscribe(
         response => {
           this.toastr.success('Login Successful!', 'Success', {
@@ -43,7 +43,7 @@ export class LoginComponent implements OnInit {
         },
         error => {
           if (error.status === 401) {
-            this.toastr.error('Invalid email or password', 'Failed', {
+            this.toastr.error('Invalid password', 'Failed', {
               timeOut: 2000,
             });
           } else {
