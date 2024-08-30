@@ -33,9 +33,9 @@ public class SecurityConfig {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
-//                .requestMatchers("/api/auth/register").hasRole("DIRECTOR")
+                .requestMatchers("/api/auth/register").hasAnyRole("ADMIN", "DIRECTOR", "SRO")
 //                .requestMatchers("api/auth/register").hasRole("SRO")
-                .requestMatchers("/api/auth/**").permitAll()
+                .requestMatchers("/api/auth/login").permitAll()
                 .requestMatchers("/api/user/**").permitAll()
                 .anyRequest().authenticated()
                 
