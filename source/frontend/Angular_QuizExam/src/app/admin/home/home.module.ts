@@ -9,6 +9,7 @@ import { StudentComponent } from './student/student.component';
 import { ClassComponent } from './class/class.component';
 import { EmployeeComponent } from './employee/employee.component';
 import { ProfileComponent } from './profile/profile.component';
+import { FormsModule } from '@angular/forms';
 
 
 
@@ -23,7 +24,8 @@ import { ProfileComponent } from './profile/profile.component';
   ],
   imports: [
     CommonModule,
-    HomeRoutingModule
+    HomeRoutingModule,
+    FormsModule
   ]
 })
 export class HomeModule { }
