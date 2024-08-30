@@ -5,7 +5,7 @@ import { AdminRoutingModule } from './admin-routing.module';
 import {ToastrModule, ToastrService} from 'ngx-toastr';
 import { FormsModule} from '@angular/forms';
 import { AdminComponent } from './admin.component';
-
+import { ReactiveFormsModule } from '@angular/forms'; 
 
 
 @NgModule({
@@ -17,7 +17,9 @@ import { AdminComponent } from './admin.component';
     CommonModule,
     AdminRoutingModule,
     FormsModule,
-    ToastrModule
+    ToastrModule,
+    ReactiveFormsModule
+   
   ],
   providers: [
     NgModule
