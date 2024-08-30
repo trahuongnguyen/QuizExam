@@ -7,6 +7,7 @@ import com.example.quizexam_student.service.RoleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,8 +24,30 @@ public class RoleServiceImpl implements RoleService {
         return roleRepository.findById(id).orElseThrow(() -> new NotFoundException("Role is not exist"));
     }
 
+
+
     @Override
     public List<Role> findAll(){
         return  roleRepository.findAll();
+    }
+
+    @Override
+    public List<Role> findAllByPermission(int id) {
+        Role role = findById(id);
+        List<Role> roles = roleRepository.findAll();
+        roles.removeIf(x->x.getName().equals("ADMIN"));
+        if(role.getName().equals("ADMIN")){
+            return roles;
+        }
+        roles.removeIf(x->x.getName().equals("DIRECTOR"));
+        if(role.getName().equals("DIRECTOR")){
+            roles.removeIf(x->x.getName().equals("STUDENT"));
+            return roles;
+        }
+        roles.removeIf(x->x.getName().equals("SRO")||x.getName().equals("TEACHER"));
+        if(role.getName().equals("SRO")){
+            return roles;
+        }
+        return null;
     }
 }

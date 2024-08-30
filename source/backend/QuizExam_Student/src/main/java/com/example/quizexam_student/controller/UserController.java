@@ -31,44 +31,25 @@ public class UserController {
         return userService.getAllUsers();
     }
 
-    @GetMapping("/{Id}")
-    public UserResponse getDetail(@PathVariable int Id){
-        return userService.getUserById(Id);
+    @GetMapping("/{id}")
+    public UserResponse getDetail(@PathVariable int id){
+        return userService.getUserById(id);
     }
 
-    @GetMapping("/register")
-    public void register(Model model) {
-        List<Role> role = roleService.findAll();
-//        if (roleService.findById(Id).getName().equals("DIRECTOR")){
-//            role = roleService.findAll();
-//        }
-//        if (roleService.findById(Id).getName().equals("SRO")){
-//            role = roleService.findByRoleName("STUDENT");
-//        }
-        model.addAttribute("listRole", role);
-//        return "register";
+    @GetMapping("/profile/{id}")
+    public UserResponse getProfile(@PathVariable int id){
+        return userService.getUserById(id);
     }
 
-    @PostMapping("/register")
-    public ResponseEntity<String> register(@RequestBody @Valid UserRequest userRequest) {
-        userService.saveUser(userRequest);
-        return ResponseEntity.ok("success");
-    }
-
-    @GetMapping("/profile/{Id}")
-    public UserResponse getProfile(@PathVariable int Id){
-        return userService.getUserById(Id);
-    }
-
-    @PostMapping("/profile/{Id}")
-    public ResponseEntity<String> updateProfile(@PathVariable int Id, @RequestBody @Valid PasswordRequest passwordRequest) {
-        userService.changePassword(Id, passwordRequest);
+    @PostMapping("/profile/{id}")
+    public ResponseEntity<String> updateProfile(@PathVariable int id, @RequestBody @Valid PasswordRequest passwordRequest) {
+        userService.changePassword(id, passwordRequest);
         return new ResponseEntity<>("Password updated successfully", HttpStatus.OK);
     }
 
-    @GetMapping("/remove/{Id}")
-    public ResponseEntity<String> remove(@PathVariable int Id){
-        userService.deleteUserById(Id);
+    @GetMapping("/remove/{id}")
+    public ResponseEntity<String> remove(@PathVariable int id){
+        userService.deleteUserById(id);
         return new ResponseEntity<>("User deleted successfully", HttpStatus.OK);
     }
 }
