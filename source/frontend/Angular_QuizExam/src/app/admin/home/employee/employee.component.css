@@ -75,7 +75,7 @@
 
 .modal-content {
     background-color: #fff;
-    border-radius: 5px;
+    border-radius: 10px;
     width: 600px;
     /* Tăng chiều rộng của modal */
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
@@ -86,6 +86,7 @@
 
 .modal-header {
     background-color: #aa1210;
+    border-radius: 10px 10px 0 0;
     color: white;
     padding: 15px;
     /* Tăng kích thước padding cho header */
@@ -108,6 +109,7 @@
     padding: 20px;
     /* Tăng kích thước padding cho body */
     font-size: 18px;
+    border-radius: 10px;
     /* Tăng kích thước font chữ cho nội dung */
     background-color: var(--color-background);
 }
