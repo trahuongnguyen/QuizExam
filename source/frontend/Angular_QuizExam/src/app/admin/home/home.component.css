@@ -7,7 +7,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 2px solid var(--color-switch);
+    border-bottom: 1px solid var(--color-switch);
     position: fixed;
     top: 0;
     right: 0;
@@ -37,69 +37,6 @@
     margin-bottom: 10px;
 }
 
-.toggle-switch {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    /* Canh phải cho toggle-switch */
-    flex-grow: 1;
-    margin-right: 100px;
-}
-
-.switch {
-    font-size: 17px;
-    position: relative;
-    display: inline-block;
-    width: 4em;
-    height: 2em;
-    margin-right: 100px;
-}
-
-/* Hide default HTML checkbox */
-.switch input {
-    opacity: 0;
-    width: 0;
-    height: 0;
-}
-
-/* The slider */
-.slider {
-    position: absolute;
-    cursor: pointer;
-    width: 74px;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: var(--color-switch);
-    transition: 0.4s;
-    border-radius: 30px;
-    box-shadow: var(--color-switch-shadow);
-}
-
-.slider:before {
-    position: absolute;
-    content: "";
-    height: 1.6em;
-    width: 1.6em;
-    border-radius: 20px;
-    left: 0.2em;
-    bottom: 0.2em;
-    transition: 0.4s;
-    transform: var(--transform-switch-button);
-    background-color: var(--color-switch-button);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-}
-
-.slider:after {
-    content: var(--content-switch-button);
-    position: absolute;
-    top: 23%;
-    font-size: 0.8em;
-    transition: opacity 0.4s;
-    opacity: 1;
-}
-
 
 
 /* Sidebar */
@@ -107,7 +44,6 @@
 .sidebar {
     width: 200px;
     background-color: var(--color-sidebar);
-    opacity: 80%;
     border-right: 1px solid var(--color-sidebar);
     height: 100vh;
     position: fixed;
@@ -157,9 +93,8 @@
 .footer {
     background-color: var(--color-background);
     padding: 21px 40px;
-    border-top: 2px solid var(--color-switch);
-    position: fixed;
-    bottom: 0;
+    border-top: 1px solid var(--color-switch);
+    position: absolute;
     right: 0;
     left: 200px;
     z-index: 1000;
