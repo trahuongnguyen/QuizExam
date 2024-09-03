@@ -1,0 +1,151 @@
+
+/* Body */
+.content-wrapper {
+    position: relative;
+    padding: 20px;
+    margin: 80px 0 60px 200px;
+    width: calc(100% - 200px);
+    flex-grow: 1;
+    overflow-x: hidden;
+}
+
+.line {
+    margin-top: 0;
+}
+
+.bottom-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 15px;
+}
+
+.button {
+    font-size: 15px;
+    background-color: #aa1210;
+    border: none;
+    border-radius: 15px;
+}
+
+.button:active {
+    background-color: #8f0a0a;
+}
+
+.bottom-actions .icon {
+    line-height: normal;
+    margin-right: 8px;
+}
+
+.pagination .page-item .page-link {
+    color: var(--color-text);
+    background-color: var(--color-background);
+    border: none;
+    border-radius: 8px;
+    padding: 5px 13px;
+    margin: 5px;
+    transition: none
+}
+
+.pagination .page-item .page-link:hover {
+    background-color: var(--color-page-hover);
+}
+
+.pagination .page-item .active,
+.pagination .page-item .active:hover {
+    color: #fff;
+    background-color: rgba(170, 18, 16, 0.93);
+}
+
+.pagination .page-item .disabled {
+    color: var(--color-disable);
+    background-color: transparent;
+}
+
+
+/* Popup */
+.modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background-color: #fff;
+    border-radius: 10px;
+    width: 600px;
+    /* Tăng chiều rộng của modal */
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    border: 1px solid #ddd;
+    font-size: 18px;
+    /* Tăng kích thước font chữ */
+}
+
+.modal-header {
+    background-color: #aa1210;
+    border-radius: 10px 10px 0 0;
+    color: white;
+    padding: 15px;
+    /* Tăng kích thước padding cho header */
+    font-size: 20px;
+    /* Tăng kích thước font chữ của header */
+    font-weight: bold;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #ddd;
+}
+
+.close-icon {
+    font-size: 24px;
+    /* Tăng kích thước dấu "X" */
+    cursor: pointer;
+}
+
+.modal-body {
+    padding: 20px;
+    /* Tăng kích thước padding cho body */
+    font-size: 18px;
+    border-radius: 10px;
+    /* Tăng kích thước font chữ cho nội dung */
+    background-color: var(--color-background);
+}
+
+/* Popup Detail */
+.popup-table {
+    width: 100%;
+    border-spacing: 0;
+}
+
+.popup-table td {
+    padding: 8px;
+    /* Tăng khoảng cách giữa các ô trong bảng */
+    vertical-align: top;
+}
+
+.popup-table strong {
+    display: inline-block;
+    width: 150px;
+    /* Tăng kích thước chiều rộng của cột "strong" */
+}
+
+/* Popup Create */
+.modal-body .form-create {
+    font-size: 16px;
+}
+
+.modal-body .form-create input {
+    font-size: 15px;
+}
+
+.modal-body .text-popup {
+    margin-left: 3px;
+}
+
+.modal-body .form-group {
+    margin-bottom: 22px;
+}

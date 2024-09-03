@@ -1,1 +1,70 @@
-<p>class works!</p>
+<div class="content-wrapper">
+    <h4>Class</h4>
+    <hr class="line">
+
+    <!-- Bottom Actions (Create and Export) -->
+    <div class="bottom-actions">
+        <div>
+            <a class="btn btn-primary button create">Create</a>
+        </div>
+        <div>
+            <a href="" class="btn btn-primary button" style="margin-right: 5px;"><span
+                    class="mdi mdi-file-export icon"></span>Export Excel</a>
+            <a href="" class="btn btn-primary button"><span class="mdi mdi-file-export icon"></span>Export PDF</a>
+        </div>
+    </div>
+
+    <table class="table" id="example">
+        <thead>
+            <tr>
+                <th>STT</th>
+                <th>Name</th>
+                <th>Day</th>
+                <th>Hour</th>
+                <th>Admission Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Add more rows as needed -->
+        </tbody>
+    </table>
+</div>
+
+<div *ngIf="isPopupCreate" class="modal-backdrop" (click)="closePopup($event)">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+            <span>Create Student</span>
+            <span class="close-icon" (click)="closePopup()">&times;</span>
+        </div>
+        <div class="modal-body">
+            <form method="post" (ngSubmit)="createClass()" class="form-create">
+                <div class="form-group">
+                    <label for="fullName" class="text-popup">Name:</label>
+                    <input type="text" class="form-control" [(ngModel)]="Name" name="name"
+                        placeholder="Enter Full Name">
+                </div>
+                <div class="form-group">
+                    <label for="day" class="text-popup">Day:</label>
+                    <select class="form-control" [(ngModel)]="Day" name="day">
+                        <option value="2,4,6">2,4,6</option>
+                        <option value="3,5,7">3,5,7</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="hour" class="text-popup">Hour:</label>
+                    <select class="form-control" [(ngModel)]="Hour" name="hour">
+                        <option value="8:00-10:00">8:00-10:00</option>
+                        <option value="10:00-12:00">10:00-12:00</option>
+                        <option value="13:30-16:30">13:30-16:30</option>
+                        <option value="18:00-21:00">18:00-21:00</option>
+                    </select>
+                </div>
+                
+                <button type="submit" class="btn btn-primary button">Save</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
