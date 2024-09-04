@@ -3,6 +3,8 @@ package com.example.quizexam_student.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.Set;
+
 @Data
 @Entity
 @Table(name = "t_student_detail")
@@ -24,4 +26,6 @@ public class StudentDetail {
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "class_id")
     private Class _class;
+    @OneToMany(mappedBy = "studentDetail")
+    private Set<Mark> marks;
 }

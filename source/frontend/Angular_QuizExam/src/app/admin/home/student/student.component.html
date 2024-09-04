@@ -1,1 +1,139 @@
-<p>student works!</p>
+
+<div class="content-wrapper">
+    <h4>Student (No Class)</h4>
+    <hr class="line">
+
+    <!-- Bottom Actions (Create and Export) -->
+    <div class="bottom-actions">
+        <div>
+            <a class="btn btn-primary button create">Create</a>
+        </div>
+        <div>
+            <a href="" class="btn btn-primary button" style="margin-right: 5px;"><span
+                    class="mdi mdi-file-export icon"></span>Export Excel</a>
+            <a href="" class="btn btn-primary button"><span class="mdi mdi-file-export icon"></span>Export PDF</a>
+        </div>
+    </div>
+
+    <table class="table" id="example">
+        <thead>
+            <tr>
+                <th>STT</th>
+                <th>Roll Number</th>
+                <th>Roll Portal</th>
+                <th>Full Name</th>
+                <th>Phone Number</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Add more rows as needed -->
+        </tbody>
+    </table>
+</div>
+
+<div *ngIf="isPopupDetail" class="modal-backdrop" (click)="closePopup($event)">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+            <span>Student Detail</span>
+            <span class="close-icon" (click)="closePopup()">&times;</span>
+        </div>
+        <div class="modal-body">
+            <table class="popup-table">
+                <tr>
+                    <td><strong>ID</strong></td>
+                    <td>{{ stdDetail?.id }}</td>
+                </tr>
+                <tr>
+                    <td><strong>Full Name</strong></td>
+                    <td>{{ stdDetail?.fullName }}</td>
+                </tr>
+                <tr>
+                    <td><strong>Email</strong></td>
+                    <td>{{ stdDetail?.email }}</td>
+                </tr>
+                <tr>
+                    <td><strong>DOB</strong></td>
+                    <td>{{ stdDetail?.dob }}</td>
+                </tr>
+                <tr>
+                    <td><strong>Phone Number</strong></td>
+                    <td>{{ stdDetail?.phoneNumber }}</td>
+                </tr>
+                <tr>
+                    <td><strong>Address</strong></td>
+                    <td>{{ stdDetail?.address }}</td>
+                </tr>
+                <tr>
+                    <td><strong>Gender</strong></td>
+                    <td>{{ stdDetail?.gender == 1 ? "Male" : "Female" }}</td>
+                </tr>
+                <tr>
+                    <td><strong>Roll Number</strong></td>
+                    <td>{{ stdDetail?.rollNumber }}</td>
+                </tr>
+                <tr>
+                    <td><strong>Roll Portal</strong></td>
+                    <td>{{ stdDetail?.rollPortal }}</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div *ngIf="isPopupCreate" class="modal-backdrop" (click)="closePopup($event)">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+            <span>Create Student</span>
+            <span class="close-icon" (click)="closePopup()">&times;</span>
+        </div>
+        <div class="modal-body">
+            <form method="post" (ngSubmit)="createStudent()" class="form-create">
+                <div class="form-group">
+                    <label for="fullName" class="text-popup">Full Name:</label>
+                    <input type="text" class="form-control" [(ngModel)]="fullName" name="fullName"
+                        placeholder="Enter Full Name">
+                </div>
+                <div class="form-group">
+                    <label for="email" class="text-popup">Email:</label>
+                    <input type="text" class="form-control" [(ngModel)]="email" name="email" placeholder="Enter Email">
+                </div>
+                <div class="form-group">
+                    <label for="dob" class="text-popup">DOB:</label>
+                    <input type="date" class="form-control" [(ngModel)]="dob" name="dob">
+                </div>
+                <div class="form-group">
+                    <label for="phoneNumber" class="text-popup">Phone Number:</label>
+                    <input type="number" class="form-control" [(ngModel)]="phoneNumber" name="phoneNumber"
+                        placeholder="Enter Phone Number">
+                </div>
+                <div class="form-group">
+                    <label for="address" class="text-popup">Address:</label>
+                    <input type="text" class="form-control" [(ngModel)]="address" name="address"
+                        placeholder="Enter Address">
+                </div>
+                <div class="form-group">
+                    <label for="gender" class="text-popup">Gender:</label>
+                    <select class="form-control" [(ngModel)]="gender" name="gender">
+                        <option value=1>Male</option>
+                        <option value=2>Female</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="rollNumber" class="text-popup">Roll Number:</label>
+                    <input type="text" class="form-control" [(ngModel)]="rollNumber" name="rollNumber"
+                        placeholder="Enter Roll Number">
+                </div>
+                <div class="form-group">
+                    <label for="rollPortal" class="text-popup">Roll Portal:</label>
+                    <input type="text" class="form-control" [(ngModel)]="rollPortal" name="rollPortal"
+                        placeholder="Enter Roll Portal">
+                </div>
+                <button type="submit" class="btn btn-primary button">Save</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+

@@ -30,4 +30,8 @@ public class Mark {
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "subject_id")
     private Subject subject;
+
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "user_id")
+    private StudentDetail studentDetail;
 }
