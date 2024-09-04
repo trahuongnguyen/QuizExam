@@ -162,6 +162,7 @@
 }
 
 .dataTables_filter input[type="search"] {
+    color: var(--color-text);
     width: 265px;
     height: 40px;
     border: 1px solid #d9d9d9;
