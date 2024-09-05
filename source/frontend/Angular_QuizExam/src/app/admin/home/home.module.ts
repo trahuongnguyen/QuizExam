@@ -28,4 +28,4 @@ import { FormsModule } from '@angular/forms';
     FormsModule
   ]
 })
-export class HomeModule { }
+export class HomeModule {}

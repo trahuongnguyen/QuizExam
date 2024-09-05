@@ -65,7 +65,7 @@ public class AuthController {
         return roles;
     }
 
-    @PreAuthorize("hasRole('ADMIN') or hasRole('DIRECTOR') or hasRole('SRO')")
+    @PreAuthorize("hasAnyRole('ADMIN','DIRECTOR','SRO')")
     @PostMapping("/register")
     public ResponseEntity<RegisterResponse> register(@RequestBody @Valid UserRequest userRequest) {
         userService.saveUser(userRequest);
