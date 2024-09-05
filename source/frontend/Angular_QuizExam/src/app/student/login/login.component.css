@@ -40,7 +40,12 @@
 .container span {
     font-size: 12px;
 }
-
+.input-a a:hover {
+    color: blue;
+    font-size: 13px;
+    margin: 15px 0 10px;
+    text-decoration: underline;
+}
 .container a {
     color: #333;
     font-size: 13px;
@@ -59,7 +64,10 @@
     letter-spacing: 0.5px;
     text-transform: uppercase;
     margin-top: 10px;
-    cursor: pointer;
+
+}
+.container button:disabled {
+    opacity: 0.6;
 }
 .container form {
     background-color: #fff;
@@ -256,6 +264,9 @@ a.icon  {
     transform: translateX(0);
 }
 
+.error {
+    color: red;
+}
 /* .container.active .toogle-right{
     transform: translateX(200%);
 } */

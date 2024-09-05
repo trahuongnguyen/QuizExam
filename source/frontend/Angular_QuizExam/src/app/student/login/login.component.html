@@ -1,12 +1,27 @@
 <div class="body">
     <div class="container " id="container">
         <div class="sign-in">
-            <form (ngSubmit)="login()" method="post">
+            <form [formGroup]="loginForm" (ngSubmit)="login()" method="post">
                 <h1>Sign In</h1>
-                <input type="text" placeholder="Email" id="email" [(ngModel)]="email" name="email" required>
-                <input type="password" placeholder="Password" id="password" [(ngModel)]="password" name="password" required>
+                <input type="email" placeholder="Email" id="email" formControlName="email" name="email" required>
+                <div style="width: 96%;" *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched">
+                    <small class="error" *ngIf="loginForm.get('email')?.errors?.['required']">Email is
+                        required.</small>
+                    <small class="error" *ngIf="loginForm.get('email')?.errors?.['email']">Invalid email
+                        format.</small>
+                </div>
+                <input type="password" placeholder="Password" id="password" formControlName="password" name="password" required>
+                <div style="width: 96%;" *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
+                    <small class="error" *ngIf="loginForm.get('password')?.errors?.['required']">Password is
+                        required.</small>
+                    <small class="error" *ngIf="loginForm.get('password')?.errors?.['minlength']">
+                        Password must be at least 8 characters long.
+                    </small>
+                </div>
+                <div class="input-a">
                 <a href="#">Forgot password</a>
-                <button type="submit">Sign In</button>
+            </div>
+                <button type="submit" [disabled]="loginForm.invalid" >Sign In</button>
             </form>
             <div class="circle-sm-left"></div>
         </div>

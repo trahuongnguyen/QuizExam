@@ -1,8 +1,10 @@
-import { Component, Injectable, OnInit } from '@angular/core';
+import { AfterContentInit, Component, Injectable, OnInit } from '@angular/core';
 import { AuthService } from '../service/auth.service';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ElementRef } from '@angular/core';
+declare var $: any;
 
 @Component({
   selector: 'app-login',
@@ -10,7 +12,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
   styleUrl: './login.component.css'
 })
 
-export class LoginComponent implements OnInit {
+export class LoginComponent implements AfterContentInit {
   loginForm: FormGroup;
 
   email: string = '';
@@ -22,11 +24,15 @@ export class LoginComponent implements OnInit {
       password: ['', [Validators.required, Validators.minLength(8)]]
     });
   }
+
   //Login
   // password: string = '';
   // email: string = '';
 
-  ngOnInit(): void { }
+  ngAfterContentInit(): void {
+    const myCarousel = document.querySelector('#carouselExampleSlidesOnly');
+    const carousel = $(myCarousel).carousel();
+  }
 
 
   onSubmit() {
@@ -65,6 +71,7 @@ export class LoginComponent implements OnInit {
     } else {
       this.toastr.error('Please fill in the form correctly.');
     }
+
     // if (!this.email) {
     //   this.toastr.error('Email is required', 'Failed', {
     //     timeOut: 2000,
