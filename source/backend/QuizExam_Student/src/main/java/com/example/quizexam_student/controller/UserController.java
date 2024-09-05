@@ -38,11 +38,13 @@ public class UserController {
     public List<UserResponse> getAll(){
         String email = ((org.springframework.security.core.userdetails.User) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
         Role role = userService.findUserByEmail(email).getRole();
+        System.out.println(role);
         List<Role> roles = roleService.findAllByPermission(role.getId());
         if(roles!=null){
             List<UserResponse> users = new ArrayList<>();
             roles.forEach(role1 -> {
                 users.addAll(userService.getUserByRolePermission(role1));
+                System.out.println(users);
             });
             if (users.isEmpty()){
                 throw new EmptyException("Employee List is null");

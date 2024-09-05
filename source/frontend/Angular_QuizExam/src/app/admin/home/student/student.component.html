@@ -7,6 +7,7 @@
     <div class="bottom-actions">
         <div>
             <a class="btn btn-primary button create">Create</a>
+            <a class="btn btn-primary button move" style="margin-left: 5px;">Move<span class="mdi mdi-arrow-right-bold" style="padding-left: 4px;"></span></a>
         </div>
         <div>
             <a href="" class="btn btn-primary button" style="margin-right: 5px;"><span
@@ -130,6 +131,30 @@
                         placeholder="Enter Roll Portal">
                 </div>
                 <button type="submit" class="btn btn-primary button">Save</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div *ngIf="isPopupMove" class="modal-backdrop" (click)="closePopup($event)">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+            <span>Move Student to Class</span>
+            <span class="close-icon" (click)="closePopup()">&times;</span>
+        </div>
+        <div class="modal-body">
+            <form method="post" (ngSubmit)="moveStudent()" class="form-create">
+                <div class="form-group">
+                    <label for="roleId" class="text-popup">Role:</label>
+                    <!-- [(ngModel)]="roleId" name="roleId" -->
+                    <select class="form-control" >
+                        <option value=0>C2206I</option>
+                        <option value=1>C2208G</option>
+                        <option value=2 selected>C2209I</option>
+                        <!-- <option [value]="data.roleId" selected *ngFor="let data of role">{{data.name}}</option> -->
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary button">Move</button>
             </form>
         </div>
     </div>
