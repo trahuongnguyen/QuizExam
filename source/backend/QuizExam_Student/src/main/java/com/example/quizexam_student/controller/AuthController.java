@@ -12,6 +12,7 @@ import com.example.quizexam_student.service.UserService;
 import com.example.quizexam_student.util.JwtUtil;
 import jakarta.persistence.Id;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -64,7 +65,7 @@ public class AuthController {
         return roles;
     }
 
-    @PreAuthorize("hasRole('ADMIN') or hasRole('DIRECTOR') or hasRole('SRO')")
+    @PreAuthorize("hasAnyRole('ADMIN','DIRECTOR','SRO')")
     @PostMapping("/register")
     public ResponseEntity<RegisterResponse> register(@RequestBody @Valid UserRequest userRequest) {
         userService.saveUser(userRequest);
