@@ -131,8 +131,9 @@ export class EmployeeComponent implements OnInit, OnDestroy {
         this.toastr.success('Create Successful!', 'Success', {
           timeOut: 2000,
         });
-        console.log('Create successfully', response);
-        this.router.navigate(['/admin/home/employee']);
+        setInterval(function() {
+          window.location.reload();
+        }, 2000);
       },
       error => {
         this.toastr.error('Error create Employee', 'Error', {
