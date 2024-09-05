@@ -12,6 +12,7 @@ import com.example.quizexam_student.service.UserService;
 import com.example.quizexam_student.util.JwtUtil;
 import jakarta.persistence.Id;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -55,7 +56,7 @@ public class AuthController {
         return ResponseEntity.ok(new LoginResponse(token, loginRequest.getEmail()));
     }
 
-    @PreAuthorize("hasRole('ADMIN') or hasRole('DIRECTOR') or hasRole('SRO')")
+    @PreAuthorize("hasAnyRole('ADMIN','DIRECTOR','SRO')")
     @GetMapping("/register")
     public List<Role> register() {
         String email = ((org.springframework.security.core.userdetails.User) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
