@@ -18,6 +18,7 @@ export class StudentComponent implements OnInit, OnDestroy {
   stdDetail: any = null;
   isPopupDetail = false;
   isPopupCreate = false;
+  isPopupMove = false;
 
   ngOnInit(): void {
     this.http.get<any>(`${this.authService.apiUrl}/user`).subscribe((data: any) => {
@@ -76,6 +77,10 @@ export class StudentComponent implements OnInit, OnDestroy {
         $('.create').on('click', () => {
           this.isPopupCreate = true;
         });
+
+        $('.move').on('click', () => {
+          this.isPopupMove = true;
+        });
       }
     });
   }
@@ -121,6 +126,30 @@ export class StudentComponent implements OnInit, OnDestroy {
       },
       error => {
         this.toastr.error('Error create Employee', 'Error', {
+          timeOut: 2000,
+        });
+        console.log('Error', error);
+      }
+    )
+  }
+
+  class: String = '';
+  moveStudent(): void {
+    const classes =
+    {
+      class: this.class
+    }
+
+    this.http.post(`${this.authService.apiUrl}/auth/register`, classes, { responseType: 'json' }).subscribe(
+      response => {
+        this.toastr.success('Move Successful!', 'Success', {
+          timeOut: 2000,
+        });
+        console.log('Move successfully', response);
+        this.router.navigate(['/admin/home/student']);
+      },
+      error => {
+        this.toastr.error('Error ', 'Error', {
           timeOut: 2000,
         });
         console.log('Error', error);

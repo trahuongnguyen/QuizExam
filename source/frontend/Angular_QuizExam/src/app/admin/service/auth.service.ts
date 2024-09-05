@@ -44,7 +44,7 @@ export class AuthService {
    // Logout admin
    logoutAdmin() {
     localStorage.removeItem(this.tokenKey);
-    this.router.navigate(['/admin/login']);
+    this.router.navigate(['admin/login']);
   }
 
   isLoggedIn(): boolean {
