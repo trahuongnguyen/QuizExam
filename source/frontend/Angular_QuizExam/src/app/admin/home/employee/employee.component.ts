@@ -1,8 +1,9 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { AuthService } from '../../service/auth.service';
 import { ToastrService } from 'ngx-toastr';
 import { Router } from '@angular/router';
+import { response } from 'express';
 declare var $: any;
 
 @Component({
@@ -10,6 +11,7 @@ declare var $: any;
   templateUrl: './employee.component.html',
   styleUrl: './employee.component.css'
 })
+
 export class EmployeeComponent implements OnInit, OnDestroy {
   constructor(private authService: AuthService, private http: HttpClient, public toastr: ToastrService, private router: Router) { }
 
@@ -18,12 +20,27 @@ export class EmployeeComponent implements OnInit, OnDestroy {
   infoDetail: any = null;
   isPopupDetail = false;
   isPopupCreate = false;
-
+  
+  role:any;
+  token = localStorage.getItem('jwtToken');
+  httpOptions = {
+  headers: new HttpHeaders({ 
+    'Content-Type': 'application/json' ,
+    'Authorization': `Bearer ${this.token}`,
+    'Accept': 'application/json'
+  }),
+  responeType: 'json',
+  withCredentials: true
+};
   ngOnInit(): void {
-    this.http.get<any>(`${this.authService.apiUrl}/user`).subscribe((data: any) => {
+    this.http.get<any>(`${this.authService.apiUrl}/user`, this.httpOptions).subscribe((data: any) => {
       this.apiData = data;
       this.initializeDataTable();
     });
+
+    this.http.get<any>(`${this.authService.apiUrl}/auth/register`, this.httpOptions).subscribe(response=>{
+      this.role = response;
+    })
   }
 
   initializeDataTable(): void {

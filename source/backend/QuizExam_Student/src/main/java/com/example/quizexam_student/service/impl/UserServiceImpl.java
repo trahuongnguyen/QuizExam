@@ -86,9 +86,6 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<UserResponse> getUserByRolePermission(Role role) {
         List<UserResponse> userResponses = userRepository.findAllByRole(role).stream().map(UserMapper::convertToResponse).collect(Collectors.toList());
-        if (userResponses.isEmpty()){
-            throw new EmptyException("Employee List is null");
-        }
         return userResponses;
     }
 

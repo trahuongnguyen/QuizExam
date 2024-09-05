@@ -5,6 +5,7 @@ import com.example.quizexam_student.bean.response.EmpExcelExporter;
 import com.example.quizexam_student.bean.response.EmpPDFExporter;
 import com.example.quizexam_student.bean.response.UserResponse;
 import com.example.quizexam_student.entity.Role;
+import com.example.quizexam_student.exception.EmptyException;
 import com.example.quizexam_student.service.RoleService;
 import com.example.quizexam_student.service.UserService;
 import jakarta.servlet.http.HttpServletResponse;
@@ -43,6 +44,9 @@ public class UserController {
             roles.forEach(role1 -> {
                 users.addAll(userService.getUserByRolePermission(role1));
             });
+            if (users.isEmpty()){
+                throw new EmptyException("Employee List is null");
+            }
             return users;
         }
         return null;
