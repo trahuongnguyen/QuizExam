@@ -117,9 +117,10 @@
                 <div class="form-group">
                     <label for="roleId" class="text-popup">Role:</label>
                     <select class="form-control" [(ngModel)]="roleId" name="roleId">
-                        <option value=2>Director</option>
+                        <!-- <option value=2>Director</option>
                         <option value=3>Teacher</option>
-                        <option value=4 selected>SRO</option>
+                        <option value=4 selected>SRO</option> -->
+                        <option [value]="data.roleId" selected *ngFor="let data of role">{{data.name}}</option>
                     </select>
                 </div>
                 <button type="submit" class="btn btn-primary button">Save</button>

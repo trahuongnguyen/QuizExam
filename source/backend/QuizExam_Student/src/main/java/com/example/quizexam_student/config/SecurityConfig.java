@@ -34,7 +34,6 @@ public class SecurityConfig {
                 .and()
                 .authorizeRequests()
                 .requestMatchers("/api/auth/register").hasAnyRole("ADMIN", "DIRECTOR", "SRO")
-//                .requestMatchers("api/auth/register").hasRole("SRO")
                 .requestMatchers("/api/auth/login").permitAll()
                 .requestMatchers("/api/user/**").permitAll()
                 .anyRequest().authenticated()
