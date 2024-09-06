@@ -4,14 +4,14 @@
             <form [formGroup]="loginForm" (ngSubmit)="login()" method="post">
                 <h1>Sign In</h1>
                 <input type="email" placeholder="Email" id="email" formControlName="email" name="email" required>
-                <div style="width: 96%;" *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched">
+                <div style="width: 96%;" *ngIf="loginForm.get('email')?.invalid && (loginForm.get('email')?.touched||loginForm.get('email')?.dirty)">
                     <small class="error" *ngIf="loginForm.get('email')?.errors?.['required']">Email is
                         required.</small>
                     <small class="error" *ngIf="loginForm.get('email')?.errors?.['email']">Invalid email
                         format.</small>
                 </div>
                 <input type="password" placeholder="Password" id="password" formControlName="password" name="password" required>
-                <div style="width: 96%;" *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
+                <div style="width: 96%;" *ngIf="loginForm.get('password')?.invalid && (loginForm.get('password')?.touched||loginForm.get('password')?.dirty)">
                     <small class="error" *ngIf="loginForm.get('password')?.errors?.['required']">Password is
                         required.</small>
                     <small class="error" *ngIf="loginForm.get('password')?.errors?.['minlength']">
