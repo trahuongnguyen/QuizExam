@@ -25,7 +25,7 @@ public class StudentDetail {
     private Status status;
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "class_id")
-    private Class _class;
+    private Classes _class;
     @OneToMany(mappedBy = "studentDetail")
     private Set<Mark> marks;
 }

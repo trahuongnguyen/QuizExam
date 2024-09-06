@@ -22,6 +22,7 @@
                 <th>Day</th>
                 <th>Hour</th>
                 <th>Admission Date</th>
+                <th>Action</th>
             </tr>
         </thead>
         <tbody>
@@ -39,25 +40,29 @@
         <div class="modal-body">
             <form method="post" (ngSubmit)="createClass()" class="form-create">
                 <div class="form-group">
-                    <label for="fullName" class="text-popup">Name:</label>
-                    <input type="text" class="form-control" [(ngModel)]="Name" name="name"
-                        placeholder="Enter Full Name">
+                    <label for="name" class="text-popup">Name:</label>
+                    <input type="text" class="form-control" [(ngModel)]="name" name="name"
+                        placeholder="Enter Class Name">
                 </div>
                 <div class="form-group">
-                    <label for="day" class="text-popup">Day:</label>
-                    <select class="form-control" [(ngModel)]="Day" name="day">
+                    <label for="classDay" class="text-popup">Day:</label>
+                    <select class="form-control" [(ngModel)]="classDay" name="classDay">
                         <option value="2,4,6">2,4,6</option>
                         <option value="3,5,7">3,5,7</option>
                     </select>
                 </div>
                 <div class="form-group">
-                    <label for="hour" class="text-popup">Hour:</label>
-                    <select class="form-control" [(ngModel)]="Hour" name="hour">
+                    <label for="classTime" class="text-popup">Hour:</label>
+                    <select class="form-control" [(ngModel)]="classTime" name="classTime">
                         <option value="8:00-10:00">8:00-10:00</option>
                         <option value="10:00-12:00">10:00-12:00</option>
                         <option value="13:30-16:30">13:30-16:30</option>
                         <option value="18:00-21:00">18:00-21:00</option>
                     </select>
+                </div>
+                <div class="form-group">
+                    <label for="admissionDate" class="text-popup">Admission Date:</label>
+                    <input type="date" class="form-control" [(ngModel)]="admissionDate" name="admissionDate">
                 </div>
                 
                 <button type="submit" class="btn btn-primary button">Save</button>
@@ -65,6 +70,3 @@
         </div>
     </div>
 </div>
-
-
-

@@ -13,7 +13,7 @@ public class ClassGroup {
     @Id
     @OneToOne(cascade = CascadeType.ALL,fetch = FetchType.LAZY)
     @JoinColumn(name = "class_id")
-    private Class _class;
+    private Classes _class;
     @Column(name = "count", nullable = false)
     private int count;
 }

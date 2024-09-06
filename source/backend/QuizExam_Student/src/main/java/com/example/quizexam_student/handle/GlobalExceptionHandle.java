@@ -55,4 +55,9 @@ public class GlobalExceptionHandle {
         return new ErrorResponse(HttpStatus.BAD_REQUEST, e.getMessage());
     }
 
+    @ExceptionHandler(AlreadyExistException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleAlreadyExistException(AlreadyExistException e) {
+        return new ErrorResponse(HttpStatus.BAD_REQUEST, e.getMessage());
+    }
 }

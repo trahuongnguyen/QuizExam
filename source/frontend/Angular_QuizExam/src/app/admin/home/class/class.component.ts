@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { AuthService } from '../../service/auth.service';
 import { ToastrService } from 'ngx-toastr';
@@ -19,8 +19,30 @@ export class ClassComponent implements OnInit, OnDestroy {
   isPopupDetail = false;
   isPopupCreate = false;
 
+  httpOptions: any;
+
+  private loadToken() {
+    if (this.authService.isLoggedIn()) {
+      const token = localStorage.getItem('jwtToken');
+      this.httpOptions = {
+        headers: new HttpHeaders({
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+          'Accept': 'application/json'
+        }),
+        responeType: 'json',
+        withCredentials: true
+      };
+    }
+    else {
+      this.router.navigate(['admin/login']);
+    }
+  }
+
   ngOnInit(): void {
-    this.http.get<any>(`${this.authService.apiUrl}/user`).subscribe((data: any) => {
+    this.loadToken();
+
+    this.http.get<any>(`${this.authService.apiUrl}/class`, this.httpOptions).subscribe((data: any) => {
       this.apiData = data;
       this.initializeDataTable();
     });
@@ -45,10 +67,18 @@ export class ClassComponent implements OnInit, OnDestroy {
           }
         },
         { title: 'Name', data: 'name' },
-        { title: 'Day', data: 'day' },
-        { title: 'Hour', data: 'hour' },
+        { title: 'Day', data: 'classDay' },
+        { title: 'Hour', data: 'classTime' },
         { title: 'Admission Date', data: 'admissionDate' },
-        
+        {
+          title: 'Action',
+          data: null,
+          render: function (data: any, type: any, row: any) {
+            return `<span class="mdi mdi-information-outline icon-action info-icon" data-id="${row.id}"></span>
+            <span class="mdi mdi-delete-forever icon-action delete-icon"></span>`;
+          }
+        }
+
       ],
 
       drawCallback: () => {
@@ -87,23 +117,24 @@ export class ClassComponent implements OnInit, OnDestroy {
   }
 
 
-  Name: String = '';
-  Day: String = '';
-  Hour: String = '';
-  AdmissionDate: String = '';
+  name: String = '';
+  classDay: String = '';
+  classTime: String = '';
+  admissionDate: String = '';
+
   createClass(): void {
-const class0 =
+    const _class =
     {
-      name: this.Name, day: this.Day, hour: this.Hour, admissionDate: this.AdmissionDate
+      name: this.name, classDay: this.classDay, classTime: this.classTime, admissionDate: this.admissionDate
     }
 
-    this.http.post(`${this.authService.apiUrl}/auth/register`, class0, {responseType: 'json'}).subscribe(
+    this.http.post(`${this.authService.apiUrl}/class`, _class, this.httpOptions).subscribe(
       response => {
         this.toastr.success('Create Successful!', 'Success', {
           timeOut: 2000,
         });
         console.log('Create successfully', response);
-        this.router.navigate(['/admin/home/class']);
+        this.router.navigate(['/admin/home/class#']);
       },
       error => {
         this.toastr.error('Error', 'Error', {

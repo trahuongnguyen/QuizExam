@@ -21,18 +21,30 @@ export class EmployeeComponent implements OnInit, OnDestroy {
   isPopupDetail = false;
   isPopupCreate = false;
   
-  role:any;
-  token = localStorage.getItem('jwtToken');
-  httpOptions = {
-  headers: new HttpHeaders({ 
-    'Content-Type': 'application/json' ,
-    'Authorization': `Bearer ${this.token}`,
-    'Accept': 'application/json'
-  }),
-  responeType: 'json',
-  withCredentials: true
-};
+  role: any;
+  httpOptions: any;
+
+  private loadToken() {
+    if (this.authService.isLoggedIn()) {
+      const token = localStorage.getItem('jwtToken');
+      this.httpOptions = {
+        headers: new HttpHeaders({ 
+          'Content-Type': 'application/json' ,
+          'Authorization': `Bearer ${token}`,
+          'Accept': 'application/json'
+        }),
+        responeType: 'json',
+        withCredentials: true
+      };
+    }
+    else {
+      this.router.navigate(['admin/login']);
+    }
+  }
+
   ngOnInit(): void {
+    this.loadToken();
+    
     this.http.get<any>(`${this.authService.apiUrl}/user`, this.httpOptions).subscribe((data: any) => {
       this.apiData = data;
       this.initializeDataTable();

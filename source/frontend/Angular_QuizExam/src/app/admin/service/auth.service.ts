@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Router } from '@angular/router';
 import { response } from 'express';
@@ -8,16 +8,6 @@ interface User {
   email: string;
   password: string;
 }
-const token = localStorage.getItem('jwtToken');
-const httpOptions = {
-  headers: new HttpHeaders({ 
-    'Content-Type': 'application/json' ,
-    'Authorization': `Bearer ${token}`,
-    'Accept': 'application/json'
-  }),
-  responeType: 'json',
-  withCredentials: true
-};
 
 @Injectable({
   providedIn: 'root'
@@ -26,14 +16,19 @@ export class AuthService {
 
   public apiUrl = 'http://localhost:8080/api';
 
-  private tokenKey = 'token';
+  private tokenKey = 'jwtToken';
   constructor(private http: HttpClient, private router: Router) { }
-  
+
+  // Kiểm tra xem localStorage có sẵn không trước khi sử dụng
+  private isLocalStorageAvailable(): boolean {
+    return typeof localStorage !== 'undefined';
+  }
+
 
   // Login user
   login(user: User): Observable<any> {
 
-    return this.http.post(`${this.apiUrl}/auth/login`, user, {responseType: 'json'});
+    return this.http.post(`${this.apiUrl}/auth/login`, user, { responseType: 'json' });
   }
 
   // Logout user
@@ -41,15 +36,18 @@ export class AuthService {
   //   localStorage.removeItem(this.tokenKey);
   //   this.router.navigate(['/login']);
   // }
-   // Logout admin
-   logoutAdmin() {
+  // Logout admin
+  logoutAdmin() {
     localStorage.removeItem(this.tokenKey);
     this.router.navigate(['admin/login']);
   }
 
   isLoggedIn(): boolean {
-    let token = localStorage.getItem(this.tokenKey);
-    return token != null && token.length > 0;  
+    if (this.isLocalStorageAvailable()) {
+      let token = localStorage.getItem(this.tokenKey);
+      return token != null && token.length > 0;
+    }
+    return false;
   }
 
   public getToken(): string | null {
