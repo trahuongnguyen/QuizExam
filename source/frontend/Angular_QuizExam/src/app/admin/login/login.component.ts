@@ -1,9 +1,8 @@
-import { AfterContentInit, Component, Injectable, OnInit } from '@angular/core';
+import { AfterContentInit, Component } from '@angular/core';
 import { AuthService } from '../service/auth.service';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ElementRef } from '@angular/core';
 declare var $: any;
 
 @Component({
@@ -15,9 +14,6 @@ declare var $: any;
 export class LoginComponent implements AfterContentInit {
   loginForm: FormGroup;
 
-  email: string = '';
-  password: string = '';
-
   constructor(private authService: AuthService, private router: Router, public toastr: ToastrService, private formBuilder: FormBuilder) {
     this.loginForm = this.formBuilder.group({
       email: ['', [Validators.required, Validators.email]],
@@ -25,19 +21,13 @@ export class LoginComponent implements AfterContentInit {
     });
   }
 
-  //Login
-  // password: string = '';
-  // email: string = '';
-
   ngAfterContentInit(): void {
     const myCarousel = document.querySelector('#carouselExampleSlidesOnly');
     const carousel = $(myCarousel).carousel();
   }
 
-
   onSubmit() {
     if (this.loginForm.valid) {
-      //const loginData = this.loginForm.value;
       this.authService.login({ email: this.loginForm.get('email')?.value, password: this.loginForm.get('password')?.value }).subscribe(
         response => {
           this.toastr.success('Login Successful!', 'Success', {
@@ -71,32 +61,6 @@ export class LoginComponent implements AfterContentInit {
     } else {
       this.toastr.error('Please fill in the form correctly.');
     }
-
-    // if (!this.email) {
-    //   this.toastr.error('Email is required', 'Failed', {
-    //     timeOut: 2000,
-    //   });
-    //   return;
-    // }
-
-    // if (!this.password) {
-    //   this.toastr.error('Password is required', 'Failed', {
-    //     timeOut: 2000,
-    //   });
-    //   return;
-    // }
-    // const user = { password: this.password, email: this.email };
-    // this.authService.login(user).subscribe(
-    //   response => {
-    //     this.toastr.success('Login Successful!', 'Success', {
-    //       timeOut: 2000,
-    //     });
-    //     window.localStorage.setItem('jwtToken', JSON.stringify(response.token));
-    //     console.log('User logged in successfully', response);
-    //     this.router.navigate(['/admin/home/employee']);
-    //   },
-
-    // );
   }
 }
 

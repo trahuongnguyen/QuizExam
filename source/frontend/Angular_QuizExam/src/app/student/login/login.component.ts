@@ -12,22 +12,16 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 export class LoginComponent {
   loginForm: FormGroup;
 
-  password: string = '';
-  email: string = '';
-
   constructor(private authService: AuthService, private router: Router, public toastr: ToastrService, private formBuilder: FormBuilder) {
     this.loginForm = this.formBuilder.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(8)]]
     });
   }  //Login
-
   
   login() {
-
     if (this.loginForm.valid) {
       const user = { password: this.loginForm.get('password')?.value, email: this.loginForm.get('email')?.value };
-      //const loginData = this.loginForm.value;
       this.authService.login(user).subscribe(
         response => {
           this.toastr.success('Login Successful!', 'Success', {

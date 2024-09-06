@@ -7,7 +7,8 @@
                     <div class="input-box">
                         <input type="text" id="email" formControlName="email" name="email" required>
                         <label for="email">Email</label>
-                        <div *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched">
+                        <div
+                            *ngIf="loginForm.get('email')?.invalid && (loginForm.get('email')?.touched||loginForm.get('email')?.dirty)">
                             <small class="error" *ngIf="loginForm.get('email')?.errors?.['required']">Email is
                                 required.</small>
                             <small class="error" *ngIf="loginForm.get('email')?.errors?.['email']">Invalid email
@@ -17,7 +18,8 @@
                     <div class="input-box">
                         <input type="password" id="password" formControlName="password" name="password" required>
                         <label for="password">Password</label>
-                        <div *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
+                        <div
+                            *ngIf="loginForm.get('password')?.invalid && (loginForm.get('password')?.touched||loginForm.get('password')?.dirty)">
                             <small class="error" *ngIf="loginForm.get('password')?.errors?.['required']">Password is
                                 required.</small>
                             <small class="error" *ngIf="loginForm.get('password')?.errors?.['minlength']">
@@ -32,42 +34,25 @@
                         <button type="submit" class="sign-in" [disabled]="loginForm.invalid" value="Sign In">Sign
                             In</button>
                     </div>
-                    <!-- <div class="input-box1">
-                        <button class="btn" type="submit" [disabled]="loginForm.invalid"> Sign In</button>
-                    </div> -->
                 </div>
             </div>
         </form>
         <div class="item">
             <div class="content">
-                <!-- <div id="carouselExampleSlidesOnly" class="carousel slide" data-bs-ride="carousel">
-                    <div class="carousel-inner">
-                        <div class="carousel-item active" data-bs-interval="5000">
-                            <img src="https://t4.ftcdn.net/jpg/01/41/02/31/360_F_141023124_UaDYoZaZDtRzgzuN0Bdy0Qu5dapqagwv.jpg" class="d-block w-100" alt="...">
-                        </div>
-                        <div class="carousel-item" data-bs-interval="5000">
-                            <img src="../../../../img/imgLogin.jpg" class="d-block w-100" alt="...">
-                        </div>
-                        <div class="carousel-item" data-bs-interval="5000">
-                            <img src="../../../../img/imgLogin1.jpg" class="d-block w-100" alt="...">
-                        </div>
-                    </div>        
-                </div> -->
                 <div id="carouselExampleSlidesOnly" class="carousel slide" #carousel data-bs-ride="carousel">
                     <div class="carousel-inner">
-                      <div class="carousel-item active" data-bs-interval="2000">
-                        <img src="../../../../img/imgLogin.jpg" class="d-block w-100" alt="...">
-                      </div>
-                      <div class="carousel-item" data-bs-interval="2000">
-                        <img src="../../../../img/imgLogin2.jpg" class="d-block w-100" alt="...">
-                      </div>
-                      <div class="carousel-item" data-bs-interval="2000">
-                        <img src="../../../../img/imgLogin1.jpg" class="d-block w-100" alt="...">
-                      </div>
+                        <div class="carousel-item active" data-bs-interval="3000">
+                            <img src="../../../../img/img_login.png" class="d-block w-80" alt="...">
+                        </div>
+                        <div class="carousel-item" data-bs-interval="3000">
+                            <img src="../../../../img/img_login1.png" class="d-block w-100" alt="...">
+                        </div>
+                        <div class="carousel-item" data-bs-interval="3000">
+                            <img src="../../../../img/img_login2.png" class="d-block w-100" alt="...">
+                        </div>
                     </div>
-                  </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
-<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
