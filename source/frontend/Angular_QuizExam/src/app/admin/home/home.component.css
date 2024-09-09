@@ -96,7 +96,6 @@
     padding: 21px 40px;
     border-top: 1px solid var(--color-switch);
     position: absolute;
-    bottom: 0;
     right: 0;
     left: 200px;
     z-index: 1000;
