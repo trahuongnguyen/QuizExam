@@ -6,6 +6,8 @@ import { EmployeeComponent } from './employee/employee.component';
 import { ClassComponent } from './class/class.component';
 import { StudentComponent } from './student/student.component';
 import { ProfileComponent } from './profile/profile.component';
+import { ListComponent } from './subject/list/list.component';
+import { ChapterComponent } from './subject/chapter/chapter.component';
 
 const routes: Routes = [
     {
@@ -31,6 +33,16 @@ const routes: Routes = [
       {
         path: 'profile',
         component: ProfileComponent
+      },
+      {
+        path: 'subject',
+        component: ListComponent,
+        children: [
+          {
+            path: 'chapter',
+            component: ChapterComponent,
+          },
+        ]
       },
     ]
   },
