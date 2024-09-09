@@ -8,5 +8,6 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class DuplicatedPhoneException extends RuntimeException {
+    private final String key;
     private final String message;
 }

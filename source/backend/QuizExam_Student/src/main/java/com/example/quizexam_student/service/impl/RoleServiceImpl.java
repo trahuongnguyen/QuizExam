@@ -19,7 +19,7 @@ public class RoleServiceImpl implements RoleService {
     }
     @Override
     public Role findById(int id) {
-        return roleRepository.findById(id).orElseThrow(() -> new NotFoundException("Role is not exist"));
+        return roleRepository.findById(id).orElseThrow(() -> new NotFoundException("roleNotFound", "Role is not exist"));
     }
 
 

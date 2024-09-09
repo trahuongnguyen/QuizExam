@@ -52,7 +52,7 @@ public class UserController {
                 System.out.println(users);
             });
             if (users.isEmpty()){
-                throw new EmptyException("Employee List is null");
+                throw new EmptyException("employeeList", "Employee List is null");
             }
             return users;
         }
