@@ -3,6 +3,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { AuthService } from '../../../service/auth.service';
 import { ToastrService } from 'ngx-toastr';
 import { Router } from '@angular/router';
+import { HomeComponent } from '../../home.component';
 declare var $: any;
 
 @Component({
@@ -11,7 +12,7 @@ declare var $: any;
   styleUrl: './list.component.css'
 })
 export class ListComponent implements OnInit, OnDestroy {
-  constructor(private authService: AuthService, private http: HttpClient, public toastr: ToastrService, private router: Router) { }
+  constructor(private authService: AuthService, private home: HomeComponent, private http: HttpClient, public toastr: ToastrService, private router: Router) { }
 
   dataTable: any;
   apiData: any;
@@ -20,30 +21,8 @@ export class ListComponent implements OnInit, OnDestroy {
   isPopupCreate = false;
   isPopupUpdate = false;
 
-  httpOptions: any;
-
-  private loadToken() {
-    if (this.authService.isLoggedIn()) {
-      const token = localStorage.getItem('jwtToken');
-      this.httpOptions = {
-        headers: new HttpHeaders({
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-          'Accept': 'application/json'
-        }),
-        responeType: 'json',
-        withCredentials: true
-      };
-    }
-    else {
-      this.router.navigate(['admin/login']);
-    }
-  }
-
   ngOnInit(): void {
-    this.loadToken();
-
-    this.http.get<any>(`${this.authService.apiUrl}/subject`, this.httpOptions).subscribe((data: any) => {
+    this.http.get<any>(`${this.authService.apiUrl}/subject`, this.home.httpOptions).subscribe((data: any) => {
       this.apiData = data;
       this.initializeDataTable();
     });
@@ -130,7 +109,7 @@ export class ListComponent implements OnInit, OnDestroy {
       sem: this.sem, name: this.name, img: this.img,
     }
 
-    this.http.post(`${this.authService.apiUrl}/subject`, _class, this.httpOptions).subscribe(
+    this.http.post(`${this.authService.apiUrl}/subject`, _class, this.home.httpOptions).subscribe(
       response => {
         this.toastr.success('Create Successful!', 'Success', {
           timeOut: 2000,
@@ -153,7 +132,7 @@ export class ListComponent implements OnInit, OnDestroy {
       sem: this.sem, name: this.name, img: this.img,
     }
 
-    this.http.post(`${this.authService.apiUrl}/subject/{id}`, _class, this.httpOptions).subscribe(
+    this.http.post(`${this.authService.apiUrl}/subject/{id}`, _class, this.home.httpOptions).subscribe(
       response => {
         this.toastr.success('Update Successful!', 'Success', {
           timeOut: 2000,
