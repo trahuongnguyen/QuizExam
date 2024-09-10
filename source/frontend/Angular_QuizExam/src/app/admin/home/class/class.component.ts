@@ -3,6 +3,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { AuthService } from '../../service/auth.service';
 import { ToastrService } from 'ngx-toastr';
 import { Router } from '@angular/router';
+import { HomeComponent } from '../home.component';
 declare var $: any;
 
 @Component({
@@ -11,7 +12,7 @@ declare var $: any;
   styleUrl: './class.component.css'
 })
 export class ClassComponent implements OnInit, OnDestroy {
-  constructor(private authService: AuthService, private http: HttpClient, public toastr: ToastrService, private router: Router) { }
+  constructor(private authService: AuthService, private http: HttpClient, public toastr: ToastrService, private router: Router, public home: HomeComponent) { }
 
   dataTable: any;
   apiData: any;
@@ -40,7 +41,7 @@ export class ClassComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.loadToken();
+    this.httpOptions = this.home.httpOptions;
 
     this.http.get<any>(`${this.authService.apiUrl}/class`, this.httpOptions).subscribe((data: any) => {
       this.apiData = data;

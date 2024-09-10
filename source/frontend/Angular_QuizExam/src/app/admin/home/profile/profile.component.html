@@ -1,1 +1,99 @@
-
+<div class="profile-container">
+    <!-- Profile Title -->
+    <h4 class="profile-title">
+        Profile
+    </h4>
+    <hr class="line">
+    <div class="d-flex profile-content">
+        <div class="profile-header">
+            <img src="https://via.placeholder.com/100" class="profile-img" alt="Profile Image">
+            <h3>Alexa Rawles</h3>
+            <p>alexarawles&#64;gmail.com</p>
+            <div class="d-flex">
+                <div>
+                    <a (click)="showEditForm()" class="btn btn-primary button me-2">Edit</a>
+                </div>
+                <div>
+                    <a (click)="showPasswordForm()" class="btn btn-secondary button">Change Password</a>
+                </div>
+            </div>
+        </div>
+        <div class="content infor" id="infor">
+            <div class="form-group d-flex">
+                <label for="dob" class="label-title">Date Of Birth</label>
+                <p>12-12-2012</p>
+            </div>
+            <div class="form-group d-flex">
+                <label for="gender" class="label-title">Gender</label>
+                <P>Female</P>
+            </div>
+            <div class="form-group d-flex">
+                <label for="phone" class="label-title">Phone Number</label>
+                <p>0326589758</p>
+            </div>
+            <div class="form-group d-flex">
+                <label for="address" class="label-title">Address</label>
+                <p>Tran dai nghia - dong tam - Ha Noi</p>
+            </div>
+        </div>
+        <form (submit)="edit()">
+            <div class="content form-infor" id="form-infor">
+                <div class="form-group d-flex">
+                    <label for="dob" class="label-title">Date Of Birth</label>
+                    <input type="date" name="dob" class="form-control">
+                </div>
+                <div class="form-group d-flex">
+                    <label for="gender" class="label-title">Gender</label>
+                    <div class="d-flex w-100">
+                        <div class="form-check me-2">
+                            <input type="radio" name="gender" class="form-check-input">
+                            <label for="" class="form-check-label">Male</label>
+                        </div>
+                        <div class="form-check">
+                            <input type="radio" name="gender" class="form-check-input">
+                            <label for="" class="form-check-label">Female</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group d-flex">
+                    <label for="phone" class="label-title">Phone Number</label>
+                    <input type="text" name="phone" class="form-control">
+                </div>
+                <div class="form-group d-flex">
+                    <label for="address" class="label-title">Address</label>
+                    <input type="text" name="address" class="form-control">
+                </div>
+                <div class="form-group d-flex">
+                    <label for="" class="label-title"></label>
+                    <div class="w-100">
+                        <a type="submit" class="btn btn-primary button me-2">Save</a>
+                        <a (click)="showInformation()" class="btn btn-secondary button me-2">Cancel</a>
+                    </div>
+                </div>
+            </div>
+        </form>
+        <form (submit)="chagePassword()">
+            <div class="content change-password-form" id="change-password-form">
+                <div class="form-group d-flex">
+                    <label for="old-pword" class="label-pword">Current Password</label>
+                    <input type="text" name="old-pword" class="form-control">
+                </div>
+                <div class="form-group d-flex">
+                    <label for="new-pword" class="label-pword">New Password</label>
+                    <input type="text" name="new-pword" class="form-control">
+                </div>
+                <div class="form-group d-flex">
+                    <label for="confirm-pword" class="label-pword">Confirm Password</label>
+                    <input type="text" name="confirm-pword" class="form-control">
+                </div>
+                <div class="form-group d-flex">
+                    <label for="" class="label-pword"></label>
+                    <div class="w-100 d-flex">
+                        <a type="submit" class="btn btn-primary button me-2">Change Password</a>
+                        <a (click)="showInformation()" class="btn btn-secondary button me-2">Cancel</a>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
