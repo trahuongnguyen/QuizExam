@@ -7,6 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @AllArgsConstructor
-public class NotPermitExecption extends RuntimeException {
+public class NotPermitException extends RuntimeException {
+    private final String key;
     private final String message;
 }

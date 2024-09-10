@@ -21,6 +21,26 @@ export class HomeComponent {
     this.windowScrolled = Math.round(window.scrollY) !=0;
   }
 
+  httpOptions: any;
+
+  private loadToken() {
+    if (this.authService.isLoggedIn()) {
+      const token = localStorage.getItem('jwtToken');
+      this.httpOptions = {
+        headers: new HttpHeaders({ 
+          'Content-Type': 'application/json' ,
+          'Authorization': `Bearer ${token}`,
+          'Accept': 'application/json'
+        }),
+        responeType: 'json',
+        withCredentials: true
+      };
+    }
+    else {
+      this.router.navigate(['admin/login']);
+    }
+  }
+
   constructor(public app : AppComponent, private router: Router,  public authService: AuthService) {
     this.loadToken();
     this.router.events.pipe(

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Router } from '@angular/router';
 import { response } from 'express';
@@ -52,5 +52,20 @@ export class AuthService {
 
   public getToken(): string | null {
     return this.isLoggedIn() ? localStorage.getItem(this.tokenKey) : null;
+  }
+
+  exportDataExcel() {
+    // return this.http.get(`${this.apiUrl}/auth/export/excel`, { responseType: 'blob' as 'json' });
+    const token = this.getToken(); // Lấy token từ AuthService
+    const headers = new HttpHeaders().set('Authorization', 'Bearer ' + token);
+
+    return this.http.get(`${this.apiUrl}/auth/export/excel`, { headers: headers, responseType: 'blob',});
+  }
+
+  exportDataPDF() {
+    const token = this.getToken(); // Lấy token từ AuthService
+    const headers = new HttpHeaders().set('Authorization', 'Bearer ' + token);
+
+    return this.http.get(`${this.apiUrl}/auth/export/pdf`, { headers: headers, responseType: 'blob',});
   }
 }
