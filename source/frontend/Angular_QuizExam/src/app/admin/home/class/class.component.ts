@@ -12,14 +12,13 @@ declare var $: any;
   styleUrl: './class.component.css'
 })
 export class ClassComponent implements OnInit, OnDestroy {
-  constructor(private authService: AuthService, private home: HomeComponent, private http: HttpClient, public toastr: ToastrService, private router: Router) { }
+  constructor(private authService: AuthService, private http: HttpClient, public toastr: ToastrService, private router: Router, public home: HomeComponent) { }
 
   dataTable: any;
   apiData: any;
   infoEdit: any = null;
   isPopupEdit = false;
   isPopupCreate = false;
-
   classId: any;
 
   ngOnInit(): void {
@@ -115,7 +114,7 @@ export class ClassComponent implements OnInit, OnDestroy {
   classDayError: String = '';
   classTimeError: String = '';
   admissionDateError: String = '';
-  
+
   errorEmpty(): void {
     this.nameError = '';
     this.classDayError = '';
@@ -141,7 +140,7 @@ export class ClassComponent implements OnInit, OnDestroy {
         this.toastr.error(error.error.message, 'Error', {
           timeOut: 2000,
         });
-        error.error.forEach((err:any) => {
+        error.error.forEach((err: any) => {
           if (err.key == 'name') {
             this.nameError = err.message;
           }
@@ -178,7 +177,7 @@ export class ClassComponent implements OnInit, OnDestroy {
           timeOut: 2000,
         });
         console.log(error);
-        error.error.forEach((err:any) => {
+        error.error.forEach((err: any) => {
           if (err.key == 'name') {
             this.nameError = err.message;
           }

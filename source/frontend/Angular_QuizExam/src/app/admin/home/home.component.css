@@ -8,12 +8,10 @@
     justify-content: space-between;
     align-items: center;
     border-bottom: 1px solid var(--color-switch);
-    position: fixed;
-    top: 0;
-    right: 0;
-    left: 200px;
+    position: static;
     z-index: 1000;
     height: 80px;
+    margin-left: 200px;
 }
 
 .user-section {
@@ -95,15 +93,14 @@
     background-color: var(--color-background);
     padding: 21px 40px;
     border-top: 1px solid var(--color-switch);
-    position: absolute;
-    right: 0;
-    left: 200px;
+    position: static;
     z-index: 1000;
     height: 50px;
     display: flex;
     align-items: center;
     font-size: 20px;
     color: #c9c9c9;
+    margin-left: 200px;
 }
 
 
@@ -175,4 +172,5 @@
 
 .d-flex .menu ul li:hover a {
     color: #ff5d94;
+    cursor: pointer;
 }
