@@ -1,0 +1,53 @@
+<div class="header">
+    <div class="toggle-switch">
+        <label class="switch">
+            <input type="checkbox" id="buttonSwitch" (click)="app.toggleTheme()">
+            <span class="slider"></span>
+        </label>
+    </div>
+    <div class="d-flex" (click)="app.menuToggle()">
+        <div class="user-section">
+            <span class="mdi mdi-account-outline icon"></span>
+            <span>User</span>
+        </div>
+        <div class="menu" id="menuToggle">
+            <ul>
+                <li>
+                    <i class="fa-regular fa-circle-user"></i><a [routerLink]="'profile'">My profile</a>
+                </li>
+                <li>
+                    <i class="fa-solid fa-arrow-right-from-bracket"></i><a (click)="onLogout()">Logout</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div class="sidebar">
+    <div class="block-wrapper">
+        <img class="block-image" alt="" src="../../../../img/logo.png" />
+    </div>
+    <a [routerLink]="'dashboard'" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }"
+        class="sidebar-link"><span class="mdi mdi-chart-bar icon"></span>Dashboard</a>
+    <a [routerLink]="'subject'" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }"
+        class="sidebar-link"><span class="mdi mdi-book-open-variant icon"></span>Subject</a>
+    <a [routerLink]="'question'" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }"
+        class="sidebar-link"><span class="mdi mdi-comment-question-outline icon"></span>Question</a>
+    <a [routerLink]="'class'" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }"
+        class="sidebar-link"><span class="mdi mdi-home-outline icon"></span>Class</a>
+    <a [routerLink]="'student'" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }"
+        class="sidebar-link"><span class="mdi mdi-account-multiple icon"></span>Student</a>
+    <a [routerLink]="'exam'" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }"
+        class="sidebar-link"><span class="mdi mdi-monitor icon"></span>Exam</a>
+    <a [routerLink]="'authorize'" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }"
+        class="sidebar-link"><span class="mdi mdi-clipboard-outline icon"></span>Authorize</a>
+    <a [routerLink]="'employee'" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }"
+        class="sidebar-link active"><span class="mdi mdi-account-multiple icon"></span>Employee</a>
+</div>
+
+<router-outlet>
+</router-outlet>
+
+<footer class="footer">
+    <b>Copyright © 2024</b>
+</footer>

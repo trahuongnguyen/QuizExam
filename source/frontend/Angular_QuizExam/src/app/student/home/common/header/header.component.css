@@ -46,64 +46,6 @@
     cursor: pointer;
 }
 
-/* toogle-switched */
-
-
-.switch {
-    font-size: 17px;
-    position: relative;
-    display: inline-block;
-    width: 4em;
-    height: 2em;
-    margin-right: 100px;
-}
-
-/* Hide default HTML checkbox */
-.switch input {
-    opacity: 0;
-    width: 0;
-    height: 0;
-}
-
-/* The slider */
-.slider {
-    position: absolute;
-    cursor: pointer;
-    width: 74px;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: var(--color-switch);
-    transition: 0.4s;
-    border-radius: 30px;
-    box-shadow: var(--color-switch-shadow);
-}
-
-.slider:before {
-    position: absolute;
-    content: "";
-    height: 1.6em;
-    width: 1.6em;
-    border-radius: 20px;
-    left: 0.2em;
-    bottom: 0.2em;
-    transition: 0.4s;
-    transform: var(--transform-switch-button);
-    background-color: var(--color-switch-button);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-}
-
-.slider:after {
-    content: var(--content-switch-button);
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    font-size: 0.8em;
-    transition: opacity 0.4s;
-    opacity: 1;
-}
-
 /* menu-user-dropdown */
 .d-flex .menu {
     position: absolute;
@@ -178,6 +120,7 @@
     .navbar-expand-lg .navbar-nav {
         flex-direction: row;
     }
+
     .navbar-expand-lg .navbar-collapse {
         display: flex !important;
         flex-basis: auto;
@@ -185,12 +128,13 @@
 }
 
 @media (min-width: 400px) {
-    .r-5{
+    .r-5 {
         position: absolute;
         right: 50px;
         display: flex !important;
     }
 }
+
 .r-5:not(.show) {
     display: none;
 }

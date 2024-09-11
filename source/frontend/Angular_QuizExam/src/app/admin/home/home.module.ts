@@ -1,25 +1,34 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { CommonComponent } from './common/common.component';
+import { HomeRoutingModule } from './home-routing.module';
+
+
+import { HomeComponent } from './home.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { StudentComponent } from './student/student.component';
 import { ClassComponent } from './class/class.component';
 import { EmployeeComponent } from './employee/employee.component';
 import { ProfileComponent } from './profile/profile.component';
+import { FormsModule } from '@angular/forms';
+import { SubjectModule } from './subject/subject.module';
 
 
 
 @NgModule({
   declarations: [
-    CommonComponent,
+    HomeComponent,
     DashboardComponent,
     StudentComponent,
     ClassComponent,
     EmployeeComponent,
-    ProfileComponent
+    ProfileComponent,
+    
   ],
   imports: [
-    CommonModule
+    CommonModule,
+    HomeRoutingModule,
+    FormsModule,
+    SubjectModule
   ]
 })
-export class HomeModule { }
+export class HomeModule {}

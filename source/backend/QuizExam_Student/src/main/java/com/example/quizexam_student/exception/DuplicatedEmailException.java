@@ -8,5 +8,6 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class DuplicatedEmailException extends RuntimeException {
+    private final String key;
     private final String message;
 }

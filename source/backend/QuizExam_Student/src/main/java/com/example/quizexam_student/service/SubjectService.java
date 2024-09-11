@@ -1,0 +1,19 @@
+package com.example.quizexam_student.service;
+
+import com.example.quizexam_student.bean.request.SubjectRequest;
+import com.example.quizexam_student.entity.Subject;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.util.List;
+
+@Service
+public interface SubjectService {
+    Boolean existSubjectByName(String subjectName);
+    List<Subject> findAll();
+    Subject findById(int id);
+    void save(SubjectRequest subjectRequest, MultipartFile multipartFile) throws IOException;
+    void deleteById(int id);
+    void update(int id, SubjectRequest subjectRequest, MultipartFile multipartFile) throws IOException;
+}

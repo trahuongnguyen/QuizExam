@@ -33,8 +33,17 @@ public class SecurityConfig {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
-                .requestMatchers("/api/auth/**").permitAll()
+                .requestMatchers("/api/auth/export/excel").hasAnyRole("ADMIN", "DIRECTOR", "SRO")
+                .requestMatchers("/api/auth/export/pdf").hasAnyRole("ADMIN", "DIRECTOR", "SRO")
+                .requestMatchers("/api/auth/register").hasAnyRole("ADMIN", "DIRECTOR", "SRO")
+                .requestMatchers("/api/auth/update/{id}").hasAnyRole("ADMIN", "DIRECTOR", "TEACHER", "SRO")
+                .requestMatchers("/api/auth/profile/{id}").hasAnyRole("ADMIN", "DIRECTOR", "TEACHER", "SRO")
+                .requestMatchers("/api/auth/login").permitAll()
+                .requestMatchers("/api/user/**").permitAll()
+                .requestMatchers("/api/student/profile/{id}").hasRole("STUDENT")
+                .requestMatchers("/api/class/**").hasAnyRole("ADMIN", "DIRECTOR", "SRO")
                 .anyRequest().authenticated()
+                
                 .and()
                 .httpBasic();
         http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
