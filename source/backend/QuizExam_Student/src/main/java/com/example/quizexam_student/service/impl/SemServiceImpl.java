@@ -20,14 +20,14 @@ public class SemServiceImpl implements SemService {
     public List<Sem> getAllSem() {
         List<Sem> semList = semRepository.findAll();
         if (semList.isEmpty()) {
-            throw new EmptyException("Semeter list is empty");
+            throw new EmptyException("EmptySem","Semeter list is empty");
         }
         return semList;
     }
 
     @Override
     public Sem getSemById(int id) {
-        return semRepository.findById(id).orElseThrow(() -> new NotFoundException("Semeter not found"));
+        return semRepository.findById(id).orElseThrow(() -> new NotFoundException("EmptySem","Semeter not found"));
     }
 
     @Override
