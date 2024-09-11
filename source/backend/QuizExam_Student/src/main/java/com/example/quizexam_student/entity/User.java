@@ -1,5 +1,6 @@
 package com.example.quizexam_student.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -11,6 +12,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @Getter
 @Setter
+@EqualsAndHashCode
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -37,5 +39,5 @@ public class User {
     private Role role;
     @OneToOne(mappedBy = "user")
     private StudentDetail studentDetail;
-
 }
+
