@@ -3,6 +3,7 @@ import { AppComponent } from '../../app.component';
 import { NavigationEnd, Router } from '@angular/router';
 import { filter } from 'rxjs/operators';
 import { AuthService } from '../service/auth.service';
+import { HttpHeaders } from '@angular/common/http';
 
 @Component({
   selector: 'app-home',
@@ -20,7 +21,28 @@ export class HomeComponent {
     this.windowScrolled = Math.round(window.scrollY) !=0;
   }
 
+  httpOptions: any;
+
+  loadToken() {
+    if (this.authService.isLoggedIn()) {
+      const token = localStorage.getItem('jwtToken');
+      this.httpOptions = {
+        headers: new HttpHeaders({ 
+          'Content-Type': 'application/json' ,
+          'Authorization': `Bearer ${token}`,
+          'Accept': 'application/json'
+        }),
+        responeType: 'json',
+        withCredentials: true
+      };
+    }
+    else {
+      this.router.navigate(['admin/login']);
+    }
+  }
+
   constructor(public app : AppComponent, private router: Router,  public authService: AuthService) {
+    this.loadToken();
     this.router.events.pipe(
       filter(event => event instanceof NavigationEnd)
     ).subscribe(() => {

@@ -35,7 +35,7 @@ export class LoginComponent implements AfterContentInit {
           });
           window.localStorage.setItem('jwtToken', JSON.stringify(response.token));
           console.log('User logged in successfully', response);
-          this.router.navigate(['/admin/home/employee']);
+          this.router.navigate(['/admin/home']);
         },
         error => {
           if (error.status === 401) {

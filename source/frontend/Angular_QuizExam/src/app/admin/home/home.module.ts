@@ -10,6 +10,7 @@ import { ClassComponent } from './class/class.component';
 import { EmployeeComponent } from './employee/employee.component';
 import { ProfileComponent } from './profile/profile.component';
 import { FormsModule } from '@angular/forms';
+import { SubjectModule } from './subject/subject.module';
 
 
 
@@ -20,12 +21,14 @@ import { FormsModule } from '@angular/forms';
     StudentComponent,
     ClassComponent,
     EmployeeComponent,
-    ProfileComponent
+    ProfileComponent,
+    
   ],
   imports: [
     CommonModule,
     HomeRoutingModule,
-    FormsModule
+    FormsModule,
+    SubjectModule
   ]
 })
 export class HomeModule {}

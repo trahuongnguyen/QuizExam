@@ -18,13 +18,13 @@ public class ClassesServiceImpl implements ClassesService {
 
     @Override
     public List<Classes> getAllClasses() {
-        return classesRepository.findByStatus(1);
+        return classesRepository.findByStatusOrderByIdDesc(1);
     }
 
     @Override
     public Classes addClass(Classes _class) {
         if (classesRepository.existsByName(_class.getName())) {
-            throw new AlreadyExistException("Class Name already exists.");
+            throw new AlreadyExistException("className", "Class Name already exists.");
         }
         _class.setStatus(1);
         return classesRepository.save(_class);
@@ -34,10 +34,10 @@ public class ClassesServiceImpl implements ClassesService {
     public Classes updateClass(int id, Classes classInput) {
         Classes classUpdate = classesRepository.findById(id).orElse(null);
         if (Objects.isNull(classUpdate) || classUpdate.getStatus() == 0) {
-            throw new NotFoundException("Class not found.");
+            throw new NotFoundException("classNotFound", "Class not found.");
         }
         if (classesRepository.existsByNameAndIdNot(classInput.getName(), id)) {
-            throw new AlreadyExistException("Class Name already exists.");
+            throw new AlreadyExistException("className", "Class Name already exists.");
         }
         setClass(classUpdate, classInput);
         return classesRepository.save(classUpdate);
@@ -47,7 +47,7 @@ public class ClassesServiceImpl implements ClassesService {
     public void deleteClass(int id) {
         Classes classDelete = classesRepository.findById(id).orElse(null);
         if (Objects.isNull(classDelete) || classDelete.getStatus() == 0) {
-            throw new NotFoundException("Class not found.");
+            throw new NotFoundException("classNotFound", "Class not found.");
         }
         classDelete.setStatus(0);
         classesRepository.save(classDelete);
@@ -57,5 +57,6 @@ public class ClassesServiceImpl implements ClassesService {
         classUpdate.setName(classInput.getName());
         classUpdate.setClassDay(classInput.getClassDay());
         classUpdate.setClassTime(classInput.getClassTime());
+        classUpdate.setAdmissionDate(classInput.getAdmissionDate());
     }
 }

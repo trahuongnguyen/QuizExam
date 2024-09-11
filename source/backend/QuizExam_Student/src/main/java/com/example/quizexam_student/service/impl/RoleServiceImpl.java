@@ -19,7 +19,7 @@ public class RoleServiceImpl implements RoleService {
     }
     @Override
     public Role findById(int id) {
-        return roleRepository.findById(id).orElseThrow(() -> new NotFoundException("Role is not exist"));
+        return roleRepository.findById(id).orElseThrow(() -> new NotFoundException("roleNotFound", "Role is not exist"));
     }
 
 
@@ -34,13 +34,18 @@ public class RoleServiceImpl implements RoleService {
         Role role = findById(id);
         List<Role> roles = roleRepository.findAll();
         roles.removeIf(x->x.getName().equals("ADMIN"));
-        roles.removeIf(x->x.getName().equals("STUDENT"));
         if(role.getName().equals("ADMIN")){
+            roles.removeIf(x->x.getName().equals("STUDENT"));
             return roles;
         }
         roles.removeIf(x->x.getName().equals("DIRECTOR"));
         if(role.getName().equals("DIRECTOR")){
             roles.removeIf(x->x.getName().equals("STUDENT"));
+            return roles;
+        }   
+        roles.removeIf(x->x.getName().equals("SRO"));
+        roles.removeIf(x->x.getName().equals("TEACHER"));
+        if(role.getName().equals("SRO")){
             return roles;
         }
         return null;
