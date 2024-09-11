@@ -3,6 +3,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { AuthService } from '../../service/auth.service';
 import { ToastrService } from 'ngx-toastr';
 import { Router } from '@angular/router';
+import { HomeComponent } from '../home.component';
 declare var $: any;
 
 @Component({
@@ -11,7 +12,7 @@ declare var $: any;
   styleUrl: './student.component.css'
 })
 export class StudentComponent implements OnInit, OnDestroy {
-  constructor(private authService: AuthService, private http: HttpClient, public toastr: ToastrService, private router: Router) { }
+  constructor(private authService: AuthService, private http: HttpClient, public toastr: ToastrService, private router: Router, private home: HomeComponent) { }
 
   dataTable: any;
   apiData: any;
@@ -21,7 +22,7 @@ export class StudentComponent implements OnInit, OnDestroy {
   isPopupMove = false;
 
   ngOnInit(): void {
-    this.http.get<any>(`${this.authService.apiUrl}/user`).subscribe((data: any) => {
+    this.http.get<any>(`${this.authService.apiUrl}/user`, this.home.httpOptions).subscribe((data: any) => {
       this.apiData = data;
       this.initializeDataTable();
     });
@@ -109,23 +110,23 @@ export class StudentComponent implements OnInit, OnDestroy {
   rollNumber: String = '';
   rollPortal: String = '';
   createStudent(): void {
-    const employee =
+    const student =
     {
       fullName: this.fullName, email: this.email, dob: this.dob,
       phoneNumber: this.phoneNumber, address: this.address,
       gender: this.gender, rollNumber: this.rollNumber, rollPortal: this.rollPortal
     }
 
-    this.http.post(`${this.authService.apiUrl}/auth/register`, employee, { responseType: 'json' }).subscribe(
+    this.http.post(`${this.authService.apiUrl}/auth/register`, student, this.home.httpOptions).subscribe(
       response => {
         this.toastr.success('Create Successful!', 'Success', {
           timeOut: 2000,
         });
         console.log('Create successfully', response);
-        this.router.navigate(['/admin/home/employee']);
+        this.router.navigate(['/admin/home/student']);
       },
       error => {
-        this.toastr.error('Error create Employee', 'Error', {
+        this.toastr.error('Error create Student', 'Error', {
           timeOut: 2000,
         });
         console.log('Error', error);
