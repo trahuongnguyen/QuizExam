@@ -21,14 +21,11 @@ export class EmployeeComponent implements OnInit, OnDestroy {
   infoDetail: any = null;
   isPopupDetail = false;
   isPopupCreate = false;
-  
   role: any;
 
   ngOnInit(): void {
-    //this.loadToken();
-    this.httpOptions = this.home.httpOptions;
     
-    this.http.get<any>(`${this.authService.apiUrl}/user`, this.httpOptions).subscribe((data: any) => {
+    this.http.get<any>(`${this.authService.apiUrl}/user`, this.home.httpOptions).subscribe((data: any) => {
       this.apiData = data;
       this.initializeDataTable();
     });
@@ -121,7 +118,7 @@ export class EmployeeComponent implements OnInit, OnDestroy {
       gender: this.gender, roleId: this.roleId
     }
 
-    this.http.post(`${this.authService.apiUrl}/auth/register`, employee, {responseType: 'json'}).subscribe(
+    this.http.post(`${this.authService.apiUrl}/auth/register`, employee, this.home.httpOptions).subscribe(
       response => {
         this.toastr.success('Create Successful!', 'Success', {
           timeOut: 2000,
