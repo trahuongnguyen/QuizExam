@@ -8,7 +8,6 @@ import com.example.quizexam_student.bean.response.UserResponse;
 import com.example.quizexam_student.entity.Role;
 import com.example.quizexam_student.entity.User;
 import com.example.quizexam_student.exception.EmptyException;
-import com.example.quizexam_student.mapper.UserMapper;
 import com.example.quizexam_student.service.ExportService;
 import com.example.quizexam_student.service.RoleService;
 import com.example.quizexam_student.service.UserService;
@@ -40,7 +39,6 @@ public class UserController {
     private final RoleService roleService;
     private final ExportService exportService;
 
-    @PreAuthorize("hasAnyRole('ADMIN','DIRECTOR','SRO')")
     @GetMapping("")
     public List<UserResponse> getAll(){
         String email = ((org.springframework.security.core.userdetails.User) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
@@ -50,25 +48,20 @@ public class UserController {
         if(roles!=null){
             List<UserResponse> users = new ArrayList<>();
             roles.forEach(role1 -> {
-                System.out.println(role1);
                 users.addAll(userService.getUserByRolePermission(role1));
+                System.out.println(users);
             });
             if (users.isEmpty()){
-                if (role.getName().equals("SRO")){
-                    throw new EmptyException("student", "Student List is null");
-                } else {
-                    throw new EmptyException("employee", "Employee List is empty");
-                }
+                throw new EmptyException("employeeList", "Employee List is null");
             }
             return users;
         }
         return null;
     }
 
-    @GetMapping("/profile")
-    public UserResponse getDetail(){
-        String email = ((org.springframework.security.core.userdetails.User) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
-        return UserMapper.convertToResponse(userService.findUserByEmail(email));
+    @GetMapping("/{id}")
+    public UserResponse getDetail(@PathVariable int id){
+        return userService.getUserById(id);
     }
 
 
@@ -78,16 +71,31 @@ public class UserController {
         return new ResponseEntity<>("User deleted successfully", HttpStatus.OK);
     }
 
+
+    @PreAuthorize("hasRole('ADMIN') or hasRole('DIRECTOR') or hasRole('SRO')  or hasRole('TEACHER')")
+    @GetMapping("/update/{id}")
+    public User updateUser(@PathVariable int id) {
+        return userService.findById(id);
+    }
+
     @PreAuthorize("hasRole('ADMIN') or hasRole('DIRECTOR') or hasRole('SRO') or hasRole('TEACHER')")
     @PostMapping("/update/{id}")
-    public ResponseEntity<User> updateUser(@PathVariable int id, @RequestBody @Valid UserRequest userRequest) {
-        return ResponseEntity.ok(userService.updateUser(id, userRequest));
+    public ResponseEntity<String> updateUser(@PathVariable int id, @RequestBody @Valid UserRequest userRequest) {
+        userService.updateUser(id, userRequest);
+        return new ResponseEntity("Update User Success", HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasRole('ADMIN') or hasRole('DIRECTOR') or hasRole('SRO')  or hasRole('TEACHER') or hasRole('STUDENT')")
+    @GetMapping("/changePassword/{id}")
+    public UserResponse getProfile(@PathVariable int id){
+        return userService.getUserById(id);
     }
 
     @PreAuthorize("hasRole('ADMIN') or hasRole('DIRECTOR') or hasRole('SRO')  or hasRole('TEACHER') or hasRole('STUDENT')")
     @PostMapping("/changePassword/{id}")
-    public ResponseEntity<User> updateProfile(@PathVariable int id, @RequestBody @Valid PasswordRequest passwordRequest) {
-        return ResponseEntity.ok(userService.changePassword(id, passwordRequest));
+    public ResponseEntity<String> updateProfile(@PathVariable int id, @RequestBody @Valid PasswordRequest passwordRequest) {
+        userService.changePassword(id, passwordRequest);
+        return new ResponseEntity<>("Password updated successfully", HttpStatus.OK);
     }
 
     @PreAuthorize("hasRole('ADMIN') or hasRole('DIRECTOR') or hasRole('SRO')")

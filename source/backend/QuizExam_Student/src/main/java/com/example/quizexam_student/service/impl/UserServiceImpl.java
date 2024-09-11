@@ -4,7 +4,6 @@ import com.example.quizexam_student.bean.request.PasswordRequest;
 import com.example.quizexam_student.bean.request.UserRequest;
 import com.example.quizexam_student.bean.response.UserResponse;
 import com.example.quizexam_student.entity.Role;
-import com.example.quizexam_student.entity.StudentDetail;
 import com.example.quizexam_student.entity.User;
 import com.example.quizexam_student.exception.EmptyException;
 import com.example.quizexam_student.mapper.*;
@@ -12,7 +11,6 @@ import com.example.quizexam_student.exception.DuplicatedEmailException;
 import com.example.quizexam_student.exception.DuplicatedPhoneException;
 import com.example.quizexam_student.exception.IncorrectEmailOrPassword;
 import com.example.quizexam_student.repository.RoleRepository;
-import com.example.quizexam_student.repository.StudentRepository;
 import com.example.quizexam_student.repository.UserRepository;
 import com.example.quizexam_student.service.RoleService;
 import com.example.quizexam_student.service.UserService;
@@ -28,7 +26,6 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
-    private final StudentRepository studentRepository;
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
     private final RoleService roleService;
@@ -88,10 +85,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserResponse> getUserByRolePermission(Role role) {
-        List<UserResponse> userResponses = userRepository.findByRole(role).stream().map(UserMapper::convertToResponse).collect(Collectors.toList());
-        if (role.getName().equals("STUDENT")){
-            userResponses = userResponses.stream().map(userResponse -> UserMapper.convertStudentDetailToStudentResponse(userResponse, studentRepository.findByUser(userRepository.findById(userResponse.getId()).orElse(null)))).collect(Collectors.toList());
-        }
+        List<UserResponse> userResponses = userRepository.findAllByRole(role).stream().map(UserMapper::convertToResponse).collect(Collectors.toList());
         return userResponses;
     }
 
@@ -122,7 +116,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User changePassword(int id, PasswordRequest passwordRequest) {
+    public void changePassword(int id, PasswordRequest passwordRequest) {
         User user = userRepository.findById(id).orElse(null);
         if (!passwordEncoder.matches(passwordRequest.getCurrentPassword(), user.getPassword())){
             throw new IncorrectEmailOrPassword("password", "Your current password does not match");
@@ -130,11 +124,14 @@ public class UserServiceImpl implements UserService {
         if (passwordEncoder.matches(passwordRequest.getNewPassword(), user.getPassword())){
             throw new IncorrectEmailOrPassword("password", "Your new password must different old password");
         }
+        if (passwordRequest.getCurrentPassword().equals(passwordRequest.getNewPassword())){
+            throw new IncorrectEmailOrPassword("password", "Your new password must different current password");
+        }
         if (!passwordRequest.getNewPassword().equals(passwordRequest.getConfirmPassword())){
             throw new IncorrectEmailOrPassword("password", "Your confirm password does not match");
         }
         user.setPassword(passwordEncoder.encode(passwordRequest.getNewPassword()));
-        return userRepository.save(user);
+        userRepository.save(user);
     }
 
     @Override
@@ -149,16 +146,16 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User updateUser(int id, UserRequest userRequest) {
+    public void updateUser(int id, UserRequest userRequest) {
         User user = userRepository.findById(id).orElse(null);
-        if (existUserByPhone(userRequest.getPhoneNumber()) && !userRequest.getPhoneNumber().equals(user.getPhoneNumber())) {
+        if (existUserByPhone(userRequest.getPhoneNumber())) {
             throw new DuplicatedPhoneException("phoneNumber", "Phone number existed already");
         }
         user.setDob(userRequest.getDob());
         user.setGender(userRequest.getGender());
         user.setAddress(userRequest.getAddress());
         user.setPhoneNumber(userRequest.getPhoneNumber());
-        return userRepository.save(user);
+        userRepository.save(user);
     }
 
 
