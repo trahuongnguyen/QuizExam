@@ -23,7 +23,7 @@ export class HomeComponent {
 
   httpOptions: any;
 
-  loadToken() {
+  private loadToken() {
     if (this.authService.isLoggedIn()) {
       const token = localStorage.getItem('jwtToken');
       this.httpOptions = {

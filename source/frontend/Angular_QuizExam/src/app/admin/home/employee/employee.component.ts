@@ -14,17 +14,17 @@ declare var $: any;
 })
 
 export class EmployeeComponent implements OnInit, OnDestroy {
-  constructor(private authService: AuthService, private http: HttpClient, public toastr: ToastrService, private router: Router, public home: HomeComponent) { }
+  constructor(private authService: AuthService, private home: HomeComponent, private http: HttpClient, public toastr: ToastrService, private router: Router) { }
 
   dataTable: any;
   apiData: any;
   infoDetail: any = null;
   isPopupDetail = false;
   isPopupCreate = false;
+  
   role: any;
 
   ngOnInit(): void {
-    
     this.http.get<any>(`${this.authService.apiUrl}/user`, this.home.httpOptions).subscribe((data: any) => {
       this.apiData = data;
       this.initializeDataTable();
@@ -118,7 +118,7 @@ export class EmployeeComponent implements OnInit, OnDestroy {
       gender: this.gender, roleId: this.roleId
     }
 
-    this.http.post(`${this.authService.apiUrl}/auth/register`, employee, this.home.httpOptions).subscribe(
+    this.http.post(`${this.authService.apiUrl}/auth/register`, employee, {responseType: 'json'}).subscribe(
       response => {
         this.toastr.success('Create Successful!', 'Success', {
           timeOut: 2000,

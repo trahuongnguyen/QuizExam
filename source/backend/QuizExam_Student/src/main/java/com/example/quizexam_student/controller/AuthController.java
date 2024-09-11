@@ -65,13 +65,6 @@ public class AuthController {
         return roles;
     }
 
-    @PreAuthorize("permitAll()")
-    @GetMapping("/role")
-    public Role getCurrentRole() {
-        String email = ((org.springframework.security.core.userdetails.User) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
-        return userService.findUserByEmail(email).getRole();
-    }
-
     @PreAuthorize("hasAnyRole('ADMIN','DIRECTOR','SRO')")
     @PostMapping("/register")
     public ResponseEntity<RegisterResponse> register(@RequestBody @Valid UserRequest userRequest) {
