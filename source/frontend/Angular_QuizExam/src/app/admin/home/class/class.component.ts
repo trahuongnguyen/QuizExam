@@ -82,6 +82,12 @@ export class ClassComponent implements OnInit, OnDestroy {
         $('.create').on('click', () => {
           this.isPopupCreate = true;
         });
+
+        $('.delete-icon').on('click', (event: any) => {
+          const id = $(event.currentTarget).data('id');
+          this.classId = id;
+          this.deleteClass(this.classId);
+        });
       }
     });
   }
@@ -188,6 +194,21 @@ export class ClassComponent implements OnInit, OnDestroy {
         });
       }
     )
+  }
+
+  deleteClass(id: number): void {
+    if (!window.confirm('Are you sure you want to delete this class?')) {
+      return;
+    }
+    this.http.delete(`${this.authService.apiUrl}/class/${id}`, this.home.httpOptions).subscribe(
+      () => {
+        console.log(`Class with ID ${id} deleted successfully`);
+        this.router.navigate(['/admin/home/class']);
+      },
+      error => {
+        console.error('Error deleting item:', error);
+      }
+    );
   }
 
   ngOnDestroy(): void {
