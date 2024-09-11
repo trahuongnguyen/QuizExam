@@ -70,7 +70,7 @@ public class EmpExcelExporter {
     private void writeDataRow(){
         int rowCount = 1;
         for (UserResponse user : users) {
-            Row row = sheet.createRow(rowCount);
+            Row row = sheet.createRow(rowCount++);
 
             Cell cell = row.createCell(0);
             cell.setCellValue(user.getId());
@@ -103,7 +103,7 @@ public class EmpExcelExporter {
             cell = row.createCell(7);
             cell.setCellValue(user.getAddress());
             sheet.autoSizeColumn(7);
-            rowCount++;
+
         }
     }
     public void export(HttpServletResponse response) throws IOException {
