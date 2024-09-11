@@ -32,18 +32,18 @@ public class SubjectServiceImpl implements SubjectService {
     public List<Subject> findAll() {
         List<Subject> subjects = subjectRepository.findByStatus(1);
         if (subjects.isEmpty()) {
-            throw new EmptyException("Subject list is empty");
+            throw new EmptyException("EmptySubject","Subject list is empty");
         }
         return subjects;
     }
 
     @Override
     public Subject findById(int id) {
-        return subjectRepository.findById(id).orElseThrow(() -> new NotFoundException("Subject not found"));
+        return subjectRepository.findById(id).orElseThrow(() -> new NotFoundException("NotFoundSubject","Subject not found"));
     }
 
     @Override
-    public void save(SubjectRequest subjectRequest, MultipartFile multipartFile) throws IOException {
+    public Subject save(SubjectRequest subjectRequest, MultipartFile multipartFile) throws IOException {
         if (multipartFile != null && !multipartFile.isEmpty()) {
             subjectRequest.setImage(multipartFile.getBytes());
         }
@@ -52,29 +52,29 @@ public class SubjectServiceImpl implements SubjectService {
         subject.setImage(subjectRequest.getImage());
         subject.setStatus(1);
         subject.setSem(semRepository.findById(subjectRequest.getSemId()).orElse(null));
-        subjectRepository.save(subject);
+        return subjectRepository.save(subject);
     }
 
 
 
     @Override
     public void deleteById(int id) {
-        Subject subject = subjectRepository.findById(id).orElseThrow(() -> new NotFoundException("Subject not found"));
+        Subject subject = subjectRepository.findById(id).orElseThrow(() -> new NotFoundException("NotFoundSubject","Subject not found"));
         subject.setStatus(0);
         subjectRepository.save(subject);
     }
 
     @Override
-    public void update(int id, SubjectRequest subjectRequest, MultipartFile multipartFile) throws IOException {
-        Subject subject = subjectRepository.findById(id).orElseThrow(() -> new NotFoundException("Subject not found"));
+    public Subject update(int id, SubjectRequest subjectRequest, MultipartFile multipartFile) throws IOException {
+        Subject subject = subjectRepository.findById(id).orElseThrow(() -> new NotFoundException("NotFoundSubject","Subject not found"));
         if (existSubjectByName(subject.getName())) {
-            throw new AlreadyExistException("Subject already exist");
+            throw new AlreadyExistException("AlreadyExistSubject","Subject already exist");
         }
         if (multipartFile != null && !multipartFile.isEmpty()) {
             subjectRequest.setImage(multipartFile.getBytes());
         }
         subject.setName(subjectRequest.getName());
         subject.setImage(subjectRequest.getImage());
-        subjectRepository.save(subject);
+        return subjectRepository.save(subject);
     }
 }
