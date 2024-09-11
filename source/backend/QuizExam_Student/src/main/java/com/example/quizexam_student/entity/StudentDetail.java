@@ -1,8 +1,11 @@
 package com.example.quizexam_student.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.List;
 import java.util.Set;
 
 @Data
@@ -11,9 +14,12 @@ import java.util.Set;
 @NoArgsConstructor
 @Getter
 @Setter
+@EqualsAndHashCode(exclude = "user")
 public class StudentDetail {
     @Id
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private int user_id;
+    @MapsId
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id")
     private User user;
     @Column(name = "roll_portal", nullable = false)
