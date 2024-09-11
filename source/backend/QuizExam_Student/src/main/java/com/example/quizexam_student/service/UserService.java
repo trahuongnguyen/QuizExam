@@ -23,7 +23,7 @@ public interface UserService {
     public List<UserResponse> getUserByRolePermission(Role role);
 //    public List<UserResponse> getAllWithoutStudent();
     public UserResponse getUserById(int id);
-    public void changePassword(int id, PasswordRequest passwordRequest);
+    public User changePassword(int id, PasswordRequest passwordRequest);
     public void deleteUserById(int id);
-    public void updateUser(int id, UserRequest userRequest);
+    public User updateUser(int id, UserRequest userRequest);
 }
