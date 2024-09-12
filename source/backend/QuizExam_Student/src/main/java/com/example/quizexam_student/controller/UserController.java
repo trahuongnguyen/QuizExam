@@ -4,6 +4,7 @@ import com.example.quizexam_student.bean.request.PasswordRequest;
 import com.example.quizexam_student.bean.request.UserRequest;
 import com.example.quizexam_student.bean.response.EmpExcelExporter;
 import com.example.quizexam_student.bean.response.EmpPDFExporter;
+import com.example.quizexam_student.bean.response.RegisterResponse;
 import com.example.quizexam_student.bean.response.UserResponse;
 import com.example.quizexam_student.entity.Role;
 import com.example.quizexam_student.entity.User;
@@ -35,18 +36,18 @@ import java.util.List;
 @RequiredArgsConstructor
 @CrossOrigin(origins = "http://localhost:4200")
 @Validated
+@PreAuthorize("hasAnyRole('ADMIN','DIRECTOR')")
 public class UserController {
     private final UserService userService;
     private final RoleService roleService;
     private final ExportService exportService;
 
-    @PreAuthorize("hasAnyRole('ADMIN','DIRECTOR','SRO')")
     @GetMapping("")
     public List<UserResponse> getAll(){
         String email = ((org.springframework.security.core.userdetails.User) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
         Role role = userService.findUserByEmail(email).getRole();
         System.out.println(role);
-        List<Role> roles = roleService.findAllByPermission(role.getId());
+        List<Role> roles = roleService.findAllByPermissionToEmployee(role.getId());
         if(roles!=null){
             List<UserResponse> users = new ArrayList<>();
             roles.forEach(role1 -> {
@@ -54,70 +55,50 @@ public class UserController {
                 users.addAll(userService.getUserByRolePermission(role1));
             });
             if (users.isEmpty()){
-                if (role.getName().equals("SRO")){
-                    throw new EmptyException("student", "Student List is null");
-                } else {
-                    throw new EmptyException("employee", "Employee List is empty");
-                }
+                throw new EmptyException("employee", "Employee List is empty");
             }
             return users;
         }
         return null;
     }
 
-    @GetMapping("/profile")
-    public UserResponse getDetail(){
+    @GetMapping("/employee")
+    public List<Role> getRolePermissionToEmployees() {
         String email = ((org.springframework.security.core.userdetails.User) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
-        return UserMapper.convertToResponse(userService.findUserByEmail(email));
+        Role role = userService.findUserByEmail(email).getRole();
+        List<Role> roles = roleService.findAllByPermissionToEmployee(role.getId());
+        return roles;
     }
 
+    @PostMapping("")
+    public ResponseEntity<RegisterResponse> addEmployee(@RequestBody @Valid UserRequest userRequest) {
+        userService.saveUser(userRequest);
+        return ResponseEntity.ok(new RegisterResponse(userRequest.getEmail(), "Employee created successfully"));
+    }
 
-    @GetMapping("/remove/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<String> remove(@PathVariable int id){
         userService.deleteUserById(id);
         return new ResponseEntity<>("User deleted successfully", HttpStatus.OK);
     }
 
-    @PreAuthorize("hasRole('ADMIN') or hasRole('DIRECTOR') or hasRole('SRO') or hasRole('TEACHER')")
-    @PostMapping("/update/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<User> updateUser(@PathVariable int id, @RequestBody @Valid UserRequest userRequest) {
         return ResponseEntity.ok(userService.updateUser(id, userRequest));
     }
 
-    @PreAuthorize("hasRole('ADMIN') or hasRole('DIRECTOR') or hasRole('SRO')  or hasRole('TEACHER') or hasRole('STUDENT')")
-    @PostMapping("/changePassword/{id}")
-    public ResponseEntity<User> updateProfile(@PathVariable int id, @RequestBody @Valid PasswordRequest passwordRequest) {
-        return ResponseEntity.ok(userService.changePassword(id, passwordRequest));
-    }
-
-    @PreAuthorize("hasRole('ADMIN') or hasRole('DIRECTOR') or hasRole('SRO')")
     @GetMapping("/export/excel")
     public ResponseEntity<String> exportToExcel(HttpServletResponse response) throws IOException {
         exportService.export(response, "user", "xlsx");
-        String email = ((org.springframework.security.core.userdetails.User) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
-        Role role = userService.findUserByEmail(email).getRole();
-        List<Role> roles = roleService.findAllByPermission(role.getId());
-        List<UserResponse> users = new ArrayList<>();
-        roles.forEach(role1 -> {
-            users.addAll(userService.getUserByRolePermission(role1));
-        });
-        EmpExcelExporter excelExporter = new EmpExcelExporter(users);
+        EmpExcelExporter excelExporter = new EmpExcelExporter(getAll());
         excelExporter.export(response);
         return new ResponseEntity<>("Export To Excel Successfully", HttpStatus.OK);
     }
 
-    @PreAuthorize("hasRole('ADMIN') or hasRole('DIRECTOR') or hasRole('SRO')")
     @GetMapping(value = "/export/pdf", produces = MediaType.APPLICATION_PDF_VALUE)
     public ResponseEntity<String> exportToPDF(HttpServletResponse response) throws IOException {
         exportService.export(response, "user", "pdf");
-        String email = ((org.springframework.security.core.userdetails.User) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
-        Role role = userService.findUserByEmail(email).getRole();
-        List<Role> roles = roleService.findAllByPermission(role.getId());
-        List<UserResponse> users = new ArrayList<>();
-        roles.forEach(role1 -> {
-            users.addAll(userService.getUserByRolePermission(role1));
-        });
-        EmpPDFExporter userPDFExporter = new EmpPDFExporter(users);
+        EmpPDFExporter userPDFExporter = new EmpPDFExporter(getAll());
         userPDFExporter.export(response);
         return new ResponseEntity<>("Export To PDF Successfully", HttpStatus.OK);
     }

@@ -30,7 +30,7 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
-    public List<Role> findAllByPermission(int id) {
+    public List<Role> findAllByPermissionToEmployee(int id) {
         Role role = findById(id);
         List<Role> roles = roleRepository.findAll();
         roles.removeIf(x->x.getName().equals("ADMIN"));

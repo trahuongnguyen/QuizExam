@@ -10,5 +10,5 @@ public interface RoleService {
     Role findByRoleName(String roleName);
     Role findById(int id);
     List<Role> findAll();
-    List<Role> findAllByPermission(int id);
+    List<Role> findAllByPermissionToEmployee(int id);
 }

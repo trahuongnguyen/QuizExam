@@ -1,37 +1,51 @@
 package com.example.quizexam_student.controller;
 
+import com.example.quizexam_student.bean.request.StudentRequest;
 import com.example.quizexam_student.bean.request.UpdateClassRequest;
 import com.example.quizexam_student.bean.request.UserAndStudentRequest;
 import com.example.quizexam_student.bean.request.UserRequest;
+import com.example.quizexam_student.bean.response.RegisterResponse;
+import com.example.quizexam_student.bean.response.StudentResponse;
 import com.example.quizexam_student.entity.StudentDetail;
 import com.example.quizexam_student.service.StudentService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/studentManagement")
 @RequiredArgsConstructor
 @CrossOrigin(origins = "http://localhost:4200")
 @Validated
+@PreAuthorize("hasAnyRole('ADMIN', 'SRO')")
 public class StudentController {
     private final StudentService studentService;
 
-    @PostMapping
-    public ResponseEntity<StudentDetail> addStudent(@RequestBody @Valid UserAndStudentRequest request) {
-        UserRequest user = request.getUser();
-        StudentDetail studentDetail = request.getStudentDetail();
-        StudentDetail savedStudent = studentService.addStudent(user, studentDetail);
-        return ResponseEntity.ok(savedStudent);
+    @GetMapping("")
+    public List<StudentResponse> getAllStudents(){
+        return studentService.getAllStudentsNoneClass();
+    }
+
+    @GetMapping("{classId}")
+    public List<StudentResponse> getAllStudentsByClass(@PathVariable int classId){
+        return studentService.getAllStudentsByClass(classId);
+    }
+
+    @PostMapping("")
+    public ResponseEntity<RegisterResponse> addStudent(@RequestBody @Valid StudentRequest studentRequest) {
+        studentService.addStudent(studentRequest);
+        return ResponseEntity.ok(new RegisterResponse(studentRequest.getUserRequest().getEmail(), "Student created successfully"));
     }
 
     @PutMapping("/{id}")
-    public StudentDetail updateStudent(@PathVariable int id, @RequestBody @Valid UserAndStudentRequest request) {
-        UserRequest user = request.getUser();
-        StudentDetail studentDetail = request.getStudentDetail();
-        return studentService.updateStudent(user, studentDetail, id);
+    public ResponseEntity<RegisterResponse> updateStudent(@PathVariable int id, @RequestBody @Valid StudentRequest studentRequest) {
+        studentService.updateStudent(studentRequest, id);
+        return ResponseEntity.ok(new RegisterResponse(studentRequest.getUserRequest().getEmail(), "Student updated successfully"));
     }
 
     @PutMapping("/update-class")

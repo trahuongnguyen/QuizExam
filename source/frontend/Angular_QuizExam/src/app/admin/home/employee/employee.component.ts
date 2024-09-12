@@ -25,12 +25,13 @@ export class EmployeeComponent implements OnInit, OnDestroy {
   role: any;
 
   ngOnInit(): void {
+    this.authService.entityExporter = 'user';
     this.http.get<any>(`${this.authService.apiUrl}/user`, this.home.httpOptions).subscribe((data: any) => {
       this.apiData = data;
       this.initializeDataTable();
     });
 
-    this.http.get<any>(`${this.authService.apiUrl}/auth/register`, this.home.httpOptions).subscribe(response=>{
+    this.http.get<any>(`${this.authService.apiUrl}/user/employee`, this.home.httpOptions).subscribe(response=>{
       this.role = response;
     })
   }
@@ -118,7 +119,7 @@ export class EmployeeComponent implements OnInit, OnDestroy {
       gender: this.gender, roleId: this.roleId
     }
 
-    this.http.post(`${this.authService.apiUrl}/auth/register`, employee, {responseType: 'json'}).subscribe(
+    this.http.post(`${this.authService.apiUrl}/user`, employee, this.home.httpOptions).subscribe(
       response => {
         this.toastr.success('Create Successful!', 'Success', {
           timeOut: 2000,
