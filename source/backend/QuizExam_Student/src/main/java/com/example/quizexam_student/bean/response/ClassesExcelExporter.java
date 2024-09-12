@@ -1,31 +1,30 @@
 package com.example.quizexam_student.bean.response;
 
-import com.example.quizexam_student.entity.Subject;
+import com.example.quizexam_student.entity.Classes;
 import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.NoArgsConstructor;
-import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.util.IOUtils;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.time.format.DateTimeFormatter;
-import java.util.Base64;
 import java.util.List;
 
 @NoArgsConstructor
-public class SubjectExcelExporter {
+public class ClassesExcelExporter {
     private XSSFWorkbook workbook;
     private XSSFSheet sheet;
-    private List<Subject> subjects;
+    private List<Classes> classes;
 
-    public SubjectExcelExporter(List<Subject> subjects) {
-        this.subjects = subjects;
+
+    public ClassesExcelExporter(List<Classes> classes) {
+        this.classes = classes;
         workbook = new XSSFWorkbook();
-        sheet = workbook.createSheet("Subjects");
+        sheet = workbook.createSheet("Classes");
     }
 
     private void writeHeaderRow(){
@@ -38,7 +37,7 @@ public class SubjectExcelExporter {
         style.setFont(font);
 
         Cell cell = row.createCell(0);
-        cell.setCellValue("Subject ID");
+        cell.setCellValue("Class ID");
         cell.setCellStyle(style);
 
         cell = row.createCell(1);
@@ -46,57 +45,45 @@ public class SubjectExcelExporter {
         cell.setCellStyle(style);
 
         cell = row.createCell(2);
-        cell.setCellValue("Semeter");
+        cell.setCellValue("Class Day");
         cell.setCellStyle(style);
 
         cell = row.createCell(3);
-        cell.setCellValue("Image");
+        cell.setCellValue("Class Time");
+        cell.setCellStyle(style);
+
+        cell = row.createCell(4);
+        cell.setCellValue("Admission Date");
         cell.setCellStyle(style);
 
     }
-    private void writeDataRow() throws IOException {
+    private void writeDataRow(){
         int rowCount = 1;
-        for (Subject subject : subjects) {
+        for (Classes cls : classes) {
             Row row = sheet.createRow(rowCount++);
 
             Cell cell = row.createCell(0);
-            cell.setCellValue(subject.getId());
+            cell.setCellValue(cls.getId());
             sheet.autoSizeColumn(0);
 
             cell = row.createCell(1);
-            cell.setCellValue(subject.getName());
+            cell.setCellValue(cls.getName());
             sheet.autoSizeColumn(1);
 
             cell = row.createCell(2);
-            cell.setCellValue(subject.getSem().getName());
+            cell.setCellValue(cls.getClassDay());
             sheet.autoSizeColumn(2);
 
             cell = row.createCell(3);
-            cell.setCellValue(subject.getImage());
+            cell.setCellValue(cls.getClassTime());
             sheet.autoSizeColumn(3);
 
-//            if (subject.getImage() != null) {
-//                int pictureIndex = addImageToWorkBook(subject.getImage());
-//                Drawing<?> drawing = sheet.createDrawingPatriarch();
-//
-//                ClientAnchor anchor = workbook.getCreationHelper().createClientAnchor();
-//                anchor.setCol1(3);
-//                anchor.setRow1(rowCount -1);
-//
-//                Picture picture = drawing.createPicture(anchor, pictureIndex);
-//                picture.resize();
-//            }
+            cell = row.createCell(4);
+            cell.setCellValue(cls.getAdmissionDate());
+            sheet.autoSizeColumn(4);
+
         }
     }
-
-//    private int addImageToWorkBook(byte[] imageBytes) throws IOException {
-//        ByteArrayInputStream bis = new ByteArrayInputStream(imageBytes);
-//        byte[] imageInputBytes = IOUtils.toByteArray(bis);
-//        int pictureIndex = workbook.addPicture(imageInputBytes, XSSFWorkbook.PICTURE_TYPE_PNG);
-//        bis.close();
-//        return pictureIndex;
-//    }
-
     public void export(HttpServletResponse response) throws IOException {
         writeHeaderRow();
         writeDataRow();
