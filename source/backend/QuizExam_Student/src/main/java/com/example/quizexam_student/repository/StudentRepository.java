@@ -10,4 +10,12 @@ import org.springframework.stereotype.Repository;
 public interface StudentRepository extends JpaRepository<StudentDetail, Integer> {
     StudentDetail findStudentDetailByUser(User user);
     StudentDetail findByUser(User user);
+
+    boolean existsByRollPortal(String rollPortal);
+
+    boolean existsByRollNumber(String rollNumber);
+
+    boolean existsByRollPortalAndUserNot(String rollPortal, User user);
+
+    boolean existsByRollNumberAndUserNot(String rollNumber, User user);
 }
