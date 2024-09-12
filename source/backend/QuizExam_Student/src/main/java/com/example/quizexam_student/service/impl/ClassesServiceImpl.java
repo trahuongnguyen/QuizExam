@@ -34,7 +34,7 @@ public class ClassesServiceImpl implements ClassesService {
     public Classes updateClass(int id, Classes classInput) {
         Classes classUpdate = classesRepository.findById(id).orElse(null);
         if (Objects.isNull(classUpdate) || classUpdate.getStatus() == 0) {
-            throw new NotFoundException("classNotFound", "Class not found.");
+            throw new NotFoundException("class", "Class not found.");
         }
         if (classesRepository.existsByNameAndIdNot(classInput.getName(), id)) {
             throw new AlreadyExistException("className", "Class Name already exists.");
@@ -47,7 +47,7 @@ public class ClassesServiceImpl implements ClassesService {
     public void deleteClass(int id) {
         Classes classDelete = classesRepository.findById(id).orElse(null);
         if (Objects.isNull(classDelete) || classDelete.getStatus() == 0) {
-            throw new NotFoundException("classNotFound", "Class not found.");
+            throw new NotFoundException("class", "Class not found.");
         }
         classDelete.setStatus(0);
         classesRepository.save(classDelete);

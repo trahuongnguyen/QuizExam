@@ -13,7 +13,7 @@ public interface SubjectService {
     Boolean existSubjectByName(String subjectName);
     List<Subject> findAll();
     Subject findById(int id);
-    void save(SubjectRequest subjectRequest, MultipartFile multipartFile) throws IOException;
+    Subject save(SubjectRequest subjectRequest, MultipartFile multipartFile) throws IOException;
     void deleteById(int id);
-    void update(int id, SubjectRequest subjectRequest, MultipartFile multipartFile) throws IOException;
+    Subject update(int id, SubjectRequest subjectRequest, MultipartFile multipartFile) throws IOException;
 }
