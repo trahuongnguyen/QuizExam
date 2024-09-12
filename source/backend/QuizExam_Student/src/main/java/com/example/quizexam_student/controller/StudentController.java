@@ -1,9 +1,9 @@
 package com.example.quizexam_student.controller;
 
+import com.example.quizexam_student.bean.request.UpdateClassRequest;
 import com.example.quizexam_student.bean.request.UserAndStudentRequest;
 import com.example.quizexam_student.bean.request.UserRequest;
 import com.example.quizexam_student.entity.StudentDetail;
-import com.example.quizexam_student.entity.User;
 import com.example.quizexam_student.service.StudentService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -32,5 +32,10 @@ public class StudentController {
         UserRequest user = request.getUser();
         StudentDetail studentDetail = request.getStudentDetail();
         return studentService.updateStudent(user, studentDetail, id);
+    }
+
+    @PutMapping("/update-class")
+    public void updateClassForStudents(@RequestBody UpdateClassRequest request) {
+        studentService.updateClassForStudents(request.getUserIds(), request.getClassId());
     }
 }
