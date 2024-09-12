@@ -22,7 +22,7 @@ import { SubjectModule } from './subject/subject.module';
     ClassComponent,
     EmployeeComponent,
     ProfileComponent,
-    
+
   ],
   imports: [
     CommonModule,
@@ -31,4 +31,4 @@ import { SubjectModule } from './subject/subject.module';
     SubjectModule
   ]
 })
-export class HomeModule {}
+export class HomeModule { }
