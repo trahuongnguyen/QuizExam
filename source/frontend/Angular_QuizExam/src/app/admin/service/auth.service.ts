@@ -68,9 +68,9 @@ export class AuthService {
     return this.http.get(`${this.apiUrl}/${this.entityExporter}/export/excel`, { headers: headers, responseType: 'blob',});
   }
 
-  // exportDataPDF() {
-  //   const token = this.getToken(); // Lấy token từ AuthService
-  //   const headers = new HttpHeaders().set('Authorization', 'Bearer ' + token);
+  exportDataPDF() {
+    const token = this.getToken(); // Lấy token từ AuthService
+    const headers = new HttpHeaders().set('Authorization', 'Bearer ' + token);
 
     return this.http.get(`${this.apiUrl}/${this.entityExporter}/export/pdf`, { headers: headers, responseType: 'blob',});
   }
