@@ -4,15 +4,13 @@ import com.example.quizexam_student.bean.request.UserRequest;
 import com.example.quizexam_student.entity.*;
 import com.example.quizexam_student.exception.AlreadyExistException;
 import com.example.quizexam_student.exception.NotFoundException;
-import com.example.quizexam_student.repository.RoleRepository;
-import com.example.quizexam_student.repository.StatusRepository;
-import com.example.quizexam_student.repository.StudentRepository;
-import com.example.quizexam_student.repository.UserRepository;
+import com.example.quizexam_student.repository.*;
 import com.example.quizexam_student.service.StudentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Objects;
 
 @Service
@@ -25,6 +23,8 @@ public class StudentServiceImpl implements StudentService {
     private final StudentRepository studentRepository;
 
     private final StatusRepository statusRepository;
+
+    private final ClassesRepository classesRepository;
 
     private final PasswordEncoder passwordEncoder;
 
@@ -79,6 +79,19 @@ public class StudentServiceImpl implements StudentService {
         studentUpdate.setRollNumber(studentInput.getRollNumber());
         studentRepository.save(studentUpdate);
         return null;
+    }
+
+    @Override
+    public void updateClassForStudents(List<Integer> userIds, int classId) {
+        Classes newClass = classesRepository.findById(classId).orElse(null);
+        if (Objects.isNull(newClass)) {
+            throw new NotFoundException("class", "Class not found.");
+        }
+        List<StudentDetail> students = studentRepository.findAllByUserIdIn(userIds);
+        for (StudentDetail student : students) {
+            student.set_class(newClass);
+        }
+        studentRepository.saveAll(students);
     }
 
     public User addUser(UserRequest userRequest) {
