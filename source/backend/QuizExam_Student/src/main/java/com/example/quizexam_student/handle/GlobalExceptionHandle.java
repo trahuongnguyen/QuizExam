@@ -6,14 +6,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @RestControllerAdvice
 public class GlobalExceptionHandle {
@@ -60,6 +57,12 @@ public class GlobalExceptionHandle {
     @ExceptionHandler(AlreadyExistException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleAlreadyExistException(AlreadyExistException e) {
+        return new ErrorResponse(HttpStatus.BAD_REQUEST, e.getKey(), e.getMessage());
+    }
+
+    @ExceptionHandler(AuthenticatedException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public ErrorResponse handleAuthenticationCredentialsNotFoundException(AuthenticatedException e) {
         return new ErrorResponse(HttpStatus.BAD_REQUEST, e.getKey(), e.getMessage());
     }
 }

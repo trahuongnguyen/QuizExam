@@ -1,5 +1,7 @@
 package com.example.quizexam_student.mapper;
 
+import com.example.quizexam_student.bean.request.UserRequest;
+import com.example.quizexam_student.bean.response.StudentResponse;
 import com.example.quizexam_student.bean.response.UserResponse;
 import com.example.quizexam_student.entity.StudentDetail;
 import com.example.quizexam_student.entity.User;
@@ -26,15 +28,14 @@ public class UserMapper {
         return userResponse;
     }
 
-    public static UserResponse convertStudentDetailToStudentResponse(UserResponse userResponse, StudentDetail studentDetail){
-        if (studentDetail == null) {
-            return userResponse;
-        }
-        userResponse.setRollPortal(studentDetail.getRollPortal());
-        userResponse.setRollNumber(studentDetail.getRollNumber());
-        userResponse.setStatus(studentDetail.getStatus());
-        userResponse.set_class(studentDetail.get_class());
-        userResponse.setMarks(studentDetail.getMarks().stream().toList());
-        return userResponse;
+    public static User convertFromRequest(UserRequest userRequest){
+        User user = new User();
+        user.setEmail(userRequest.getEmail());
+        user.setDob(userRequest.getDob());
+        user.setGender(userRequest.getGender());
+        user.setFullName(userRequest.getFullName());
+        user.setAddress(userRequest.getAddress());
+        user.setPhoneNumber(userRequest.getPhoneNumber());
+        return user;
     }
 }

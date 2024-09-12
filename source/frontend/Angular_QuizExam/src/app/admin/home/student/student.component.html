@@ -1,12 +1,13 @@
 <div class="content-wrapper">
-    <h4>Student (No Class)</h4>
+    <h4 *ngIf="_classId==0">Student (No Class)</h4>
+    <h4 *ngIf="_classId!=0">{{class}}/Student</h4>
     <hr class="line">
 
     <!-- Bottom Actions (Create and Export) -->
     <div class="bottom-actions">
         <div>
             <a class="btn btn-primary button create">Create</a>
-            <a class="btn btn-primary button move" style="margin-left: 5px;">Move<span class="mdi mdi-arrow-right-bold"
+            <a *ngIf="_classId==0" (click)="showMovePopup()" class="btn btn-primary button move" style="margin-left: 5px;">Move<span class="mdi mdi-arrow-right-bold"
                     style="padding-left: 4px;"></span></a>
         </div>
         <div>
@@ -45,46 +46,46 @@
                     <div class="form-column">
                         <div class="form-group">
                             <label for="fullName" class="text-popup">Full Name:</label>
-                            <input type="text" class="form-control" [(ngModel)]="user.fullName" name="user.fullName"
+                            <input type="text" class="form-control" [(ngModel)]="stdResponse.userResponse.fullName" name="stdResponse.userResponse.fullName"
                                 placeholder="Enter Full Name">
                         </div>
                         <div class="form-group">
                             <label for="email" class="text-popup">Email:</label>
-                            <input type="text" class="form-control" [(ngModel)]="user.email" name="user.email"
+                            <input type="text" class="form-control" [(ngModel)]="stdResponse.userResponse.email" name="stdResponse.userResponse.email"
                                 placeholder="Enter Email">
                         </div>
                         <div class="form-group">
                             <label for="dob" class="text-popup">DOB:</label>
-                            <input type="date" class="form-control" [(ngModel)]="user.dob" name="user.dob">
+                            <input type="date" class="form-control" [(ngModel)]="stdResponse.userResponse.dob" name="stdResponse.userResponse.dob">
                         </div>
                         <div class="form-group">
                             <label for="phoneNumber" class="text-popup">Phone Number:</label>
-                            <input type="text" class="form-control" [(ngModel)]="user.phoneNumber"
-                                name="user.phoneNumber" placeholder="Enter Phone Number">
+                            <input type="text" class="form-control" [(ngModel)]="stdResponse.userResponse.phoneNumber"
+                                name="stdResponse.userResponse.phoneNumber" placeholder="Enter Phone Number">
                         </div>
                     </div>
                     <div class="form-column">
                         <div class="form-group">
                             <label for="address" class="text-popup">Address:</label>
-                            <input type="text" class="form-control" [(ngModel)]="user.address" name="user.address"
+                            <input type="text" class="form-control" [(ngModel)]="stdResponse.userResponse.address" name="stdResponse.userResponse.address"
                                 placeholder="Enter Address">
                         </div>
                         <div class="form-group">
                             <label for="gender" class="text-popup">Gender:</label>
-                            <select class="form-control" [(ngModel)]="user.gender" name="user.gender">
+                            <select class="form-control" [(ngModel)]="stdResponse.userResponse.gender" name="stdResponse.userResponse.gender">
                                 <option value="1">Male</option>
-                                <option value="2">Female</option>
+                                <option value="0">Female</option>
                             </select>
                         </div>
                         <div class="form-group">
                             <label for="rollNumber" class="text-popup">Roll Number:</label>
-                            <input type="text" class="form-control" [(ngModel)]="studentDetail.rollNumber"
-                                name="studentDetail.rollNumber" placeholder="Enter Roll Number">
+                            <input type="text" class="form-control" [(ngModel)]="stdResponse.rollNumber"
+                                name="stdRequest.rollNumber" placeholder="Enter Roll Number">
                         </div>
                         <div class="form-group">
                             <label for="rollPortal" class="text-popup">Roll Portal:</label>
-                            <input type="text" class="form-control" [(ngModel)]="studentDetail.rollPortal"
-                                name="studentDetail.rollPortal" placeholder="Enter Roll Portal">
+                            <input type="text" class="form-control" [(ngModel)]="stdResponse.rollPortal"
+                                name="stdRequest.rollPortal" placeholder="Enter Roll Portal">
                         </div>
                     </div>
                 </div>
@@ -106,46 +107,46 @@
                     <div class="form-column">
                         <div class="form-group">
                             <label for="fullName" class="text-popup">Full Name:</label>
-                            <input type="text" class="form-control" [(ngModel)]="user.fullName" name="user.fullName"
+                            <input type="text" class="form-control" [(ngModel)]="stdRequest.userRequest.fullName" name="stdRequest.userRequest.fullName"
                                 placeholder="Enter Full Name">
                         </div>
                         <div class="form-group">
                             <label for="email" class="text-popup">Email:</label>
-                            <input type="text" class="form-control" [(ngModel)]="user.email" name="user.email"
+                            <input type="text" class="form-control" [(ngModel)]="stdRequest.userRequest.email" name="stdRequest.userRequest.email"
                                 placeholder="Enter Email">
                         </div>
                         <div class="form-group">
                             <label for="dob" class="text-popup">DOB:</label>
-                            <input type="date" class="form-control" [(ngModel)]="user.dob" name="user.dob">
+                            <input type="date" class="form-control" [(ngModel)]="stdRequest.userRequest.dob" name="stdRequest.userRequest.dob">
                         </div>
                         <div class="form-group">
                             <label for="phoneNumber" class="text-popup">Phone Number:</label>
-                            <input type="text" class="form-control" [(ngModel)]="user.phoneNumber"
-                                name="user.phoneNumber" placeholder="Enter Phone Number">
+                            <input type="text" class="form-control" [(ngModel)]="stdRequest.userRequest.phoneNumber"
+                                name="stdRequest.userRequest.phoneNumber" placeholder="Enter Phone Number">
                         </div>
                     </div>
                     <div class="form-column">
                         <div class="form-group">
                             <label for="address" class="text-popup">Address:</label>
-                            <input type="text" class="form-control" [(ngModel)]="user.address" name="user.address"
+                            <input type="text" class="form-control" [(ngModel)]="stdRequest.userRequest.address" name="stdRequest.userRequest.address"
                                 placeholder="Enter Address">
                         </div>
                         <div class="form-group">
                             <label for="gender" class="text-popup">Gender:</label>
-                            <select class="form-control" [(ngModel)]="user.gender" name="user.gender">
-                                <option value="1">Male</option>
-                                <option value="2">Female</option>
+                            <select class="form-control" [(ngModel)]="stdRequest.userRequest.gender" name="stdRequest.userRequest.gender">
+                                <option value=1>Male</option>
+                                <option value=2>Female</option>
                             </select>
                         </div>
                         <div class="form-group">
                             <label for="rollNumber" class="text-popup">Roll Number:</label>
-                            <input type="text" class="form-control" [(ngModel)]="studentDetail.rollNumber"
-                                name="studentDetail.rollNumber" placeholder="Enter Roll Number">
+                            <input type="text" class="form-control" [(ngModel)]="stdRequest.rollNumber"
+                                name="stdRequest.rollNumber" placeholder="Enter Roll Number">
                         </div>
                         <div class="form-group">
                             <label for="rollPortal" class="text-popup">Roll Portal:</label>
-                            <input type="text" class="form-control" [(ngModel)]="studentDetail.rollPortal"
-                                name="studentDetail.rollPortal" placeholder="Enter Roll Portal">
+                            <input type="text" class="form-control" [(ngModel)]="stdRequest.rollPortal"
+                                name="stdRequest.rollPortal" placeholder="Enter Roll Portal">
                         </div>
                     </div>
                 </div>
@@ -159,21 +160,21 @@
     <div class="modal-content" (click)="$event.stopPropagation()">
         <div class="modal-header">
             <span>Move Student to Class</span>
-            <span class="close-icon" (click)="closePopup()">&times;</span>
+            <span class="close-icon" (click)="closeMove()">&times;</span>
         </div>
         <div class="modal-body">
             <form method="post" (ngSubmit)="moveStudent()" class="form-create">
                 <div class="form-group">
-                    <label for="roleId" class="text-popup">Role:</label>
+                    <label for="roleId" class="text-popup">Class:</label>
                     <!-- [(ngModel)]="roleId" name="roleId" -->
-                    <select class="form-control">
-                        <option value=0>C2206I</option>
-                        <option value=1>C2208G</option>
-                        <option value=2 selected>C2209I</option>
-                        <!-- <option [value]="data.roleId" selected *ngFor="let data of role">{{data.name}}</option> -->
+                    <select class="form-control" [(ngModel)]="classId" name="classId">
+                        <!-- <option value=1>C2206I</option>
+                        <option value=2>C2208G</option>
+                        <option value=3 selected>C2209I</option> -->
+                        <option [value]="data.id" *ngFor="let data of classes">{{data.name}}</option>
                     </select>
                 </div>
-                <button type="submit" class="btn btn-primary button">Move</button>
+                <button [disabled]="userIds.length==0" type="submit" class="btn btn-primary button">Move</button>
             </form>
         </div>
     </div>
