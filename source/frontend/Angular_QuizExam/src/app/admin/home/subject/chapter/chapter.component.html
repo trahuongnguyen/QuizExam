@@ -1,1 +1,68 @@
-<p>chapter works!</p>
+<div class="content-wrapper">
+    <h4>Sem 1 / HTML/CSS/JS</h4>
+    <hr class="line">
+    <div class="d-flex">
+        <div class="chapter">
+            <!-- Bottom Actions  -->
+            <div class="bottom-actions m-2">
+                <div class="search-container d-flex">
+                    <input type="text" class="form-control" placeholder="Search">
+                    <!-- <i class="fa-solid fa-magnifying-glass"></i> -->
+                    <span class="input-group-text"><i class="fa-solid fa-magnifying-glass"></i></span>
+                </div>
+            </div>
+            <div class="m-2 mt-4">
+                <table class="table" id="example">
+                    <thead>
+                        <tr>
+                            <th>STT</th>
+                            <th>Chapter</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+                <div class=" collapse add-chapter mt-5" id="addChapter">
+                    <div class="add">
+                        <div class="row mb-3 align-items-center ">
+                            <label for="subject" class="col-sm-2 col-form-label">Subject:</label>
+                            <div class="col-sm-10">
+                                <select id="subject" class="form-select">
+                                    <option selected>A</option>
+                                    <option selected>B</option>
+                                    <option selected>C</option>
+                                    <!-- Add more options as needed -->
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3 align-items-center">
+                            <label for="chapter" class="col-sm-2 col-form-label">Chapter New:</label>
+                            <div class="col-sm-10">
+                                <input type="text" id="chapter" class="form-control" value="Value">
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-sm-10 offset-sm-5">
+                                <button class="btn btn-danger me-2">Save</button>
+                                <button class="btn cancel-btn">Cancel</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="btn-chapter">
+            <div class="btn-add">
+                <i data-bs-toggle="collapse" href="#addChapter" role="button" aria-expanded="false"
+                    aria-controls="collapseExample" class="fa-solid fa-circle-plus"></i>
+            </div>
+            <div class="btn-list">
+                <i class="fa-solid fa-arrow-left"></i>
+            </div>
+        </div>
+    </div>
+
+</div>

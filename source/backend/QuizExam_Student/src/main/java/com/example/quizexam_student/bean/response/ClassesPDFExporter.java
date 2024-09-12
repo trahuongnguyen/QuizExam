@@ -1,9 +1,8 @@
 package com.example.quizexam_student.bean.response;
 
-import com.example.quizexam_student.entity.Subject;
+import com.example.quizexam_student.entity.Classes;
 import com.lowagie.text.*;
 import com.lowagie.text.Font;
-import com.lowagie.text.Image;
 import com.lowagie.text.pdf.PdfPCell;
 import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfWriter;
@@ -11,14 +10,14 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.awt.*;
 import java.io.IOException;
-import java.util.Base64;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-public class SubjectPDFExporter {
-    private List<Subject> subjects;
+public class ClassesPDFExporter {
+    private List<Classes> classes;
 
-    public SubjectPDFExporter(List<Subject> subjects) {
-        this.subjects = subjects;
+    public ClassesPDFExporter(List<Classes> classes) {
+        this.classes = classes;
     }
 
     private void writeTableHeader(PdfPTable table){
@@ -29,25 +28,29 @@ public class SubjectPDFExporter {
         com.lowagie.text.Font font = FontFactory.getFont(FontFactory.HELVETICA);
         font.setColor(Color.WHITE);
 
-        cell.setPhrase(new Phrase("Subject ID", font));
+        cell.setPhrase(new Phrase("Class ID", font));
         table.addCell(cell);
 
-        cell.setPhrase(new Phrase("Subject Name", font));
+        cell.setPhrase(new Phrase("Name", font));
         table.addCell(cell);
 
-        cell.setPhrase(new Phrase("Image", font));
+        cell.setPhrase(new Phrase("Class Day", font));
         table.addCell(cell);
 
-        cell.setPhrase(new Phrase("Semeter", font));
+        cell.setPhrase(new Phrase("Class Time", font));
+        table.addCell(cell);
+
+        cell.setPhrase(new Phrase("Admission Date", font));
         table.addCell(cell);
 
     }
-    private void writeTableData(PdfPTable table) throws IOException {
-        for (Subject subject : subjects) {
-            table.addCell(String.valueOf(subject.getId()));
-            table.addCell(String.valueOf(subject.getName()));
-            table.addCell(String.valueOf(subject.getImage()));
-            table.addCell(String.valueOf(subject.getSem().getName()));
+    private void writeTableData(PdfPTable table){
+        for (Classes cls : classes) {
+            table.addCell(String.valueOf(cls.getId()));
+            table.addCell(String.valueOf(cls.getName()));
+            table.addCell(String.valueOf(cls.getClassDay()));
+            table.addCell(String.valueOf(cls.getClassTime()));
+            table.addCell(String.valueOf(cls.getAdmissionDate().format(DateTimeFormatter.ISO_LOCAL_DATE)));
         }
     }
     public void export(HttpServletResponse response) throws IOException {
@@ -56,13 +59,13 @@ public class SubjectPDFExporter {
         document.open();
         Font font = FontFactory.getFont(FontFactory.HELVETICA_BOLD);
         font.setColor(Color.BLUE);
-        Paragraph title = new Paragraph("List of all subject", font);
+        Paragraph title = new Paragraph("List of all users", font);
         title.setAlignment(Paragraph.ALIGN_CENTER);
         document.add(title);
-        PdfPTable table = new PdfPTable(4);
+        PdfPTable table = new PdfPTable(5);
         table.setWidthPercentage(100);
         table.setSpacingBefore(15);
-        table.setWidths(new float[] {1.5f, 3.5f, 3.5f, 1.5f});
+        table.setWidths(new float[] {1.5f, 3.5f, 3.5f, 3.0f, 3.0f});
         writeTableHeader(table);
         writeTableData(table);
         document.add(table);
