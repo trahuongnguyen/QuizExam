@@ -2,8 +2,15 @@
     <h4>Subject</h4>
     <hr class="line">
 
+    
     <!-- Bottom Actions (Create and Export) -->
     <div class="bottom-actions">
+        <div class="sem-container">
+            <a class="btn btn-outline-secondary" [ngClass]="{'active': selectedSem === 1}" (click)="selectSem(1)">Sem 1</a>
+            <a class="btn btn-outline-secondary" [ngClass]="{'active': selectedSem === 2}" (click)="selectSem(2)">Sem 2</a>
+            <a class="btn btn-outline-secondary" [ngClass]="{'active': selectedSem === 3}" (click)="selectSem(3)">Sem 3</a>
+            <a class="btn btn-outline-secondary" [ngClass]="{'active': selectedSem === 4}" (click)="selectSem(4)">Sem 4</a>
+          </div>
         <div>
             <a class="btn btn-primary button create">Create</a>
         </div>
@@ -30,18 +37,19 @@
 <div *ngIf="isPopupCreate" class="modal-backdrop" (click)="closePopup($event)">
     <div class="modal-content" (click)="$event.stopPropagation()">
         <div class="modal-header">
-            <span>Create Student</span>
+            <span>Create Subject</span>
             <span class="close-icon" (click)="closePopup()">&times;</span>
         </div>
         <div class="modal-body">
             <form method="post" (ngSubmit)="createSubject()" class="form-create">
                 <div class="form-group">
-                    <label for="sem" class="text-popup">SEM:</label>
-                    <select class="form-control" [(ngModel)]="sem" name="sem">
-                        <option value="1">Sem 1</option>
-                        <option value="2">Sem 2</option>
-                        <option value="3">Sem 3</option>
-                        <option value="4">Sem 4</option>
+                    <label for="semId" class="text-popup">SEM:</label>
+                    <select class="form-control" [(ngModel)]="semId" name="semId">
+                        <!-- <option value=1>Sem 1</option>
+                        <option value=2>Sem 2</option>
+                        <option value=3>Sem 3</option>
+                        <option value=4>Sem 4</option> -->
+                        <option [value]="data.id" *ngFor="let data of sem">{{data.name}}</option>
                     </select>
                 </div>
                 <div class="form-group">
@@ -53,7 +61,40 @@
                     <label for="img" class="text-popup">Image:</label>
                     <input type="file" class="form-control" [(ngModel)]="img" name="img">
                 </div>
-                
+
+                <button type="submit" class="btn btn-primary button">Save</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div *ngIf="isPopupUpdate" class="modal-backdrop" (click)="closePopup($event)">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+            <span>Update Subject</span>
+            <span class="close-icon" (click)="closePopup()">&times;</span>
+        </div>
+        <div class="modal-body">
+            <form method="post" (ngSubmit)="updateSubject()" class="form-create">
+                <div class="form-group">
+                    <label for="sem" class="text-popup">SEM:</label>
+                    <select class="form-control" [(ngModel)]="subjectDetail.sem.id" name="sem">
+                        <option value=1>Sem 1</option>
+                        <option value=2>Sem 2</option>
+                        <option value=3>Sem 3</option>
+                        <option value=4>Sem 4</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="name" class="text-popup">Name:</label>
+                    <input type="text" class="form-control" [(ngModel)]="subjectDetail.name" name="name"
+                        placeholder="Enter Subject Name">
+                </div>
+                <div class="form-group">
+                    <label for="img" class="text-popup">Image:</label>
+                    <input type="file" class="form-control" [(ngModel)]="subjectDetail.img" name="img">
+                </div>
+
                 <button type="submit" class="btn btn-primary button">Save</button>
             </form>
         </div>

@@ -90,7 +90,7 @@ public class UserController {
         return ResponseEntity.ok(userService.changePassword(id, passwordRequest));
     }
 
-    @PreAuthorize("hasRole('ADMIN') or hasRole('DIRECTOR') or hasRole('SRO')")
+    @PreAuthorize("hasAnyRole('ADMIN') or hasRole('DIRECTOR') or hasRole('SRO')")
     @GetMapping("/export/excel")
     public ResponseEntity<String> exportToExcel(HttpServletResponse response) throws IOException {
         exportService.export(response, "user", "xlsx");
@@ -106,7 +106,7 @@ public class UserController {
         return new ResponseEntity<>("Export To Excel Successfully", HttpStatus.OK);
     }
 
-    @PreAuthorize("hasRole('ADMIN') or hasRole('DIRECTOR') or hasRole('SRO')")
+    @PreAuthorize("hasAnyRole('ADMIN') or hasRole('DIRECTOR') or hasRole('SRO')")
     @GetMapping(value = "/export/pdf", produces = MediaType.APPLICATION_PDF_VALUE)
     public ResponseEntity<String> exportToPDF(HttpServletResponse response) throws IOException {
         exportService.export(response, "user", "pdf");

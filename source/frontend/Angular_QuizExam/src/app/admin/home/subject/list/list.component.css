@@ -10,6 +10,23 @@
     margin-top: 0;
 }
 
+.sem-container {
+    display: flex;
+    gap: 10px;
+}
+
+.sem-container .btn {
+    border-radius: 15px;
+    border: none;
+    color: black;
+}
+
+.sem-container .btn.active {
+    background-color: #e0e0e0;
+    /* Màu nền khi được chọn */
+    font-weight: bold;
+}
+
 .bottom-actions {
     display: flex;
     justify-content: space-between;
