@@ -8,10 +8,7 @@
     justify-content: space-between;
     align-items: center;
     border-bottom: 1px solid var(--color-switch);
-    position: fixed;
-    top: 0;
-    right: 0;
-    left: 200px;
+    margin-left: 200px;
     z-index: 1000;
     height: 80px;
 }
@@ -95,9 +92,8 @@
     background-color: var(--color-background);
     padding: 21px 40px;
     border-top: 1px solid var(--color-switch);
-    position: absolute;
-    right: 0;
-    left: 200px;
+    position: static;
+    margin-left: 200px;
     z-index: 1000;
     height: 50px;
     display: flex;
