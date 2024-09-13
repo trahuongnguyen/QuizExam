@@ -48,9 +48,14 @@ public class SubjectController {
         return  ResponseEntity.ok(subjectService.save(subjectRequest));
     }
 
-    @GetMapping("/{id}")
+    /*@GetMapping("/{id}")
     public Subject updateSubject(@PathVariable int id){
         return subjectService.findById(id);
+    }*/
+
+    @GetMapping("/{id}")
+    public List<Subject> getAllSubjects(@PathVariable Integer id){
+        return subjectService.getAllSubjectBySem(id);
     }
 
     @PutMapping ("/{id}")
@@ -62,9 +67,8 @@ public class SubjectController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteSubject(@PathVariable int id){
+    public void deleteSubject(@PathVariable int id){
         subjectService.deleteById(id);
-        return new ResponseEntity<>("Delete subject successfully", HttpStatus.OK);
     }
 
     @GetMapping("/export/excel")

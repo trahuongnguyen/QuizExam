@@ -4,6 +4,7 @@ import { AuthService } from '../../../service/auth.service';
 import { ToastrService } from 'ngx-toastr';
 import { Router } from '@angular/router';
 import { HomeComponent } from '../../home.component';
+import { response } from 'express';
 declare var $: any;
 
 @Component({
@@ -23,8 +24,11 @@ export class ListComponent implements OnInit, OnDestroy {
 
   subjectId: any;
   sem: any;
+  selectedSem: number = 1; // Default chọn Sem 1
+
   ngOnInit(): void {
-    this.http.get<any>(`${this.authService.apiUrl}/subject`, this.home.httpOptions).subscribe((data: any) => {
+    this.authService.entityExporter = 'subject';
+    this.http.get<any>(`${this.authService.apiUrl}/subject/${this.selectedSem}`, this.home.httpOptions).subscribe((data: any) => {
       this.apiData = data;
       this.initializeDataTable();
     });
@@ -59,7 +63,7 @@ export class ListComponent implements OnInit, OnDestroy {
           render: function (data: any, type: any, row: any) {
             return `<span class="mdi mdi-information-outline icon-action info-icon" data-id="${row.id}"></span>
             <span class="mdi mdi-pencil icon-action edit-icon" data-id="${row.id}"></span>
-            <span class="mdi mdi-delete-forever icon-action delete-icon data-id="${row.id}""></span>`;
+            <span class="mdi mdi-delete-forever icon-action delete-icon" data-id="${row.id}"></span>`;
           }
         }
 
@@ -101,10 +105,25 @@ export class ListComponent implements OnInit, OnDestroy {
     });
   }
 
-  selectedSem: number = 1; // Default chọn Sem 1
+  updateDataTable(newData: any[]): void {
+    if (this.dataTable) {
+      this.dataTable.clear(); // Xóa dữ liệu hiện tại
+      this.dataTable.rows.add(newData); // Thêm dữ liệu mới
+      this.dataTable.draw(); // Vẽ lại bảng
+    }
+  }
+
+  reloadTable(id: number): void {
+    this.http.get<any>(`${this.authService.apiUrl}/subject/${id}`, this.home.httpOptions).subscribe((data: any) => {
+      this.apiData = data;
+      this.updateDataTable(this.apiData); // Cập nhật bảng với dữ liệu mới
+    });
+  }
+
   selectSem(sem: number): void {
     this.selectedSem = sem;
     // Thực hiện các logic nếu cần thiết khi chọn Sem
+    this.reloadTable(this.selectedSem);
     console.log('Selected Sem:', sem);
   }
 
@@ -125,12 +144,12 @@ export class ListComponent implements OnInit, OnDestroy {
 
   semId: number = 1;
   name: String = '';
-  img: String = '';
+  image: String = '';
 
   createSubject(): void {
     const _subject =
     {
-      semId: this.semId, name: this.name, img: this.img,
+      semId: this.semId, name: this.name, image: this.image,
     }
 
     this.http.post(`${this.authService.apiUrl}/subject/save`, _subject, this.home.httpOptions).subscribe(
@@ -139,7 +158,8 @@ export class ListComponent implements OnInit, OnDestroy {
           timeOut: 2000,
         });
         console.log('Create successfully', response);
-        this.router.navigate(['/admin/home/subject']);
+        this.selectedSem = _subject.semId;
+        this.reloadTable(this.selectedSem);
       },
       error => {
         this.toastr.error('Error', 'Error', {
@@ -153,16 +173,16 @@ export class ListComponent implements OnInit, OnDestroy {
   updateSubject() {
     const _subject =
     {
-      semId: this.semId, name: this.name, img: this.img,
+      semId: this.subjectDetail.sem.id, name: this.subjectDetail.name, image: this.subjectDetail.image,
     }
 
-    this.http.put(`${this.authService.apiUrl}/subject/{id}`, _subject, this.home.httpOptions).subscribe(
+    this.http.put(`${this.authService.apiUrl}/subject/${this.subjectId}`, _subject, this.home.httpOptions).subscribe(
       response => {
         this.toastr.success('Update Successful!', 'Success', {
           timeOut: 2000,
         });
         console.log('Update successfully', response);
-        this.router.navigate(['/admin/home/subject']);
+        this.reloadTable(_subject.semId);
       },
       error => {
         this.toastr.error('Error', 'Error', {
@@ -183,13 +203,49 @@ export class ListComponent implements OnInit, OnDestroy {
           timeOut: 2000,
         });
         console.log(`Class with ID ${id} deleted successfully`);
-        this.router.navigate(['/admin/home/subject']);
+        this.reloadTable(id);
       },
       error => {
         this.toastr.error('Error', 'Error', {
           timeOut: 2000,
         });
         console.error('Error deleting item:', error);
+      }
+    );
+  }
+
+  exportExcel() {
+    this.authService.exportDataExcel().subscribe(
+      (response) => {
+        const url = window.URL.createObjectURL(new Blob([response], { type: 'blob' as 'json' }));
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'export_excel.xlsx'; // Thay đổi tên file nếu cần
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+      },
+      (error) => {
+        console.error('Export failed', error);
+      }
+    );
+  }
+
+  exportPDF() {
+    this.authService.exportDataPDF().subscribe(
+      (response) => {
+        const url = window.URL.createObjectURL(new Blob([response], { type: 'blob' }));
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'export_pdf.pdf'; // Thay đổi tên file nếu cần
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+      },
+      (error) => {
+        console.error('Export failed', error);
       }
     );
   }

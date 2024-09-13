@@ -13,6 +13,7 @@
 .sem-container {
     display: flex;
     gap: 10px;
+    margin-bottom: 10px;
 }
 
 .sem-container .btn {
@@ -30,7 +31,7 @@
 .bottom-actions {
     display: flex;
     justify-content: space-between;
-    margin-bottom: 15px;
+    margin-bottom: 10px;
 }
 
 .button {

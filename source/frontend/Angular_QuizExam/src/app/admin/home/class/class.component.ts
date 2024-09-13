@@ -23,6 +23,7 @@ export class ClassComponent implements OnInit, OnDestroy {
   classId: any;
 
   ngOnInit(): void {
+    this.authService.entityExporter = 'class';
     this.http.get<any>(`${this.authService.apiUrl}/class`, this.home.httpOptions).subscribe((data: any) => {
       this.apiData = data;
       this.initializeDataTable();
@@ -213,6 +214,42 @@ export class ClassComponent implements OnInit, OnDestroy {
       },
       error => {
         console.error('Error deleting item:', error);
+      }
+    );
+  }
+
+  exportExcel() {
+    this.authService.exportDataExcel().subscribe(
+      (response) => {
+        const url = window.URL.createObjectURL(new Blob([response], { type: 'blob' as 'json' }));
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'export_excel.xlsx'; // Thay đổi tên file nếu cần
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+      },
+      (error) => {
+        console.error('Export failed', error);
+      }
+    );
+  }
+
+  exportPDF() {
+    this.authService.exportDataPDF().subscribe(
+      (response) => {
+        const url = window.URL.createObjectURL(new Blob([response], { type: 'blob' }));
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'export_pdf.pdf'; // Thay đổi tên file nếu cần
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+      },
+      (error) => {
+        console.error('Export failed', error);
       }
     );
   }

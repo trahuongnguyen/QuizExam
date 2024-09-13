@@ -1,6 +1,7 @@
 package com.example.quizexam_student.service;
 
 import com.example.quizexam_student.bean.request.SubjectRequest;
+import com.example.quizexam_student.entity.Sem;
 import com.example.quizexam_student.entity.Subject;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -16,4 +17,6 @@ public interface SubjectService {
     Subject save(SubjectRequest subjectRequest) throws IOException;
     void deleteById(int id);
     Subject update(int id, SubjectRequest subjectRequest) throws IOException;
+
+    List<Subject> getAllSubjectBySem(int id);
 }
