@@ -29,6 +29,10 @@ const routes: Routes = [
         component: StudentComponent
       },
       {
+        path: 'class/:classId',
+        component: StudentComponent,
+      },
+      {
         path: 'profile',
         component: ProfileComponent
       },

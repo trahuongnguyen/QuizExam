@@ -73,6 +73,12 @@ export class ClassComponent implements OnInit, OnDestroy {
         $('.dataTables_filter input[type="search"]').attr('placeholder', 'Search');
 
         // Click vào edit icon sẽ hiện ra popup
+        $('.info-icon').on('click', (event: any) => {
+          const id = $(event.currentTarget).data('id');
+          this.classId = id;
+          this.router.navigate([`/admin/home/class/${id}`])
+        });
+
         $('.edit-icon').on('click', (event: any) => {
           const id = $(event.currentTarget).data('id');
           this.classId = id;

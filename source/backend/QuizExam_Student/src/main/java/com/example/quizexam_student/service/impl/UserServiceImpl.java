@@ -4,7 +4,6 @@ import com.example.quizexam_student.bean.request.PasswordRequest;
 import com.example.quizexam_student.bean.request.UserRequest;
 import com.example.quizexam_student.bean.response.UserResponse;
 import com.example.quizexam_student.entity.Role;
-import com.example.quizexam_student.entity.StudentDetail;
 import com.example.quizexam_student.entity.User;
 import com.example.quizexam_student.exception.EmptyException;
 import com.example.quizexam_student.mapper.*;
@@ -12,9 +11,7 @@ import com.example.quizexam_student.exception.DuplicatedEmailException;
 import com.example.quizexam_student.exception.DuplicatedPhoneException;
 import com.example.quizexam_student.exception.IncorrectEmailOrPassword;
 import com.example.quizexam_student.repository.RoleRepository;
-import com.example.quizexam_student.repository.StudentRepository;
 import com.example.quizexam_student.repository.UserRepository;
-import com.example.quizexam_student.service.RoleService;
 import com.example.quizexam_student.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -28,10 +25,8 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
-    private final StudentRepository studentRepository;
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
-    private final RoleService roleService;
 
     @Override
     public User findUserByEmail(String email) {
@@ -64,24 +59,19 @@ public class UserServiceImpl implements UserService {
             throw new DuplicatedPhoneException("phoneNumber", "Phone number existed already");
         }
         User user = new User();
-        user.setEmail(userRequest.getEmail());
+        user = UserMapper.convertFromRequest(userRequest);
         user.setPassword(passwordEncoder.encode("@1234567"));
-        user.setDob(userRequest.getDob());
-        user.setGender(userRequest.getGender());
-        user.setFullName(userRequest.getFullName());
-        user.setAddress(userRequest.getAddress());
-        user.setPhoneNumber(userRequest.getPhoneNumber());
         Role role = roleRepository.findById(userRequest.getRoleId()).orElse(null);
         user.setRole(role);
         user.setStatus(1);
-        return userRepository.save(user);
+        return userRepository.saveAndFlush(user);
     }
 
     @Override
     public List<UserResponse> getAllUsers() {
         List<UserResponse> userResponses = userRepository.findAll().stream().map(UserMapper::convertToResponse).collect(Collectors.toList());
         if (userResponses.isEmpty()){
-            throw new EmptyException("employee", "Employee List is null");
+            throw new EmptyException("employees", "Employee List is null");
         }
         return userResponses;
     }
@@ -89,32 +79,8 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<UserResponse> getUserByRolePermission(Role role) {
         List<UserResponse> userResponses = userRepository.findByRole(role).stream().map(UserMapper::convertToResponse).collect(Collectors.toList());
-        if (role.getName().equals("STUDENT")){
-            userResponses = userResponses.stream().map(userResponse -> UserMapper.convertStudentDetailToStudentResponse(userResponse, studentRepository.findByUser(userRepository.findById(userResponse.getId()).orElse(null)))).collect(Collectors.toList());
-        }
         return userResponses;
     }
-
-//    @Override
-//    public List<UserResponse> getUserByRolePermission() {
-//        //List<Role> roles = roleService.findAllByPermission()
-//        List<UserResponse> userResponses =  userRepository.findAllByStudentId(roleRepository.findByName("STUDENT").getId())
-//                .stream().map(UserMapper::convertToResponse).collect(Collectors.toList());
-//        if (userResponses.isEmpty()){
-//            throw new EmptyException("Student List is null");
-//        }
-//        return userResponses;
-//    }
-
-//    @Override
-//    public List<UserResponse> getAllWithoutStudent() {
-//        List<UserResponse> userResponses = userRepository.findAllWithoutRole("STUDENT")
-//                .stream().map(UserMapper::convertToResponse).collect(Collectors.toList());
-//        if (userResponses.isEmpty()){
-//            throw new EmptyException("Employee List is null");
-//        }
-//        return userResponses;
-//    }
 
     @Override
     public UserResponse getUserById(int id) {
@@ -150,16 +116,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User updateUser(int id, UserRequest userRequest) {
-        User user = userRepository.findById(id).orElse(null);
+        User user = findById(id);
         if (existUserByPhone(userRequest.getPhoneNumber()) && !userRequest.getPhoneNumber().equals(user.getPhoneNumber())) {
             throw new DuplicatedPhoneException("phoneNumber", "Phone number existed already");
         }
-        user.setDob(userRequest.getDob());
-        user.setGender(userRequest.getGender());
-        user.setAddress(userRequest.getAddress());
-        user.setPhoneNumber(userRequest.getPhoneNumber());
+        user = UserMapper.convertFromRequest(userRequest);
+        user.setId(id);
         return userRepository.save(user);
     }
-
-
 }
