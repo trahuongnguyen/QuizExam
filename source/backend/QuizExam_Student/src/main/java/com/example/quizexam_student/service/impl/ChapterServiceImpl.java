@@ -60,7 +60,7 @@ public class ChapterServiceImpl implements ChapterService {
     @Override
     public Chapter updateChapter(int id, ChapterRequest chapterRequest) {
         Chapter oldChapter = chapterRepository.findById(id).orElseThrow(() -> new NotFoundException("NotFoundChapter", "Chapter not found"));
-        if (ExistChapterName(chapterRequest.getName()) && oldChapter.getName().equals(chapterRequest.getName())) {
+        if (ExistChapterName(chapterRequest.getName()) && !oldChapter.getName().equals(chapterRequest.getName())) {
             throw new AlreadyExistException("ExistChapter", "Chapter name already exists");
         }
         if (!ExistSubjectId(chapterRequest.getSubjectId())) {

@@ -29,7 +29,7 @@ export class ListComponent implements OnInit, OnDestroy {
       this.initializeDataTable();
     });
 
-    this.http.get<any>(`${this.authService.apiUrl}/subject/sem`, this.home.httpOptions).subscribe(response=>{
+    this.http.get<any>(`${this.authService.apiUrl}/subject/sem`, this.home.httpOptions).subscribe(response => {
       this.sem = response;
     })
   }
@@ -78,6 +78,7 @@ export class ListComponent implements OnInit, OnDestroy {
         $('.info-icon').on('click', (event: any) => {
           const id = $(event.currentTarget).data('id');
           this.subjectId = id;
+          this.router.navigate([`/admin/home/subject/${id}`])
         });
 
         $('.create').on('click', () => {

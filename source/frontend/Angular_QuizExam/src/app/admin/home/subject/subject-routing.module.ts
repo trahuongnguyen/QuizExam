@@ -5,29 +5,29 @@ import { ListComponent } from './list/list.component';
 import { ChapterComponent } from './chapter/chapter.component';
 
 const routes: Routes = [
-    {
-        path: '', 
-        component: SubjectComponent,
-        children: [
-          {
-            path: '',
-            component: ListComponent,
-          },
-          // {
-          //   path: '',
-          //   redirectTo: 'subject',
-          //   pathMatch: 'full'
-          // },
-          {
-            path: 'chapter',
-            component: ChapterComponent
-          },
-        ]
-    },
+  {
+    path: '',
+    component: SubjectComponent,
+    children: [
+      {
+        path: '',
+        component: ListComponent,
+      },
+      // {
+      //   path: '',
+      //   redirectTo: 'subject',
+      //   pathMatch: 'full'
+      // },
+      {
+        path: ':subjectId',
+        component: ChapterComponent
+      },
+    ]
+  },
 ];
 
 @NgModule({
-    imports: [RouterModule.forChild(routes)],
-    exports: [RouterModule]
+  imports: [RouterModule.forChild(routes)],
+  exports: [RouterModule]
 })
 export class SubjectRoutingModule { }

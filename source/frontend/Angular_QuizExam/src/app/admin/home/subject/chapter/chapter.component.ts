@@ -2,7 +2,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { AuthService } from '../../../service/auth.service';
 import { ToastrService } from 'ngx-toastr';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { HomeComponent } from '../../home.component';
 declare var $: any;
 
@@ -12,29 +12,50 @@ declare var $: any;
   styleUrl: './chapter.component.css'
 })
 export class ChapterComponent implements OnInit, OnDestroy {
-  constructor(private authService: AuthService, private home: HomeComponent, private http: HttpClient, public toastr: ToastrService, private router: Router) { }
+  constructor(private authService: AuthService, private home: HomeComponent, private http: HttpClient, public toastr: ToastrService, private router: Router, private activatedRoute: ActivatedRoute) { }
 
   dataTable: any;
   apiData: any;
   subjects: any;
   sems: any;
-  
+  _subjectId: any;
+  _subjectName: any;
+  _chapter: any = {
+    id: 0,
+    subject: {
+      id: 1,
+    },
+    name: ''
+  };
+  chapterId: any;
+  semId: number = 1;
+  subjectId: number = 1;
+  name: String = '';
 
   ngOnInit(): void {
-     // trả về trang subject
-     const returnSubject = document.getElementById('returnSubject');
-     if(returnSubject) {
-       returnSubject.addEventListener("click", () => {
+    // trả về trang subject
+    const returnSubject = document.getElementById('returnSubject');
+    if (returnSubject) {
+      returnSubject.addEventListener("click", () => {
         this.router.navigate(['admin/home/subject']);
-         });
-     }
+      });
+    }
 
-    this.http.get<any>(`${this.authService.apiUrl}/chapter`, this.home.httpOptions).subscribe((data: any) => {
-      this.apiData = data;
-      this.initializeDataTable();
-    });
+    this._subjectId = Number(this.activatedRoute.snapshot.params['subjectId']) ?? 0;
+    if (this._subjectId > 0 && !Number.isNaN(this._subjectId)) {
+      this.http.get<any>(`${this.authService.apiUrl}/chapter/${this._subjectId}`, this.home.httpOptions).subscribe((data: any) => {
+        this.apiData = data;
+        this.subjectId = this._subjectId;
+        this.initializeDataTable();
+      });
+    }
     this.http.get<any>(`${this.authService.apiUrl}/subject`, this.home.httpOptions).subscribe(response => {
       this.subjects = response;
+      for (let sub of this.subjects) {
+        if (sub.id == this._subjectId) {
+          this._subjectName = sub.name;
+        }
+      }
     });
     // this.http.get<any>(`${this.authService.apiUrl}/subject/sem`, this.home.httpOptions).subscribe(response=>{
     //   this.sems = response;
@@ -64,7 +85,7 @@ export class ChapterComponent implements OnInit, OnDestroy {
           title: 'Action',
           data: null,
           render: function (data: any, type: any, row: any) {
-            return `<span data-bs-toggle="collapse" href="#addChapter" role="button" aria-expanded="false"
+            return `<span data-bs-toggle="collapse" role="button" aria-expanded="false"
                     aria-controls="collapseExample" class="mdi mdi-pencil icon-action edit-icon" data-id="${row.id}"></span>
             <span class="mdi mdi-delete-forever icon-action delete-icon" data-id="${row.id}"></span>`;
           }
@@ -80,14 +101,21 @@ export class ChapterComponent implements OnInit, OnDestroy {
 
         // Thêm placeholder vào input của DataTables
         $('.dataTables_filter input[type="search"]').attr('placeholder', 'Search');
+        $('.edit-icon').on('click', (event: any) => {
+          this.chapterId = $(event.currentTarget).data('id');
+          this._chapter = this.apiData.find((item: any) => item.id === this.chapterId);
+          $('#addChapter').removeClass('show');
+          $('#updateChapter').addClass('show');
 
-       
+        });
+        $('.btn-add').on('click', (event: any) => {
+          this.subjectId = this._subjectId;
+          this.name = '';
+          $('#updateChapter').removeClass('show');
+        });
       }
     });
   }
-  semId: number=1;
-  subjectId: number = 1;
-  name: String = '';
   createChapter(): void {
     const chapter =
     {
@@ -95,15 +123,54 @@ export class ChapterComponent implements OnInit, OnDestroy {
       subjectId: this.subjectId
     }
 
-    this.http.post(`${this.authService.apiUrl}/chapter/save`, chapter, this.home.httpOptions).subscribe(
+    this.http.post(`${this.authService.apiUrl}/chapter`, chapter, this.home.httpOptions).subscribe(
       response => {
         this.toastr.success('Create new chapter Successful!', 'Success', {
           timeOut: 2000,
         });
-        this.closeform();
         setInterval(function () {
-           window.location.reload();
-        }, 2000);      
+          window.location.reload();
+        }, 2000);
+      },
+      error => {
+        if (error.status === 401) {
+          this.toastr.error('Not found', 'Failed', {
+            timeOut: 2000,
+          });
+        } else {
+          let msg = '';
+          if (error.error.message) {
+            msg = error.error.message;
+          } else {
+            error.error.forEach((err: any) => {
+              msg += ' ' + err.message;
+            })
+          }
+          this.toastr.error(msg, 'Failed', {
+            timeOut: 2000,
+          });
+        }
+        console.log('Error', error);
+      }
+    )
+  }
+
+  updateChapter(): void {
+    const chapter =
+    {
+      name: this._chapter.name,
+      subjectId: this._chapter.subject.id,
+      id: this.chapterId
+    }
+
+    this.http.put(`${this.authService.apiUrl}/chapter/${this.chapterId}`, chapter, this.home.httpOptions).subscribe(
+      response => {
+        this.toastr.success('Create new chapter Successful!', 'Success', {
+          timeOut: 2000,
+        });
+        setInterval(function () {
+          window.location.reload();
+        }, 2000);
       },
       error => {
         if (error.status === 401) {
@@ -129,9 +196,10 @@ export class ChapterComponent implements OnInit, OnDestroy {
   }
 
   closeform() {
-    (document.getElementById('addChapter') as HTMLElement).style.display = 'none';
+    document.getElementById('addChapter')?.classList.remove('show');
+    document.getElementById('updateChapter')?.classList.remove('show');
   }
-  
+
   ngOnDestroy(): void {
     if (this.dataTable) {
       this.dataTable.destroy();

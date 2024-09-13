@@ -18,17 +18,12 @@ import java.util.List;
 public class ChapterController {
     private final ChapterService chapterService;
 
-    @GetMapping("/list/{subjectId}")
+    @GetMapping("/{subjectId}")
     public List<Chapter> getAllChapters(@PathVariable int subjectId) {
         return chapterService.getAllChaptersBySubjectId(subjectId);
     }
 
-    @GetMapping("/{id}")
-    public Chapter getChapterById(@PathVariable int id) {
-        return chapterService.getChapterById(id);
-    }
-
-    @PostMapping("/save")
+    @PostMapping("")
     public ResponseEntity<Chapter> saveChapter(@Validated @RequestBody ChapterRequest chapterRequest) {
         return ResponseEntity.ok(chapterService.addChapter(chapterRequest));
     }
