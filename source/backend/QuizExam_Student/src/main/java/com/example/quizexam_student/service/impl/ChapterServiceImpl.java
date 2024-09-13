@@ -28,11 +28,12 @@ public class ChapterServiceImpl implements ChapterService {
         return subject != null;
     }
     @Override
-    public List<Chapter> getAllChapters() {
-        if (chapterRepository.findByStatus(1) == null) {
+    public List<Chapter> getAllChaptersBySubjectId(int subjectId) {
+        List<Chapter> chapterList = chapterRepository.findAllByStatusAndSubjectId(1, subjectId);
+        if (chapterList == null) {
             throw new EmptyException("EmptyChapter", "Chapter list is empty");
         }
-        return chapterRepository.findByStatus(1);
+        return chapterList;
     }
 
     @Override

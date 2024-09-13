@@ -18,9 +18,9 @@ import java.util.List;
 public class ChapterController {
     private final ChapterService chapterService;
 
-    @GetMapping("")
-    public List<Chapter> getAllChapters() {
-        return chapterService.getAllChapters();
+    @GetMapping("/list/{subjectId}")
+    public List<Chapter> getAllChapters(@PathVariable int subjectId) {
+        return chapterService.getAllChaptersBySubjectId(subjectId);
     }
 
     @GetMapping("/{id}")

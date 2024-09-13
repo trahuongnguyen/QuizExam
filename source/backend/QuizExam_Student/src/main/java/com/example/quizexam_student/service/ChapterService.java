@@ -8,7 +8,7 @@ import java.util.List;
 
 @Service
 public interface ChapterService {
-    List<Chapter> getAllChapters();
+    List<Chapter> getAllChaptersBySubjectId(int subjectId);
     Chapter addChapter(ChapterRequest chapterRequest);
     Chapter getChapterById(int id);
     Chapter updateChapter(int id, ChapterRequest chapterRequest);
