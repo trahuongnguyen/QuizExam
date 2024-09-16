@@ -37,6 +37,7 @@ public class SecurityConfig {
                 .requestMatchers("/api/user/**").hasAnyRole("ADMIN", "DIRECTOR")
                 .requestMatchers("/api/class/**").hasAnyRole("ADMIN", "DIRECTOR", "SRO")
                 .requestMatchers("/api/subject/**").hasAnyRole("ADMIN", "DIRECTOR")
+                .requestMatchers("/api/sem/**").hasAnyRole("ADMIN", "DIRECTOR")
                 .requestMatchers("/api/studentManagement/**").hasAnyRole("ADMIN", "SRO")
                 .requestMatchers("/api/chapter/**").permitAll()
                 .anyRequest().authenticated()

@@ -46,14 +46,8 @@ public class StudentServiceImpl implements StudentService {
     public List<StudentResponse> getAllStudentsNoneClass() {
         Role role = roleRepository.findByName("STUDENT");
         List<UserResponse> userResponses = userRepository.findByRole(role).stream().map(UserMapper::convertToResponse).collect(Collectors.toList());
-        if (userResponses.isEmpty()){
-            throw new EmptyException("students", "Student List is Empty");
-        }
         List<StudentResponse> studentResponses = userResponses.stream().map(userResponse -> StudentMapper.convertToResponse(userResponse, studentRepository.findByUser(userRepository.findById(userResponse.getId()).orElse(null)))).collect(Collectors.toList());
         studentResponses.removeIf(std->std.get_class()!=null);
-        if (studentResponses.isEmpty()){
-            throw new EmptyException("students", "Student List is Empty");
-        }
         return studentResponses;
     }
 
@@ -61,14 +55,8 @@ public class StudentServiceImpl implements StudentService {
     public List<StudentResponse> getAllStudentsByClass(int classId) {
         Role role = roleRepository.findByName("STUDENT");
         List<UserResponse> userResponses = userRepository.findByRole(role).stream().map(UserMapper::convertToResponse).collect(Collectors.toList());
-        if (userResponses.isEmpty()){
-            throw new EmptyException("students", "Student List is Empty");
-        }
         List<StudentResponse> studentResponses = userResponses.stream().map(userResponse -> StudentMapper.convertToResponse(userResponse, studentRepository.findByUser(userRepository.findById(userResponse.getId()).orElse(null)))).collect(Collectors.toList());
         studentResponses.removeIf(std->std.get_class()==null||std.get_class().getId()!=classId);
-        if (studentResponses.isEmpty()){
-            throw new EmptyException("students", "Student List is Empty");
-        }
         return studentResponses;
     }
 
@@ -83,8 +71,10 @@ public class StudentServiceImpl implements StudentService {
         User user = userService.saveUser(studentRequest.getUserRequest());
         StudentDetail studentDetail = StudentMapper.convertFromRequest(studentRequest);
         Status status = statusRepository.findById(1).orElse(null);
+        Classes classes = classesRepository.findById(studentRequest.getClassId()).orElse(null);
         studentDetail.setStatus(status);
         studentDetail.setUser(user);
+        studentDetail.set_class(classes);
         return studentRepository.save(studentDetail);
     }
 

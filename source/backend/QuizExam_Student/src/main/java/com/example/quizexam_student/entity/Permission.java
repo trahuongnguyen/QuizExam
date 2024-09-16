@@ -14,7 +14,7 @@ import java.util.Set;
 public class Permission {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "action_id")
+    @Column(name = "permission_id")
     private int id;
     @Column(name = "name", nullable = false)
     private String name;

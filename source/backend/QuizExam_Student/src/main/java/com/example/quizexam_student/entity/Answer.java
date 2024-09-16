@@ -21,6 +21,7 @@ public class Answer {
     @Column(name = "is_correct", columnDefinition = "TINYINT", nullable = false)
     private boolean isCorrect;
 
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "question_id")
     private Question question;
 }
