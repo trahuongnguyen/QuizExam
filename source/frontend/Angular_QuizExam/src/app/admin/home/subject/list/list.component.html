@@ -71,6 +71,7 @@
     <div class="modal-content" (click)="$event.stopPropagation()">
         <div class="modal-header">
             <span>Update Subject</span>
+            <span class="mdi mdi-delete-forever icon-action delete-icon" style="" (click)="deleteSubject(subjectId)"></span>
             <span class="close-icon" (click)="closePopup()">&times;</span>
         </div>
         <div class="modal-body">

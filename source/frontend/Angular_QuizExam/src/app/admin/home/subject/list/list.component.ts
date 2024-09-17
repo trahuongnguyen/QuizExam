@@ -63,10 +63,10 @@ export class ListComponent implements OnInit, OnDestroy {
           render: function (data: any, type: any, row: any) {
             return `<span class="mdi mdi-information-outline icon-action info-icon" data-id="${row.id}"></span>
             <span class="mdi mdi-pencil icon-action edit-icon" data-id="${row.id}"></span>
-            <span class="mdi mdi-delete-forever icon-action delete-icon" data-id="${row.id}"></span>`;
+            <span class="mdi mdi-comment-question-outline icon-action question-icon" data-id="${row.id}"></span>
+            `;
           }
         }
-
       ],
 
       drawCallback: () => {
@@ -89,10 +89,10 @@ export class ListComponent implements OnInit, OnDestroy {
           this.isPopupCreate = true;
         });
 
-        $('.delete-icon').on('click', (event: any) => {
+        $('.question-icon').on('click', (event: any) => {
           const id = $(event.currentTarget).data('id');
           this.subjectId = id;
-          this.deleteSubject(id);
+          this.router.navigate([`/admin/home/subject/questionForm`])
         });
 
         $('.edit-icon').on('click', (event: any) => {

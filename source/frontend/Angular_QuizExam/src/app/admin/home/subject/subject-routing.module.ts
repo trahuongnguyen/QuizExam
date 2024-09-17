@@ -1,8 +1,11 @@
+
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { SubjectComponent } from './subject.component';
 import { ListComponent } from './list/list.component';
 import { ChapterComponent } from './chapter/chapter.component';
+import { QuestionListComponent } from './question-list/question-list.component';
+import { QuestionFormComponent } from './question-form/question-form.component';
 
 const routes: Routes = [
   {
@@ -21,6 +24,14 @@ const routes: Routes = [
       {
         path: ':subjectId',
         component: ChapterComponent
+      },
+      {
+        path: '',
+        component: QuestionListComponent, 
+      },
+      {
+        path: 'questionForm',
+        component: QuestionFormComponent
       },
     ]
   },
