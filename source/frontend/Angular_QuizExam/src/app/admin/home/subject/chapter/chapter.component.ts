@@ -49,17 +49,19 @@ export class ChapterComponent implements OnInit, OnDestroy {
         this.initializeDataTable();
       });
     }
-    this.http.get<any>(`${this.authService.apiUrl}/subject`, this.home.httpOptions).subscribe(response => {
-      this.subjects = response;
-      for (let sub of this.subjects) {
-        if (sub.id == this._subjectId) {
-          this._subjectName = sub.name;
+
+    this.http.get<any>(`${this.authService.apiUrl}/subject/${this._subjectId}`, this.home.httpOptions).subscribe((data: any) => {
+      this.semId = data.sem.id;
+      console.log(this.semId);
+      this.http.get<any>(`${this.authService.apiUrl}/subject/sem/${this.semId}`, this.home.httpOptions).subscribe(response => {
+        this.subjects = response;
+        for (let sub of this.subjects) {
+          if (sub.id == this._subjectId) {
+            this._subjectName = sub.name;
+          }
         }
-      }
+      });
     });
-    // this.http.get<any>(`${this.authService.apiUrl}/subject/sem`, this.home.httpOptions).subscribe(response=>{
-    //   this.sems = response;
-    // })
   }
 
   initializeDataTable(): void {
@@ -116,6 +118,23 @@ export class ChapterComponent implements OnInit, OnDestroy {
       }
     });
   }
+
+  updateDataTable(newData: any[]): void {
+    if (this.dataTable) {
+      this.dataTable.clear(); // Xóa dữ liệu hiện tại
+      this.dataTable.rows.add(newData); // Thêm dữ liệu mới
+      this.dataTable.draw(); // Vẽ lại bảng
+    }
+  }
+
+  reloadTable(id: number): void {
+    this.http.get<any>(`${this.authService.apiUrl}/chapter/${id}`, this.home.httpOptions).subscribe((data: any) => {
+      this.apiData = data;
+      this.updateDataTable(this.apiData); // Cập nhật bảng với dữ liệu mới
+    });
+    this.closeform();
+  }
+
   createChapter(): void {
     const chapter =
     {
@@ -128,9 +147,7 @@ export class ChapterComponent implements OnInit, OnDestroy {
         this.toastr.success('Create new chapter Successful!', 'Success', {
           timeOut: 2000,
         });
-        setInterval(function () {
-          window.location.reload();
-        }, 2000);
+        this.reloadTable(this._subjectId);
       },
       error => {
         if (error.status === 401) {
@@ -168,9 +185,7 @@ export class ChapterComponent implements OnInit, OnDestroy {
         this.toastr.success('Create new chapter Successful!', 'Success', {
           timeOut: 2000,
         });
-        setInterval(function () {
-          window.location.reload();
-        }, 2000);
+        this.reloadTable(this._subjectId);
       },
       error => {
         if (error.status === 401) {

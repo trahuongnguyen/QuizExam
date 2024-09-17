@@ -30,9 +30,6 @@ public class ChapterServiceImpl implements ChapterService {
     @Override
     public List<Chapter> getAllChaptersBySubjectId(int subjectId) {
         List<Chapter> chapterList = chapterRepository.findAllByStatusAndSubjectId(1, subjectId);
-        if (chapterList == null) {
-            throw new EmptyException("EmptyChapter", "Chapter list is empty");
-        }
         return chapterList;
     }
 

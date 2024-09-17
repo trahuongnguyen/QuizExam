@@ -28,12 +28,12 @@ export class ListComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.authService.entityExporter = 'subject';
-    this.http.get<any>(`${this.authService.apiUrl}/subject/${this.selectedSem}`, this.home.httpOptions).subscribe((data: any) => {
+    this.http.get<any>(`${this.authService.apiUrl}/subject/sem/${this.selectedSem}`, this.home.httpOptions).subscribe((data: any) => {
       this.apiData = data;
       this.initializeDataTable();
     });
 
-    this.http.get<any>(`${this.authService.apiUrl}/subject/sem`, this.home.httpOptions).subscribe(response => {
+    this.http.get<any>(`${this.authService.apiUrl}/sem`, this.home.httpOptions).subscribe(response => {
       this.sem = response;
     })
   }
@@ -114,14 +114,18 @@ export class ListComponent implements OnInit, OnDestroy {
   }
 
   reloadTable(id: number): void {
-    this.http.get<any>(`${this.authService.apiUrl}/subject/${id}`, this.home.httpOptions).subscribe((data: any) => {
+    this.http.get<any>(`${this.authService.apiUrl}/subject/sem/${id}`, this.home.httpOptions).subscribe((data: any) => {
       this.apiData = data;
       this.updateDataTable(this.apiData); // Cập nhật bảng với dữ liệu mới
     });
+    this.isPopupCreate = false;
+    this.isPopupUpdate = false;
+    this.isPopupDetail = false;
   }
 
   selectSem(sem: number): void {
     this.selectedSem = sem;
+    this.semId = sem;
     // Thực hiện các logic nếu cần thiết khi chọn Sem
     this.reloadTable(this.selectedSem);
     console.log('Selected Sem:', sem);

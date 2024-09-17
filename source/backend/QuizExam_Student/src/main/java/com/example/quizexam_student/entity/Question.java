@@ -29,14 +29,16 @@ public class Question {
     @ManyToMany(cascade = CascadeType.ALL, mappedBy = "questions")
     private Set<Examination> examinations;
 
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "subject_id")
     private Subject subject;
 
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "rel_chapter_question", joinColumns = @JoinColumn( name = "question_id"), inverseJoinColumns = @JoinColumn(name = "chapter_id"))
     private Set<Chapter> chapters;
 
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "level_id")
     private Level level;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "question")

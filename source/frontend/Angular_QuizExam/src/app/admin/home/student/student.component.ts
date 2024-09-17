@@ -30,7 +30,7 @@ export class StudentComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this._classId = Number(this.activatedRoute.snapshot.params['classId'])??0;
     if(this._classId!=0 && !Number.isNaN(this._classId)){
-      this.http.get<any>(`${this.authService.apiUrl}/studentManagement/${this.classId}`, this.home.httpOptions).subscribe((data: any) => {
+      this.http.get<any>(`${this.authService.apiUrl}/studentManagement/${this._classId}`, this.home.httpOptions).subscribe((data: any) => {
         this.apiData = data;
         this.initializeDataTable();
       });
@@ -115,10 +115,6 @@ export class StudentComponent implements OnInit, OnDestroy {
           const id = $(event.currentTarget).data('id');
           this.userIds.includes(id) ? this.userIds.splice(this.userIds.indexOf(id), 1) : this.userIds.push(id);
         });
-
-        // $('.move').on('click', () => {
-        //   this.showMovePopup();
-        // });
       }
     });
   }
@@ -156,16 +152,34 @@ export class StudentComponent implements OnInit, OnDestroy {
     rollNumber: "",
     rollPortal: ""
   }
+
+  updateDataTable(newData: any[]): void {
+    if (this.dataTable) {
+      this.dataTable.clear(); // Xóa dữ liệu hiện tại
+      this.dataTable.rows.add(newData); // Thêm dữ liệu mới
+      this.dataTable.draw(); // Vẽ lại bảng
+    }
+  }
+
+  reloadTable(id: number): void {
+      this.http.get<any>(id!=0?`${this.authService.apiUrl}/studentManagement/${id}`:`${this.authService.apiUrl}/studentManagement`, this.home.httpOptions).subscribe((data: any) => {
+        this.apiData = data;
+        this.updateDataTable(this.apiData); // Cập nhật bảng với dữ liệu mới
+      });
+    this.closePopup();
+  }
+
   createStudent(): void {
+    if(this._classId !=0){
+      this.stdRequest.classId = this._classId;
+    }
     this.http.post(`${this.authService.apiUrl}/studentManagement`, this.stdRequest, this.home.httpOptions).subscribe(
       response => {
         this.toastr.success('Create Successful!', 'Success', {
           timeOut: 2000,
         });
         console.log('Create successfully', response);
-        setInterval(function() {
-          window.location.reload();
-        }, 2000);
+        this.reloadTable(this._classId);
       },
       error => {
         this.toastr.error('Error create Student', 'Error', {
@@ -196,9 +210,7 @@ export class StudentComponent implements OnInit, OnDestroy {
         this.toastr.success('Update Successful!', 'Success', {
           timeOut: 2000,
         });
-        setInterval(function() {
-          window.location.reload();
-        }, 2000);
+        this.reloadTable(this._classId);
       },
       error => {
         this.toastr.error(error.error.message, 'Error', {
