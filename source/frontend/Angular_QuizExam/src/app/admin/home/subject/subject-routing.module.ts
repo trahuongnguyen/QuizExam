@@ -30,7 +30,7 @@ const routes: Routes = [
         component: QuestionListComponent, 
       },
       {
-        path: 'questionForm',
+        path: ':subjectId/questionForm',
         component: QuestionFormComponent
       },
     ]
