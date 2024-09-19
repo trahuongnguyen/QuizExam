@@ -170,5 +170,6 @@
 }
 
 .d-flex .menu ul li:hover a {
+    cursor: pointer;
     color: #ff5d94;
 }

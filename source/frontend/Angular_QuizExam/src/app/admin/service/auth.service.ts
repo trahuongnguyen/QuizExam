@@ -20,6 +20,8 @@ export class AuthService {
 
   public roleKey = 'role';
 
+  public userLogged:any = localStorage.getItem('userLogged');
+
   constructor(private http: HttpClient, private router: Router) { }
 
   // Kiểm tra xem localStorage có sẵn không trước khi sử dụng
@@ -42,14 +44,24 @@ export class AuthService {
   logoutAdmin() {
     localStorage.removeItem(this.tokenKey);
     localStorage.removeItem(this.roleKey);
+    this.userLogged = null;
+    this.isValidToken = false;
     this.router.navigate(['admin/login']);
   }
+
+  nagivateToPrePage(): void{
+    this.router.navigate(['admin/home'])
+  }
+
+  isValidToken: any;
 
   isLoggedIn(): boolean {
     if (this.isLocalStorageAvailable()) {
       let token = localStorage.getItem(this.tokenKey);
       let role = localStorage.getItem(this.roleKey);
-      return token != null && token.length > 0 && (role == 'ADMIN' || role == 'DIRECTOR' || role == 'TEACHER' || role == 'SRO') ;
+      const jwtToken = JSON.parse(atob(token!.split('.')[1]));
+      const tokenExpired = Date.now() > (jwtToken.exp * 1000);
+      return token != null && token.length > 0 && !tokenExpired  && ['ADMIN', 'DIRECTOR', 'TEACHER', 'SRO'].includes(role!);
     }
     return false;
   }

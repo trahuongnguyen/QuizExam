@@ -124,7 +124,7 @@ export class ProfileComponent implements OnInit {
   ngOnInit(): void {
     //this.loadToken();
     this.httpOptions = this.home.httpOptions;
-    this.http.get<any>(`${this.authService.apiUrl}/user/profile`, this.httpOptions).subscribe((data: any) => {
+    this.http.get<any>(`${this.authService.apiUrl}/auth/profile`, this.httpOptions).subscribe((data: any) => {
       this.user = data;
       this.fullName = this.user.fullName;
       this.email = this.user.email;

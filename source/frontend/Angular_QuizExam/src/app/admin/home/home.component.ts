@@ -22,6 +22,7 @@ export class HomeComponent {
   }
 
   httpOptions: any;
+  role: any;
 
   private loadToken() {
     if (this.authService.isLoggedIn()) {
@@ -43,6 +44,7 @@ export class HomeComponent {
 
   constructor(public app : AppComponent, private router: Router,  public authService: AuthService) {
     this.loadToken();
+    this.role = localStorage.getItem(authService.roleKey);
     this.router.events.pipe(
       filter(event => event instanceof NavigationEnd)
     ).subscribe(() => {
@@ -53,8 +55,8 @@ export class HomeComponent {
 
   currentRoute: string = '';
 
-  isActive(route: string): boolean {
-    return this.currentRoute ===  this.thisRouter + route;
+  isActive(roles: Array<String>): boolean {
+    return roles.includes(this.role);
   }
 
    // Logout process

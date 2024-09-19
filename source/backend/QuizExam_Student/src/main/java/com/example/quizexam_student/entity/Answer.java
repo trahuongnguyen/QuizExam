@@ -19,7 +19,7 @@ public class Answer {
     private String content;
 
     @Column(name = "is_correct", columnDefinition = "TINYINT", nullable = false)
-    private boolean isCorrect;
+    private int isCorrect;
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "question_id")
