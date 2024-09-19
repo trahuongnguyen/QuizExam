@@ -31,19 +31,21 @@ export class LoginComponent implements AfterContentInit {
     if (this.loginForm.valid) {
       this.authService.login({ email: this.loginForm.get('email')?.value, password: this.loginForm.get('password')?.value }).subscribe(
         response => {
-          window.localStorage.setItem('jwtToken', JSON.stringify(response.token));
-          console.log('User logged in successfully', response);
           const headers = new HttpHeaders().set('Email', this.loginForm.get('email')?.value);
           this.http.get<any>(`${this.authService.apiUrl}/auth/role`, {headers: headers, responseType: 'json'}).subscribe((data: any) => {
             let role = data.name;
-            window.localStorage.setItem('role', data.name);
-            if(role=='ADMIN' || role=='DIRECTOR' || role=='TEACHER' || role=='SRO'){
+            if(['ADMIN', 'DIRECTOR', 'TEACHER', 'SRO'].includes(role)){
               this.toastr.success('Login Successful!', 'Success', {
                 timeOut: 2000,
               });
+              window.localStorage.setItem('jwtToken', JSON.stringify(response.token));
+              window.localStorage.setItem('role', data.name);
+              console.log('User logged in successfully', response);
+              window.localStorage.setItem('userLogged', response);
+              this.authService.userLogged = response;
               this.router.navigate(['/admin/home']);
             } else {
-              this.toastr.error('Unauthorized', 'Failed', {
+              this.toastr.error('This account is not accessed in this page', 'Failed', {
                 timeOut: 2000,
               });
             }

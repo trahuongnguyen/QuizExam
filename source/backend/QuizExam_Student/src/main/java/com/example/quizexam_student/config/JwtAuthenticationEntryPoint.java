@@ -1,9 +1,14 @@
 package com.example.quizexam_student.config;
 
+import com.example.quizexam_student.bean.response.ErrorResponse;
+import com.example.quizexam_student.exception.AuthenticatedException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ProblemDetail;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
@@ -13,10 +18,13 @@ import java.io.IOException;
 @Component
 @RequiredArgsConstructor
 public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
+    private final ObjectMapper mapper;
+
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
-//        response.getWriter().write("Incorrect password");
-//        response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-        response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
+        response.setStatus(HttpStatus.UNAUTHORIZED.value());
+        response.setContentType("application/json");
+        response.getWriter().write(authException.getMessage());
+        //response.sendError(HttpServletResponse.SC_UNAUTHORIZED, authException.getMessage());
     }
 }

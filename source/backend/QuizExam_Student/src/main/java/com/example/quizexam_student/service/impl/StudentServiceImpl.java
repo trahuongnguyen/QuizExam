@@ -122,8 +122,10 @@ public class StudentServiceImpl implements StudentService {
             throw new NotFoundException("class", "Class not found.");
         }
         List<StudentDetail> students = studentRepository.findAllByUserIdIn(userIds);
+        Status status = statusRepository.findById(2).orElse(null);
         for (StudentDetail student : students) {
             student.set_class(newClass);
+            student.setStatus(status);
         }
         studentRepository.saveAll(students);
     }

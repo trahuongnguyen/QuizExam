@@ -6,6 +6,9 @@ import {ToastrModule, ToastrService} from 'ngx-toastr';
 import { FormsModule} from '@angular/forms';
 import { AdminComponent } from './admin.component';
 import { ReactiveFormsModule } from '@angular/forms'; 
+import { AuthGuard } from './service/authguard.service';
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
+import { ErrorInterceptor } from './service/error.interceptor';
 
 
 @NgModule({
@@ -22,7 +25,13 @@ import { ReactiveFormsModule } from '@angular/forms';
    
   ],
   providers: [
-    NgModule
+    NgModule,
+    AuthGuard,
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: ErrorInterceptor,
+      multi: true
+    }
   ],
 })
 export class AdminModule { }

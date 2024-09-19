@@ -27,21 +27,19 @@
     <div class="block-wrapper">
         <img class="block-image" alt="" src="../../../../img/logo.png" />
     </div>
-    <a [routerLink]="'dashboard'" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }"
+    <a [routerLink]="'./'" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }"
         class="sidebar-link"><span class="mdi mdi-chart-bar icon"></span>Dashboard</a>
-    <a [routerLink]="'subject'" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }"
+    <a [routerLink]="'subject'" *ngIf="isActive(['ADMIN','DIRECTOR'])" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }"
         class="sidebar-link"><span class="mdi mdi-book-open-variant icon"></span>Subject</a>
-    <a [routerLink]="'question'" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }"
-        class="sidebar-link"><span class="mdi mdi-comment-question-outline icon"></span>Question</a>
-    <a [routerLink]="'class'" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }"
+    <a [routerLink]="'class'" *ngIf="isActive(['ADMIN','DIRECTOR','SRO'])" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }"
         class="sidebar-link"><span class="mdi mdi-home-outline icon"></span>Class</a>
-    <a [routerLink]="'student'" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }"
+    <a [routerLink]="'student'" *ngIf="isActive(['ADMIN','SRO'])" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }"
         class="sidebar-link"><span class="mdi mdi-account-multiple icon"></span>Student</a>
-    <a [routerLink]="'exam'" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }"
+    <a [routerLink]="'exam'" *ngIf="isActive(['ADMIN','DIRECTOR','SRO'])" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }"
         class="sidebar-link"><span class="mdi mdi-monitor icon"></span>Exam</a>
-    <a [routerLink]="'authorize'" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }"
+    <a [routerLink]="'authorize'" *ngIf="isActive(['ADMIN','DIRECTOR'])" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }"
         class="sidebar-link"><span class="mdi mdi-clipboard-outline icon"></span>Authorize</a>
-    <a [routerLink]="'employee'" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }"
+    <a [routerLink]="'employee'" *ngIf="isActive(['ADMIN','DIRECTOR'])" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }"
         class="sidebar-link active"><span class="mdi mdi-account-multiple icon"></span>Employee</a>
 </div>
 

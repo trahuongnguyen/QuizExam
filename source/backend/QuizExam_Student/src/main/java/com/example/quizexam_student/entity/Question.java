@@ -23,7 +23,7 @@ public class Question {
     @Column(name = "status", nullable = false)
     private int status;
 
-    @Column(name = "image", nullable = false)
+    @Column(name = "image")
     private String image;
 
     @ManyToMany(cascade = CascadeType.ALL, mappedBy = "questions")
