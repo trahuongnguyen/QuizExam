@@ -92,7 +92,7 @@ export class ListComponent implements OnInit, OnDestroy {
         $('.question-icon').on('click', (event: any) => {
           const id = $(event.currentTarget).data('id');
           this.subjectId = id;
-          this.router.navigate([`/admin/home/subject/questionForm`])
+          this.router.navigate([`/admin/home/subject/${id}/questionList`])
         });
 
         $('.edit-icon').on('click', (event: any) => {
