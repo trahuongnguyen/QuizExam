@@ -26,13 +26,13 @@ const routes: Routes = [
         component: ChapterComponent
       },
       {
-        path: '',
-        component: QuestionListComponent, 
+        path: ':subjectId/questionList',
+        component: QuestionListComponent,
       },
-      {
-        path: ':subjectId/questionForm',
-        component: QuestionFormComponent
-      },
+      // {
+      //   path: 'questionForm',
+      //   component: QuestionFormComponent
+      // },
     ]
   },
 ];
