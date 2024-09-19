@@ -11,13 +11,14 @@
 }
 
 #question-forms {
-    width: 97%;
+    width: 100%;
+    margin-right: 50px;
 }
 
 .question-form {
     border: 1px solid #dddddd8b;
     padding: 10px;
-    margin: 0 10px 30px 0;
+    margin-bottom: 30px;
 }
 
 .btn-action {
