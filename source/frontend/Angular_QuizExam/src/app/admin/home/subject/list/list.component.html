@@ -71,7 +71,6 @@
     <div class="modal-content" (click)="$event.stopPropagation()">
         <div class="modal-header">
             <span>Update Subject</span>
-            <span class="mdi mdi-delete-forever icon-action delete-icon" style="" (click)="deleteSubject(subjectId)"></span>
             <span class="close-icon" (click)="closePopup()">&times;</span>
         </div>
         <div class="modal-body">
@@ -97,6 +96,7 @@
                 </div>
 
                 <button type="submit" class="btn btn-primary button">Save</button>
+                <span class="mdi mdi-delete-forever icon-action delete-icon" style="font-size: 24px; float: right; cursor: pointer;" (click)="deleteSubject(subjectId)"></span>
             </form>
         </div>
     </div>
