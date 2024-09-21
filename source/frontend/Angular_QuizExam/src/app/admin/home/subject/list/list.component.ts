@@ -26,6 +26,11 @@ export class ListComponent implements OnInit, OnDestroy {
   sem: any;
   selectedSem: number = 1; // Default chọn Sem 1
 
+  isSidebarCollapsed = false;
+
+  toggleSidebar() {
+    this.isSidebarCollapsed = !this.isSidebarCollapsed;
+  }
   ngOnInit(): void {
     this.authService.entityExporter = 'subject';
     this.http.get<any>(`${this.authService.apiUrl}/subject/sem/${this.selectedSem}`, this.home.httpOptions).subscribe((data: any) => {

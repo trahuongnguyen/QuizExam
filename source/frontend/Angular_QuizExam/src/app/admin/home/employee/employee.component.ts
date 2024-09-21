@@ -24,6 +24,11 @@ export class EmployeeComponent implements OnInit, OnDestroy {
 
   role: any;
 
+  isSidebarCollapsed = false;
+
+  toggleSidebar() {
+    this.isSidebarCollapsed = !this.isSidebarCollapsed;
+  }
   ngOnInit(): void {
     this.authService.entityExporter = 'user';
     this.http.get<any>(`${this.authService.apiUrl}/user`, this.home.httpOptions).subscribe((data: any) => {
@@ -63,7 +68,7 @@ export class EmployeeComponent implements OnInit, OnDestroy {
           data: null,
           render: function (data: any, type: any, row: any) {
             return `<span class="mdi mdi-information-outline icon-action info-icon" data-id="${row.id}"></span>
-            <span class="mdi mdi-delete-forever icon-action delete-icon"></span>`;
+            <span class="mdi mdi-delete-forever icon-action delete-icon" ></span>`;
           }
         }
       ],

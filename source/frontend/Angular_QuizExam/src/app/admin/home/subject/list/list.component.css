@@ -1,9 +1,14 @@
 /* Body */
 .content-wrapper {
     padding: 20px;
-    margin: 0 0 60px 200px;
+    margin: 0 0 60px 8%;
     min-height: 80vh;
     overflow-x: hidden;
+    transition: margin-left 0.3s ease;
+}
+
+.content-wrapper-collapsed {
+    margin-left: 2%;
 }
 
 .line {
@@ -17,7 +22,7 @@
 }
 
 .sem-container .btn {
-    border-radius: 15px;
+    border-radius: 8px;
     border: none;
     color: black;
 }
@@ -38,7 +43,7 @@
     font-size: 15px;
     background-color: #aa1210;
     border: none;
-    border-radius: 15px;
+    border-radius: 8px;
 }
 
 .button:active {
@@ -91,7 +96,7 @@
 
 .modal-content {
     background-color: #fff;
-    border-radius: 10px;
+    border-radius: 8px;
     width: 600px;
     /* Tăng chiều rộng của modal */
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
@@ -125,7 +130,7 @@
     padding: 20px;
     /* Tăng kích thước padding cho body */
     font-size: 18px;
-    border-radius: 10px;
+    border-radius: 8px;
     /* Tăng kích thước font chữ cho nội dung */
     background-color: var(--color-background);
 }

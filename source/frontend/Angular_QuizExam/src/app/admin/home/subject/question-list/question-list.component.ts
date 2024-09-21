@@ -80,9 +80,10 @@ export class QuestionListComponent {
           title: 'Chapter',
           data: 'chapters',
           render: function (data: any, type: any, row: any) {
-            let value: any = [];
+            let value: any = '';
+            console.log(row);
             data.forEach((val: any) => {
-              value.push(val.name);
+              value+=val.name;
             });
             return value;
           }

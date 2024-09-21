@@ -20,7 +20,7 @@
     font-size: 15px;
     background-color: #aa1210;
     border: none;
-    border-radius: 15px;
+    border-radius: 8px;
 }
 
 .button:active {
@@ -73,7 +73,7 @@
 
 .modal-content {
     background-color: #fff;
-    border-radius: 10px;
+    border-radius: 8px;
     width: 600px;
     /* Tăng chiều rộng của modal */
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
@@ -107,7 +107,7 @@
     padding: 20px;
     /* Tăng kích thước padding cho body */
     font-size: 18px;
-    border-radius: 10px;
+    border-radius: 8px;
     /* Tăng kích thước font chữ cho nội dung */
     background-color: var(--color-background);
 }

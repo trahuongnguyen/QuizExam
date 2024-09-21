@@ -193,39 +193,29 @@
 
 /* Table (admin) */
 .dataTables_wrapper .table {
-    font-size: 16px;
-    text-align: center;
-    filter: drop-shadow(0 4px 4px rgba(0, 0, 0, 0.25));
+    font-size: 10px;
 }
 
 .dataTables_wrapper table.dataTable.no-footer {
     border-bottom: none;
 }
 
-.dataTables_wrapper .table td {
-    font-size: 16px;
-    text-align: center;
+.dataTables_wrapper .table th {
+    font-size: 14px;
+    border-bottom: none;
 }
 
-.dataTables_wrapper .table tbody tr td {
+.dataTables_wrapper .table td {
+    padding: 8px 18px;
+    vertical-align: middle;
+    font-size: 14px;
     color: var(--color-text);
     background-color: var(--color-background);
-    padding: 0;
-    border-bottom: 1px solid #d9d9d9;
-}
-
-.dataTables_wrapper .table th {
-    font-size: 16px;
-    background-color: #eaeaea;
-}
-
-.dataTables_wrapper .table td {
-    padding: 11px;
-    vertical-align: middle;
+    border: none;
 }
 
 .dataTables_wrapper .table .icon-action {
-    font-size: 29px;
+    font-size: 22px;
     cursor: pointer;
 }
 
@@ -234,6 +224,21 @@
     height: 21px;
 }
 
+.dataTables_wrapper .table .delete-icon {
+    color: #aa1210;
+}
+
+.dataTables_wrapper .table .info-icon{
+    color: #1aaa51;
+}
+
+.dataTables_wrapper .table .edit-icon{
+    color: #1572e8;
+}
+
+.dataTables_wrapper .table .question-icon{
+    color: #d7da2e;
+}
 
 /* Ghi đè CSS cho Pagination của DataTables */
 .dataTables_wrapper .dataTables_paginate {

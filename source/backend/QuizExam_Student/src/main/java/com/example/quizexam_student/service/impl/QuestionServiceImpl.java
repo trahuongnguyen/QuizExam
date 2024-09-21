@@ -25,7 +25,7 @@ public class QuestionServiceImpl implements QuestionService {
 
     @Override
     public List<QuestionResponse> getAllQuestionsBySubjectId(int subjectId) {
-        return questionRepository.findAllBySubject(subjectRepository.findById(subjectId).orElse(null)).stream().map(QuestionMapper::convertToResponse).collect(Collectors.toList());
+        return questionRepository.findAllBySubjectAndChaptersIsNotNull(subjectRepository.findById(subjectId).orElse(null)).stream().map(QuestionMapper::convertToResponse).collect(Collectors.toList());
     }
 
     @Override

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { AppComponent } from '../../app.component';
 import { NavigationEnd, Router } from '@angular/router';
 import { filter } from 'rxjs/operators';
@@ -10,10 +10,21 @@ import { HttpHeaders } from '@angular/common/http';
   templateUrl: './home.component.html',
   styleUrl: './home.component.css'
 })
-export class HomeComponent {
+export class HomeComponent implements OnInit {
   title = 'Angular_QuizExam';
   thisRouter = '/admin/home'
   windowScrolled = false;
+  isSidebarCollapsed = false;
+
+  userName: string = '';
+  userRole: string = ''; 
+
+  ngOnInit() {
+    const user = this.authService.userLogged;
+    this.userName = user.fullName;
+    this.userRole = user.role;
+  }
+
   scrollToTop(): void {
     window.scrollTo(0, 0);
   }
@@ -60,7 +71,11 @@ export class HomeComponent {
   }
 
    // Logout process
-   onLogout() {
+  onLogout() {
     this.authService.logoutAdmin(); // call method logout
+  }
+
+  toggleSidebar() {
+    this.isSidebarCollapsed = !this.isSidebarCollapsed;
   }
 }

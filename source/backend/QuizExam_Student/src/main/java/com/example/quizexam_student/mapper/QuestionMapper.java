@@ -21,6 +21,7 @@ public class QuestionMapper {
         questionResponse.setImage(question.getImage());
         questionResponse.setSubject(question.getSubject());
         questionResponse.setChapters(question.getChapters().stream().toList());
+        System.out.println(question.getChapters());
         questionResponse.setLevel(question.getLevel());
         questionResponse.setAnswers(question.getAnswers().stream().toList());
         return questionResponse;
