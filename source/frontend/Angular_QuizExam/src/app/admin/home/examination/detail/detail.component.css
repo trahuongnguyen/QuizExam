@@ -1,0 +1,122 @@
+.content-wrapper {
+    padding: 20px;
+    margin: 0 0 0 8%;
+    min-height: 80vh;
+    overflow-x: hidden;
+    transition: margin-left 0.3s ease;
+}
+
+.content-wrapper-collapsed {
+    margin-left: 2%;
+}
+
+.line {
+    margin-top: 0;
+}
+
+.bottom-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.button {
+    font-size: 15px;
+    background-color: #aa1210;
+    border: none;
+    border-radius: 8px;
+}
+
+.button:active {
+    background-color: #8f0a0a;
+}
+
+.bottom-actions .icon {
+    line-height: normal;
+    margin-right: 8px;
+}
+
+/* Exam details section with box shadow */
+.exam-details {
+    background-color: #f8f9fa;
+    padding: 10px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    position: relative;
+    margin-bottom: 20px;
+    /* Center title */
+}
+
+.exam-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.exam-header i {
+    font-size: 24px;
+    cursor: pointer;
+}
+
+/* Aligning labels and content with icons */
+.exam-details .row .d-flex {
+    align-items: center;
+}
+
+.exam-details .row {
+    padding-left: 160px;
+    padding-right: 50px;
+}
+
+.exam-details p {
+    margin-bottom: 0.5rem;
+}
+
+/* Adjust the label to align better */
+.label {
+    font-weight: bold;
+    margin-right: 10px;
+    min-width: 100px;
+}
+
+/* Flex-grow the content to take the rest of the space */
+.content {
+    flex-grow: 1;
+}
+
+/* Edit icon positioning */
+.edit-icon {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    cursor: pointer;
+}
+
+/* Centering the export buttons */
+.export-buttons {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 20px;
+}
+
+/* Question section with box shadow (same as exam-details) */
+.question-section-container {
+    background-color: #f8f9fa;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    max-height: 500px; /* Limit height of question section */
+    overflow-y: auto;
+}
+
+.question-section {
+    margin-bottom: 20px;
+}
+
+.question-section img {
+    margin: 10px 0px;
+    width: 20%;
+    height: auto;
+    text-align: center;
+  }
