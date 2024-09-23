@@ -42,6 +42,9 @@ public class SubjectServiceImpl implements SubjectService {
 
     @Override
     public Subject save(SubjectRequest subjectRequest){
+        if (existSubjectByName(subjectRequest.getName())) {
+            throw new AlreadyExistException("AlreadyExistSubject","Subject already exist");
+        }
         Subject subject = new Subject();
         subject.setName(subjectRequest.getName());
         subject.setImage(subjectRequest.getImage());

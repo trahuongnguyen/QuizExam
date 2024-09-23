@@ -11,6 +11,7 @@ import java.util.Set;
 @NoArgsConstructor
 @Getter
 @Setter
+@AllArgsConstructor
 public class Sem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
