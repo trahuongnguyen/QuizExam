@@ -59,6 +59,11 @@ const routes: Routes = [
         loadChildren: () => import('./subject/subject.module')
           .then(m => m.SubjectModule),
       },
+      {
+        path: 'exam',
+        loadChildren: () => import('./examination/examination.module')
+          .then(m => m.ExaminationModule),
+      },
     ]
   },
 
