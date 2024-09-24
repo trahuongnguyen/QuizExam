@@ -1,4 +1,10 @@
-import { Component } from '@angular/core';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { AuthService } from '../../../service/auth.service';
+import { ToastrService } from 'ngx-toastr';
+import { ActivatedRoute, Router } from '@angular/router';
+import { HomeComponent } from '../../home.component';
+declare var $: any;
 
 @Component({
   selector: 'app-detail',
@@ -6,5 +12,6 @@ import { Component } from '@angular/core';
   styleUrl: './detail.component.css'
 })
 export class DetailComponent {
+    constructor(private authService: AuthService, private home: HomeComponent, private http: HttpClient, public toastr: ToastrService, private router: Router, private activatedRoute: ActivatedRoute) { }
 
 }

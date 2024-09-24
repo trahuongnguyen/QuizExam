@@ -38,6 +38,7 @@ public class SubjectServiceTest {
     private Subject subject;
     private Sem sem;
     private List<Subject> subjectList;
+
     @BeforeEach
     void initData(){
         subjectRequest = SubjectRequest.builder()
@@ -119,7 +120,7 @@ public class SubjectServiceTest {
 
     @Test
     @WithMockUser(username = "admin@example.com", roles = {"ADMIN"})
-    void createUser_nameInvalid_fail(){
+    void createUser_alreadyExistName_fail(){
         // GIVEN
         Mockito.when(subjectRepository.findByName(subjectRequest.getName())).thenReturn(subject);
 

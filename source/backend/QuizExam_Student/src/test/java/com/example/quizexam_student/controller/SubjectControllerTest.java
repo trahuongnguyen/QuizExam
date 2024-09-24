@@ -24,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.cache.support.NullValue;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -36,6 +37,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.mockito.ArgumentMatchers.nullable;
 import static org.mockito.Mockito.times;
 
 @Slf4j
@@ -131,7 +133,6 @@ public class SubjectControllerTest {
         subjectRequest.setName("");
         ObjectMapper objectMapper = new ObjectMapper();
         String content = objectMapper.writeValueAsString(subjectRequest);
-        //Mockito.when(subjectService.save(ArgumentMatchers.any())).thenReturn(subject);
 
         // WHEN
         mockMvc.perform(MockMvcRequestBuilders
@@ -141,6 +142,26 @@ public class SubjectControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isBadRequest())
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].key").value("name"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].message").value("Subject name is required"))
+        ;
+        // THEN
+    }
+
+    @Test
+    @WithMockUser(username = "admin@example.com", roles = {"ADMIN"})
+    void createSubject_semNull_fail() throws Exception {
+        // GIVEN
+        subjectRequest.setSemId(null);
+        ObjectMapper objectMapper = new ObjectMapper();
+        String content = objectMapper.writeValueAsString(subjectRequest);
+
+        // WHEN
+        mockMvc.perform(MockMvcRequestBuilders
+                        .post("/api/subject/save")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(content))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].key").value("semId"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].message").value("Semeter is required"))
         ;
         // THEN
     }
@@ -285,6 +306,26 @@ public class SubjectControllerTest {
 
     @Test
     @WithMockUser(username = "admin@example.com", roles = {"ADMIN"})
+    void updateSubject_semNull_fail() throws Exception {
+        // GIVEN
+        subjectRequest.setSemId(null);
+        ObjectMapper objectMapper = new ObjectMapper();
+        String content = objectMapper.writeValueAsString(subjectRequest);
+
+        // WHEN
+        mockMvc.perform(MockMvcRequestBuilders
+                        .put("/api/subject/{id}", 1)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(content))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].key").value("semId"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].message").value("Semeter is required"))
+        ;
+        // THEN
+    }
+
+    @Test
+    @WithMockUser(username = "admin@example.com", roles = {"ADMIN"})
     void updateSubject_nameDuplicate_fail() throws Exception {
         // GIVEN
         ObjectMapper objectMapper = new ObjectMapper();
@@ -304,6 +345,7 @@ public class SubjectControllerTest {
         // THEN
 
     }
+
 
     @Test
     @WithMockUser(username = "admin@example.com", roles = {"ADMIN"})
