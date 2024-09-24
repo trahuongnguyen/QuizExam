@@ -1,25 +1,27 @@
 <div class="content-wrapper">
     <h4>{{ subjectName }} / Add new Question</h4>
     <hr class="line">
-    <form class="d-flex">
+    <form class="d-flex" (ngSubmit)="saveQuestions()">
         <div id="question-forms">
             <div *ngFor="let question of questionForms; let i = index" class="question-form">
                 <div class="form-row">
+                    <input type="hidden" [(ngModel)]="question.subjectId" name="question.subjectId{{i}}" class="form-control" />
+                    
                     <div class="form-group-row col me-3">
                         <label for="chapter">Chapter:</label>
-                        <button type="button" class="form-select" style="text-align: left;" (click)="openPopup()">Choose Chapter</button>
+                        <button type="button" class="form-select" style="text-align: left;" (click)="openPopup(i)">Choose Chapter</button>
                     </div>
                     <div class="form-group-row col me-0">
                         <label for="level">Level:</label>
-                        <select class="form-select" id="level">
-                            <option *ngFor="let level of levels" [value]=level.point>{{ level.name }}</option>
+                        <select class="form-select" [(ngModel)]="question.levelId" name="question.levelId{{i}}">
+                            <option *ngFor="let level of listLevel" [value]="level.id">{{ level.name }}</option>
                         </select>
                     </div>
                 </div>
 
                 <div class="form-group-row">
                     <label for="question">Question:</label>
-                    <textarea class="form-control" rows="3" style="flex-grow: 1"></textarea>
+                    <textarea class="form-control" [(ngModel)]="question.content" name="question.content{{i}}" rows="3" style="flex-grow: 1"></textarea>
                 </div>
 
                 <div class="form-group form-image">
@@ -37,9 +39,9 @@
                     <div class="answers-container">
                         <div *ngFor="let answer of question.answers; let j = index" class="input-group mb-2">
                             <div class="input-group-text">
-                                <input type="checkbox" name="answerSelect{{i}}" />
+                                <input type="checkbox" [(ngModel)]="answer.isCorrect" name="answer.isCorrect{{i}}{{j}}" (change)="toggleIsCorrect(answer)" />
                             </div>
-                            <input type="text" [(ngModel)]="answer.text" name="answers{{i}}" class="form-control" />
+                            <input type="text" [(ngModel)]="answer.content" name="answer.content{{i}}{{j}}" class="form-control" />
                             <span class="remove-answer" (click)="removeAnswer(i, j)">X</span>
                         </div>
                     </div>
@@ -49,6 +51,26 @@
                     <button type="button" class="add-answer" (click)="addAnswer(i)"><span class="mdi mdi-plus icon-button"></span> Another choice</button>
                     <button type="button" class="remove-question" style="float: right;" (click)="removeQuestionForm(i)"><span class="mdi mdi-delete-forever icon-button"></span> Remove Question</button>
                 </div>
+
+                <div *ngIf="isPopupChapter" class="modal-backdrop" (click)="closePopup($event)">
+                    <div class="modal-content" (click)="$event.stopPropagation()">
+                        <div class="modal-header">
+                            <span>Select Chapter</span>
+                            <span class="close-icon" (click)="closePopup()">&times;</span>
+                        </div>
+                        <div class="modal-body">
+                            <div class="form-chapter">
+                                <div class="checkbox-group">
+                                    <div class="checkbox-input col-4" *ngFor="let chapter of listChapter">
+                                        <input type="checkbox" [checked]="selectedChapterIds.includes(chapter.id)" (change)="toggleChapterSelection(i, chapter.id, $event)" id="chapter{{chapter.id}}" />
+                                        <label for="chapter{{chapter.id}}">{{ chapter.name }}</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <button type="button" class="btn btn-primary button" (click)="onConfirmSelection(i)">OK</button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
         <div class="btn-action">
@@ -57,23 +79,4 @@
             <button type="button" class="mdi mdi-close-circle-outline icon-action" title="Cancel"></button>
         </div>
     </form>
-</div>
-
-<div *ngIf="isPopupChapter" class="modal-backdrop" (click)="closePopup($event)">
-    <div class="modal-content" (click)="$event.stopPropagation()">
-        <div class="modal-header">
-            <span>Select Chapter</span>
-            <span class="close-icon" (click)="closePopup()">&times;</span>
-        </div>
-        <div class="modal-body">
-            <form method="post" class="form-chapter">
-                <div class="checkbox-group">
-                    <div class="checkbox-input" *ngFor="let chapter of chapters">
-                        <input type="checkbox" [name]="'chapter' + chapter.id" /> {{ chapter.name }}
-                    </div>
-                </div>
-                <button type="submit" class="btn btn-primary button">OK</button>
-            </form>
-        </div>
-    </div>
 </div>

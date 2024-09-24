@@ -7,13 +7,17 @@ import { HomeComponent } from '../../home.component';
 declare var $: any;
 
 interface Answer {
-  text: string;
+  content: string; // Đổi từ text thành content
+  isCorrect: number; // Thêm thuộc tính isCorrect
 }
 
 interface QuestionForm {
-  answers: Answer[];
+  content: string; // Thuộc tính để lưu nội dung câu hỏi
+  subjectId: number; // Thuộc tính để lưu ID chủ đề
+  chapters: number[]; // Thuộc tính để lưu chapters
+  levelId: number; // Thuộc tính để lưu levelId
+  answers: Answer[]; // Danh sách các câu trả lời
   imageSelected?: boolean;
-  // thêm các thuộc tính khác nếu cần
 }
 
 @Component({
@@ -25,37 +29,17 @@ interface QuestionForm {
 export class QuestionFormComponent implements OnInit {
   constructor(private authService: AuthService, private home: HomeComponent, private http: HttpClient, public toastr: ToastrService, private router: Router, private activatedRoute: ActivatedRoute) { }
 
-  chapters = [
-    { id: 1, name: 'Chapter 1'},
-    { id: 2, name: 'Chapter 2'},
-    { id: 3, name: 'Chapter 3'},
-    { id: 4, name: 'Chapter 4'},
-    { id: 5, name: 'Chapter 5'},
-    { id: 6, name: 'Chapter 6'},
-    { id: 7, name: 'Chapter 7'}
-  ];
-  
-  levels = [
-    { point: 1, name: 'Easy' },
-    { point: 2, name: 'Hard' }
-  ];
-
-  questionForms: QuestionForm[] = [
-    {
-      answers: [
-        { text: '' },
-        { text: '' },
-        { text: '' },
-        { text: '' }
-      ]
-    }
-  ];
-
   subjects: any;
-  subjectId: any;
+  subjectId: number = 0;
   subjectName: any;
 
-  isPopupChapter = false;
+  listChapter: any;
+  listLevel = [
+    { id: 1, name: 'Easy', point: 1 },
+    { id: 2, name: 'Hard', point: 2 }
+  ];
+  
+  questionForms: QuestionForm[] = [];
 
   ngOnInit(): void {
     this.subjectId = Number(this.activatedRoute.snapshot.params['subjectId']) ?? 0;
@@ -70,25 +54,71 @@ export class QuestionFormComponent implements OnInit {
         }
       });
     });
+
+    this.http.get<any>(`${this.authService.apiUrl}/chapter/${this.subjectId}`, this.home.httpOptions).subscribe((data: any) => {
+      this.listChapter = data;
+    });
+
+    this.initializeQuestion();
   }
 
-  showChapterOptions = false;
-
-  toggleChapterOptions() {
-      this.showChapterOptions = !this.showChapterOptions; // Chuyển trạng thái hiển thị
+  initializeQuestion(): void {
+    this.questionForms = [
+      {
+        content: '',
+        subjectId: this.subjectId,
+        chapters: [],
+        levelId: this.listLevel[0].id,
+        answers: [
+          { content: '', isCorrect: 0 },
+          { content: '', isCorrect: 0 },
+          { content: '', isCorrect: 0 },
+          { content: '', isCorrect: 0 }
+        ]
+      }
+    ];
   }
 
-  openPopup() {
+  isPopupChapter = false;
+
+  selectedChapterIds: number[] = []; // Biến để lưu chapter đã chọn trong popup
+
+  openPopup(questionIndex: number) {
+    this.selectedChapterIds = [...this.questionForms[questionIndex].chapters];
     this.isPopupChapter = true;
+  }
+
+  // Hàm này được gọi khi người dùng nhấn checkbox
+  toggleChapterSelection(questionIndex: number, chapterId: number, event: Event) {
+    const checkbox = (event.target as HTMLInputElement);
+
+    if (checkbox.checked) {
+      this.selectedChapterIds.push(chapterId);
+    } else {
+      this.selectedChapterIds = this.selectedChapterIds.filter(id => id !== chapterId);
+    }
+
+    console.log(this.selectedChapterIds);
+  }
+
+  // Hàm xử lý khi nhấn nút OK
+  onConfirmSelection(questionIndex: number) {
+    this.questionForms[questionIndex].chapters = [...this.selectedChapterIds];
+    console.log('Updated selected chapter IDs for question:', this.questionForms[questionIndex].chapters);
+    this.closePopup();
   }
 
   addQuestionForm() {
     this.questionForms.push({
+      content: '',
+      subjectId: this.subjectId,
+      chapters: [],
+      levelId: this.listLevel[0].id,
       answers: [
-        { text: '' },
-        { text: '' },
-        { text: '' },
-        { text: '' }
+        { content: '', isCorrect: 0 },
+        { content: '', isCorrect: 0 },
+        { content: '', isCorrect: 0 },
+        { content: '', isCorrect: 0 }
       ]
     });
   }
@@ -102,7 +132,11 @@ export class QuestionFormComponent implements OnInit {
   }
 
   addAnswer(index: number) {
-    this.questionForms[index].answers.push({ text: '' }); // Thêm câu trả lời mới
+    this.questionForms[index].answers.push({ content: '', isCorrect: 0 }); // Thêm câu trả lời mới
+  }
+
+  toggleIsCorrect(answer: Answer) {
+    answer.isCorrect = answer.isCorrect === 1 ? 0 : 1; // Chuyển đổi giữa 0 và 1
   }
 
   removeAnswer(questionIndex: number, answerIndex: number) {
@@ -145,5 +179,33 @@ export class QuestionFormComponent implements OnInit {
       event.stopPropagation(); // Ngăn việc sự kiện click ra ngoài ảnh hưởng đến việc đóng modal
     }
     this.isPopupChapter = false;
+  }
+
+  saveQuestions() {
+    const payload = this.questionForms.map(question => ({
+      content: question.content,
+      subjectId: question.subjectId,
+      chapters: this.selectedChapterIds,
+      levelId: question.levelId,
+      answers: question.answers.map(answer => ({
+        content: answer.content,
+        isCorrect: answer.isCorrect
+      }))
+    }));
+
+    this.http.post<any>(`${this.authService.apiUrl}/question`, payload, this.home.httpOptions).subscribe(
+      response => {
+        this.toastr.success('Questions saved successfully!', 'Success', {
+          timeOut: 2000,
+        });
+        console.log('Questions saved successfully:', response);
+      },
+      error => {
+        this.toastr.error('Error saving questions.', 'Error', {
+          timeOut: 2000,
+        });
+        console.error('Error saving questions:', error);
+      }
+    );
   }
 }

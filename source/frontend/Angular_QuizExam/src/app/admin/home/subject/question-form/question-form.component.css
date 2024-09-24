@@ -250,11 +250,9 @@ input[type="checkbox"] {
     display: flex;
     flex-wrap: wrap; /* Cho phép các checkbox xuống dòng */
     margin-bottom: 20px; /* Khoảng cách dưới cùng */
+    width: 100%;
 }
 
 .form-chapter .checkbox-input {
-    flex: 0 0 33.33%; /* Mỗi checkbox group chiếm 1/3 chiều rộng */
-    display: flex; /* Để căn chỉnh checkbox và nhãn bên cạnh nhau */
-    align-items: center; /* Căn giữa theo chiều dọc */
     margin-bottom: 10px; /* Khoảng cách giữa các dòng */
 }
