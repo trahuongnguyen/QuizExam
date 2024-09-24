@@ -61,7 +61,7 @@ public class StudentController {
 
     @GetMapping("/export/excel")
     public ResponseEntity<String> exportToExcel(HttpServletResponse response
-            , List<StudentResponse> studentResponses)
+            ,@RequestBody List<StudentResponse> studentResponses)
             throws IOException {
         exportService.export(response, "student", "xlsx");
         StudentExcelExporter excelExporter = new StudentExcelExporter(studentResponses);
@@ -71,7 +71,7 @@ public class StudentController {
 
     @GetMapping(value = "/export/pdf", produces = MediaType.APPLICATION_PDF_VALUE)
     public ResponseEntity<String> exportToPDF(HttpServletResponse response
-            , List<StudentResponse> studentResponses) throws IOException {
+            ,@RequestBody List<StudentResponse> studentResponses) throws IOException {
         exportService.export(response, "student", "pdf");
         StudentPDFExporter pdfExporter = new StudentPDFExporter(studentResponses);
         pdfExporter.export(response);
