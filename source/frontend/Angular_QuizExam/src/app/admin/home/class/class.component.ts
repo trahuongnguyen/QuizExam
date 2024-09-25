@@ -22,6 +22,11 @@ export class ClassComponent implements OnInit, OnDestroy {
 
   classId: any;
 
+  isSidebarCollapsed = false;
+
+  toggleSidebar() {
+    this.isSidebarCollapsed = !this.isSidebarCollapsed;
+  }
   ngOnInit(): void {
     this.authService.entityExporter = 'class';
     this.http.get<any>(`${this.authService.apiUrl}/class`, this.home.httpOptions).subscribe((data: any) => {

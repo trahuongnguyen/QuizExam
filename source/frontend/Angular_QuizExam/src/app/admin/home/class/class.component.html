@@ -1,4 +1,4 @@
-<div class="content-wrapper">
+<div class="content-wrapper" [ngClass]="{'content-wrapper-collapsed': isSidebarCollapsed}">
     <h4>Class</h4>
     <hr class="line">
 
@@ -14,7 +14,7 @@
         </div>
     </div>
 
-    <table class="table" id="example">
+    <table class="table table-striped" id="example">
         <thead>
             <tr>
                 <th>STT</th>
