@@ -29,6 +29,7 @@ export class EmployeeComponent implements OnInit, OnDestroy {
   toggleSidebar() {
     this.isSidebarCollapsed = !this.isSidebarCollapsed;
   }
+
   ngOnInit(): void {
     this.authService.entityExporter = 'user';
     this.http.get<any>(`${this.authService.apiUrl}/user`, this.home.httpOptions).subscribe((data: any) => {

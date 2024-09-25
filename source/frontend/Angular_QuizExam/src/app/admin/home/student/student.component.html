@@ -1,4 +1,4 @@
-<div class="content-wrapper">
+<div class="content-wrapper" [ngClass]="{'content-wrapper-collapsed': isSidebarCollapsed}">
     <h4 *ngIf="_classId==0">Student (No Class)</h4>
     <h4 *ngIf="_classId!=0">{{class}}/Student</h4>
     <hr class="line">
@@ -11,13 +11,13 @@
                     style="padding-left: 4px;"></span></a>
         </div>
         <div>
-            <a href="" class="btn btn-primary button" style="margin-right: 5px;"><span
+            <a (click)="exportExcel()" class="btn btn-primary button" style="margin-right: 5px;"><span
                     class="mdi mdi-file-export icon"></span>Export Excel</a>
-            <a href="" class="btn btn-primary button"><span class="mdi mdi-file-export icon"></span>Export PDF</a>
+            <a (click)="exportPDF()" class="btn btn-primary button"><span class="mdi mdi-file-export icon"></span>Export PDF</a>
         </div>
     </div>
 
-    <table class="table" id="example">
+    <table class="table table-striped" id="example">
         <thead>
             <tr>
                 <th>STT</th>

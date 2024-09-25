@@ -215,13 +215,13 @@
 }
 
 .dataTables_wrapper .table .icon-action {
-    font-size: 22px;
+    font-size: 20px;
     cursor: pointer;
 }
 
 .dataTables_wrapper .table .chk_box {
-    width: 21px;
-    height: 21px;
+    width: 20px;
+    height: 16px;
 }
 
 .dataTables_wrapper .table .delete-icon {
