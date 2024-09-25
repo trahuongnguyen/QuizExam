@@ -1,8 +1,11 @@
 package com.example.quizexam_student.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -36,12 +39,12 @@ public class Question {
 
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "rel_chapter_question", joinColumns = @JoinColumn( name = "question_id"), inverseJoinColumns = @JoinColumn(name = "chapter_id"))
-    private Set<Chapter> chapters;
+    private Set<Chapter> chapters = new HashSet<>();
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "level_id")
     private Level level;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "question")
-    private Set<Answer> answers;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "question", orphanRemoval = false)
+    private Set<Answer> answers = new HashSet<>();
 }
