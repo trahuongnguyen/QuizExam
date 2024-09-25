@@ -21,26 +21,6 @@
     margin-bottom: 30px;
 }
 
-.btn-action {
-    position: fixed;
-    right: 20px;
-    width: 40px;
-    height: 115px;
-    border: 1px solid #dddddd8b;
-    text-align: center;
-    z-index: 1000;
-}
-
-.btn-action .icon-action {
-    color: var(--color-text);
-    font-size: 24px;
-    background-color: unset;
-    border: none;
-    cursor: pointer;
-}
-
-
-
 .form-row {
     display: flex;
     flex-wrap: wrap;
@@ -86,6 +66,10 @@
     position: relative;
 }
 
+.img-preview.hidden-border {
+    border: none; /* Ẩn border */
+}
+
 .img-preview input[type="file"] {
     position: absolute;
     opacity: 0;
@@ -99,6 +83,19 @@
     max-width: 100%;
     max-height: 100%;
     display: none;
+}
+
+.remove-image {
+    position: absolute;
+    top: 10px; /* Điều chỉnh theo vị trí mong muốn */
+    right: 10px; /* Điều chỉnh theo vị trí mong muốn */
+    font-size: 18px;
+    color: red;
+    cursor: pointer;
+    background: rgba(255, 255, 255, 0.7);
+    border-radius: 50%;
+    padding: 5px;
+    z-index: 10; /* Đảm bảo dấu X nằm trên các phần tử khác */
 }
 
 .choose-file-btn {
@@ -166,4 +163,96 @@ input[type="checkbox"] {
 
 .icon-button {
     font-size: 18px;
+}
+
+.btn-action {
+    position: fixed;
+    right: 20px;
+    width: 40px;
+    height: 115px;
+    border: 1px solid #dddddd8b;
+    text-align: center;
+}
+
+.btn-action .icon-action {
+    color: var(--color-text);
+    font-size: 24px;
+    background-color: unset;
+    border: none;
+    cursor: pointer;
+}
+
+
+/* Popup */
+.modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background-color: #fff;
+    border-radius: 8px;
+    width: 600px;
+    /* Tăng chiều rộng của modal */
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    border: 1px solid #ddd;
+    font-size: 18px;
+    /* Tăng kích thước font chữ */
+}
+
+.modal-header {
+    background-color: #aa1210;
+    border-radius: 10px 10px 0 0;
+    color: white;
+    padding: 15px;
+    /* Tăng kích thước padding cho header */
+    font-size: 20px;
+    /* Tăng kích thước font chữ của header */
+    font-weight: bold;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #ddd;
+}
+
+.close-icon {
+    font-size: 24px;
+    /* Tăng kích thước dấu "X" */
+    cursor: pointer;
+}
+
+.modal-body {
+    padding: 20px;
+    /* Tăng kích thước padding cho body */
+    font-size: 18px;
+    border-radius: 8px;
+    /* Tăng kích thước font chữ cho nội dung */
+    background-color: var(--color-background);
+}
+
+.form-chapter {
+    display: flex;
+    flex-wrap: wrap; /* Cho phép các phần tử xuống dòng */
+}
+
+.form-chapter input[type="checkbox"] {
+    margin-right: 10px; /* Khoảng cách giữa checkbox và nhãn */
+}
+
+.form-chapter .checkbox-group {
+    display: flex;
+    flex-wrap: wrap; /* Cho phép các checkbox xuống dòng */
+    margin-bottom: 20px; /* Khoảng cách dưới cùng */
+    width: 100%;
+}
+
+.form-chapter .checkbox-input {
+    margin-bottom: 10px; /* Khoảng cách giữa các dòng */
 }

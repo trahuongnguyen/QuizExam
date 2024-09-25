@@ -1,25 +1,23 @@
 <div class="content-wrapper">
     <h4>Examination</h4>
     <hr class="line">
-    <div class="container my-4">
-        <!-- Bottom Actions (Back and Export) -->
-        <div class="bottom-actions">
-            <div>
-                <span class="mdi mdi-keyboard-backspace" style="font-size: 22px;"></span>
-            </div>
-            <div>
-                <a  class="btn btn-primary button" style="margin-right: 5px;"><span
-                        class="mdi mdi-file-export icon"></span>Export Excel</a>
-                <a  class="btn btn-primary button"><span
-                        class="mdi mdi-file-export icon"></span>Export PDF</a>
-            </div>
+    <!-- Bottom Actions (Back and Export) -->
+    <div class="bottom-actions">
+        <div>
+            <span class="mdi mdi-keyboard-backspace" style="font-size: 18px;"></span>
         </div>
-
+        <div>
+            <a class="btn btn-primary button" style="margin-right: 5px;"><span
+                    class="mdi mdi-file-export icon"></span>Export Excel</a>
+            <a class="btn btn-primary button"><span class="mdi mdi-file-export icon"></span>Export PDF</a>
+        </div>
+    </div>
+    <div class="container my-4">
         <!-- Exam details section -->
         <div class="exam-details">
             <!-- Centered title with edit icon -->
             <div class="exam-header">
-                <h3 class="text-center flex-grow-1">Create Examination</h3>
+                <h4 class="text-center flex-grow-1">Create Examination</h4>
                 <i class="fa-solid fa-pen-to-square"></i>
             </div>
 
@@ -59,7 +57,7 @@
         <div class="question-section-container">
             <!-- Example Question 1 -->
             <div class="question-section">
-                <h5>Question 1: What do meta tags help in?</h5>
+                <h6>Question 1: What do meta tags help in?</h6>
                 <div class="form-check">
                     <input class="form-check-input" type="radio" name="question1" id="q1a">
                     <label class="form-check-label" for="q1a">A. Responsiveness of the webpage</label>
@@ -80,7 +78,7 @@
 
             <!-- Example Question 2 (Checkboxes) -->
             <div class="question-section">
-                <h5>Question 2: What is HTML?</h5>
+                <h6>Question 2: What is HTML?</h6>
                 <div class="form-check">
                     <input class="form-check-input" type="checkbox" id="q2a">
                     <label class="form-check-label" for="q2a">A. HTML consists of a set of elements that helps the
@@ -103,7 +101,7 @@
 
             <!-- Example Question 3 (Image-based question) -->
             <div class="question-section">
-                <h5>Question 3: What is this symbol?</h5>
+                <h6>Question 3: What is this symbol?</h6>
                 <!-- Display Image -->
                 <div class="text-center">
                     <img src="https://www.shutterstock.com/image-vector/html-coding-symbols-260nw-797760319.jpg"
@@ -127,7 +125,85 @@
                 </div>
             </div>
 
-            <!-- More questions as needed -->
+            <div class="question-section">
+                <h6>Question 4: What does CSS stand for?</h6>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="question2" id="q2a">
+                    <label class="form-check-label" for="q2a">A. Cascading Style Sheets</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="question2" id="q2b">
+                    <label class="form-check-label" for="q2b">B. Computer Style Sheets</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="question2" id="q2c">
+                    <label class="form-check-label" for="q2c">C. Creative Style Sheets</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="question2" id="q2d">
+                    <label class="form-check-label" for="q2d">D. Colorful Style Sheets</label>
+                </div>
+            </div>
+
+            <div class="question-section">
+                <h6>Question 5: Which HTML tag is used to define an internal style sheet?</h6>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="question3" id="q3a">
+                    <label class="form-check-label" for="q3a">A. &lt;style&gt;</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="question3" id="q3b">
+                    <label class="form-check-label" for="q3b">B. &lt;css&gt;</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="question3" id="q3c">
+                    <label class="form-check-label" for="q3c">C. &lt;script&gt;</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="question3" id="q3d">
+                    <label class="form-check-label" for="q3d">D. &lt;link&gt;</label>
+                </div>
+            </div>
+
+            <div class="question-section">
+                <h6>Question 6: What is the purpose of the &lt;head&gt; section in an HTML document?</h6>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="question4" id="q4a">
+                    <label class="form-check-label" for="q4a">A. To define the document's body content</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="question4" id="q4b">
+                    <label class="form-check-label" for="q4b">B. To include metadata and links to stylesheets</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="question4" id="q4c">
+                    <label class="form-check-label" for="q4c">C. To create links to other pages</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="question4" id="q4d">
+                    <label class="form-check-label" for="q4d">D. To define scripts and other page content</label>
+                </div>
+            </div>
+
+            <div class="question-section">
+                <h6>Question 7: Which HTML tag is used to display a line break?</h6>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="question5" id="q5a">
+                    <label class="form-check-label" for="q5a">A. &lt;br&gt;</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="question5" id="q5b">
+                    <label class="form-check-label" for="q5b">B. &lt;hr&gt;</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="question5" id="q5c">
+                    <label class="form-check-label" for="q5c">C. &lt;p&gt;</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="question5" id="q5d">
+                    <label class="form-check-label" for="q5d">D. &lt;line&gt;</label>
+                </div>
+            </div>
         </div>
 
     </div>

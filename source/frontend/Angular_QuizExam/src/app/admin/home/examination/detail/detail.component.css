@@ -21,7 +21,7 @@
 }
 
 .button {
-    font-size: 15px;
+    font-size: 10px;
     background-color: #aa1210;
     border: none;
     border-radius: 8px;
@@ -40,10 +40,14 @@
 .exam-details {
     background-color: #f8f9fa;
     padding: 10px;
-    border-radius: 10px;
+    border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     position: relative;
     margin-bottom: 20px;
+    min-height: 200px;
+    width: 80%;
+    margin-left: auto;
+    margin-right: auto;
     /* Center title */
 }
 
@@ -65,8 +69,8 @@
 }
 
 .exam-details .row {
-    padding-left: 160px;
-    padding-right: 50px;
+    padding-left: 130px;
+    padding-right: 40px;
 }
 
 .exam-details p {
@@ -78,11 +82,13 @@
     font-weight: bold;
     margin-right: 10px;
     min-width: 100px;
+    font-size: 14px;
 }
 
 /* Flex-grow the content to take the rest of the space */
 .content {
     flex-grow: 1;
+    font-size: 14px;
 }
 
 /* Edit icon positioning */
@@ -104,10 +110,13 @@
 .question-section-container {
     background-color: #f8f9fa;
     padding: 20px;
-    border-radius: 10px;
+    border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     max-height: 500px; /* Limit height of question section */
     overflow-y: auto;
+    width: 80%;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .question-section {
@@ -119,4 +128,8 @@
     width: 20%;
     height: auto;
     text-align: center;
-  }
+}
+
+.form-check-label {
+    font-size: 14px;
+}
