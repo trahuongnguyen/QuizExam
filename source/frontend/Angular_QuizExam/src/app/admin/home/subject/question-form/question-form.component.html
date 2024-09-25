@@ -39,7 +39,7 @@
                     <div class="answers-container">
                         <div *ngFor="let answer of question.answers; let j = index" class="input-group mb-2">
                             <div class="input-group-text">
-                                <input type="checkbox" [(ngModel)]="answer.isCorrect" name="answer.isCorrect{{i}}{{j}}" (change)="toggleIsCorrect(answer)" />
+                                <input type="checkbox" [(ngModel)]="answer.isCorrect" (change)="toggleIsCorrect(answer)" />
                             </div>
                             <input type="text" [(ngModel)]="answer.content" name="answer.content{{i}}{{j}}" class="form-control" />
                             <span class="remove-answer" (click)="removeAnswer(i, j)">X</span>

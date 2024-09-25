@@ -137,6 +137,7 @@ export class QuestionFormComponent implements OnInit {
 
   toggleIsCorrect(answer: Answer) {
     answer.isCorrect = answer.isCorrect === 1 ? 0 : 1; // Chuyển đổi giữa 0 và 1
+    console.log('Current isCorrect value:', answer.isCorrect); // In ra giá trị
   }
 
   removeAnswer(questionIndex: number, answerIndex: number) {
@@ -182,23 +183,26 @@ export class QuestionFormComponent implements OnInit {
   }
 
   saveQuestions() {
-    const payload = this.questionForms.map(question => ({
-      content: question.content,
-      subjectId: question.subjectId,
-      chapters: this.selectedChapterIds,
-      levelId: question.levelId,
-      answers: question.answers.map(answer => ({
-        content: answer.content,
-        isCorrect: answer.isCorrect
+    const payload = {
+      questions: this.questionForms.map(question => ({
+        content: question.content,
+        subjectId: question.subjectId,
+        chapters: question.chapters,
+        levelId: question.levelId,
+        answers: question.answers.map(answer => ({
+          content: answer.content,
+          isCorrect: answer.isCorrect
+        }))
       }))
-    }));
+    };
 
-    this.http.post<any>(`${this.authService.apiUrl}/question`, payload, this.home.httpOptions).subscribe(
+    this.http.post(`${this.authService.apiUrl}/question`, payload, this.home.httpOptions).subscribe(
       response => {
         this.toastr.success('Questions saved successfully!', 'Success', {
           timeOut: 2000,
         });
         console.log('Questions saved successfully:', response);
+        this.router.navigate([`/admin/home/subject/${this.subjectId}/questionList`]);
       },
       error => {
         this.toastr.error('Error saving questions.', 'Error', {
