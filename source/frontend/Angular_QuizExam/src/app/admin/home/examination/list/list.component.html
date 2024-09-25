@@ -1,1 +1,223 @@
-<p>list works!</p>
+<div class="content-wrapper">
+    <h4>Examination</h4>
+    <hr class="line">
+
+    <!-- Bottom Actions (Create and Export) -->
+    <div class="bottom-actions">
+
+        <div class="sem-container">
+            <a class="btn btn-outline-light" [ngClass]="{'active': selectedSem === 1}" (click)="selectSem(1)">Sem
+                1</a>
+            <a class="btn btn-outline-light" [ngClass]="{'active': selectedSem === 2}" (click)="selectSem(2)">Sem
+                2</a>
+            <a class="btn btn-outline-light" [ngClass]="{'active': selectedSem === 3}" (click)="selectSem(3)">Sem
+                3</a>
+            <a class="btn btn-outline-light" [ngClass]="{'active': selectedSem === 4}" (click)="selectSem(4)">Sem
+                4</a>
+        </div>
+       
+    </div>
+    <div>
+        <a  [routerLink]="'../exam/examform'"  class="btn btn-primary button create">Create</a>
+    </div>
+    <div class="container">
+        <div class="row">
+            <!-- Card 1 -->
+            <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12 mb-5">
+                <div class="card">
+                    <div class="card-image">
+                        <img src="https://i.pinimg.com/564x/33/34/66/333466cd07d18eae8c6546e298f2b9c7.jpg"
+                            alt="Quiz Thumbnail">
+                    </div>
+                    <div class="card-content">
+                        <span class="card-title">HTML, CSS AND JAVASCRIPT</span>
+                        <p>
+                            <i class="fa-regular fa-clock"></i> 7h 16/07/2024 - 15h 16/07/2024
+                        </p>
+                        <p><strong>Code:</strong> HTMLCSSJS-102</p>
+
+                        <div class="row">
+                            <div class="col-6">
+                                <p><i class="fa-regular fa-clock"></i> 45 minutes</p>
+                            </div>
+                            <div class="col-6">
+                                <p>Question: 16</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Card 2 -->
+            <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12 mb-5">
+                <div class="card">
+                    <div class="card-image">
+                        <img src="https://i.pinimg.com/736x/93/4e/2e/934e2e8d10d658f55391da3bb00fc83a.jpg"
+                            alt="Quiz Thumbnail">
+                    </div>
+                    <div class="card-content">
+                        <span class="card-title">HTML, CSS AND JAVASCRIPT</span>
+                        <p class="mt-2">
+                            <i class="fa-regular fa-clock"></i> 7h 16/07/2024 - 15h 16/07/2024
+                        </p>
+                        <p><strong>Code:</strong> HTMLCSSJS-102</p>
+
+                        <div class="row">
+                            <div class="col-6">
+                                <p><i class="fa-regular fa-clock"></i> 45 minutes</p>
+                            </div>
+                            <div class="col-6">
+                                <p>Question: 16</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- card 3 -->
+            <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12 mb-5">
+                <div class="card">
+                    <div class="card-image">
+                        <img src="https://i.pinimg.com/564x/e1/c9/8b/e1c98bad8a1c4de2b1397060beab6a42.jpg"
+                            alt="Quiz Thumbnail">
+                    </div>
+                    <div class="card-content">
+                        <span class="card-title">HTML, CSS AND JAVASCRIPT</span>
+                        <p class="mt-2">
+                            <i class="fa-regular fa-clock"></i> 7h 16/07/2024 - 15h 16/07/2024
+                        </p>
+                        <p><strong>Code:</strong> HTMLCSSJS-102</p>
+
+                        <div class="row">
+                            <div class="col-6">
+                                <p><i class="fa-regular fa-clock"></i> 45 minutes</p>
+                            </div>
+                            <div class="col-6">
+                                <p>Question: 16</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- card 4 -->
+            <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12 mb-5">
+                <div class="card">
+                    <div class="card-image">
+                        <img src="https://i.pinimg.com/564x/33/34/66/333466cd07d18eae8c6546e298f2b9c7.jpg"
+                            alt="Quiz Thumbnail">
+                    </div>
+                    <div class="card-content">
+                        <span class="card-title">HTML, CSS AND JAVASCRIPT</span>
+                        <p class="mt-2">
+                            <i class="fa-regular fa-clock"></i> 7h 16/07/2024 - 15h 16/07/2024
+                        </p>
+                        <p><strong>Code:</strong> HTMLCSSJS-102</p>
+
+                        <div class="row">
+                            <div class="col-6">
+                                <p><i class="fa-regular fa-clock"></i> 45 minutes</p>
+                            </div>
+                            <div class="col-6">
+                                <p>Question: 16</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12 mb-5">
+                <div class="card">
+                    <div class="card-image">
+                        <img src="https://i.pinimg.com/564x/33/34/66/333466cd07d18eae8c6546e298f2b9c7.jpg"
+                            alt="Quiz Thumbnail">
+                    </div>
+                    <div class="card-content">
+                        <span class="card-title">HTML, CSS AND JAVASCRIPT</span>
+                        <p class="mt-2">
+                            <i class="fa-regular fa-clock"></i> 7h 16/07/2024 - 15h 16/07/2024
+                        </p>
+                        <p><strong>Code:</strong> HTMLCSSJS-102</p>
+
+                        <div class="row">
+                            <div class="col-6">
+                                <p><i class="fa-regular fa-clock"></i> 45 minutes</p>
+                            </div>
+                            <div class="col-6">
+                                <p>Question: 16</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12 mb-5">
+                <div class="card">
+                    <div class="card-image">
+                        <img src="https://i.pinimg.com/564x/33/34/66/333466cd07d18eae8c6546e298f2b9c7.jpg"
+                            alt="Quiz Thumbnail">
+                    </div>
+                    <div class="card-content">
+                        <span class="card-title">HTML, CSS AND JAVASCRIPT</span>
+                        <p class="mt-2">
+                            <i class="fa-regular fa-clock"></i> 7h 16/07/2024 - 15h 16/07/2024
+                        </p>
+                        <p><strong>Code:</strong> HTMLCSSJS-102</p>
+
+                        <div class="row">
+                            <div class="col-6">
+                                <p><i class="fa-regular fa-clock"></i> 45 minutes</p>
+                            </div>
+                            <div class="col-6">
+                                <p>Question: 16</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12 mb-5">
+                <div class="card">
+                    <div class="card-image">
+                        <img src="https://i.pinimg.com/564x/33/34/66/333466cd07d18eae8c6546e298f2b9c7.jpg"
+                            alt="Quiz Thumbnail">
+                    </div>
+                    <div class="card-content">
+                        <span class="card-title">HTML, CSS AND JAVASCRIPT</span>
+                        <p class="mt-2">
+                            <i class="fa-regular fa-clock"></i> 7h 16/07/2024 - 15h 16/07/2024
+                        </p>
+                        <p><strong>Code:</strong> HTMLCSSJS-102</p>
+
+                        <div class="row">
+                            <div class="col-6">
+                                <p><i class="fa-regular fa-clock"></i> 45 minutes</p>
+                            </div>
+                            <div class="col-6">
+                                <p>Question: 16</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12 mb-5">
+                <div class="card">
+                    <div class="card-image">
+                        <img src="https://i.pinimg.com/564x/33/34/66/333466cd07d18eae8c6546e298f2b9c7.jpg"
+                            alt="Quiz Thumbnail">
+                    </div>
+                    <div class="card-content">
+                        <span class="card-title">HTML, CSS AND JAVASCRIPT</span>
+                        <p class="mt-2">
+                            <i class="fa-regular fa-clock"></i> 7h 16/07/2024 - 15h 16/07/2024
+                        </p>
+                        <p><strong>Code:</strong> HTMLCSSJS-102</p>
+
+                        <div class="row">
+                            <div class="col-6">
+                                <p><i class="fa-regular fa-clock"></i> 45 minutes</p>
+                            </div>
+                            <div class="col-6">
+                                <p>Question: 16</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

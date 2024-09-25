@@ -1,0 +1,60 @@
+.content-wrapper {
+    padding: 20px;
+    margin: 0 0 60px 8%;
+    min-height: 80vh;
+    overflow-x: hidden;
+}
+
+.line {
+    margin-top: 0;
+}
+
+.container {
+    border: 1px solid #ddd;
+    box-shadow: 0 2px 4px rgba(0.1, 0.1, 0.1, 0.1);
+    border-radius: 6px;
+    margin-top: 80px;
+    max-width: 750px;
+}
+
+.content {
+    margin: -1% 5% 5% 5%;
+}
+
+.content label {
+    font-weight: 600;
+    padding-bottom: 3px;
+    padding-top: 30px;
+}
+
+.content input,
+select {
+    width: 95%;
+    background-color: #EDF5F4;
+    border: none;
+    min-height: 32px;
+    border-radius: 5px;
+}
+
+.group-input {
+    padding-left: 5%;
+}
+
+.w-30 .button {
+    color: white;
+    background-color: #AA1210;
+    width: 100%;
+}
+
+.w-30 {
+    width: 30%;
+    margin: auto;
+}
+
+.form-right {
+    margin-left: 10px;
+}
+
+.title h3 {
+    font-weight: bold;
+}

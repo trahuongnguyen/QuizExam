@@ -27,7 +27,14 @@ export class StudentComponent implements OnInit, OnDestroy {
   userIds: Number[] = [];
 
   studentId: any;
+
+  isSidebarCollapsed = false;
+
+  toggleSidebar() {
+    this.isSidebarCollapsed = !this.isSidebarCollapsed;
+  }
   ngOnInit(): void {
+    this.authService.entityExporter = 'studentManagement';
     this._classId = Number(this.activatedRoute.snapshot.params['classId'])??0;
     if(this._classId!=0 && !Number.isNaN(this._classId)){
       this.http.get<any>(`${this.authService.apiUrl}/studentManagement/${this._classId}`, this.home.httpOptions).subscribe((data: any) => {
@@ -249,5 +256,41 @@ export class StudentComponent implements OnInit, OnDestroy {
     if (this.dataTable) {
       this.dataTable.destroy();
     }
+  }
+
+  exportExcel() {
+    this.authService.exportDataExcel().subscribe(
+      (response) => {
+        const url = window.URL.createObjectURL(new Blob([response], { type: 'blob' as 'json' }));
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'export_excel.xlsx'; // Thay đổi tên file nếu cần
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+      },
+      (error) => {
+        console.error('Export failed', error);
+      }
+    );
+  }
+
+  exportPDF() {
+    this.authService.exportDataPDF().subscribe(
+      (response) => {
+        const url = window.URL.createObjectURL(new Blob([response], { type: 'blob' }));
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'export_pdf.pdf'; // Thay đổi tên file nếu cần
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+      },
+      (error) => {
+        console.error('Export failed', error);
+      }
+    );
   }
 }

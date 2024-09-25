@@ -18,13 +18,14 @@ const routes: Routes = [
         component: ListComponent,
       },
       {
+        path: 'examform',
+        component: FormComponent
+      },
+      {
         path: ':detail',
         component: DetailComponent,
       },
-      {
-        path: ':examinationId',
-        component: FormComponent
-      },
+     
     ],
     canActivate: [AuthGuard],
     data: {roles: ['ADMIN', 'DIRECTOR', 'SRO']},

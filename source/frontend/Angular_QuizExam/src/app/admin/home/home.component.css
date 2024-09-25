@@ -28,20 +28,24 @@
 .user-section .icon {
     height: 45px;
     font-size: 45px;
-    margin-left: 10px; /* Khoảng cách giữa icon và thông tin user */
+    margin-left: 10px;
+    /* Khoảng cách giữa icon và thông tin user */
     margin-bottom: 24px;
 }
 
 .user-info {
     display: flex;
-    flex-direction: column; /* Thông tin user hiển thị theo cột (tên trên, role dưới) */
-    align-items: flex-end; /* Căn phải cho thông tin */
+    flex-direction: column;
+    /* Thông tin user hiển thị theo cột (tên trên, role dưới) */
+    align-items: flex-end;
+    /* Căn phải cho thông tin */
 }
 
 .user-name {
     font-size: 14px;
     font-weight: bold;
-    margin-bottom: 2px; /* Khoảng cách giữa tên và role */
+    margin-bottom: 2px;
+    /* Khoảng cách giữa tên và role */
 }
 
 .user-role {
@@ -55,7 +59,7 @@
 /* Sidebar */
 
 .sidebar {
-    width: 8%;
+    width: 120px;
     background-color: var(--color-sidebar);
     border-right: 1px solid var(--color-sidebar);
     height: 100vh;
@@ -112,7 +116,7 @@
 
 /* sidebar thu nhỏ */
 .sidebar-collapsed {
-    width: 2%;
+    width: 30px;
     transition: all 0.3s ease;
     overflow: hidden;
 }
