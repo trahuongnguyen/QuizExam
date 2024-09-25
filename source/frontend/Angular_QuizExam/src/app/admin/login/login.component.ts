@@ -45,7 +45,7 @@ export class LoginComponent implements AfterContentInit {
               this.authService.userLogged = response;
               this.router.navigate(['/admin/home']);
             } else {
-              this.toastr.error('This account is not accessed in this page', 'Failed', {
+              this.toastr.error('Full authentication is required to access this resource', 'Failed', {
                 timeOut: 2000,
               });
             }

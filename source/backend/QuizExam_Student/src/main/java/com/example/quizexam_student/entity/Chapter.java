@@ -1,8 +1,11 @@
 package com.example.quizexam_student.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -25,8 +28,10 @@ public class Chapter {
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "subject_id")
+    @JsonIgnore
     private Subject subject;
 
     @ManyToMany(cascade = CascadeType.ALL, mappedBy = "chapters")
-    private Set<Question> questions;
+    @JsonBackReference
+    private Set<Question> questions = new HashSet<>();
 }
