@@ -163,8 +163,8 @@
 
 .dataTables_filter input[type="search"] {
     color: var(--color-text);
-    width: 265px;
-    height: 40px;
+    width: 240px;
+    height: 34px;
     border: 1px solid #d9d9d9;
     border-radius: 8px;
     padding: 12px 16px;
@@ -176,8 +176,8 @@
 
 .dataTables_filter button {
     background-color: #d9d9d9;
-    width: 40px;
-    height: 40px;
+    width: 34px;
+    height: 34px;
     border: none;
     border-radius: 0 8px 8px 0;
     margin-left: -35px;
@@ -265,6 +265,7 @@
 .dataTables_wrapper .dataTables_paginate .paginate_button {
     color: var(--color-text) !important;
     border-radius: 8px;
+    padding: 0.1em 0.5em;
 }
 
 .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
