@@ -16,8 +16,8 @@ interface QuestionForm {
   subjectId: number; // Thuộc tính để lưu ID chủ đề
   chapters: number[]; // Thuộc tính để lưu chapters
   levelId: number; // Thuộc tính để lưu levelId
+  imageFile?: File | null; // Thông tin file ảnh
   answers: Answer[]; // Danh sách các câu trả lời
-  imageSelected?: boolean;
 }
 
 @Component({
@@ -69,6 +69,7 @@ export class QuestionFormComponent implements OnInit {
         subjectId: this.subjectId,
         chapters: [],
         levelId: this.listLevel[0].id,
+        imageFile: null,
         answers: [
           { content: '', isCorrect: 0 },
           { content: '', isCorrect: 0 },
@@ -80,35 +81,42 @@ export class QuestionFormComponent implements OnInit {
   }
 
   isPopupChapter = false;
-
-  selectedChapterIds: number[] = []; // Biến để lưu chapter đã chọn trong popup
+  popupChapterIndex: number = 0;
 
   openPopup(questionIndex: number) {
-    this.selectedChapterIds = [...this.questionForms[questionIndex].chapters];
+    this.popupChapterIndex = questionIndex;
     this.isPopupChapter = true;
+    console.log(this.questionForms[questionIndex].chapters);
   }
 
   // Hàm này được gọi khi người dùng nhấn checkbox
   toggleChapterSelection(questionIndex: number, chapterId: number, event: Event) {
     const checkbox = (event.target as HTMLInputElement);
 
-    if (checkbox.checked) {
-      this.selectedChapterIds.push(chapterId);
-    } else {
-      this.selectedChapterIds = this.selectedChapterIds.filter(id => id !== chapterId);
+    if (!this.questionForms[questionIndex].chapters) {
+      this.questionForms[questionIndex].chapters = [];
     }
 
-    console.log(this.selectedChapterIds);
+    if (checkbox.checked) {
+      this.questionForms[questionIndex].chapters.push(chapterId);
+    } else {
+      this.questionForms[questionIndex].chapters = this.questionForms[questionIndex].chapters.filter(id => id !== chapterId);
+    }
+
+    console.log(this.questionForms[questionIndex].chapters);
   }
 
-  // Hàm xử lý khi nhấn nút OK
-  onConfirmSelection(questionIndex: number) {
-    this.questionForms[questionIndex].chapters = [...this.selectedChapterIds];
-    console.log('Updated selected chapter IDs for question:', this.questionForms[questionIndex].chapters);
-    this.closePopup();
+  closePopup(event?: MouseEvent): void {
+    if (event) {
+      event.stopPropagation(); // Ngăn việc sự kiện click ra ngoài ảnh hưởng đến việc đóng modal
+    }
+    this.isPopupChapter = false;
+    this.popupChapterIndex = 0; // Reset khi đóng popup
   }
 
   addQuestionForm() {
+    const newQuestionIndex = this.questionForms.length;
+    
     this.questionForms.push({
       content: '',
       subjectId: this.subjectId,
@@ -121,6 +129,14 @@ export class QuestionFormComponent implements OnInit {
         { content: '', isCorrect: 0 }
       ]
     });
+
+    // Cuộn xuống form mới thêm
+    setTimeout(() => {
+      const newQuestionForm = document.getElementById(`question-form-${newQuestionIndex}`);
+      if (newQuestionForm) {
+          newQuestionForm.scrollIntoView({ behavior: 'smooth' });
+      }
+    }, 0);
   }
 
   removeQuestionForm(index: number) {
@@ -158,10 +174,9 @@ export class QuestionFormComponent implements OnInit {
         imgPreview.style.display = 'block';
       };
       reader.readAsDataURL(file);
-      console.log(file.name);
 
       // Đánh dấu là đã chọn ảnh và thêm lớp ẩn border
-      this.questionForms[questionIndex].imageSelected = true;
+      this.questionForms[questionIndex].imageFile = file; // Lưu file vào đối tượng
       imgContainer?.classList.add('hidden-border'); // Thêm lớp để ẩn border
     } else {
       imgContainer?.classList.remove('hidden-border'); // Xóa lớp nếu không có ảnh
@@ -169,34 +184,43 @@ export class QuestionFormComponent implements OnInit {
   }
 
   removeImage(questionIndex: number) {
-    this.questionForms[questionIndex].imageSelected = false; // Đánh dấu là chưa chọn ảnh
+    this.questionForms[questionIndex].imageFile = null; // Xóa thông tin file
     const imgPreview = document.getElementById(`imagePreview${questionIndex}`) as HTMLImageElement;
     imgPreview.src = ''; // Đặt lại src của ảnh
     imgPreview.style.display = 'none'; // Ẩn ảnh đi
   }
 
-  closePopup(event?: MouseEvent): void {
-    if (event) {
-      event.stopPropagation(); // Ngăn việc sự kiện click ra ngoài ảnh hưởng đến việc đóng modal
-    }
-    this.isPopupChapter = false;
-  }
-
   saveQuestions() {
-    const payload = {
-      questions: this.questionForms.map(question => ({
-        content: question.content,
-        subjectId: question.subjectId,
-        chapters: question.chapters,
-        levelId: question.levelId,
-        answers: question.answers.map(answer => ({
-          content: answer.content,
-          isCorrect: answer.isCorrect
-        }))
+    const formData = new FormData();
+  
+    // Tạo danh sách câu hỏi
+    const questionsList = this.questionForms.map(question => ({
+      content: question.content,
+      image: null, // Hoặc giá trị tương ứng nếu có ảnh
+      subjectId: question.subjectId,
+      chapters: question.chapters,
+      levelId: question.levelId,
+      answers: question.answers.map(answer => ({
+        content: answer.content,
+        isCorrect: answer.isCorrect
       }))
-    };
-
-    this.http.post(`${this.authService.apiUrl}/question`, payload, this.home.httpOptions).subscribe(
+    }));
+  
+    // Thêm danh sách câu hỏi vào FormData
+    formData.append('questions', new Blob([JSON.stringify(questionsList)], { type: 'application/json' }));
+  
+    // Thêm các file vào FormData
+    this.questionForms.forEach((question) => {
+      if (question.imageFile) {
+          formData.append('files', question.imageFile); // Sử dụng file đã lưu
+      }
+      else {
+        formData.append('files', new Blob([]));
+      }
+    });
+  
+    // Gửi yêu cầu POST
+    this.http.post(`${this.authService.apiUrl}/question`, formData, this.home.httpOptions).subscribe(
       response => {
         this.toastr.success('Questions saved successfully!', 'Success', {
           timeOut: 2000,

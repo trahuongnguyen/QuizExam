@@ -11,6 +11,6 @@ import java.util.List;
 @Service
 public interface QuestionService {
     List<QuestionResponse> getAllQuestionsBySubjectId(int subjectId);
-    Question saveQuestion(QuestionRequest questionRequest) throws IOException;
+    List<Question> saveQuestions(List<QuestionRequest> questionRequests) throws IOException;
     Question updateQuestion(int id, QuestionRequest questionRequest) throws IOException;
 }

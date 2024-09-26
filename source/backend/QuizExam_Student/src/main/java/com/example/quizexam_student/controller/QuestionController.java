@@ -16,7 +16,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.LocalDate;
-import java.util.Date;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -40,14 +40,23 @@ public class QuestionController {
     }
 
     @PostMapping(consumes = {MULTIPART_FORM_DATA_VALUE, APPLICATION_JSON_VALUE})
-    public Question addQuestion(@RequestPart(value = "file", required = false) MultipartFile file, @RequestPart("question") @Valid QuestionRequest questionRequest) throws IOException {
-        if (file!=null) {
-            LocalDate date = LocalDate.now();
-            String fileName = UUID.randomUUID() + "_" + date + "_" + file.getOriginalFilename();
-            Files.copy(file.getInputStream(), Paths.get(uploadDir).resolve(fileName));
-            questionRequest.setImage(fileName);
+    public List<Question> addQuestions(@RequestParam("files") MultipartFile[] files, @RequestPart("questions") @Valid List<QuestionRequest> questionRequests) throws IOException {
+        if (files.length != questionRequests.size()) {
+            throw new IllegalArgumentException("Số lượng file không khớp với số lượng câu hỏi.");
         }
-        return questionService.saveQuestion(questionRequest);
+
+        List<Question> savedQuestions = new ArrayList<>();
+        for (int i = 0; i < questionRequests.size(); i++) {
+            QuestionRequest questionRequest = questionRequests.get(i);
+            if (files[i] != null && !files[i].isEmpty()) {
+                LocalDate date = LocalDate.now();
+                String fileName = UUID.randomUUID() + "_" + date + "_" + files[i].getOriginalFilename();
+                Files.copy(files[i].getInputStream(), Paths.get(uploadDir).resolve(fileName));
+                questionRequest.setImage(fileName);
+            }
+            savedQuestions.addAll(questionService.saveQuestions(List.of(questionRequest)));
+        }
+        return savedQuestions;
     }
 
     @PutMapping(consumes = {MULTIPART_FORM_DATA_VALUE, APPLICATION_JSON_VALUE}, path = "/{id}")

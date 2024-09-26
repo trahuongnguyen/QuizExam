@@ -47,7 +47,6 @@ export class HomeComponent implements OnInit {
       const token = localStorage.getItem('jwtToken');
       this.httpOptions = {
         headers: new HttpHeaders({ 
-          'Content-Type': 'application/json' ,
           'Authorization': `Bearer ${token}`,
           'Accept': 'application/json'
         }),

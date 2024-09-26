@@ -3,7 +3,7 @@
     <hr class="line">
     <form class="d-flex" (ngSubmit)="saveQuestions()">
         <div id="question-forms">
-            <div *ngFor="let question of questionForms; let i = index" class="question-form">
+            <div *ngFor="let question of questionForms; let i = index" class="question-form" [id]="'question-form-' + i">
                 <div class="form-row">
                     <input type="hidden" [(ngModel)]="question.subjectId" name="question.subjectId{{i}}" class="form-control" />
                     
@@ -25,13 +25,13 @@
                 </div>
 
                 <div class="form-group form-image">
-                    <div class="img-preview mt-3 mb-3" [ngClass]="{'hidden-border': question.imageSelected}">
-                        <input type="file" class="form-control-file" accept="image/*" (change)="previewImage($event, i)" />
-                        <button *ngIf="!question.imageSelected" class="choose-file-btn" type="button">Choose file</button>
+                    <div class="img-preview mt-3 mb-3" [ngClass]="{'hidden-border': question.imageFile}">
+                        <input type="file" name="file{{i}}" class="form-control-file" accept="image/*" (change)="previewImage($event, i)" />
+                        <button *ngIf="!question.imageFile" class="choose-file-btn" type="button">Choose file</button>
                         <img id="imagePreview{{i}}" src="#" alt="Image Preview" style="display:none;" />
                 
                         <!-- Dấu X để xóa ảnh -->
-                        <span *ngIf="question.imageSelected" class="remove-image" (click)="removeImage(i)"><b>x</b></span>
+                        <span *ngIf="question.imageFile" class="remove-image" (click)="removeImage(i)"><b>x</b></span>
                     </div>
                 </div>
 
@@ -62,12 +62,12 @@
                             <div class="form-chapter">
                                 <div class="checkbox-group">
                                     <div class="checkbox-input col-4" *ngFor="let chapter of listChapter">
-                                        <input type="checkbox" [checked]="selectedChapterIds.includes(chapter.id)" (change)="toggleChapterSelection(i, chapter.id, $event)" id="chapter{{chapter.id}}" />
-                                        <label for="chapter{{chapter.id}}">{{ chapter.name }}</label>
+                                        <input type="checkbox" (change)="toggleChapterSelection(popupChapterIndex, chapter.id, $event)" [checked]="questionForms[popupChapterIndex].chapters.includes(chapter.id)" id="chapter{{chapter.id}}-{{popupChapterIndex}}" />
+                                        <label for="chapter{{chapter.id}}-{{popupChapterIndex}}">{{ chapter.name }}</label>
                                     </div>
                                 </div>
                             </div>
-                            <button type="button" class="btn btn-primary button" (click)="onConfirmSelection(i)">OK</button>
+                            <button type="button" class="btn btn-primary button" (click)="closePopup()">OK</button>
                         </div>
                     </div>
                 </div>
