@@ -1,14 +1,14 @@
 /* Body */
 .content-wrapper {
     padding: 20px;
-    margin: 0 0 60px 8%;
+    margin: 0 0 60px 120px;
     min-height: 80vh;
     overflow-x: hidden;
     transition: margin-left 0.3s ease;
 }
 
 .content-wrapper-collapsed {
-    margin-left: 2%;
+    margin-left: 30px;
 }
 
 .line {

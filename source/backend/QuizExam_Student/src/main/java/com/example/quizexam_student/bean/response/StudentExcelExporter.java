@@ -9,10 +9,12 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.data.repository.query.parser.Part;
 
 import java.io.IOException;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Objects;
 
 @NoArgsConstructor
 public class StudentExcelExporter {
@@ -86,7 +88,7 @@ public class StudentExcelExporter {
             sheet.autoSizeColumn(1);
 
             cell = row.createCell(2);
-            cell.setCellValue(std.get_class().getName());
+            cell.setCellValue(std.get_class().getName() != null ? std.get_class().getName(): "");
             sheet.autoSizeColumn(2);
 
             cell = row.createCell(3);
