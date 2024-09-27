@@ -75,7 +75,6 @@ export class AuthService {
   public listExporter: any ;
 
   exportDataExcel() {
-    // return this.http.get(`${this.apiUrl}/auth/export/excel`, { responseType: 'blob' as 'json' });
     const token = this.getToken(); // Lấy token từ AuthService
     const headers = new HttpHeaders().set('Authorization', 'Bearer ' + token).set('Content-Type', 'application/json');
 
@@ -84,8 +83,8 @@ export class AuthService {
 
   exportDataPDF() {
     const token = this.getToken(); // Lấy token từ AuthService
-    const headers = new HttpHeaders().set('Authorization', 'Bearer ' + token);
+    const headers = new HttpHeaders().set('Authorization', 'Bearer ' + token).set('Content-Type', 'application/json');
 
-    return this.http.get(`${this.apiUrl}/${this.entityExporter}/export/pdf`, { headers: headers, responseType: 'blob',});
+    return this.http.post(`${this.apiUrl}/${this.entityExporter}/export/pdf`, this.listExporter , { headers: headers, responseType: 'blob',});
   }
 }
