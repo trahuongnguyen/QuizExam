@@ -27,7 +27,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @CrossOrigin(origins = "http://localhost:4200")
 @Validated
-//@PreAuthorize("hasAnyRole('ADMIN', 'SRO')")
+@PreAuthorize("hasAnyRole('ADMIN', 'SRO')")
 public class StudentController {
     private final StudentService studentService;
     private final ExportService exportService;
@@ -59,7 +59,7 @@ public class StudentController {
         studentService.updateClassForStudents(request.getUserIds(), request.getClassId());
     }
 
-    @GetMapping("/export/excel")
+    @PostMapping("/export/excel")
     public ResponseEntity<String> exportToExcel(HttpServletResponse response
             ,@RequestBody List<StudentResponse> studentResponses)
             throws IOException {

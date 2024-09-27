@@ -63,7 +63,7 @@
     </a>
 </div>
 
-<router-outlet>
+<router-outlet class="content-wrapper" [ngClass]="{'content-wrapper-collapsed': isSidebarCollapsed}">
 </router-outlet>
 
 <footer class="footer" [ngClass]="{'footer-collapsed': isSidebarCollapsed}">

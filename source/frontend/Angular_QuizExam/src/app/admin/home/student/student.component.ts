@@ -33,12 +33,29 @@ export class StudentComponent implements OnInit, OnDestroy {
   toggleSidebar() {
     this.isSidebarCollapsed = !this.isSidebarCollapsed;
   }
+
+  get formattedDob(): string {
+    const dob = this.stdResponse.userResponse.dob;
+    // Chuyển đổi chuỗi "dd-MM-yyyy" sang định dạng "yyyy-MM-dd"
+    if (dob) {
+      const [day, month, year] = dob.split('-');
+      return `${year}-${month}-${day}`;  // Định dạng yyyy-MM-dd
+    }
+    return '';
+  }
+
+  onDateChange(event: any) {
+    // Khi người dùng thay đổi ngày, lưu giá trị đó lại
+    this.stdResponse.userResponse.dob = event; // Giá trị sẽ ở định dạng yyyy-MM-dd
+  }
+  
   ngOnInit(): void {
     this.authService.entityExporter = 'studentManagement';
     this._classId = Number(this.activatedRoute.snapshot.params['classId'])??0;
     if(this._classId!=0 && !Number.isNaN(this._classId)){
       this.http.get<any>(`${this.authService.apiUrl}/studentManagement/${this._classId}`, this.home.httpOptions).subscribe((data: any) => {
         this.apiData = data;
+        this.authService.listExporter = data;
         this.initializeDataTable();
       });
     }
@@ -259,6 +276,7 @@ export class StudentComponent implements OnInit, OnDestroy {
   }
 
   exportExcel() {
+    this.authService.listExporter = this.apiData;
     this.authService.exportDataExcel().subscribe(
       (response) => {
         const url = window.URL.createObjectURL(new Blob([response], { type: 'blob' as 'json' }));

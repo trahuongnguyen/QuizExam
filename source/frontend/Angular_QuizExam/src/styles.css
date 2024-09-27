@@ -149,6 +149,7 @@
 .dataTables_wrapper .dataTables_length,
 .dataTables_wrapper .dataTables_length select {
     color: var(--color-text);
+    font-size: 14px;
 }
 
 .dataTables_wrapper .dataTables_length select option {
