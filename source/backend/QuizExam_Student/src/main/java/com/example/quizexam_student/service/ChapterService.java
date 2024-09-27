@@ -10,7 +10,8 @@ import java.util.List;
 public interface ChapterService {
     List<Chapter> getAllChaptersBySubjectId(int subjectId);
     Chapter addChapter(ChapterRequest chapterRequest);
-    Chapter getChapterById(int id);
     Chapter updateChapter(int id, ChapterRequest chapterRequest);
     void deleteChapter(int id);
+    Boolean ExistChapterName(String name);
+    Boolean ExistSubjectId(int subjectId);
 }

@@ -3,6 +3,7 @@ package com.example.quizexam_student.controller;
 import com.example.quizexam_student.bean.request.ChapterRequest;
 import com.example.quizexam_student.entity.Chapter;
 import com.example.quizexam_student.service.ChapterService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -24,12 +25,12 @@ public class ChapterController {
     }
 
     @PostMapping("")
-    public ResponseEntity<Chapter> saveChapter(@Validated @RequestBody ChapterRequest chapterRequest) {
+    public ResponseEntity<Chapter> saveChapter(@Valid @RequestBody ChapterRequest chapterRequest) {
         return ResponseEntity.ok(chapterService.addChapter(chapterRequest));
     }
 
     @PutMapping("/{id}")
-    public Chapter updateChapter(@PathVariable int id, @RequestBody ChapterRequest chapterRequest) {
+    public Chapter updateChapter(@PathVariable int id, @Valid @RequestBody ChapterRequest chapterRequest) {
         return chapterService.updateChapter(id, chapterRequest);
     }
 

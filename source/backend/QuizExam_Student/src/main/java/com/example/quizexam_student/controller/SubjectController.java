@@ -63,7 +63,7 @@ public class SubjectController {
         subjectService.deleteById(id);
     }
 
-    @GetMapping("/export/excel")
+    @PostMapping("/export/excel")
     public ResponseEntity<String> exportToExcel(HttpServletResponse response, @RequestBody List<Subject> subjects) throws IOException {
         exportService.export(response, "subject", "xlsx");
         SubjectExcelExporter excelExporter = new SubjectExcelExporter(subjects);
@@ -71,7 +71,7 @@ public class SubjectController {
         return new ResponseEntity<>("Export To Excel Successfully", HttpStatus.OK);
     }
 
-    @GetMapping(value = "/export/pdf", produces = MediaType.APPLICATION_PDF_VALUE)
+    @PostMapping(value = "/export/pdf", produces = MediaType.APPLICATION_PDF_VALUE)
     public ResponseEntity<String> exportToPDF(HttpServletResponse response, @RequestBody List<Subject> subjects) throws IOException {
         exportService.export(response, "subject", "pdf");
         SubjectPDFExporter subjectPDFExporter = new SubjectPDFExporter(subjects);
