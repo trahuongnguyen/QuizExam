@@ -2,11 +2,13 @@ package com.example.quizexam_student.bean.request;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.*;
+import lombok.Builder;
 import lombok.Data;
 
 import java.time.LocalDate;
 
 @Data
+@Builder
 public class UserRequest {
     @NotBlank(message = "Full Name is required")
     @Pattern(regexp="^[a-z A-Z]+$", message = "Full name cannot have number or special character")
@@ -14,11 +16,11 @@ public class UserRequest {
     @NotBlank(message = "Email is required")
     @Email(message = "Email should be valid")
     private String email;
-//    @Size(min = 8, message = "Password must be at least 8 characters long")
-//    @Pattern(
-//            regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@#$%^&+=.]).{8,}$",
-//            message = "Password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, one number, and one special character"
-//    )
+    @Size(min = 8, message = "Password must be at least 8 characters long")
+    @Pattern(
+            regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@#$%^&+=.]).{8,}$",
+            message = "Password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, one number, and one special character"
+    )
     private String password;
     @NotNull(message = "Date of Birth is required")
     //@Pattern(regexp = "^\\d{4}-\\d{2}-\\d{2}$", message = "Date of birth must be in the format yyyy-MM-dd")

@@ -20,10 +20,13 @@ public class ChapterServiceImpl implements ChapterService {
     private final ChapterRepository chapterRepository;
     private final SubjectRepository subjectRepository;
 
-    private Boolean ExistChapterName(String chapterName) {
+    @Override
+    public Boolean ExistChapterName(String chapterName) {
         return chapterRepository.findByName(chapterName) != null;
     }
-    private Boolean ExistSubjectId(int id){
+
+    @Override
+    public Boolean ExistSubjectId(int id){
         Subject subject = subjectRepository.findById(id).orElse(null);
         return subject != null;
     }
@@ -49,10 +52,6 @@ public class ChapterServiceImpl implements ChapterService {
         return chapterRepository.save(chapter);
     }
 
-    @Override
-    public Chapter getChapterById(int id) {
-        return chapterRepository.findById(id).orElseThrow(() -> new NotFoundException("NotFoundChapter", "Chapter not found"));
-    }
 
     @Override
     public Chapter updateChapter(int id, ChapterRequest chapterRequest) {

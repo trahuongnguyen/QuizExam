@@ -101,7 +101,7 @@ public class SubjectServiceTest {
 
     @Test
     @WithMockUser(username = "admin@example.com", roles = {"ADMIN"})
-    void createUser_validRequest_success(){
+    void createSubject_validRequest_success(){
         // GIVEN
         Mockito.when(subjectRepository.findByName(subjectRequest.getName())).thenReturn(null);
         Mockito.when(subjectRepository.save(ArgumentMatchers.any())).thenReturn(subject);
@@ -120,7 +120,7 @@ public class SubjectServiceTest {
 
     @Test
     @WithMockUser(username = "admin@example.com", roles = {"ADMIN"})
-    void createUser_alreadyExistName_fail(){
+    void createSubject_alreadyExistName_fail(){
         // GIVEN
         Mockito.when(subjectRepository.findByName(subjectRequest.getName())).thenReturn(subject);
 
