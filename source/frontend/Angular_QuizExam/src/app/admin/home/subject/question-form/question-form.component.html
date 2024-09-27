@@ -61,7 +61,7 @@
                         <div class="modal-body">
                             <div class="form-chapter">
                                 <div class="checkbox-group">
-                                    <div class="checkbox-input col-4" *ngFor="let chapter of listChapter">
+                                    <div class="checkbox-input" *ngFor="let chapter of listChapter">
                                         <input type="checkbox" (change)="toggleChapterSelection(popupChapterIndex, chapter.id, $event)" [checked]="questionForms[popupChapterIndex].chapters.includes(chapter.id)" id="chapter{{chapter.id}}-{{popupChapterIndex}}" />
                                         <label for="chapter{{chapter.id}}-{{popupChapterIndex}}">{{ chapter.name }}</label>
                                     </div>
