@@ -4,6 +4,7 @@ import { NavigationEnd, Router } from '@angular/router';
 import { filter } from 'rxjs/operators';
 import { AuthService } from '../../service/auth.service';
 import { HttpHeaders } from '@angular/common/http';
+import { HomeComponent } from '../home.component';
 
 @Component({
   selector: 'app-examination',
@@ -40,7 +41,7 @@ export class ExaminationComponent {
     }
   }
 
-  constructor(public app : AppComponent, private router: Router,  public authService: AuthService) {
+  constructor(public app : AppComponent, private router: Router,  public authService: AuthService, public home: HomeComponent) {
     this.loadToken();
     this.router.events.pipe(
       filter(event => event instanceof NavigationEnd)

@@ -1,4 +1,4 @@
-<div class="content-wrapper">
+<div class="content-wrapper" [ngClass]="{'content-wrapper-collapsed': subjectComponent.home.isSidebarCollapsed}">
     <h4>Sem {{semId}} / {{_subjectName}}</h4>
     <hr class="line">
     <div class="d-flex">

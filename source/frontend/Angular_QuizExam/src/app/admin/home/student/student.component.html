@@ -1,4 +1,4 @@
-<div class="content-wrapper" [ngClass]="{'content-wrapper-collapsed': isSidebarCollapsed}">
+<div class="content-wrapper" [ngClass]="{'content-wrapper-collapsed': home.isSidebarCollapsed}">
     <h4 *ngIf="_classId==0">Student (No Class)</h4>
     <h4 *ngIf="_classId!=0">{{class}}/Student</h4>
     <hr class="line">
