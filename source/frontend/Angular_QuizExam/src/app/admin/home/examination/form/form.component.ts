@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import { HomeComponent } from '../../home.component';
+import { ExaminationComponent } from '../examination.component';
 
 @Component({
   selector: 'app-form',
@@ -6,5 +8,5 @@ import { Component } from '@angular/core';
   styleUrl: './form.component.css'
 })
 export class FormComponent {
-
+  constructor(public examComponent: ExaminationComponent){}
 }

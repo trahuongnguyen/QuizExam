@@ -5,6 +5,7 @@ import { ToastrService } from 'ngx-toastr';
 import { Router } from '@angular/router';
 import { HomeComponent } from '../../home.component';
 import { response } from 'express';
+import { SubjectComponent } from '../subject.component';
 declare var $: any;
 
 @Component({
@@ -13,7 +14,7 @@ declare var $: any;
   styleUrl: './list.component.css'
 })
 export class ListComponent implements OnInit, OnDestroy {
-  constructor(private authService: AuthService, private home: HomeComponent, private http: HttpClient, public toastr: ToastrService, private router: Router) { }
+  constructor(private authService: AuthService, private home: HomeComponent, private http: HttpClient, public toastr: ToastrService, private router: Router, public subjectComponent: SubjectComponent) { }
 
   dataTable: any;
   apiData: any;

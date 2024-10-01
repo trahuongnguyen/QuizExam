@@ -12,7 +12,7 @@ declare var $: any;
   styleUrl: './class.component.css'
 })
 export class ClassComponent implements OnInit, OnDestroy {
-  constructor(private authService: AuthService, private home: HomeComponent, private http: HttpClient, public toastr: ToastrService, private router: Router) { }
+  constructor(private authService: AuthService, public home: HomeComponent, private http: HttpClient, public toastr: ToastrService, private router: Router) { }
 
   dataTable: any;
   apiData: any;

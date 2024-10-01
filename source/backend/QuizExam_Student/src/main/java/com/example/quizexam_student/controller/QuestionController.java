@@ -17,8 +17,11 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 import static org.springframework.http.MediaType.*;
 
@@ -68,5 +71,43 @@ public class QuestionController {
             questionRequest.setImage(fileName);
         }
         return questionService.updateQuestion(id,questionRequest);
+    }
+
+    @GetMapping("/exam/{subjectId}")
+    public List<QuestionResponse> generate(@PathVariable int subjectId) {
+        List<QuestionResponse> questions = questionService.getAllQuestionsBySubjectId(subjectId);
+        Collections.shuffle(questions);
+        AtomicInteger hardCount = new AtomicInteger(0);
+        AtomicInteger easyCount = new AtomicInteger(0);
+//        questions = questions.stream().limit(16).takeWhile(questionResponse -> {
+//            if (questionResponse.getLevel().getId()==1){
+//                hardCount.getAndIncrement();
+//            }
+//            if (hardCount.get()>=4){
+//                return false;
+//            }
+//            return true;
+//        }).collect(Collectors.toList());
+        List<QuestionResponse> selectedQuestions = questions.stream()
+                .filter(questionResponse -> {
+                    if (questionResponse.getLevel().getId() == 2) {
+                        return hardCount.get() < 4;
+                    }
+                    if (questionResponse.getLevel().getId() == 1) {
+                        return easyCount.get() < 12;
+                    }
+                    return true;
+                })
+
+                .peek(questionResponse -> {
+                    if (questionResponse.getLevel().getId() == 2) {
+                        hardCount.getAndIncrement();
+                    }
+                    if (questionResponse.getLevel().getId() == 1) {
+                        easyCount.getAndIncrement();
+                    }
+                }).limit(16)
+                .collect(Collectors.toList());
+        return selectedQuestions;
     }
 }

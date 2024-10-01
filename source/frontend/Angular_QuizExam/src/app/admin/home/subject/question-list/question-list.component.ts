@@ -4,6 +4,7 @@ import { AuthService } from '../../../service/auth.service';
 import { ToastrService } from 'ngx-toastr';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HomeComponent } from '../../home.component';
+import { SubjectComponent } from '../subject.component';
 declare var $: any;
 
 @Component({
@@ -12,7 +13,7 @@ declare var $: any;
   styleUrl: './question-list.component.css'
 })
 export class QuestionListComponent {
-  constructor(private authService: AuthService, private home: HomeComponent, private http: HttpClient, public toastr: ToastrService, private router: Router, private activatedRoute: ActivatedRoute) { }
+  constructor(private authService: AuthService, private home: HomeComponent, private http: HttpClient, public toastr: ToastrService, private router: Router, private activatedRoute: ActivatedRoute, public subjectComponent: SubjectComponent) { }
 
   dataTable: any;
   apiData: any;
