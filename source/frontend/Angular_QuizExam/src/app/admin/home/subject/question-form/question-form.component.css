@@ -204,7 +204,7 @@ input[type="checkbox"] {
 .modal-content {
     background-color: #fff;
     border-radius: 8px;
-    width: 600px;
+    width: 500px;
     /* Tăng chiều rộng của modal */
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
     border: 1px solid #ddd;
@@ -242,18 +242,11 @@ input[type="checkbox"] {
     background-color: var(--color-background);
 }
 
-.form-chapter {
-    display: flex;
-    flex-wrap: wrap; /* Cho phép các phần tử xuống dòng */
-}
-
 .form-chapter input[type="checkbox"] {
     margin-right: 10px; /* Khoảng cách giữa checkbox và nhãn */
 }
 
 .form-chapter .checkbox-group {
-    display: flex;
-    flex-wrap: wrap; /* Cho phép các checkbox xuống dòng */
     margin-bottom: 20px; /* Khoảng cách dưới cùng */
     width: 100%;
 }
