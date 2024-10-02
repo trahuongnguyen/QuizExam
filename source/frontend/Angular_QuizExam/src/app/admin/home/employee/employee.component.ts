@@ -69,8 +69,8 @@ export class EmployeeComponent implements OnInit, OnDestroy {
           title: 'Action',
           data: null,
           render: function (data: any, type: any, row: any) {
-            return `<span class="mdi mdi-information-outline icon-action info-icon" data-id="${row.id}"></span>
-            <span class="mdi mdi-delete-forever icon-action delete-icon" ></span>`;
+            return `<span class="mdi mdi-information-outline icon-action info-icon" title="Info" data-id="${row.id}"></span>
+            <span class="mdi mdi-delete-forever icon-action delete-icon" title="Delete" ></span>`;
           }
         }
       ],

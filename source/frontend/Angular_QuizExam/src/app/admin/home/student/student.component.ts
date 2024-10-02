@@ -103,9 +103,9 @@ export class StudentComponent implements OnInit, OnDestroy {
           data: '_class',
           render: function (data: any, type: any, row: any) {
             if(data==null){
-              return `<span class="mdi mdi-information-outline icon-action info-icon" data-id="${row.userResponse.id}"></span>
+              return `<span class="mdi mdi-information-outline icon-action info-icon" title="Info" data-id="${row.userResponse.id}"></span>
               <input type="checkbox" class="icon-action chk_box" data-id="${row.userResponse.id}">
-              <span class="mdi mdi-delete-forever icon-action delete-icon"></span>`;
+              <span class="mdi mdi-delete-forever icon-action delete-icon" title="Delete"></span>`;
             }
             else{
               return `<span class="mdi mdi-information-outline icon-action info-icon" data-id="${row.userResponse.id}"></span>
