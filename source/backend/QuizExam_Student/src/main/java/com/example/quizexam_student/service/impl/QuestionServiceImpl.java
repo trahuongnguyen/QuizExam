@@ -3,6 +3,7 @@ package com.example.quizexam_student.service.impl;
 import com.example.quizexam_student.bean.request.QuestionRequest;
 import com.example.quizexam_student.bean.response.QuestionResponse;
 import com.example.quizexam_student.entity.Answer;
+import com.example.quizexam_student.entity.Chapter;
 import com.example.quizexam_student.entity.Question;
 import com.example.quizexam_student.mapper.AnswerMapper;
 import com.example.quizexam_student.mapper.QuestionMapper;
@@ -28,7 +29,15 @@ public class QuestionServiceImpl implements QuestionService {
 
     @Override
     public List<QuestionResponse> getAllQuestionsBySubjectId(int subjectId) {
-        return questionRepository.findAllBySubject(subjectRepository.findById(subjectId).orElse(null)).stream().map(QuestionMapper::convertToResponse).collect(Collectors.toList());
+        return questionRepository.findAllBySubjectAndStatus(subjectRepository.findById(subjectId).orElse(null), 1).stream().map(question -> {
+            List<Question> questionList = new ArrayList<>();
+            questionList.add(question);
+            List<Chapter> chapters = chapterRepository.findByQuestionsIn(questionList);
+            question.setChapters(chapters.stream().collect(Collectors.toSet()));
+            List<Answer> answers = answerRepository.findByQuestion(question);
+            question.setAnswers(answers.stream().collect(Collectors.toSet()));
+            return question;
+        }).map(QuestionMapper::convertToResponse).collect(Collectors.toList());
     }
 
     @Override
