@@ -7,17 +7,16 @@
         </div>
         <div class="content">
             <form action="">
-
                 <div class="row ">
                     <div class="col-md-6">
                         <div class="group-input">
-                            <label for="">Name</label><br>
+                            <label class="group-input-label" for="">Name</label><br>
                             <input type="text" name="name" id="name">
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="group-input">
-                            <label for="">Duration(minutes)</label> <br>
+                            <label class="group-input-label" for="">Duration(minutes)</label> <br>
                             <select name="duration" id="duration">
                                 <option value="30">30</option>
                                 <option value="90">90</option>
@@ -29,48 +28,51 @@
                 <div class="row">
                     <div class="col-md-6">
                         <div class="group-input">
-                            <label for="">Start Time</label><br>
+                            <label class="group-input-label" for="">Start Time</label><br>
                             <input type="datetime" name="startTime" id="startTime">
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="group-input">
-                            <label for="">End Time</label><br>
+                            <label class="group-input-label" for="">End Time</label><br>
                             <input type="datetime" name="endTime" id="endTime">
                         </div>
                     </div>
                 </div>
-
-
                 <div class="row">
                     <div class="col-md-6">
                         <div class="group-input">
-                            <label for="">Class</label><br>
-                            <input type="text" name="class" id="class">
+                            <label class="group-input-label" for="">Class</label><br>
+                            <!-- <input type="text" name="class" id="class"> -->
+                            <button type="button" class="form-select" style="text-align: left;"
+                                (click)="openPopupClass()">Choose Class</button>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="group-input">
-                            <label for="">Student</label><br>
-                            <input type="text" name="student" id="student">
+                            <label class="group-input-label" for="">Student</label><br>
+                            <!-- <input type="text" name="student" id="student"> -->
+                            <button type="button" class="form-select" style="text-align: left;"
+                                (click)="openPopupStudent()">Choose Student</button>
                         </div>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-md-6">
                         <div class="group-input">
-                            <label for="">Subject</label><br>
-                            <select name="subject" id="subject">
-                                <option value="">HTML</option>
-                                <option value="">WS</option>
-                                <option value="">CSS</option>
+                            <label class="group-input-label" for="">Subject</label><br>
+                            <select name="subject" id="subject" (change)="selectSubject($event)">
+                                <option *ngFor="let sub of subjects" [value]="sub.id" value="">{{sub.name}}</option>
+                                <!-- <option value="">WS</option>
+                                <option value="">CSS</option> -->
                             </select>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="group-input">
-                            <label for="">Chapter</label> <br>
-                            <input type="text" name="chapter" id="chapter">
+                            <label class="group-input-label" for="">Chapter</label> <br>
+                            <button type="button" class="form-select" style="text-align: left;"
+                                (click)="openPopupChapter()">Choose Chapter</button>
                         </div>
                     </div>
                 </div>
@@ -78,11 +80,70 @@
                     <label for="" class="label-title"></label>
                     <div class="w-30">
                         <button type="submit" class="btn  button me-2">Submit</button>
-
                     </div>
                 </div>
             </form>
+        </div>
+    </div>
+</div>
 
+<div *ngIf="isPopupClass" class="modal-backdrop" (click)="closePopupClass($event)">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+            <span>Select Chapter</span>
+            <span class="close-icon" (click)="closePopupClass()">&times;</span>
+        </div>
+        <div class="modal-body">
+            <div class="form-chapter">
+                <div class="checkbox-group">
+                    <div class="checkbox-input" *ngFor="let _class of listClass">
+                        <input type="checkbox" (change)="toggleClassSelection(_class.id, $event)"
+                            [checked]="examsForm.classes.includes(_class.id)" id="class{{_class.id}}" />
+                        <label for="class{{_class.id}}">{{ _class.name }}</label>
+                    </div>
+                </div>
+            </div>
+            <button type="button" class="btn btn-primary button" (click)="closePopupClass()">OK</button>
+        </div>
+    </div>
+</div>
+
+<div *ngIf="isPopupStudent" class="modal-backdrop" (click)="closePopupStudent($event)">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+            <span>Select Student</span>
+            <span class="close-icon" (click)="closePopupStudent()">&times;</span>
+        </div>
+        <div class="modal-body">
+            <div class="form-chapter">
+                <div class="checkbox-group">
+                    <div class="checkbox-input" *ngFor="let std of listStudent">
+                        <input type="checkbox" (change)="toggleChapterSelection(std.id, $event)"
+                            [checked]="examsForm.students.includes(std.id)" id="student{{std.id}}" />
+                        <label for="student{{std.id}}">{{std.userResponse.fullName}} - {{std.rollPortal}}</label>
+                    </div>
+                </div>
+            </div>
+            <button type="button" class="btn btn-primary button" (click)="closePopupStudent()">OK</button>
+        </div>
+    </div>
+</div>
+<div *ngIf="isPopupChapter" class="modal-backdrop" (click)="closePopupChapter($event)">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+            <span>Select Chapter</span>
+            <span class="close-icon" (click)="closePopupChapter()">&times;</span>
+        </div>
+        <div class="modal-body">
+            <div class="form-chapter">
+                <div class="checkbox-input" *ngFor="let chapter of listChapter">
+                    <input type="checkbox" (change)="toggleChapterSelection( chapter.id, $event)"
+                        [checked]="examsForm.chapters.includes(chapter.id)"
+                        id="chapter{{chapter.id}}-{{popupChapterIndex}}" />
+                    <label for="chapter{{chapter.id}}-{{popupChapterIndex}}">{{ chapter.name }}</label>
+                </div>
+            </div>
+            <button type="button" class="btn btn-primary button" (click)="closePopupChapter()">OK</button>
         </div>
     </div>
 </div>
