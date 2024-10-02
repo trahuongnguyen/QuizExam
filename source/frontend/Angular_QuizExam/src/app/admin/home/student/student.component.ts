@@ -48,18 +48,18 @@ export class StudentComponent implements OnInit, OnDestroy {
     // Khi người dùng thay đổi ngày, lưu giá trị đó lại
     this.stdResponse.userResponse.dob = event; // Giá trị sẽ ở định dạng yyyy-MM-dd
   }
-  
+
   ngOnInit(): void {
     this.authService.entityExporter = 'studentManagement';
-    this._classId = Number(this.activatedRoute.snapshot.params['classId'])??0;
-    if(this._classId!=0 && !Number.isNaN(this._classId)){
+    this._classId = Number(this.activatedRoute.snapshot.params['classId']) ?? 0;
+    if (this._classId != 0 && !Number.isNaN(this._classId)) {
       this.http.get<any>(`${this.authService.apiUrl}/studentManagement/${this._classId}`, this.home.httpOptions).subscribe((data: any) => {
         this.apiData = data;
         this.authService.listExporter = data;
         this.initializeDataTable();
       });
     }
-    else{
+    else {
       this._classId = 0;
       this.http.get<any>(`${this.authService.apiUrl}/studentManagement`, this.home.httpOptions).subscribe((data: any) => {
         this.apiData = data;
@@ -69,7 +69,7 @@ export class StudentComponent implements OnInit, OnDestroy {
     this.http.get<any>(`${this.authService.apiUrl}/class`, this.home.httpOptions).subscribe((data: any) => {
       this.classes = data;
       for (let dt of data) {
-        if(this._classId == dt.id){
+        if (this._classId == dt.id) {
           this.class = dt.name;
         }
       }
@@ -107,14 +107,14 @@ export class StudentComponent implements OnInit, OnDestroy {
               <input type="checkbox" class="icon-action chk_box" data-id="${row.userResponse.id}">
               <span class="mdi mdi-delete-forever icon-action delete-icon" title="Delete"></span>`;
             }
-            else{
+            else {
               return `<span class="mdi mdi-information-outline icon-action info-icon" data-id="${row.userResponse.id}"></span>
               <span class="mdi mdi-delete-forever icon-action delete-icon"></span>`;
             }
           },
         },
       ],
-      
+
       drawCallback: () => {
         // Sửa input search thêm button vào
         if (!$('.dataTables_filter button').length) {
@@ -131,9 +131,9 @@ export class StudentComponent implements OnInit, OnDestroy {
           this.showPopupEdit(id);
         });
 
-        $('.create').on('click', () => {
-          this.isPopupCreate = true;
-        });
+        // $('.create').on('click', () => {
+        //   this.isPopupCreate = true;
+        // });
 
         $('.chk_box').on('click', (event: any) => {
           const id = $(event.currentTarget).data('id');
@@ -143,8 +143,12 @@ export class StudentComponent implements OnInit, OnDestroy {
     });
   }
 
-  showMovePopup():void{
+  showMovePopup(): void {
     this.isPopupMove = true;
+  }
+
+  showCreatePopup(): void {
+    this.isPopupCreate = true;
   }
 
   showPopupEdit(id: number): void {
@@ -160,7 +164,7 @@ export class StudentComponent implements OnInit, OnDestroy {
     this.isPopupCreate = false;
   }
 
-  closeMove():void{
+  closeMove(): void {
     this.isPopupMove = false;
   }
   stdRequest: any = {
@@ -186,15 +190,15 @@ export class StudentComponent implements OnInit, OnDestroy {
   }
 
   reloadTable(id: number): void {
-      this.http.get<any>(id!=0?`${this.authService.apiUrl}/studentManagement/${id}`:`${this.authService.apiUrl}/studentManagement`, this.home.httpOptions).subscribe((data: any) => {
-        this.apiData = data;
-        this.updateDataTable(this.apiData); // Cập nhật bảng với dữ liệu mới
-      });
+    this.http.get<any>(id != 0 ? `${this.authService.apiUrl}/studentManagement/${id}` : `${this.authService.apiUrl}/studentManagement`, this.home.httpOptions).subscribe((data: any) => {
+      this.apiData = data;
+      this.updateDataTable(this.apiData); // Cập nhật bảng với dữ liệu mới
+    });
     this.closePopup();
   }
 
   createStudent(): void {
-    if(this._classId !=0){
+    if (this._classId != 0) {
       this.stdRequest.classId = this._classId;
     }
     this.http.post(`${this.authService.apiUrl}/studentManagement`, this.stdRequest, this.home.httpOptions).subscribe(
@@ -214,7 +218,7 @@ export class StudentComponent implements OnInit, OnDestroy {
     )
   }
 
-  
+
   updateStudent(): void {
     const _studentRequest = {
       userRequest: {
