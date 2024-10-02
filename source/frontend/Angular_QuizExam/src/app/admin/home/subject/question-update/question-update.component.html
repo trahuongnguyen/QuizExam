@@ -1,19 +1,19 @@
 <div class="content-wrapper" [ngClass]="{'content-wrapper-collapsed': subjectComponent.home.isSidebarCollapsed}">
     <h4>{{ subjectName }} / Add new Question</h4>
     <hr class="line">
-    <form class="d-flex" (ngSubmit)="saveQuestions()">
+    <form class="d-flex">
         <div id="question-forms">
-            <div *ngFor="let question of questionForms; let i = index" class="question-form" [id]="'question-form-' + i">
+            <div class="question-form">
                 <div class="form-row">
-                    <input type="hidden" [(ngModel)]="question.subjectId" name="question.subjectId{{i}}" class="form-control" />
+                    <input type="hidden" [(ngModel)]="question.subjectId" name="question.subjectId" class="form-control" />
                     
                     <div class="form-group-row col me-3">
                         <label for="chapter">Chapter:</label>
-                        <button type="button" class="form-select" style="text-align: left;" (click)="openPopup(i)">Choose Chapter</button>
+                        <button type="button" class="form-select" style="text-align: left;" (click)="openPopup()">Choose Chapter</button>
                     </div>
                     <div class="form-group-row col me-0">
                         <label for="level">Level:</label>
-                        <select class="form-select" [(ngModel)]="question.levelId" name="question.levelId{{i}}">
+                        <select class="form-select" [(ngModel)]="question.level.id" name="question.level.id">
                             <option *ngFor="let level of listLevel" [value]="level.id">{{ level.name }}</option>
                         </select>
                     </div>
@@ -21,35 +21,34 @@
 
                 <div class="form-group-row">
                     <label for="question">Question:</label>
-                    <textarea class="form-control" [(ngModel)]="question.content" name="question.content{{i}}" rows="3" style="flex-grow: 1"></textarea>
+                    <textarea class="form-control" [(ngModel)]="question.content" name="question.content" rows="3" style="flex-grow: 1"></textarea>
                 </div>
 
                 <div class="form-group form-image">
                     <div class="img-preview mt-3 mb-3" [ngClass]="{'hidden-border': question.imageFile}">
-                        <input type="file" name="file{{i}}" class="form-control-file" accept="image/*" (change)="previewImage($event, i)" />
+                        <input type="file" name="file" class="form-control-file" accept="image/*" (change)="previewImage($event)" />
                         <button *ngIf="!question.imageFile" class="choose-file-btn" type="button">Choose file</button>
-                        <img id="imagePreview{{i}}" src="#" alt="Image Preview" style="display:none;" />
+                        <img id="imagePreview" src="../../../../../../img/banner.jpg" alt="Image Preview" style="display:none;" />
                 
                         <!-- Dấu X để xóa ảnh -->
-                        <span *ngIf="question.imageFile" class="remove-image" (click)="removeImage(i)"><b>x</b></span>
+                        <span *ngIf="question.imageFile" class="remove-image" (click)="removeImage()"><b>x</b></span>
                     </div>
                 </div>
 
                 <div class="form-group">
                     <div class="answers-container">
-                        <div *ngFor="let answer of question.answers; let j = index" class="input-group mb-2">
+                        <div *ngFor="let answer of question.answers; let i = index" class="input-group mb-2">
                             <div class="input-group-text">
                                 <input type="checkbox" [(ngModel)]="answer.isCorrect" (change)="toggleIsCorrect(answer)" />
                             </div>
-                            <input type="text" [(ngModel)]="answer.content" name="answer.content{{i}}{{j}}" class="form-control" />
-                            <span class="remove-answer" (click)="removeAnswer(i, j)">X</span>
+                            <input type="text" [(ngModel)]="answer.content" name="answer.content{{i}}" class="form-control" />
+                            <span class="remove-answer" (click)="removeAnswer(i)">X</span>
                         </div>
                     </div>
                 </div>
 
                 <div class="mt-3">
-                    <button type="button" class="add-answer" (click)="addAnswer(i)"><span class="mdi mdi-plus icon-button"></span> Another choice</button>
-                    <button type="button" class="remove-question" style="float: right;" (click)="removeQuestionForm(i)"><span class="mdi mdi-delete-forever icon-button"></span> Remove Question</button>
+                    <button type="button" class="add-answer" (click)="addAnswer()"><span class="mdi mdi-plus icon-button"></span> Another choice</button>
                 </div>
 
                 <div *ngIf="isPopupChapter" class="modal-backdrop" (click)="closePopup($event)">
@@ -62,8 +61,8 @@
                             <div class="form-chapter">
                                 <div class="checkbox-group">
                                     <div class="checkbox-input" *ngFor="let chapter of listChapter">
-                                        <input type="checkbox" (change)="toggleChapterSelection(popupChapterIndex, chapter.id, $event)" [checked]="questionForms[popupChapterIndex].chapters.includes(chapter.id)" id="chapter{{chapter.id}}-{{popupChapterIndex}}" />
-                                        <label for="chapter{{chapter.id}}-{{popupChapterIndex}}">{{ chapter.name }}</label>
+                                        <input type="checkbox" (change)="toggleChapterSelection(popupChapterIndex, chapter.id, $event)" [checked]="question.chapters.includes(chapter.id)" id="chapter{{chapter.id}}" />
+                                        <label for="chapter{{chapter.id}}">{{ chapter.name }}</label>
                                     </div>
                                 </div>
                             </div>
@@ -74,7 +73,6 @@
             </div>
         </div>
         <div class="btn-action">
-            <button type="button" class="mdi mdi-plus-circle-outline icon-action" title="Add Question" (click)="addQuestionForm()"></button>
             <button type="submit" class="mdi mdi-checkbox-marked-circle-outline icon-action" title="Save"></button>
             <button type="button" class="mdi mdi-close-circle-outline icon-action" title="Cancel" (click)="cancel()"></button>
         </div>

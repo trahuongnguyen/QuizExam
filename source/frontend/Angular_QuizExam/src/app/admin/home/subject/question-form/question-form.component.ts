@@ -1,5 +1,5 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../../../service/auth.service';
 import { ToastrService } from 'ngx-toastr';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -113,6 +113,7 @@ export class QuestionFormComponent implements OnInit {
     }
     this.isPopupChapter = false;
     this.popupChapterIndex = 0; // Reset khi đóng popup
+    this.isCancelPopup = false;
   }
 
   addQuestionForm() {
@@ -236,5 +237,16 @@ export class QuestionFormComponent implements OnInit {
         console.error('Error saving questions:', error);
       }
     );
+  }
+
+  isCancelPopup: boolean = false;
+  
+  cancel() {
+    this.isCancelPopup = true;
+  }
+
+  confirmCancel() {
+    this.isCancelPopup = false;
+    this.router.navigate([`/admin/home/subject/${this.subjectId}/questionList`]);
   }
 }

@@ -7,6 +7,7 @@ import { ChapterComponent } from './chapter/chapter.component';
 import { QuestionListComponent } from './question-list/question-list.component';
 import { QuestionFormComponent } from './question-form/question-form.component';
 import { AuthGuard } from '../../service/authguard.service';
+import { QuestionUpdateComponent } from './question-update/question-update.component';
 
 const routes: Routes = [
   {
@@ -33,6 +34,10 @@ const routes: Routes = [
       {
         path: ':subjectId/questionForm',
         component: QuestionFormComponent
+      },
+      {
+        path: ':subjectId/questionUpdate/:id',
+        component: QuestionUpdateComponent
       },
     ],
     canActivate: [AuthGuard],
