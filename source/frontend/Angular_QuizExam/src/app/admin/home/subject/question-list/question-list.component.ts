@@ -94,7 +94,7 @@ export class QuestionListComponent {
           title: 'Action',
           data: null,
           render: function (data: any, type: any, row: any) {
-            return `<span  class="mdi mdi-pencil icon-action edit-icon" data-id="${row.id}"></span>`;
+            return `<span  class="mdi mdi-pencil icon-action edit-icon" title="Edit" data-id="${row.id}"></span>`;
 
           }
         }

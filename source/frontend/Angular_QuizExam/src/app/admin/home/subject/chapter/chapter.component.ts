@@ -89,8 +89,8 @@ export class ChapterComponent implements OnInit, OnDestroy {
           data: null,
           render: function (data: any, type: any, row: any) {
             return `<span data-bs-toggle="collapse" role="button" aria-expanded="false"
-                    aria-controls="collapseExample" class="mdi mdi-pencil icon-action edit-icon" data-id="${row.id}"></span>
-            <span class="mdi mdi-delete-forever icon-action delete-icon" data-id="${row.id}"></span>`;
+                    aria-controls="collapseExample" class="mdi mdi-pencil icon-action edit-icon" title="Edit" data-id="${row.id}"></span>
+            <span class="mdi mdi-delete-forever icon-action delete-icon" title="Delete" data-id="${row.id}"></span>`;
           }
         }
 
