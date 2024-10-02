@@ -26,18 +26,19 @@
     margin: -1% 5% 5% 5%;
 }
 
-.content label {
+.content .group-input-label {
     font-weight: 600;
     padding-bottom: 3px;
     padding-top: 30px;
 }
 
-.content input,
+.content input[type="text"],
+input[type="datetime"],
 select {
     width: 95%;
     background-color: #EDF5F4;
     border: none;
-    min-height: 32px;
+    min-height: 35px;
     border-radius: 5px;
 }
 
@@ -62,4 +63,84 @@ select {
 
 .title h3 {
     font-weight: bold;
+}
+
+/* Popup */
+.modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background-color: #fff;
+    border-radius: 8px;
+    width: 500px;
+    /* Tăng chiều rộng của modal */
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    border: 1px solid #ddd;
+    font-size: 18px;
+    /* Tăng kích thước font chữ */
+}
+
+.modal-header {
+    background-color: #aa1210;
+    border-radius: 10px 10px 0 0;
+    color: white;
+    padding: 15px;
+    /* Tăng kích thước padding cho header */
+    font-size: 20px;
+    /* Tăng kích thước font chữ của header */
+    font-weight: bold;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #ddd;
+}
+
+.close-icon {
+    font-size: 24px;
+    /* Tăng kích thước dấu "X" */
+    cursor: pointer;
+}
+
+.modal-body {
+    padding: 20px;
+    /* Tăng kích thước padding cho body */
+    font-size: 18px;
+    border-radius: 8px;
+    /* Tăng kích thước font chữ cho nội dung */
+    background-color: var(--color-background);
+}
+
+.form-chapter input[type="checkbox"] {
+    margin-right: 10px;
+    /* Khoảng cách giữa checkbox và nhãn */
+}
+
+.form-chapter .checkbox-group {
+    margin-bottom: 20px;
+    /* Khoảng cách dưới cùng */
+    width: 100%;
+}
+
+.form-chapter .checkbox-input {
+    margin-bottom: 10px;
+    /* Khoảng cách giữa các dòng */
+}
+
+input[type="checkbox"] {
+    cursor: pointer;
+    transform: scale(1.5);
+    /* Tăng kích thước của radio và checkbox */
+}
+.form-select {
+    width: 95%;
+    background-color: #EDF5F4;
 }
