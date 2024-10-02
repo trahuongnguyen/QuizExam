@@ -111,11 +111,10 @@ public class QuestionController {
 
 
         for (QuestionResponse questionResponse : selectedQuestions) {
-            List<Answer> answers;
-            answers = questionResponse.getAnswers();
+            List<Answer> answers = new ArrayList<>(questionResponse.getAnswers());
             Collections.shuffle(answers);
-            answers.subList(0, Math.min(4, answers.size()));
-            questionResponse.setAnswers(answers);
+            List<Answer> selectedAnswers = answers.subList(0, Math.min(4, answers.size()));
+            questionResponse.setAnswers(selectedAnswers);
         }
         return selectedQuestions;
     }
