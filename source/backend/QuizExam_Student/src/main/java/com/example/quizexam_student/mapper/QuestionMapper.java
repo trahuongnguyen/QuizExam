@@ -17,6 +17,7 @@ public class QuestionMapper {
 
     public static QuestionResponse convertToResponse(Question question) {
         QuestionResponse questionResponse = new QuestionResponse();
+        questionResponse.setId(question.getId());
         questionResponse.setContent(question.getContent());
         questionResponse.setImage(question.getImage());
         questionResponse.setSubject(question.getSubject());
