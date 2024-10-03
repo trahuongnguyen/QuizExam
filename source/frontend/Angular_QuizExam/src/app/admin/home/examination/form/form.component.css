@@ -33,13 +33,22 @@
 }
 
 .content input[type="text"],
-input[type="datetime"],
+input[type="datetime-local"],
 select {
     width: 95%;
     background-color: #EDF5F4;
     border: none;
     min-height: 35px;
     border-radius: 5px;
+}
+
+.content input[type="text"],
+input[type="datetime-local"] {
+    padding: .375rem 0.75rem .375rem .75rem;
+}
+
+select {
+    padding: .375rem 2.75rem .375rem .75rem;
 }
 
 .group-input {
@@ -140,6 +149,7 @@ input[type="checkbox"] {
     transform: scale(1.5);
     /* Tăng kích thước của radio và checkbox */
 }
+
 .form-select {
     width: 95%;
     background-color: #EDF5F4;

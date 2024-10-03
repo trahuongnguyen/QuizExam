@@ -10,8 +10,8 @@ import { HomeComponent } from '../../home.component';
 interface ExamForm {
   name: string; // Thuộc tính để lưu nội dung câu hỏi
   duration: number; // Thuộc tính để lưu ID chủ đề
-  startTime: Date; // Thuộc tính để lưu chapters
-  endTime: Date; // Thuộc tính để lưu levelId
+  startTime: any; // Thuộc tính để lưu chapters
+  endTime: any; // Thuộc tính để lưu levelId
   classes: number[];
   students: number[];
   subjectId: number;
@@ -55,12 +55,20 @@ export class FormComponent implements OnInit {
   };
 
   createExam() {
-    this.http.post(`${this.authService.apiUrl}/exam`, this.examsForm, this.home.httpOptions).subscribe(
+    const exam = {  // tạm thời
+      name: this.examsForm.name,
+      duration: this.examsForm.duration,
+      startTime: this.examsForm.startTime,
+      endTime: this.examsForm.endTime,
+      subjectId: this.examsForm.subjectId,
+      chapterIds: this.examsForm.chapterIds
+    };
+    this.http.post(`${this.authService.apiUrl}/exam`, exam, this.home.httpOptions).subscribe(
       response => {
         this.toastr.success('Create exam Successful!', 'Success', {
           timeOut: 2000,
         });
-        // this.examsForm.name ='';
+        this.router.navigate(['/admin/home/exam/detail/1']);
       },
       error => {
         if (error.status === 401) {

@@ -26,12 +26,14 @@
             <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12 mb-5" *ngFor="let exam of examList">
                 <div class="card">
                     <div class="card-image">
-                        <img [src]="exam.subject.img" alt="Quiz Thumbnail">
+                        <!-- <img [src]="exam.subject.img" alt="Quiz Thumbnail"> -->
+                        <img src="https://i.pinimg.com/564x/33/34/66/333466cd07d18eae8c6546e298f2b9c7.jpg"
+                            alt="Quiz Thumbnail">
                     </div>
                     <div class="card-content">
                         <span class="card-title">{{exam.name}}</span>
                         <p><strong>Code:</strong> {{exam.code}}</p>
-                        <p>
+                        <p style="font-size: x-small;">
                             <i class="fa-regular fa-clock"></i> {{exam.startTime}} - {{exam.endTime}}
                         </p>
                     </div>
