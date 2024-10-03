@@ -6,18 +6,18 @@
             <h3 class="text-center mt-3">Create Examination</h3>
         </div>
         <div class="content">
-            <form action="">
+            <form (ngSubmit)="createExam()">
                 <div class="row ">
                     <div class="col-md-6">
                         <div class="group-input">
-                            <label class="group-input-label" for="">Name</label><br>
-                            <input type="text" name="name" id="name">
+                            <label class="group-input-label" for="name">Name</label><br>
+                            <input type="text" name="name" (ngModel)="examsForm.name" id="name">
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="group-input">
-                            <label class="group-input-label" for="">Duration(minutes)</label> <br>
-                            <select name="duration" id="duration">
+                            <label class="group-input-label" for="duration">Duration(minutes)</label> <br>
+                            <select name="duration" id="duration" (ngModel)="examsForm.duration">
                                 <option value="30">30</option>
                                 <option value="90">90</option>
                                 <option value="120">120</option>
@@ -28,21 +28,23 @@
                 <div class="row">
                     <div class="col-md-6">
                         <div class="group-input">
-                            <label class="group-input-label" for="">Start Time</label><br>
-                            <input type="datetime" name="startTime" id="startTime">
+                            <label class="group-input-label" for="startTime">Start
+                                Time</label><br>
+                            <input type="datetime" name="startTime" (ngModel)="examsForm.startTime" id="startTime">
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="group-input">
-                            <label class="group-input-label" for="">End Time</label><br>
-                            <input type="datetime" name="endTime" id="endTime">
+                            <label class="group-input-label" for="endTime">End
+                                Time</label><br>
+                            <input type="datetime" name="endTime" (ngModel)="examsForm.endTime" id="endTime">
                         </div>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-md-6">
                         <div class="group-input">
-                            <label class="group-input-label" for="">Class</label><br>
+                            <label class="group-input-label" for="class">Class</label><br>
                             <!-- <input type="text" name="class" id="class"> -->
                             <button type="button" class="form-select" style="text-align: left;"
                                 (click)="openPopupClass()">Choose Class</button>
@@ -61,7 +63,8 @@
                     <div class="col-md-6">
                         <div class="group-input">
                             <label class="group-input-label" for="">Subject</label><br>
-                            <select name="subject" id="subject" (change)="selectSubject($event)">
+                            <select (ngModel)="examsForm.subjectId" name="subject" id="subject"
+                                (change)="selectSubject($event)">
                                 <option *ngFor="let sub of subjects" [value]="sub.id" value="">{{sub.name}}</option>
                                 <!-- <option value="">WS</option>
                                 <option value="">CSS</option> -->
@@ -70,7 +73,7 @@
                     </div>
                     <div class="col-md-6">
                         <div class="group-input">
-                            <label class="group-input-label" for="">Chapter</label> <br>
+                            <label class="group-input-label" for="chapter">Chapter</label> <br>
                             <button type="button" class="form-select" style="text-align: left;"
                                 (click)="openPopupChapter()">Choose Chapter</button>
                         </div>
@@ -90,7 +93,7 @@
 <div *ngIf="isPopupClass" class="modal-backdrop" (click)="closePopupClass($event)">
     <div class="modal-content" (click)="$event.stopPropagation()">
         <div class="modal-header">
-            <span>Select Chapter</span>
+            <span>Select Class</span>
             <span class="close-icon" (click)="closePopupClass()">&times;</span>
         </div>
         <div class="modal-body">
@@ -138,7 +141,7 @@
             <div class="form-chapter">
                 <div class="checkbox-input" *ngFor="let chapter of listChapter">
                     <input type="checkbox" (change)="toggleChapterSelection( chapter.id, $event)"
-                        [checked]="examsForm.chapters.includes(chapter.id)"
+                        [checked]="examsForm.chapterIds.includes(chapter.id)"
                         id="chapter{{chapter.id}}-{{popupChapterIndex}}" />
                     <label for="chapter{{chapter.id}}-{{popupChapterIndex}}">{{ chapter.name }}</label>
                 </div>
