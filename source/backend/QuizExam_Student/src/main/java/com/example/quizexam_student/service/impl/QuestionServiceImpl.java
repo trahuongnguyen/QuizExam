@@ -49,7 +49,7 @@ public class QuestionServiceImpl implements QuestionService {
             question.setSubject(subjectRepository.findById(questionRequest.getSubjectId()).orElse(null));
             question.setLevel(levelRepository.findById(questionRequest.getLevelId()).orElse(null));
             question.setChapters(chapterRepository.findByIdIn(questionRequest.getChapters()).stream().collect(Collectors.toSet()));
-            questionRepository.saveAndFlush(question);
+            questionRepository.save(question);
             List<Answer> answers = questionRequest.getAnswers().stream().map(AnswerMapper::convertFromRequest).collect(Collectors.toList());
             answers.stream().map(answer -> {answer.setQuestion(question); return answer;}).collect(Collectors.toList());
             answerRepository.saveAll(answers);

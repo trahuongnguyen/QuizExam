@@ -15,6 +15,7 @@ import java.util.Set;
 @NoArgsConstructor
 @Getter
 @Setter
+@EqualsAndHashCode(exclude = {"examinations", "subject"})
 public class Question {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,15 +32,16 @@ public class Question {
     private String image;
 
     @ManyToMany(cascade = CascadeType.ALL, mappedBy = "questions")
+    @JsonIgnore
     private Set<Examination> examinations;
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "subject_id")
     private Subject subject;
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany(cascade = CascadeType.PERSIST)
     @JoinTable(name = "rel_chapter_question", joinColumns = @JoinColumn( name = "question_id"), inverseJoinColumns = @JoinColumn(name = "chapter_id"))
-    private Set<Chapter> chapters = new HashSet<>();
+    private Set<Chapter> chapters;
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "level_id")
