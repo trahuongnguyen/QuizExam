@@ -43,6 +43,11 @@ public class QuestionController {
         return questionService.getAllQuestionsBySubjectId(subjectId);
     }
 
+    @GetMapping("/detail/{id}")
+    public QuestionResponse getQuestionById(@PathVariable int id) {
+        return questionService.getQuestionById(id);
+    }
+
     @PostMapping(consumes = {MULTIPART_FORM_DATA_VALUE, APPLICATION_JSON_VALUE})
     public List<Question> addQuestions(@RequestParam("files") MultipartFile[] files, @RequestPart("questions") @Valid List<QuestionRequest> questionRequests) throws IOException {
         if (files.length != questionRequests.size()) {

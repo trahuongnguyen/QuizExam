@@ -10,4 +10,6 @@ import java.util.List;
 @Repository
 public interface QuestionRepository extends JpaRepository<Question, Integer> {
     List<Question> findAllBySubjectAndStatus(Subject subject, int status);
+
+    Question findByIdAndStatus(int id, int status);
 }

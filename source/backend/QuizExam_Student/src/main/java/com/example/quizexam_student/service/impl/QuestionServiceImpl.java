@@ -5,6 +5,7 @@ import com.example.quizexam_student.bean.response.QuestionResponse;
 import com.example.quizexam_student.entity.Answer;
 import com.example.quizexam_student.entity.Chapter;
 import com.example.quizexam_student.entity.Question;
+import com.example.quizexam_student.exception.NotFoundException;
 import com.example.quizexam_student.mapper.AnswerMapper;
 import com.example.quizexam_student.mapper.QuestionMapper;
 import com.example.quizexam_student.repository.*;
@@ -16,6 +17,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -33,11 +35,30 @@ public class QuestionServiceImpl implements QuestionService {
             List<Question> questionList = new ArrayList<>();
             questionList.add(question);
             List<Chapter> chapters = chapterRepository.findByQuestionsIn(questionList);
-            question.setChapters(chapters.stream().collect(Collectors.toSet()));
             List<Answer> answers = answerRepository.findByQuestion(question);
-            question.setAnswers(answers.stream().collect(Collectors.toSet()));
-            return question;
-        }).map(QuestionMapper::convertToResponse).collect(Collectors.toList());
+
+            QuestionResponse questionResponse = QuestionMapper.convertToResponse(question);
+            questionResponse.setChapters(chapters.stream().collect(Collectors.toList()));
+            questionResponse.setAnswers(answers.stream().collect(Collectors.toList()));
+            return questionResponse;
+        }).collect(Collectors.toList());
+    }
+
+    @Override
+    public QuestionResponse getQuestionById(int questionId) {
+        Question question = questionRepository.findByIdAndStatus(questionId, 1);
+        if (Objects.isNull(question) || question.getStatus() == 0) {
+            throw new NotFoundException("question", "Question not found.");
+        }
+        List<Question> questionList = new ArrayList<>();
+        questionList.add(question);
+        List<Chapter> chapters = chapterRepository.findByQuestionsIn(questionList);
+        List<Answer> answers = answerRepository.findByQuestion(question);
+
+        QuestionResponse questionResponse = QuestionMapper.convertToResponse(question);
+        questionResponse.setChapters(chapters.stream().collect(Collectors.toList()));
+        questionResponse.setAnswers(answers.stream().collect(Collectors.toList()));
+        return questionResponse;
     }
 
     @Override
