@@ -1,5 +1,6 @@
 package com.example.quizexam_student.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -34,11 +35,14 @@ public class Subject {
     private Sem sem;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "subject")
+    @JsonIgnore
     private Set<Chapter> chapters;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "subject")
+    @JsonIgnore
     private Set<Mark> marks;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "subject")
+    @JsonIgnore
     private Set<Question> questions;
 }

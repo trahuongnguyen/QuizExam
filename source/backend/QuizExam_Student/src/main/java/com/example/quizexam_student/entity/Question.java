@@ -39,7 +39,7 @@ public class Question {
     @JoinColumn(name = "subject_id")
     private Subject subject;
 
-    @ManyToMany(cascade = CascadeType.PERSIST)
+    @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "rel_chapter_question", joinColumns = @JoinColumn( name = "question_id"), inverseJoinColumns = @JoinColumn(name = "chapter_id"))
     private Set<Chapter> chapters;
 

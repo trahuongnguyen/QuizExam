@@ -31,17 +31,7 @@ public class QuestionServiceImpl implements QuestionService {
 
     @Override
     public List<QuestionResponse> getAllQuestionsBySubjectId(int subjectId) {
-        return questionRepository.findAllBySubjectAndStatus(subjectRepository.findById(subjectId).orElse(null), 1).stream().map(question -> {
-            List<Question> questionList = new ArrayList<>();
-            questionList.add(question);
-            List<Chapter> chapters = chapterRepository.findByQuestionsIn(questionList);
-            List<Answer> answers = answerRepository.findByQuestion(question);
-
-            QuestionResponse questionResponse = QuestionMapper.convertToResponse(question);
-            questionResponse.setChapters(chapters.stream().collect(Collectors.toList()));
-            questionResponse.setAnswers(answers.stream().collect(Collectors.toList()));
-            return questionResponse;
-        }).collect(Collectors.toList());
+        return questionRepository.findAllBySubjectAndStatus(subjectRepository.findById(subjectId).orElse(null), 1).stream().map(QuestionMapper::convertToResponse).collect(Collectors.toList());
     }
 
     @Override
@@ -50,15 +40,7 @@ public class QuestionServiceImpl implements QuestionService {
         if (Objects.isNull(question) || question.getStatus() == 0) {
             throw new NotFoundException("question", "Question not found.");
         }
-        List<Question> questionList = new ArrayList<>();
-        questionList.add(question);
-        List<Chapter> chapters = chapterRepository.findByQuestionsIn(questionList);
-        List<Answer> answers = answerRepository.findByQuestion(question);
-
-        QuestionResponse questionResponse = QuestionMapper.convertToResponse(question);
-        questionResponse.setChapters(chapters.stream().collect(Collectors.toList()));
-        questionResponse.setAnswers(answers.stream().collect(Collectors.toList()));
-        return questionResponse;
+        return QuestionMapper.convertToResponse(question);
     }
 
     @Override
@@ -70,10 +52,10 @@ public class QuestionServiceImpl implements QuestionService {
             question.setSubject(subjectRepository.findById(questionRequest.getSubjectId()).orElse(null));
             question.setLevel(levelRepository.findById(questionRequest.getLevelId()).orElse(null));
             question.setChapters(chapterRepository.findByIdIn(questionRequest.getChapters()).stream().collect(Collectors.toSet()));
-            questionRepository.save(question);
             List<Answer> answers = questionRequest.getAnswers().stream().map(AnswerMapper::convertFromRequest).collect(Collectors.toList());
             answers.stream().map(answer -> {answer.setQuestion(question); return answer;}).collect(Collectors.toList());
-            answerRepository.saveAll(answers);
+            question.setAnswers(answers.stream().collect(Collectors.toSet()));
+            questionRepository.save(question);
             savedQuestions.add(question);
         }
         return savedQuestions;
@@ -87,12 +69,10 @@ public class QuestionServiceImpl implements QuestionService {
         question.setSubject(subjectRepository.findById(questionRequest.getSubjectId()).orElse(null));
         question.setLevel(levelRepository.findById(questionRequest.getLevelId()).orElse(null));
         question.setChapters(chapterRepository.findByIdIn(questionRequest.getChapters()).stream().collect(Collectors.toSet()));
-        question.setAnswers(new HashSet<>());
-        questionRepository.save(question);
         List<Answer> answers = questionRequest.getAnswers().stream().map(AnswerMapper::convertFromRequest).collect(Collectors.toList());
         answers.stream().map(answer -> {answer.setQuestion(question); return answer;}).collect(Collectors.toList());
-        answerRepository.deleteAll(answerRepository.findByQuestion(question).stream().map(answer -> {answer.setQuestion(null); return answer;}).collect(Collectors.toList()));
-        answerRepository.saveAll(answers);
+        question.setAnswers(answers.stream().collect(Collectors.toSet()));
+        questionRepository.save(question);
         return question;
     }
 }

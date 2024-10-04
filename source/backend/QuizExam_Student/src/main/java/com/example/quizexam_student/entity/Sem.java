@@ -1,5 +1,6 @@
 package com.example.quizexam_student.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -13,6 +14,7 @@ import java.util.Set;
 @Setter
 @AllArgsConstructor
 @Builder
+@EqualsAndHashCode
 public class Sem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,5 +25,6 @@ public class Sem {
     private String name;
 
     @OneToMany(mappedBy = "sem")
+    @JsonIgnore
     private Set<Subject> subjects;
 }
