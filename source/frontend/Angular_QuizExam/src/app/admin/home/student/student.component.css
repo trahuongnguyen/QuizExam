@@ -1,7 +1,7 @@
 
 /* Body */
 .content-wrapper {
-    padding: 20px;
+    padding: 0 20px;
     margin: 0 0 60px 120px;
     min-height: 80vh;
     overflow-x: hidden;
@@ -23,10 +23,10 @@
 }
 
 .button {
-    font-size: 10px;
+    font-size: 12px;
     background-color: #aa1210;
     border: none;
-    border-radius: 8px;
+    border-radius: 6px;
 }
 
 .button:active {

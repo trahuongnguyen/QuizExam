@@ -10,7 +10,7 @@
     border-bottom: 1px solid var(--color-switch);
     margin-left: 120px;
     z-index: 1000;
-    height: 80px;
+    height: 60px;
     transition: margin-left 0.3s ease;
 }
 
@@ -85,7 +85,7 @@
 
 
 .sidebar .block-wrapper {
-    height: 80px;
+    height: 60px;
     text-align: center;
     align-content: center;
     border-bottom: 1px solid var(--color-sidebar);
@@ -99,10 +99,9 @@
 
 .sidebar .sidebar-link {
     display: block;
-    align-items: center;
     text-decoration: none;
     font-size: 14px;
-    padding: 10px;
+    padding: 12px 10px;
     color: var(--color-text);
     transition: all 0.3s ease;
 }
