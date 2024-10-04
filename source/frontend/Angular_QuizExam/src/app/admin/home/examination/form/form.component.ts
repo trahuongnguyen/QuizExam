@@ -10,13 +10,12 @@ import { HomeComponent } from '../../home.component';
 interface ExamForm {
   name: string; // Thuộc tính để lưu nội dung câu hỏi
   duration: number; // Thuộc tính để lưu ID chủ đề
-  startTime: Date; // Thuộc tính để lưu chapters
-  endTime: Date; // Thuộc tính để lưu levelId
+  startTime: any; // Thuộc tính để lưu chapters
+  endTime: any; // Thuộc tính để lưu levelId
   classes: number[];
   students: number[];
-  subject: number;
-  chapters: number[];
-
+  subjectId: number;
+  chapterIds: number[];
 }
 @Component({
   selector: 'app-form',
@@ -45,16 +44,54 @@ export class FormComponent implements OnInit {
   //classList: number[] = [];
 
   examsForm: ExamForm = {
-    name: '', // Thuộc tính để lưu nội dung câu hỏi
-    duration: 0,// Thuộc tính để lưu ID chủ đề
-    startTime: new Date(), // Thuộc tính để lưu chapters
-    endTime: new Date(), // Thuộc tính để lưu levelId
+    name: '',
+    duration: 30,
+    startTime: new Date(),
+    endTime: new Date(),
     classes: [],
     students: [],
-    subject: 1,
-    chapters: []
-
+    subjectId: 1,
+    chapterIds: []
   };
+
+  createExam() {
+    const exam = {  // tạm thời
+      name: this.examsForm.name,
+      duration: this.examsForm.duration,
+      startTime: this.examsForm.startTime,
+      endTime: this.examsForm.endTime,
+      subjectId: this.examsForm.subjectId,
+      chapterIds: this.examsForm.chapterIds
+    };
+    this.http.post(`${this.authService.apiUrl}/exam`, exam, this.home.httpOptions).subscribe(
+      response => {
+        this.toastr.success('Create exam Successful!', 'Success', {
+          timeOut: 2000,
+        });
+        this.router.navigate(['/admin/home/exam/detail/1']);
+      },
+      error => {
+        if (error.status === 401) {
+          this.toastr.error('Unauthorized', 'Failed', {
+            timeOut: 2000,
+          });
+        } else {
+          let msg = '';
+          if (error.error.message) {
+            msg = error.error.message;
+          } else {
+            error.error.forEach((err: any) => {
+              msg += ' ' + err.message;
+            })
+          }
+          this.toastr.error(msg, 'Failed', {
+            timeOut: 2000,
+          });
+        }
+        console.log('Error', error);
+      }
+    )
+  }
 
   ngOnInit(): void {
     //this.subjectId = Number(this.activatedRoute.snapshot.params['subjectId']) ?? 0;
@@ -121,12 +158,12 @@ export class FormComponent implements OnInit {
     const checkbox = (event.target as HTMLInputElement);
 
     if (checkbox.checked) {
-      this.examsForm.chapters.push(chapterId);
+      this.examsForm.chapterIds.push(chapterId);
     } else {
-      this.examsForm.chapters = this.examsForm.chapters.filter(id => id !== chapterId);
+      this.examsForm.chapterIds = this.examsForm.chapterIds.filter(id => id !== chapterId);
     }
 
-    console.log(this.examsForm.chapters);
+    console.log(this.examsForm.chapterIds);
   }
 
   toggleStudentSelection(studentId: number, event: Event) {

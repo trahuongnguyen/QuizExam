@@ -15,6 +15,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @AllArgsConstructor
 public class QuestionResponse {
+    private int id;
     private String content;
     private String image;
     private Subject subject;

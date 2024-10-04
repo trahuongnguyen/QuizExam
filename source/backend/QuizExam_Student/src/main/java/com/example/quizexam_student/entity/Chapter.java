@@ -2,6 +2,7 @@ package com.example.quizexam_student.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -30,10 +31,8 @@ public class Chapter {
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "subject_id")
-    @JsonIgnore
     private Subject subject;
 
     @ManyToMany(cascade = CascadeType.ALL, mappedBy = "chapters")
-    @JsonBackReference
-    private Set<Question> questions = new HashSet<>();
+    private Set<Question> questions;
 }
