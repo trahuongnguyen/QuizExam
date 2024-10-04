@@ -22,7 +22,8 @@ public class Question {
     @Column(name = "question_id")
     private int id;
 
-    @Column(name = "content", nullable = false)
+    @Column(name = "content", nullable = false, columnDefinition = "text")
+    @Lob
     private String content;
 
     @Column(name = "status", nullable = false)

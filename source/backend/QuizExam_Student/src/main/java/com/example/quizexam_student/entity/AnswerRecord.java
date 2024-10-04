@@ -18,7 +18,8 @@ public class AnswerRecord {
     @Column(name = "answer_record_id")
     private int id;
 
-    @Column(name = "correct_option", nullable = false)
+    @Column(name = "correct_option", nullable = false, columnDefinition = "text")
+    @Lob
     private String correctOption;
 
     @ManyToOne(cascade = CascadeType.ALL)

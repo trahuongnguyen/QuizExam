@@ -84,7 +84,6 @@ public class ExaminationServiceImpl implements ExaminationService {
         exam.setStatus(1);
         exam.setQuestions(selectedQuestions.stream().collect(Collectors.toSet()));
         exam.setCode("HTML-001");
-        exam.setType(1);
         examinationRepository.save(exam);
         for (Question question : selectedQuestions) {
             QuestionRecord questionRecord = new QuestionRecord();

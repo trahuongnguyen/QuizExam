@@ -41,9 +41,6 @@ public class Examination {
     @Column(name = "status", nullable = false)
     private Integer status;
 
-    @Column(name = "type", nullable = false)
-    private Integer type;
-
     @OneToMany(mappedBy = "examination")
     private Set<Mark> marks;
 
