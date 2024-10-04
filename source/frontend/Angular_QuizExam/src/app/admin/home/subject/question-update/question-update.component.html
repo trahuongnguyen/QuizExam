@@ -1,7 +1,7 @@
 <div class="content-wrapper" [ngClass]="{'content-wrapper-collapsed': subjectComponent.home.isSidebarCollapsed}">
     <h4>{{ subjectName }} / Add new Question</h4>
     <hr class="line">
-    <form class="d-flex">
+    <form class="d-flex" (ngSubmit)="saveQuestions()">
         <div id="question-forms">
             <div class="question-form">
                 <div class="form-row">
@@ -13,7 +13,7 @@
                     </div>
                     <div class="form-group-row col me-0">
                         <label for="level">Level:</label>
-                        <select class="form-select" [(ngModel)]="question.level.id" name="question.level.id">
+                        <select class="form-select" [(ngModel)]="question.levelId" name="question.levelId">
                             <option *ngFor="let level of listLevel" [value]="level.id">{{ level.name }}</option>
                         </select>
                     </div>
@@ -28,7 +28,7 @@
                     <div class="img-preview mt-3 mb-3" [ngClass]="{'hidden-border': question.imageFile}">
                         <input type="file" name="file" class="form-control-file" accept="image/*" (change)="previewImage($event)" />
                         <button *ngIf="!question.imageFile" class="choose-file-btn" type="button">Choose file</button>
-                        <img id="imagePreview" src="../../../../../../img/banner.jpg" alt="Image Preview" style="display:none;" />
+                        <img id="imagePreview" src="#" alt="Image Preview" style="display:none;" />
                 
                         <!-- Dấu X để xóa ảnh -->
                         <span *ngIf="question.imageFile" class="remove-image" (click)="removeImage()"><b>x</b></span>
@@ -39,7 +39,7 @@
                     <div class="answers-container">
                         <div *ngFor="let answer of question.answers; let i = index" class="input-group mb-2">
                             <div class="input-group-text">
-                                <input type="checkbox" [(ngModel)]="answer.isCorrect" (change)="toggleIsCorrect(answer)" />
+                                <input type="checkbox" [(ngModel)]="answer.isCorrect" (change)="toggleIsCorrect(answer)" [checked]="answer.isCorrect == 1" />
                             </div>
                             <input type="text" [(ngModel)]="answer.content" name="answer.content{{i}}" class="form-control" />
                             <span class="remove-answer" (click)="removeAnswer(i)">X</span>
@@ -61,7 +61,7 @@
                             <div class="form-chapter">
                                 <div class="checkbox-group">
                                     <div class="checkbox-input" *ngFor="let chapter of listChapter">
-                                        <input type="checkbox" (change)="toggleChapterSelection(popupChapterIndex, chapter.id, $event)" [checked]="question.chapters.includes(chapter.id)" id="chapter{{chapter.id}}" />
+                                        <input type="checkbox" (change)="toggleChapterSelection(chapter.id, $event)" [checked]="question.chapters.includes(chapter.id)" id="chapter{{chapter.id}}" />
                                         <label for="chapter{{chapter.id}}">{{ chapter.name }}</label>
                                     </div>
                                 </div>

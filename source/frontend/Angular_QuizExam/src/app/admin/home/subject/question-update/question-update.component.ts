@@ -11,15 +11,6 @@ interface Answer {
   isCorrect: number; // Thêm thuộc tính isCorrect
 }
 
-interface QuestionForm {
-  content: string; // Thuộc tính để lưu nội dung câu hỏi
-  subjectId: number; // Thuộc tính để lưu ID chủ đề
-  chapters: number[]; // Thuộc tính để lưu chapters
-  levelId: number; // Thuộc tính để lưu levelId
-  imageFile?: File | null; // Thông tin file ảnh
-  answers: Answer[]; // Danh sách các câu trả lời
-}
-
 @Component({
   selector: 'app-question-update',
   templateUrl: './question-update.component.html',
@@ -39,8 +30,17 @@ export class QuestionUpdateComponent implements OnInit {
     { id: 1, name: 'Easy', point: 1 },
     { id: 2, name: 'Hard', point: 2 }
   ];
+
+  dataQuestion: any;
   
-  question: any;
+  question: any = {
+    content: '',
+    subjectId: 0,
+    chapters: [],
+    levelId: 0,
+    imageFile: null,
+    answers: []
+  };
 
   ngOnInit(): void {
     this.subjectId = Number(this.activatedRoute.snapshot.params['subjectId']) ?? 0;
@@ -58,9 +58,23 @@ export class QuestionUpdateComponent implements OnInit {
 
     this.questionId = Number(this.activatedRoute.snapshot.params['id']) ?? 0;
 
-    this.http.get<any>(`${this.authService.apiUrl}/question/question-detail/${this.questionId}`, this.home.httpOptions).subscribe(data2 => {
-      this.question = data2;
-      console.log(this.question);
+    this.http.get<any>(`${this.authService.apiUrl}/question/detail/${this.questionId}`, this.home.httpOptions).subscribe(data => {
+      this.dataQuestion = data;
+      this.question.content = this.dataQuestion.content;
+      this.question.imageFile = this.dataQuestion.image;
+      this.question.subjectId = this.dataQuestion.subject.id;
+      this.question.levelId = this.dataQuestion.level.id;
+      this.question.answers = this.dataQuestion.answers;
+      
+      for (let chapter of this.dataQuestion.chapters) {
+        this.question.chapters.push(chapter.id);
+      }
+
+      if (this.question.imageFile) {
+        const imgPreview = document.getElementById(`imagePreview`) as HTMLImageElement;
+        imgPreview.src = '../../../../../../img-question/' + this.question.imageFile; // Đặt src của ảnh
+        imgPreview.style.display = 'block'; // Hiển thị ảnh
+      }
     });
 
     this.http.get<any>(`${this.authService.apiUrl}/chapter/${this.subjectId}`, this.home.httpOptions).subscribe((data: any) => {
@@ -69,14 +83,13 @@ export class QuestionUpdateComponent implements OnInit {
   }
 
   isPopupChapter = false;
-  popupChapterIndex: number = 0;
 
   openPopup() {
     this.isPopupChapter = true;
   }
 
   // Hàm này được gọi khi người dùng nhấn checkbox
-  toggleChapterSelection(questionIndex: number, chapterId: number, event: Event) {
+  toggleChapterSelection(chapterId: number, event: Event) {
     const checkbox = (event.target as HTMLInputElement);
 
     if (!this.question.chapters) {
@@ -97,7 +110,6 @@ export class QuestionUpdateComponent implements OnInit {
       event.stopPropagation(); // Ngăn việc sự kiện click ra ngoài ảnh hưởng đến việc đóng modal
     }
     this.isPopupChapter = false;
-    this.popupChapterIndex = 0; // Reset khi đóng popup
     this.isCancelPopup = false;
   }
 
@@ -113,6 +125,8 @@ export class QuestionUpdateComponent implements OnInit {
   removeAnswer(answerIndex: number) {
     this.question.answers.splice(answerIndex, 1);
   }
+
+  changeImg: boolean = false;
 
   previewImage(event: Event) {
     const fileInput = event.target as HTMLInputElement;
@@ -132,6 +146,7 @@ export class QuestionUpdateComponent implements OnInit {
       // Đánh dấu là đã chọn ảnh và thêm lớp ẩn border
       this.question.imageFile = file; // Lưu file vào đối tượng
       imgContainer?.classList.add('hidden-border'); // Thêm lớp để ẩn border
+      this.changeImg = true;
     } else {
       imgContainer?.classList.remove('hidden-border'); // Xóa lớp nếu không có ảnh
     }
@@ -142,6 +157,51 @@ export class QuestionUpdateComponent implements OnInit {
     const imgPreview = document.getElementById(`imagePreview`) as HTMLImageElement;
     imgPreview.src = ''; // Đặt lại src của ảnh
     imgPreview.style.display = 'none'; // Ẩn ảnh đi
+  }
+
+  saveQuestions() {
+    const formData = new FormData();
+  
+    // Tạo danh sách câu hỏi
+    const questionsList = {
+      content: this.question.content,
+      image: null, // Hoặc giá trị tương ứng nếu có ảnh
+      subjectId: this.question.subjectId,
+      chapters: this.question.chapters,
+      levelId: this.question.levelId,
+      answers: this.question.answers.map((answer: any) => ({
+        content: answer.content,
+        isCorrect: answer.isCorrect
+      }))
+    };
+  
+    // Thêm danh sách câu hỏi vào FormData
+    formData.append('question', new Blob([JSON.stringify(questionsList)], { type: 'application/json' }));
+  
+    // Thêm các file vào FormData
+    if (this.changeImg) {
+      formData.append('file', this.question.imageFile); // Sử dụng file đã lưu
+    }
+    else {
+      formData.append('file', new Blob([]));
+    }
+  
+    // Gửi yêu cầu POST
+    this.http.put(`${this.authService.apiUrl}/question/${this.questionId}`, formData, this.home.httpOptions).subscribe(
+      response => {
+        this.toastr.success('Questions saved successfully!', 'Success', {
+          timeOut: 2000,
+        });
+        console.log('Questions saved successfully:', response);
+        this.router.navigate([`/admin/home/subject/${this.subjectId}/questionList`]);
+      },
+      error => {
+        this.toastr.error('Error saving questions.', 'Error', {
+          timeOut: 2000,
+        });
+        console.error('Error saving questions:', error);
+      }
+    );
   }
 
   isCancelPopup: boolean = false;

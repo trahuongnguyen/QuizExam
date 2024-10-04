@@ -84,7 +84,7 @@ export class QuestionListComponent {
             let value: any = '';
             console.log(row);
             data.forEach((val: any) => {
-              value+=val.name;
+              value += '[' + val.name + '] ';
             });
             return value;
           }
