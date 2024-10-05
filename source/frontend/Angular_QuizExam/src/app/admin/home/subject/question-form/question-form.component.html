@@ -8,8 +8,8 @@
                     <input type="hidden" [(ngModel)]="question.subjectId" name="question.subjectId{{i}}" class="form-control" />
                     
                     <div class="form-group-row col me-3">
-                        <label for="chapter">Chapter:</label>
-                        <button type="button" class="form-select" style="text-align: left;" (click)="openPopup(i)">Choose Chapter</button>
+                        <label for="chapter" class="label-fix">Chapter:</label>
+                        <button type="button" class="form-select button-chapter" style="text-align: left;" (click)="openPopup(i)">{{ getSelectedChaptersNames(question) || 'Choose Chapter' }}</button>
                     </div>
                     <div class="form-group-row col me-0">
                         <label for="level">Level:</label>
@@ -20,15 +20,15 @@
                 </div>
 
                 <div class="form-group-row">
-                    <label for="question">Question:</label>
+                    <label for="question" class="label-fix">Question:</label>
                     <textarea class="form-control" [(ngModel)]="question.content" name="question.content{{i}}" rows="3" style="flex-grow: 1"></textarea>
                 </div>
 
                 <div class="form-group form-image">
                     <div class="img-preview mt-3 mb-3" [ngClass]="{'hidden-border': question.imageFile}">
-                        <input type="file" name="file{{i}}" class="form-control-file" accept="image/*" (change)="previewImage($event, i)" />
+                        <input type="file" name="file{{i}}" class="form-control-file" accept="image/*" (change)="chooseImage($event, i)" />
                         <button *ngIf="!question.imageFile" class="choose-file-btn" type="button">Choose file</button>
-                        <img id="imagePreview{{i}}" src="#" alt="Image Preview" style="display:none;" />
+                        <img id="imageQuestion{{i}}" src="#" alt="Image Question" style="display:none;" />
                 
                         <!-- Dấu X để xóa ảnh -->
                         <span *ngIf="question.imageFile" class="remove-image" (click)="removeImage(i)"><b>x</b></span>

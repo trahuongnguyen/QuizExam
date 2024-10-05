@@ -38,16 +38,18 @@ export class QuestionUpdateComponent implements OnInit {
     subjectId: 0,
     chapters: [],
     levelId: 0,
-    imageFile: null,
+    image: null,
     answers: []
   };
+
+  hasImage: boolean = false;
 
   ngOnInit(): void {
     this.subjectId = Number(this.activatedRoute.snapshot.params['subjectId']) ?? 0;
 
     this.http.get<any>(`${this.authService.apiUrl}/subject/${this.subjectId}`, this.home.httpOptions).subscribe((data: any) => {
-      this.http.get<any>(`${this.authService.apiUrl}/subject/sem/${data.sem.id}`, this.home.httpOptions).subscribe(data1 => {
-        this.subjects = data1;
+      this.http.get<any>(`${this.authService.apiUrl}/subject/sem/${data.sem.id}`, this.home.httpOptions).subscribe(semSubjects => {
+        this.subjects = semSubjects;
         for (let sub of this.subjects) {
           if (sub.id == this.subjectId) {
             this.subjectName = sub.name;
@@ -61,7 +63,7 @@ export class QuestionUpdateComponent implements OnInit {
     this.http.get<any>(`${this.authService.apiUrl}/question/detail/${this.questionId}`, this.home.httpOptions).subscribe(data => {
       this.dataQuestion = data;
       this.question.content = this.dataQuestion.content;
-      this.question.imageFile = this.dataQuestion.image;
+      this.question.image = this.dataQuestion.image;
       this.question.subjectId = this.dataQuestion.subject.id;
       this.question.levelId = this.dataQuestion.level.id;
       this.question.answers = this.dataQuestion.answers;
@@ -70,16 +72,19 @@ export class QuestionUpdateComponent implements OnInit {
         this.question.chapters.push(chapter.id);
       }
 
-      if (this.question.imageFile) {
-        const imgPreview = document.getElementById(`imagePreview`) as HTMLImageElement;
-        imgPreview.src = '../../../../../../img-question/' + this.question.imageFile; // Đặt src của ảnh
-        imgPreview.style.display = 'block'; // Hiển thị ảnh
+      if (this.question.image) {
+        this.hasImage = true;
       }
     });
 
     this.http.get<any>(`${this.authService.apiUrl}/chapter/${this.subjectId}`, this.home.httpOptions).subscribe((data: any) => {
       this.listChapter = data;
     });
+  }
+
+  getSelectedChaptersNames(): string {
+    const selectedChapters = this.listChapter.filter((chapter: any) => this.question.chapters.includes(chapter.id));
+    return selectedChapters.map((chapter: any) => `[${chapter.name}]`).join(' ');
   }
 
   isPopupChapter = false;
@@ -128,24 +133,25 @@ export class QuestionUpdateComponent implements OnInit {
 
   changeImg: boolean = false;
 
-  previewImage(event: Event) {
+  chooseImage(event: Event) {
     const fileInput = event.target as HTMLInputElement;
     const file = fileInput.files ? fileInput.files[0] : null;
 
-    const imgPreview = document.getElementById(`imagePreview`) as HTMLImageElement;
-    const imgContainer = imgPreview.parentElement; // Lấy phần tử cha của img
+    const imgQuestion = document.getElementById(`imageQuestion`) as HTMLImageElement;
+    const imgContainer = imgQuestion.parentElement; // Lấy phần tử cha của img
 
     if (file) {
       const reader = new FileReader();
       reader.onload = (loadEvent) => {
-        imgPreview.src = loadEvent.target?.result as string;
-        imgPreview.style.display = 'block';
+        imgQuestion.src = loadEvent.target?.result as string;
+        imgQuestion.style.display = 'block';
       };
       reader.readAsDataURL(file);
 
       // Đánh dấu là đã chọn ảnh và thêm lớp ẩn border
-      this.question.imageFile = file; // Lưu file vào đối tượng
+      this.question.image = file; // Lưu file vào đối tượng
       imgContainer?.classList.add('hidden-border'); // Thêm lớp để ẩn border
+      this.hasImage = true;
       this.changeImg = true;
     } else {
       imgContainer?.classList.remove('hidden-border'); // Xóa lớp nếu không có ảnh
@@ -153,10 +159,9 @@ export class QuestionUpdateComponent implements OnInit {
   }
 
   removeImage() {
-    this.question.imageFile = null; // Xóa thông tin file
-    const imgPreview = document.getElementById(`imagePreview`) as HTMLImageElement;
-    imgPreview.src = ''; // Đặt lại src của ảnh
-    imgPreview.style.display = 'none'; // Ẩn ảnh đi
+    this.question.image = new Blob([]);
+    this.changeImg = true;
+    this.hasImage = false;
   }
 
   saveQuestions() {
@@ -165,7 +170,6 @@ export class QuestionUpdateComponent implements OnInit {
     // Tạo danh sách câu hỏi
     const questionsList = {
       content: this.question.content,
-      image: null, // Hoặc giá trị tương ứng nếu có ảnh
       subjectId: this.question.subjectId,
       chapters: this.question.chapters,
       levelId: this.question.levelId,
@@ -180,10 +184,7 @@ export class QuestionUpdateComponent implements OnInit {
   
     // Thêm các file vào FormData
     if (this.changeImg) {
-      formData.append('file', this.question.imageFile); // Sử dụng file đã lưu
-    }
-    else {
-      formData.append('file', new Blob([]));
+      formData.append('file', this.question.image); // Sử dụng file đã lưu
     }
   
     // Gửi yêu cầu POST

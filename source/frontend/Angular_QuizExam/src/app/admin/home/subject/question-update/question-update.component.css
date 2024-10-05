@@ -1,6 +1,6 @@
 /* Body */
 .content-wrapper {
-    padding: 20px;
+    padding: 0 20px;
     margin: 0 0 60px 120px;
     min-height: 80vh;
     overflow-x: hidden;
@@ -41,8 +41,10 @@
 
 .form-group-row label {
     margin-right: 10px;
-    /* Khoảng cách giữa nhãn và input/select */
-    margin-bottom: 0;
+}
+
+.form-group-row .label-fix {
+    min-width: 75px;
 }
 
 .form-group-row input,
@@ -53,11 +55,12 @@
     /* Đảm bảo chiều cao của input và select giống như label */
 }
 
-/* Nếu cần điều chỉnh cụ thể hơn cho từng trường hợp */
-.form-group-row input,
-.form-group-row select {
-    padding: 0.375rem 0.75rem;
-    /* Padding cho input và select */
+.button-chapter {
+    white-space: nowrap; /* Ngăn không cho nội dung xuống dòng */
+    overflow: hidden; /* Ẩn nội dung vượt quá chiều rộng của nút */
+    text-overflow: ellipsis; /* Hiển thị "..." khi nội dung bị cắt */
+    width: 400px; /* Thiết lập chiều rộng cho button (có thể điều chỉnh) */
+    display: inline-block; /* Để áp dụng các thuộc tính overflow */
 }
 
 .img-preview {

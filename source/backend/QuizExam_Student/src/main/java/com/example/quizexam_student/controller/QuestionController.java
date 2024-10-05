@@ -70,10 +70,13 @@ public class QuestionController {
 
     @PutMapping(consumes = {MULTIPART_FORM_DATA_VALUE, APPLICATION_JSON_VALUE}, path = "/{id}")
     public Question editQuestion(@RequestPart(value = "file", required = false) MultipartFile file, @RequestPart("question") @Valid QuestionRequest questionRequest, @PathVariable int id) throws IOException {
-        if (file!=null) {
-            LocalDate date = LocalDate.now();
-            String fileName = UUID.randomUUID() + "_" + date + "_" + file.getOriginalFilename();
-            Files.copy(file.getInputStream(), Paths.get(uploadDir).resolve(fileName));
+        if (file != null) {
+            String fileName = "";
+            if (!file.isEmpty()) {
+                LocalDate date = LocalDate.now();
+                fileName = UUID.randomUUID() + "_" + date + "_" + file.getOriginalFilename();
+                Files.copy(file.getInputStream(), Paths.get(uploadDir).resolve(fileName));
+            }
             questionRequest.setImage(fileName);
         }
         return questionService.updateQuestion(id,questionRequest);

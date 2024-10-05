@@ -65,14 +65,20 @@ public class QuestionServiceImpl implements QuestionService {
     public Question updateQuestion(int id, QuestionRequest questionRequest) throws IOException {
         Question question = questionRepository.findById(id).orElse(null);
         question.setContent(questionRequest.getContent());
-        question.setImage(questionRequest.getImage());
+        if (questionRequest.getImage() != null) {
+            question.setImage(questionRequest.getImage().isEmpty() ? null : questionRequest.getImage());
+        }
         question.setSubject(subjectRepository.findById(questionRequest.getSubjectId()).orElse(null));
         question.setLevel(levelRepository.findById(questionRequest.getLevelId()).orElse(null));
         question.setChapters(chapterRepository.findByIdIn(questionRequest.getChapters()).stream().collect(Collectors.toSet()));
         List<Answer> answers = questionRequest.getAnswers().stream().map(AnswerMapper::convertFromRequest).collect(Collectors.toList());
         answers.stream().map(answer -> {answer.setQuestion(question); return answer;}).collect(Collectors.toList());
-        question.setAnswers(answers.stream().collect(Collectors.toSet()));
+        question.setAnswers(new HashSet<>());
         questionRepository.save(question);
+        List<Answer> questionAnswers = answerRepository.findByQuestion(question);
+        questionAnswers.stream().map(answer -> {answer.setQuestion(null); return answer;}).collect(Collectors.toList());
+        answerRepository.deleteAll(questionAnswers);
+        answerRepository.saveAll(answers);
         return question;
     }
 }

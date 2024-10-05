@@ -81,6 +81,11 @@ export class QuestionFormComponent implements OnInit {
     ];
   }
 
+  getSelectedChaptersNames(question: QuestionForm): string {
+    const selectedChapters = this.listChapter.filter((chapter: any) => question.chapters.includes(chapter.id));
+    return selectedChapters.map((chapter: any) => `[${chapter.name}]`).join(' ');
+  }
+
   isPopupChapter = false;
   popupChapterIndex: number = 0;
 
@@ -162,18 +167,18 @@ export class QuestionFormComponent implements OnInit {
     this.questionForms[questionIndex].answers.splice(answerIndex, 1);
   }
 
-  previewImage(event: Event, questionIndex: number) {
+  chooseImage(event: Event, questionIndex: number) {
     const fileInput = event.target as HTMLInputElement;
     const file = fileInput.files ? fileInput.files[0] : null;
 
-    const imgPreview = document.getElementById(`imagePreview${questionIndex}`) as HTMLImageElement;
-    const imgContainer = imgPreview.parentElement; // Lấy phần tử cha của img
+    const imgQuestion = document.getElementById(`imageQuestion${questionIndex}`) as HTMLImageElement;
+    const imgContainer = imgQuestion.parentElement; // Lấy phần tử cha của img
 
     if (file) {
       const reader = new FileReader();
       reader.onload = (loadEvent) => {
-        imgPreview.src = loadEvent.target?.result as string;
-        imgPreview.style.display = 'block';
+        imgQuestion.src = loadEvent.target?.result as string;
+        imgQuestion.style.display = 'block';
       };
       reader.readAsDataURL(file);
 
@@ -187,9 +192,9 @@ export class QuestionFormComponent implements OnInit {
 
   removeImage(questionIndex: number) {
     this.questionForms[questionIndex].imageFile = null; // Xóa thông tin file
-    const imgPreview = document.getElementById(`imagePreview${questionIndex}`) as HTMLImageElement;
-    imgPreview.src = ''; // Đặt lại src của ảnh
-    imgPreview.style.display = 'none'; // Ẩn ảnh đi
+    const imgQuestion = document.getElementById(`imageQuestion${questionIndex}`) as HTMLImageElement;
+    imgQuestion.src = ''; // Đặt lại src của ảnh
+    imgQuestion.style.display = 'none'; // Ẩn ảnh đi
   }
 
   saveQuestions() {

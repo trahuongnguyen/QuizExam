@@ -1,5 +1,5 @@
 <div class="content-wrapper" [ngClass]="{'content-wrapper-collapsed': subjectComponent.home.isSidebarCollapsed}">
-    <h4>{{ subjectName }} / Add new Question</h4>
+    <h4>{{ subjectName }} / Update Question</h4>
     <hr class="line">
     <form class="d-flex" (ngSubmit)="saveQuestions()">
         <div id="question-forms">
@@ -8,8 +8,8 @@
                     <input type="hidden" [(ngModel)]="question.subjectId" name="question.subjectId" class="form-control" />
                     
                     <div class="form-group-row col me-3">
-                        <label for="chapter">Chapter:</label>
-                        <button type="button" class="form-select" style="text-align: left;" (click)="openPopup()">Choose Chapter</button>
+                        <label for="chapter" class="label-fix">Chapter:</label>
+                        <button type="button" class="form-select button-chapter" style="text-align: left;" (click)="openPopup()">{{ getSelectedChaptersNames() || 'Choose Chapter' }}</button>
                     </div>
                     <div class="form-group-row col me-0">
                         <label for="level">Level:</label>
@@ -20,18 +20,18 @@
                 </div>
 
                 <div class="form-group-row">
-                    <label for="question">Question:</label>
+                    <label for="question" class="label-fix">Question:</label>
                     <textarea class="form-control" [(ngModel)]="question.content" name="question.content" rows="3" style="flex-grow: 1"></textarea>
                 </div>
 
                 <div class="form-group form-image">
-                    <div class="img-preview mt-3 mb-3" [ngClass]="{'hidden-border': question.imageFile}">
-                        <input type="file" name="file" class="form-control-file" accept="image/*" (change)="previewImage($event)" />
-                        <button *ngIf="!question.imageFile" class="choose-file-btn" type="button">Choose file</button>
-                        <img id="imagePreview" src="#" alt="Image Preview" style="display:none;" />
+                    <div class="img-preview mt-3 mb-3" [ngClass]="{'hidden-border': hasImage}">
+                        <input type="file" name="file" class="form-control-file" accept="image/*" (change)="chooseImage($event)" />
+                        <button *ngIf="!hasImage" class="choose-file-btn" type="button">Choose file</button>
+                        <img id="imageQuestion" [src]="hasImage ? ('../../../../../../img-question/' + question.image) : null" alt="Image Question" [style.display]="hasImage ? 'block' : 'none'" />
                 
                         <!-- Dấu X để xóa ảnh -->
-                        <span *ngIf="question.imageFile" class="remove-image" (click)="removeImage()"><b>x</b></span>
+                        <span *ngIf="hasImage" class="remove-image" (click)="removeImage()"><b>x</b></span>
                     </div>
                 </div>
 
