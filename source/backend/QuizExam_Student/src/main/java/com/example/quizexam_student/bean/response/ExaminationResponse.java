@@ -1,5 +1,6 @@
 package com.example.quizexam_student.bean.response;
 
+import com.example.quizexam_student.entity.Subject;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -12,5 +13,6 @@ public class ExaminationResponse {
     private LocalDateTime endTime;
     private Integer duration;
     private String code;
+    private Subject subject;
     private List<QuestionRecordResponse> questionRecordResponses;
 }
