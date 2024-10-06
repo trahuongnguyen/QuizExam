@@ -25,6 +25,7 @@ public class ExaminationMapper {
         examinationResponse.setEndTime(examination.getEndTime());
         examinationResponse.setDuration(examination.getDuration());
         examinationResponse.setCode(examination.getCode());
+        examinationResponse.setSubject(examination.getQuestions().stream().toList().get(0).getSubject());
         return examinationResponse;
     }
 }
