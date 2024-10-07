@@ -164,6 +164,9 @@ export class QuestionUpdateComponent implements OnInit {
     this.hasImage = false;
   }
 
+  contentError: String = '';
+  answers: String[] = [];
+
   saveQuestions() {
     const formData = new FormData();
   
@@ -200,7 +203,15 @@ export class QuestionUpdateComponent implements OnInit {
         this.toastr.error('Error saving questions.', 'Error', {
           timeOut: 2000,
         });
-        console.error('Error saving questions:', error);
+        console.log(error);
+        error.error.forEach((err:any) => {
+          if (err.key == 'content') {
+            this.contentError = err.message;
+          }
+          if (err.key == 'answers[0].content') {
+            this.contentError = err.message;
+          }
+        });
       }
     );
   }

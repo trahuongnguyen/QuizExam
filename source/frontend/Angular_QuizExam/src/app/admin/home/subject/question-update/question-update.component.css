@@ -64,14 +64,12 @@
 }
 
 .img-preview {
-    border: 1px solid #ddd;
-    padding: 10px;
-    width: 100%;
-    height: 200px;
+    width: 500px;
     display: flex;
     align-items: center;
     justify-content: center;
     position: relative;
+    margin: auto;
 }
 
 .img-preview.hidden-border {
@@ -95,14 +93,16 @@
 
 .remove-image {
     position: absolute;
-    top: 10px; /* Điều chỉnh theo vị trí mong muốn */
-    right: 10px; /* Điều chỉnh theo vị trí mong muốn */
-    font-size: 18px;
+    top: 5px; /* Điều chỉnh theo vị trí mong muốn */
+    right: 5px; /* Điều chỉnh theo vị trí mong muốn */
+    width: 20px;
+    height: 20px;
+    font-size: 13px;
+    text-align: center;
     color: red;
     cursor: pointer;
     background: rgba(255, 255, 255, 0.7);
     border-radius: 50%;
-    padding: 5px;
     z-index: 10; /* Đảm bảo dấu X nằm trên các phần tử khác */
 }
 

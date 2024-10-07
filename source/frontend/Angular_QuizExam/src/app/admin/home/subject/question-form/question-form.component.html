@@ -22,6 +22,7 @@
                 <div class="form-group-row">
                     <label for="question" class="label-fix">Question:</label>
                     <textarea class="form-control" [(ngModel)]="question.content" name="question.content{{i}}" rows="3" style="flex-grow: 1"></textarea>
+                    <span class="text-danger error">{{ contentError }}</span>
                 </div>
 
                 <div class="form-group form-image">

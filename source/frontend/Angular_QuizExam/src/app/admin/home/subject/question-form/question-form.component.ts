@@ -197,6 +197,8 @@ export class QuestionFormComponent implements OnInit {
     imgQuestion.style.display = 'none'; // Ẩn ảnh đi
   }
 
+  contentError: String = '';
+
   saveQuestions() {
     const formData = new FormData();
   
@@ -239,7 +241,7 @@ export class QuestionFormComponent implements OnInit {
         this.toastr.error('Error saving questions.', 'Error', {
           timeOut: 2000,
         });
-        console.error('Error saving questions:', error);
+        console.log(error);
       }
     );
   }
