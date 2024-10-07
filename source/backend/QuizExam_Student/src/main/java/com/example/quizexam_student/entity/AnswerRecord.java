@@ -19,7 +19,6 @@ public class AnswerRecord {
     private int id;
 
     @Column(name = "correct_option", nullable = false, columnDefinition = "text")
-    @Lob
     private String correctOption;
 
     @ManyToOne(cascade = CascadeType.ALL)

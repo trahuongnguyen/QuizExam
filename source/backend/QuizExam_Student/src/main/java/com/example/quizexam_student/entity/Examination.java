@@ -52,4 +52,8 @@ public class Examination {
             joinColumns = @JoinColumn(name = "examination_id"),
             inverseJoinColumns = @JoinColumn(name = "question_id"))
     private Set<Question> questions;
+
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "subject_id")
+    private Subject subject;
 }

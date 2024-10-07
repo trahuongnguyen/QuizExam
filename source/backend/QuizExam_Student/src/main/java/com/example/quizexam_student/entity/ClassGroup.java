@@ -1,5 +1,6 @@
 package com.example.quizexam_student.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -9,6 +10,7 @@ import lombok.*;
 @NoArgsConstructor
 @Getter
 @Setter
+@EqualsAndHashCode(exclude = "_class")
 public class ClassGroup {
     @Id
     @Column(name = "class_id")
@@ -16,6 +18,7 @@ public class ClassGroup {
     @MapsId
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "class_id")
+    @JsonIgnore
     private Classes _class;
     @Column(name = "count", nullable = false)
     private int count;

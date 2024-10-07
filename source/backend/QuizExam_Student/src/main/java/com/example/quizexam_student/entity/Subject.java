@@ -40,6 +40,10 @@ public class Subject {
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "subject")
     @JsonIgnore
+    private Set<Examination> examinations;
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "subject")
+    @JsonIgnore
     private Set<Mark> marks;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "subject")
