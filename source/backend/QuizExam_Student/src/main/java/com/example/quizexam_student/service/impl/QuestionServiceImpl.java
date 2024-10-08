@@ -5,6 +5,7 @@ import com.example.quizexam_student.bean.response.QuestionResponse;
 import com.example.quizexam_student.entity.Answer;
 import com.example.quizexam_student.entity.Chapter;
 import com.example.quizexam_student.entity.Question;
+import com.example.quizexam_student.exception.InvalidQuantityException;
 import com.example.quizexam_student.exception.NotFoundException;
 import com.example.quizexam_student.mapper.AnswerMapper;
 import com.example.quizexam_student.mapper.QuestionMapper;
@@ -73,6 +74,17 @@ public class QuestionServiceImpl implements QuestionService {
         question.setChapters(chapterRepository.findByIdIn(questionRequest.getChapters()).stream().collect(Collectors.toSet()));
         List<Answer> answers = questionRequest.getAnswers().stream().map(AnswerMapper::convertFromRequest).collect(Collectors.toList());
         answers.stream().map(answer -> {answer.setQuestion(question); return answer;}).collect(Collectors.toList());
+
+        if (answers.size() < 4) {
+            throw new InvalidQuantityException("question", "Must have at least 4 answers.");
+        }
+
+        boolean hasCorrectAnswer = answers.stream().anyMatch(answer -> answer.getIsCorrect() == 1);
+        boolean hasIncorrectAnswer = answers.stream().anyMatch(answer -> answer.getIsCorrect() == 0);
+        if (!hasCorrectAnswer || !hasIncorrectAnswer) {
+            throw new NotFoundException("question", "Must have at least one correct answer and one incorrect answer.");
+        }
+
         question.setAnswers(new HashSet<>());
         questionRepository.save(question);
         List<Answer> questionAnswers = answerRepository.findByQuestion(question);

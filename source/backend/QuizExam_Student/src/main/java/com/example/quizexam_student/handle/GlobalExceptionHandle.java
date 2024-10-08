@@ -65,4 +65,10 @@ public class GlobalExceptionHandle {
     public ErrorResponse handleAuthenticationCredentialsNotFoundException(AuthenticatedException e) {
         return new ErrorResponse(HttpStatus.BAD_REQUEST, e.getKey(), e.getMessage());
     }
+
+    @ExceptionHandler(InvalidQuantityException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleInvalidQuantityException(InvalidQuantityException e) {
+        return new ErrorResponse(HttpStatus.BAD_REQUEST, e.getKey(), e.getMessage());
+    }
 }

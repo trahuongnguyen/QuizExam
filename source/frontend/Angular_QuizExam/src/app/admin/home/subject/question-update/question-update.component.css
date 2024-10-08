@@ -59,8 +59,16 @@
     white-space: nowrap; /* Ngăn không cho nội dung xuống dòng */
     overflow: hidden; /* Ẩn nội dung vượt quá chiều rộng của nút */
     text-overflow: ellipsis; /* Hiển thị "..." khi nội dung bị cắt */
-    width: 400px; /* Thiết lập chiều rộng cho button (có thể điều chỉnh) */
+    width: 800px; /* Thiết lập chiều rộng cho button (có thể điều chỉnh) */
     display: inline-block; /* Để áp dụng các thuộc tính overflow */
+}
+
+.contentError {
+    margin-left: 85px;
+}
+
+.answersError {
+    margin-left: 35px;
 }
 
 .img-preview {
