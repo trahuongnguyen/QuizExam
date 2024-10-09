@@ -58,12 +58,11 @@
             <div *ngFor="let question of selectedExam.questionRecordResponses; let i = index" class="question-section">
                 <h6>Question {{ i + 1 }} : {{ question.content }}</h6>
 
-                <div *ngIf="question.imageUrl">
-                    <img [src]="question.imageUrl" alt="Question Image">
+                <div *ngIf="question.image">
+                    <img [src]="question.image" alt="Question Image">
                 </div>
 
-                <ng-container *ngIf="question.answerRecords.length === 1; else multipleAnswers">
-
+                <ng-container *ngIf="question.type === 1; else multipleAnswers">
                     <div class="answer-option">
                         <input type="radio" [name]="question.id" [id]="question.optionA">
                         <label [for]="question.id">{{ question.optionA }}</label>

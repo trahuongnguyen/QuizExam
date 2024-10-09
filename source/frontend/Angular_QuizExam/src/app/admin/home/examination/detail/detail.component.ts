@@ -15,45 +15,32 @@ declare var $: any;
   templateUrl: './detail.component.html',
   styleUrl: './detail.component.css'
 })
-export class DetailComponent {
+export class DetailComponent implements OnInit {
   constructor(private authService: AuthService, private home: HomeComponent, private http: HttpClient, public toastr: ToastrService, private router: Router, private activatedRoute: ActivatedRoute, public examComponent: ExaminationComponent) { }
   apiData: any;
   examId: number = 0;
   isSidebarCollapsed = false;
 
   exams: Exam[] = [];  // Danh sách bài thi
-  selectedExam: any | undefined;  // Bài thi được chọn
+  selectedExam: any;  // Bài thi được chọn
   toggleSidebar() {
     this.isSidebarCollapsed = !this.isSidebarCollapsed;
   }
 
   ngOnInit(): void {
+    this.examId = Number(this.activatedRoute.snapshot.params['examId']) ?? 0;
+
     this.isSidebarCollapsed = this.home.isSidebarCollapsed;
     this.authService.entityExporter = 'examination';
-    this.http.get<any>(`${this.authService.apiUrl}/exam/1`, this.home.httpOptions).subscribe((data: any) => {
+    this.http.get<any>(`${this.authService.apiUrl}/exam/${this.examId}`, this.home.httpOptions).subscribe((data: any) => {
       this.authService.listExporter = data;
       this.apiData = data;
       this.selectedExam = data;
+      console.log(this.selectedExam);
     });
-  }
-
-  getAllExams(): Observable<Exam[]> {
-    return this.http.get<Exam[]>(this.authService.apiUrl);
-  }
-
-  // Lấy chi tiết bài thi theo ID
-  getExamDetail(event: any){
-    const id = $(event.currentTarget).data('id');
-    this.examId = id;
-    this.router.navigate([`/admin/home/exam/detail/${id}`])
-  }
-
-  loadExams(): void {
-    this.getAllExams().subscribe(data => {
-      this.exams = data;
-    });
-  }
+  }  
 }
+
 
 export interface Exam {
   id: number;
