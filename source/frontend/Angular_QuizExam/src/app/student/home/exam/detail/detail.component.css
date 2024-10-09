@@ -1,0 +1,104 @@
+.content-wrapper {
+    padding: 0 20px;
+    margin: 0 0 60px 120px;
+    min-height: 80vh;
+    overflow-x: hidden;
+    transition: margin-left 0.3s ease;
+}
+
+.content-wrapper-collapsed {
+    margin-left: 30px;
+}
+
+.container {
+    margin-top: 20px;
+}
+
+.question-container {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin-bottom: 30px;
+    background-color: #fff;
+}
+
+.answer-options {
+    margin-left: 20px;
+}
+
+.question img {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 100%;
+}
+
+.submit-btn {
+    background-color: #d8202a;
+    color: white;
+    border: none;
+}
+
+.submit-btn:hover {
+    background-color: #a51922;
+}
+
+/* Scrollable area for questions */
+.scrollable-questions {
+    height: 80vh;
+    overflow-y: auto;
+    padding-right: 15px;
+}
+
+/* Sticky sidebar */
+.sidebar-container {
+    width: 300px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    background-color: #fff;
+    position: sticky;
+    top: 0;
+}
+
+.sidebar-container h5,
+p {
+    text-align: center;
+}
+
+.count {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    text-align: center;
+}
+
+.count input {
+    width: 70px;
+    text-align: center;
+}
+
+.calendar table {
+    width: 100%;
+    /* Đặt chiều rộng của bảng vừa với phần sidebar */
+    border-collapse: separate;
+    /* Tách biệt các ô */
+    border-spacing: 5px;
+    /* Khoảng cách giữa các ô */
+}
+
+.calendar td {
+    width: 40px;
+    /* Điều chỉnh chiều rộng của mỗi ô */
+    height: 40px;
+    /* Điều chỉnh chiều cao của mỗi ô */
+    text-align: center;
+    /* Căn giữa theo chiều ngang */
+    vertical-align: middle;
+    /* Căn giữa theo chiều dọc */
+    border: 1px solid #ddd;
+    /* Đường viền giữa các ô */
+    font-size: 14px;
+    /* Kích thước chữ nhỏ hơn */
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+    /* Hiệu ứng đổ bóng cho các ô */
+    padding: 5px;
+}
