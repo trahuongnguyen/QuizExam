@@ -17,18 +17,19 @@ export class ExamComponent {
   scrollToTop(): void {
     window.scrollTo(0, 0);
   }
-  scrolled() : void {
-    this.windowScrolled = Math.round(window.scrollY) !=0;
+  scrolled(): void {
+    this.windowScrolled = Math.round(window.scrollY) != 0;
   }
 
   httpOptions: any;
 
   loadToken() {
     if (this.authService.isLoggedIn()) {
+      console.log(this.authService.isLoggedIn());
       const token = localStorage.getItem('jwtToken');
       this.httpOptions = {
-        headers: new HttpHeaders({ 
-          'Content-Type': 'application/json' ,
+        headers: new HttpHeaders({
+          'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`,
           'Accept': 'application/json'
         }),
@@ -41,7 +42,7 @@ export class ExamComponent {
     }
   }
 
-  constructor(public app : AppComponent, private router: Router,  public authService: AuthService, public home: HomeComponent) {
+  constructor(public app: AppComponent, private router: Router, public authService: AuthService, public home: HomeComponent) {
     this.loadToken();
     this.router.events.pipe(
       filter(event => event instanceof NavigationEnd)
@@ -54,11 +55,11 @@ export class ExamComponent {
   currentRoute: string = '';
 
   isActive(route: string): boolean {
-    return this.currentRoute ===  this.thisRouter + route;
+    return this.currentRoute === this.thisRouter + route;
   }
 
-   // Logout process
-   onLogout() {
+  // Logout process
+  onLogout() {
     this.authService.logout(); // call method logout
   }
 }

@@ -21,7 +21,7 @@ export class AuthService {
 
   // Login user
   login(user: User): Observable<any> {
-    return this.http.post(`${this.apiUrl}/login`, user, {responseType: 'json'});
+    return this.http.post(`${this.apiUrl}/login`, user, { responseType: 'json' });
   }
 
   // Logout user
@@ -31,6 +31,6 @@ export class AuthService {
   }
 
   isLoggedIn(): boolean {
-    return !!localStorage.getItem('token'); // Check if token exist
+    return !!localStorage.getItem('jwtToken'); // Check if token exist
   }
 }

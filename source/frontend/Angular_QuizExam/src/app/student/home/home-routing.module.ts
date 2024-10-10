@@ -6,19 +6,19 @@ import { ProfileComponent } from './profile/profile.component';
 import { MarkComponent } from './mark/mark.component';
 
 const routes: Routes = [
-    {
-    path: '', 
+  {
+    path: '',
     component: HomeComponent,
     children: [
       {
-        path: 'homepage',
+        path: '',
         component: HomepageComponent,
       },
-      {
-        path: '',
-        redirectTo: 'homepage',
-        pathMatch: 'full'
-      },
+      // {
+      //   path: '',
+      //   redirectTo: 'homepage',
+      //   pathMatch: 'full'
+      // },
       {
         path: 'profile',
         component: ProfileComponent
@@ -38,7 +38,7 @@ const routes: Routes = [
 ];
 
 @NgModule({
-    imports: [RouterModule.forChild(routes)],
-    exports: [RouterModule]
+  imports: [RouterModule.forChild(routes)],
+  exports: [RouterModule]
 })
 export class HomeRoutingModule { }
