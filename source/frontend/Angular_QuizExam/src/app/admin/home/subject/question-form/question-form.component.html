@@ -22,8 +22,8 @@
                 <div class="form-group-row">
                     <label for="question" class="label-fix">Question:</label>
                     <textarea class="form-control" [(ngModel)]="question.content" name="question.content{{i}}" rows="3" style="flex-grow: 1"></textarea>
-                    <span class="text-danger error">{{ contentError }}</span>
                 </div>
+                <div class="text-danger error contentError" *ngIf="contentError[i]">{{ contentError[i] }}</div>
 
                 <div class="form-group form-image">
                     <div class="img-preview mt-3 mb-3" [ngClass]="{'hidden-border': question.imageFile}">
@@ -38,12 +38,15 @@
 
                 <div class="form-group">
                     <div class="answers-container">
-                        <div *ngFor="let answer of question.answers; let j = index" class="input-group mb-2">
-                            <div class="input-group-text">
-                                <input type="checkbox" [(ngModel)]="answer.isCorrect" (change)="toggleIsCorrect(answer)" />
+                        <div *ngFor="let answer of question.answers; let j = index" class="mb-2">
+                            <div class="input-group">
+                                <div class="input-group-text">
+                                    <input type="checkbox" [(ngModel)]="answer.isCorrect" (change)="toggleIsCorrect(answer)" />
+                                </div>
+                                <input type="text" [(ngModel)]="answer.content" name="answer.content{{i}}{{j}}" class="form-control" [checked]="answer.isCorrect == 1" />
+                                <span class="remove-answer" (click)="removeAnswer(i, j)">X</span>
                             </div>
-                            <input type="text" [(ngModel)]="answer.content" name="answer.content{{i}}{{j}}" class="form-control" />
-                            <span class="remove-answer" (click)="removeAnswer(i, j)">X</span>
+                            <div class="text-danger error answersError" *ngIf="answersError[i] && answersError[i][j]">{{ answersError[i][j] }}</div>
                         </div>
                     </div>
                 </div>
