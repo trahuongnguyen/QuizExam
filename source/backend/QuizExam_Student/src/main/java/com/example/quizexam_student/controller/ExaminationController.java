@@ -5,8 +5,10 @@ import com.example.quizexam_student.bean.response.ExaminationResponse;
 import com.example.quizexam_student.bean.response.QuestionResponse;
 import com.example.quizexam_student.entity.Answer;
 import com.example.quizexam_student.entity.Examination;
+import com.example.quizexam_student.service.ClassesService;
 import com.example.quizexam_student.service.ExaminationService;
 import com.example.quizexam_student.service.QuestionService;
+import com.example.quizexam_student.service.StudentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -28,6 +30,8 @@ import java.util.stream.Collectors;
 public class ExaminationController {
 
     private final ExaminationService examinationService;
+    private final ClassesService classesService;
+    private final StudentService studentService;
 
     @GetMapping("/{examinationId}")
     public ExaminationResponse getDetailExamination(@PathVariable int examinationId) {
