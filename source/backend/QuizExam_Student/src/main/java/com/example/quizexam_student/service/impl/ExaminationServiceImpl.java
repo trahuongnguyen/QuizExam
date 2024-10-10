@@ -4,7 +4,9 @@ import com.example.quizexam_student.bean.request.ExaminationRequest;
 import com.example.quizexam_student.bean.response.ExaminationResponse;
 import com.example.quizexam_student.bean.response.QuestionRecordResponse;
 import com.example.quizexam_student.bean.response.QuestionResponse;
+import com.example.quizexam_student.bean.response.StudentResponse;
 import com.example.quizexam_student.entity.*;
+import com.example.quizexam_student.exception.EmptyException;
 import com.example.quizexam_student.mapper.ExaminationMapper;
 import com.example.quizexam_student.mapper.QuestionRecordMapper;
 import com.example.quizexam_student.repository.*;
@@ -25,16 +27,28 @@ public class ExaminationServiceImpl implements ExaminationService {
     private final QuestionRecordRepository questionRecordRepository;
     private final AnswerRecordRepository answerRecordRepository;
     private final SubjectRepository subjectRepository;
+    private final StudentRepository studentRepository;
+    private final MarkRepository markRepository;
 
     @Override
     public Examination saveExamination(ExaminationRequest examinationRequest) {
         List<Question> questions = questionRepository.findAllBySubjectAndStatus(subjectRepository.findById(examinationRequest.getSubjectId()).orElse(null),1);
-        if (examinationRequest.getChapterIds()!=null){
+        if (examinationRequest.getChapterIds()!=null && !examinationRequest.getChapterIds().isEmpty()){
+            if (!examinationRequest.getChapterIds().contains(0)){
+                questions = questions.stream().filter(question ->
+                        question.getChapters().stream().anyMatch(chapter ->
+                                examinationRequest.getChapterIds().contains(chapter.getId())
+                        )).toList();
+            }
+        } else{
             questions = questions.stream().filter(question ->
-                    question.getChapters().stream().anyMatch(chapter ->
-                            examinationRequest.getChapterIds().contains(chapter.getId())
-                    )).toList();
+                    question.getChapters().isEmpty()).toList();
         }
+        List<StudentDetail> studentList = studentRepository.findAllByUserIdIn(examinationRequest.getStudentIds());
+        if (studentList == null && examinationRequest.getClassesIds() == null){
+            throw new EmptyException("Student, Class", "Student and Class can not be empty together");
+        }
+        
         Collections.shuffle(questions);
         AtomicInteger hardCount = new AtomicInteger(0);
         AtomicInteger easyCount = new AtomicInteger(0);
@@ -105,6 +119,13 @@ public class ExaminationServiceImpl implements ExaminationService {
                 }
             }
         }
+        for (StudentDetail studentDetail : studentList) {
+            Mark mark = new Mark();
+            mark.setSubject(subjectRepository.findById(examinationRequest.getSubjectId()).orElse(null));
+            mark.setStudentDetail(studentDetail);
+            mark.setExamination(exam);
+            markRepository.save(mark);
+        }
         return exam;
     }
 
@@ -118,6 +139,16 @@ public class ExaminationServiceImpl implements ExaminationService {
     @Override
     public List<ExaminationResponse> getAllExaminations() {
         return examinationRepository.findAll().stream().map(ExaminationMapper::convertToResponse).map(examinationResponse -> setQuestionRecord(examinationResponse)).collect(Collectors.toList());
+    }
+
+    @Override
+    public Examination updateExamination(int examinationId, ExaminationRequest examinationRequest) {
+        Examination examination = examinationRepository.findById(examinationId).orElse(null);
+        examination.setName(examinationRequest.getName());
+        examination.setStartTime(examinationRequest.getStartTime());
+        examination.setEndTime(examinationRequest.getEndTime());
+        examination.setDuration(examinationRequest.getDuration());
+        return examinationRepository.save(examination);
     }
 
     private ExaminationResponse setQuestionRecord(ExaminationResponse examinationResponse){
