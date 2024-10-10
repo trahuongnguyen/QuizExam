@@ -140,9 +140,14 @@
         </div>
         <div class="modal-body">
             <div class="form-chapter">
+                <div class="checkbox-input">
+                    <input type="checkbox"  id="checkAll" [checked]="allChecked"
+                        (change)="toggleAll()">
+                    <label for="checkAll">Check All</label>
+                </div>
                 <div class="checkbox-input" *ngFor="let chapter of listChapter">
-                    <input type="checkbox" (change)="toggleChapterSelection( chapter.id, $event)"
-                        [checked]="examsForm.chapterIds.includes(chapter.id)"
+                    <input type="checkbox" class="check" (change)="toggleChapterSelection( chapter.id, $event)"
+                        [checked]="allChecked?allChecked:examsForm.chapterIds.includes(chapter.id)"
                         id="chapter{{chapter.id}}-{{popupChapterIndex}}" />
                     <label for="chapter{{chapter.id}}-{{popupChapterIndex}}">{{ chapter.name }}</label>
                 </div>
