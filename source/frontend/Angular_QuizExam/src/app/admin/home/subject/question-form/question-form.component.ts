@@ -137,6 +137,8 @@ export class QuestionFormComponent implements OnInit {
       ]
     });
 
+    this.answersError[newQuestionIndex] = [];
+
     // Cuộn xuống form mới thêm
     setTimeout(() => {
       const newQuestionForm = document.getElementById(`question-form-${newQuestionIndex}`);
@@ -198,8 +200,29 @@ export class QuestionFormComponent implements OnInit {
   }
 
   contentError: String[] = [];
+  answersError: String[][] = [[]];
+
+  errorEmpty(): void {
+    this.contentError = [];
+    for (var i = 0; i < this.questionForms.length; i++) {
+      for (var j = 0; j < this.questionForms[i].answers.length; j++) {
+        this.answersError[i][j] = '';
+      }
+    }
+  }
+
+  validateAnswers(answers: Answer[]): boolean {
+    const hasCorrect = answers.some(answer => answer.isCorrect === 1);
+    const hasIncorrect = answers.some(answer => answer.isCorrect === 0);
+    return hasCorrect && hasIncorrect;
+  }
 
   saveQuestions() {
+    var valid = false;
+    var questionNumber = 0;
+    var errorMessage = '';
+
+    this.errorEmpty();
     const formData = new FormData();
   
     // Tạo danh sách câu hỏi
@@ -214,43 +237,82 @@ export class QuestionFormComponent implements OnInit {
         isCorrect: answer.isCorrect
       }))
     }));
-  
-    // Thêm danh sách câu hỏi vào FormData
-    formData.append('questions', new Blob([JSON.stringify(questionsList)], { type: 'application/json' }));
-  
-    // Thêm các file vào FormData
-    this.questionForms.forEach((question) => {
-      if (question.imageFile) {
-          formData.append('files', question.imageFile); // Sử dụng file đã lưu
+
+    // (Valid) Kiểm tra đã nhập đầy đủ và đúng các field chưa
+    for (var i = 0; i < questionsList.length; i++) {
+      if (questionsList[i].content === null || questionsList[i].content.trim() === '') {
+        this.contentError[i] = 'Content Question is required';
+        errorMessage = 'Empty.';
+        questionNumber = i;
+        valid = true;
       }
-      else {
-        formData.append('files', new Blob([]));
+      for (var j = 0; j < this.questionForms[i].answers.length; j++) {
+        if (questionsList[i].answers[j].content === null || questionsList[i].answers[j].content.trim() === '') {
+          this.answersError[i][j] = 'Content Answer is required';
+          errorMessage = 'Empty.';
+          questionNumber = i;
+          valid = true;
+        }
       }
-    });
-  
-    // Gửi yêu cầu POST
-    this.http.post(`${this.authService.apiUrl}/question`, formData, this.home.httpOptions).subscribe(
-      response => {
-        this.toastr.success('Questions saved successfully!', 'Success', {
-          timeOut: 2000,
-        });
-        console.log('Questions saved successfully:', response);
-        this.router.navigate([`/admin/home/subject/${this.subjectId}/questionList`]);
-      },
-      err => {
-        console.log(err);
-        this.toastr.error(err.error.message, 'Error', {
-          timeOut: 2000,
-        });
-        err.error.forEach((err:any) => {
-          for (var i = 0; i < this.questionForms.length; i++) {
-            if (err.key == 'question[' + i + '].content') {
-              this.contentError = err.message;
-            }
-          }
-        });
+
+      if (valid) {
+        break;
       }
-    );
+
+      if (questionsList[i].answers.length < 4) {
+        errorMessage = 'Must have at least 4 answers.';
+        questionNumber = i;
+        valid = true;
+      }
+
+      if (!this.validateAnswers(questionsList[i].answers)) {
+        errorMessage = 'Must have at least one correct and one incorrect answer.';
+        questionNumber = i;
+        valid = true;
+      }
+    }
+
+    if (valid) {
+      this.toastr.error(errorMessage, 'Error', { timeOut: 3000 });
+      // Di chuyển đến form đang bị lỗi
+      setTimeout(() => {
+        const questionError = document.getElementById(`question-form-${questionNumber}`);
+        if (questionError) {
+          questionError.scrollIntoView({ behavior: 'smooth' });
+        }
+      }, 0);
+    }
+    else {
+      // Thêm danh sách câu hỏi vào FormData
+      formData.append('questions', new Blob([JSON.stringify(questionsList)], { type: 'application/json' }));
+    
+      // Thêm các file vào FormData
+      this.questionForms.forEach((question) => {
+        if (question.imageFile) {
+            formData.append('files', question.imageFile); // Sử dụng file đã lưu
+        }
+        else {
+          formData.append('files', new Blob([]));
+        }
+      });
+    
+      // Gửi yêu cầu POST
+      this.http.post(`${this.authService.apiUrl}/question`, formData, this.home.httpOptions).subscribe(
+        response => {
+          this.toastr.success('Questions saved successfully!', 'Success', {
+            timeOut: 2000,
+          });
+          console.log('Questions saved successfully:', response);
+          this.router.navigate([`/admin/home/subject/${this.subjectId}/questionList`]);
+        },
+        err => {
+          console.log(err);
+          this.toastr.error(err.error.message, 'Error', {
+            timeOut: 3000,
+          });
+        }
+      );
+    }
   }
 
   isCancelPopup: boolean = false;

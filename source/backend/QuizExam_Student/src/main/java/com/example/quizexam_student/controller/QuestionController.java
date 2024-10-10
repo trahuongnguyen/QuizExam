@@ -51,7 +51,7 @@ public class QuestionController {
     @PostMapping(consumes = {MULTIPART_FORM_DATA_VALUE, APPLICATION_JSON_VALUE})
     public List<Question> addQuestions(@RequestParam("files") MultipartFile[] files, @RequestPart("questions") @Valid List<QuestionRequest> questionRequests) throws IOException {
         if (files.length != questionRequests.size()) {
-            throw new IllegalArgumentException("Số lượng file không khớp với số lượng câu hỏi.");
+            throw new IllegalArgumentException("The number of image files does not match the number of questions.");
         }
 
         List<Question> savedQuestions = new ArrayList<>();
