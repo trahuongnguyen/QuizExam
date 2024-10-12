@@ -38,7 +38,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             token = authHeader.substring(8).split("\"")[0];
             //token = authHeader.substring(7);
         }
-        try {
+        //try {
             if (StringUtils.hasText(token) && jwtUtil.validateToken(token)) {
                     email = jwtUtil.getEmailFromJwtToken(token);
             }
@@ -49,9 +49,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(authenticationToken);
             }
             filterChain.doFilter(request, response);
-        } catch (Exception e){
-            accessDeniedHandler.handle(request, response, new AccessDeniedException(e.getLocalizedMessage(), e));
-        }
+//            } catch (Exception e){
+//                accessDeniedHandler.handle(request, response, new AccessDeniedException(e.getLocalizedMessage(), e));
+//            }
 
     }
 

@@ -13,10 +13,8 @@ public class ExaminationRequest {
     @NotBlank(message = "Exam name is required")
     private String name;
     @NotNull(message = "Start time is required")
-    @JsonFormat(pattern = "[yyyy-MM-dd][yyyy/MM/dd][dd-MM-yyyy][dd/MM/yyyy]")
     private LocalDateTime startTime;
     @NotNull(message = "End time is required")
-    @JsonFormat(pattern = "[yyyy-MM-dd][yyyy/MM/dd][dd-MM-yyyy][dd/MM/yyyy]")
     private LocalDateTime endTime;
     @NotBlank(message = "Duration is required")
     private Integer duration;
