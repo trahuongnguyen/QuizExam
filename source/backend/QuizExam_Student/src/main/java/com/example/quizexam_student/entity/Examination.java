@@ -45,7 +45,7 @@ public class Examination {
     private Set<Mark> marks;
 
     @OneToMany(mappedBy = "examination")
-    private Set<QuestionRecord> questionRecords = new HashSet<>();
+    private Set<QuestionRecord> questionRecords;
 
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "rel_examination_question",
