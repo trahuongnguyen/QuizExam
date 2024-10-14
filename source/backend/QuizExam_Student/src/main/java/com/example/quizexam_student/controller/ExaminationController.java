@@ -11,6 +11,7 @@ import com.example.quizexam_student.service.QuestionService;
 import com.example.quizexam_student.service.StudentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -46,5 +47,19 @@ public class ExaminationController {
     @PostMapping("")
     public Examination save(@RequestBody ExaminationRequest examinationRequest) {
         return examinationService.saveExamination(examinationRequest);
+    }
+
+    @PutMapping("/{examinationId}")
+    public Examination update(@PathVariable int examinationId, @RequestBody ExaminationRequest examinationRequest) {
+        return examinationService.updateExamination(examinationId, examinationRequest);
+    }
+
+    @PutMapping("/student/{examinationId}/{subjectId}")
+    public ResponseEntity<String> updateStudentForExam(
+            @PathVariable int examinationId,
+            @PathVariable int subjectId,
+            @RequestBody List<Integer> studentIds){
+        examinationService.updateStudentForExam(examinationId, subjectId, studentIds);
+        return ResponseEntity.ok("Update Student Success");
     }
 }

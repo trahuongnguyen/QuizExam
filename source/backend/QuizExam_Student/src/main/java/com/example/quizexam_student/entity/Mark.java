@@ -17,8 +17,8 @@ public class Mark {
     @Column(name = "mark_id")
     private int id;
 
-    @Column(name = "score", nullable = false)
-    private int score;
+    @Column(name = "score")
+    private Integer score;
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "examination_id")

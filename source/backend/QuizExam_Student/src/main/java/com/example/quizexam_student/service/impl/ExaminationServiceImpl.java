@@ -12,6 +12,7 @@ import com.example.quizexam_student.service.ExaminationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
@@ -28,17 +29,16 @@ public class ExaminationServiceImpl implements ExaminationService {
     private final StudentRepository studentRepository;
     private final MarkRepository markRepository;
     private final ClassesRepository classesRepository;
+    private final Random random = new Random();
 
     @Override
     public Examination saveExamination(ExaminationRequest examinationRequest) {
         List<Question> questions = questionRepository.findAllBySubjectAndStatus(subjectRepository.findById(examinationRequest.getSubjectId()).orElse(null),1);
         if (examinationRequest.getChapterIds()!=null && !examinationRequest.getChapterIds().isEmpty()){
-
                 questions = questions.stream().filter(question ->
                         question.getChapters().stream().anyMatch(chapter ->
                                 examinationRequest.getChapterIds().contains(chapter.getId())
                         )).toList();
-
         } else{
             questions = questions.stream().filter(question ->
                     question.getChapters().isEmpty()).toList();
@@ -48,11 +48,19 @@ public class ExaminationServiceImpl implements ExaminationService {
         }
         List<StudentDetail> studentList = new ArrayList<>();
         if (examinationRequest.getClassesIds() != null){
-            studentList = studentRepository.findAllBy_classIn(classesRepository.findAllById(examinationRequest.getClassesIds()));
+            List<Classes> classes = examinationRequest.getClassesIds().stream()
+                    .map(classId->{
+                        return classesRepository.findById(classId).orElse(null);
+                    }).toList();
+            studentList.addAll(studentRepository.findAllBy_classIn(classes));
         }
         if (examinationRequest.getStudentIds() != null){
-            studentList = studentRepository.findAllByUserIdIn(examinationRequest.getStudentIds());
+            studentList.addAll(studentRepository.findAllByUserIdIn(examinationRequest.getStudentIds())
+                    .stream().filter(studentDetail -> {
+                        return studentDetail.get_class() == null;
+                    }).toList());
         }
+        System.out.println(studentList.stream().map(StudentDetail::getUserId).collect(Collectors.toList()));
         Long easyCountException = questions.stream()
                         .filter(q -> q.getLevel().getId() == 1).count();
         Long hardCountException = questions.stream()
@@ -70,11 +78,10 @@ public class ExaminationServiceImpl implements ExaminationService {
 
         List<Examination> examinations = examinationRepository.findAllByOrderByIdDesc().stream().limit(3).toList();
         questions = new ArrayList<>(questions);
-        Collections.shuffle(questions);
         List<Question> finalQuestions = questions;
         int generatedCount = 0;
         do {
-            generatedCount++;
+            Collections.shuffle(questions);
             boolean flag = true;
             AtomicInteger hardCount = new AtomicInteger(0);
             AtomicInteger easyCount = new AtomicInteger(0);
@@ -111,6 +118,7 @@ public class ExaminationServiceImpl implements ExaminationService {
                                 duplicatedQuestions.getAndIncrement();
                             }
                         }).toList();
+                System.out.println(selectedQuestions.stream().map(Question::getId).collect(Collectors.toList()));
                 System.out.println(questionList.size());
                 System.out.println("aaaaaaaaa");
                 if (questionList.size()<16){
@@ -122,6 +130,7 @@ public class ExaminationServiceImpl implements ExaminationService {
             if (flag){
                 break;
             }
+            generatedCount++;
             if (generatedCount == 3){
                 throw new InvalidQuantityException("Question","Not enough questions, please check the questions bank");
             }
@@ -151,7 +160,12 @@ public class ExaminationServiceImpl implements ExaminationService {
         Examination exam = ExaminationMapper.convertFromRequest(examinationRequest);
         exam.setStatus(1);
         exam.setQuestions(new HashSet<>(finalQuestions));
-        exam.setCode("HTML-001");
+        do {
+            int randomNumber = random.nextInt(1000);
+            String randomNumberStr = String.format("%03d",randomNumber);
+            String currentDate = new SimpleDateFormat("MM/yyyy").format(new Date());
+            exam.setCode(questions.get(0).getSubject().getName()+ "_" + randomNumberStr + "_" +currentDate);
+        }while (examinationRepository.existsByCode(exam.getCode()));
         exam.setSubject(subjectRepository.findById(examinationRequest.getSubjectId()).orElse(null));
         examinationRepository.save(exam);
         for (Question question : finalQuestions) {
@@ -207,6 +221,19 @@ public class ExaminationServiceImpl implements ExaminationService {
         examination.setEndTime(examinationRequest.getEndTime());
         examination.setDuration(examinationRequest.getDuration());
         return examinationRepository.save(examination);
+    }
+
+    @Override
+    public void updateStudentForExam(int examinationId,int subjectId, List<Integer> studentIds) {
+        List<Mark> markList = markRepository.findAllByExaminationIdAndScore(examinationId, null);
+        markRepository.deleteAll(markList);
+        studentIds.stream().map(studentId->{
+            Mark mark = new Mark();
+            mark.setExamination(examinationRepository.findById(examinationId).orElse(null));
+            mark.setStudentDetail(studentRepository.findById(studentId).orElse(null));
+            mark.setSubject(subjectRepository.findById(subjectId).orElse(null));
+            return markRepository.save(mark);
+        }).toList();
     }
 
     private ExaminationResponse setQuestionRecord(ExaminationResponse examinationResponse){
