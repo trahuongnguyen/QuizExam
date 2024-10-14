@@ -1,16 +1,8 @@
 package com.example.quizexam_student.mapper;
 
 import com.example.quizexam_student.bean.request.UserRequest;
-import com.example.quizexam_student.bean.response.StudentResponse;
 import com.example.quizexam_student.bean.response.UserResponse;
-import com.example.quizexam_student.entity.StudentDetail;
 import com.example.quizexam_student.entity.User;
-import com.example.quizexam_student.repository.StudentRepository;
-import com.example.quizexam_student.repository.UserRepository;
-import com.example.quizexam_student.service.StudentService;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 
 public class UserMapper {
 

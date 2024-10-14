@@ -1,12 +1,9 @@
 package com.example.quizexam_student.util;
 
-import com.example.quizexam_student.exception.AuthenticatedException;
-import com.example.quizexam_student.handle.CustomAccessDeniedHandler;
 import io.jsonwebtoken.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
@@ -15,7 +12,6 @@ import java.util.Date;
 @Component
 @RequiredArgsConstructor
 public class JwtUtil {
-    private final CustomAccessDeniedHandler accessDeniedHandler;
     @Value("${jwt.secret}")
     private String secret;
     @Value("${jwt.expiration}")

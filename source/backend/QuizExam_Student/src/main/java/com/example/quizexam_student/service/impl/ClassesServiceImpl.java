@@ -18,7 +18,7 @@ public class ClassesServiceImpl implements ClassesService {
 
     @Override
     public List<Classes> getAllClasses() {
-        return classesRepository.findByStatusOrderByIdDesc(1);
+        return classesRepository.findByStatusNotOrderByIdDesc(2);
     }
 
     @Override
@@ -26,7 +26,7 @@ public class ClassesServiceImpl implements ClassesService {
         if (classesRepository.existsByName(_class.getName())) {
             throw new AlreadyExistException("className", "Class Name already exists.");
         }
-        _class.setStatus(1);
+        _class.setStatus(0);
         return classesRepository.save(_class);
     }
 

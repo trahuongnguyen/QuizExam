@@ -13,10 +13,10 @@ import java.util.List;
 @RequiredArgsConstructor
 public class RoleServiceImpl implements RoleService {
     private final RoleRepository roleRepository;
-    @Override
-    public Role findByRoleName(String roleName) {
-        return roleRepository.findByName(roleName);
-    }
+//    @Override
+//    public Role findByRoleName(String roleName) {
+//        return roleRepository.findByName(roleName);
+//    }
     @Override
     public Role findById(int id) {
         return roleRepository.findById(id).orElseThrow(() -> new NotFoundException("roleNotFound", "Role is not exist"));

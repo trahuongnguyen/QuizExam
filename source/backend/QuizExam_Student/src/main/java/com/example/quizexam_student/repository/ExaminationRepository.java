@@ -10,5 +10,6 @@ import java.util.List;
 @Repository
 public interface ExaminationRepository extends JpaRepository<Examination, Integer> {
     List<Examination> findAllByOrderByIdDesc();
+    List<Examination> findAllByStatus(int status);
     boolean existsByCode(String code);
 }

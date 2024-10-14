@@ -2,7 +2,6 @@ package com.example.quizexam_student.config;
 
 import com.example.quizexam_student.entity.Role;
 import com.example.quizexam_student.entity.User;
-import com.example.quizexam_student.exception.IncorrectEmailOrPassword;
 import com.example.quizexam_student.exception.NotFoundException;
 import com.example.quizexam_student.repository.UserRepository;
 import lombok.RequiredArgsConstructor;

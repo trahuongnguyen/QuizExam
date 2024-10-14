@@ -1,6 +1,5 @@
 package com.example.quizexam_student.config;
 
-import com.example.quizexam_student.exception.IncorrectEmailOrPassword;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

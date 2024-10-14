@@ -1,6 +1,5 @@
 package com.example.quizexam_student.config;
 
-import com.example.quizexam_student.exception.IncorrectEmailOrPassword;
 import com.example.quizexam_student.handle.CustomAccessDeniedHandler;
 import com.example.quizexam_student.util.JwtUtil;
 import jakarta.servlet.FilterChain;
@@ -9,11 +8,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -36,9 +33,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String email = null;
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             token = authHeader.substring(8).split("\"")[0];
-            //token = authHeader.substring(7);
         }
-        //try {
+        try {
             if (StringUtils.hasText(token) && jwtUtil.validateToken(token)) {
                     email = jwtUtil.getEmailFromJwtToken(token);
             }
@@ -49,9 +45,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(authenticationToken);
             }
             filterChain.doFilter(request, response);
-//            } catch (Exception e){
-//                accessDeniedHandler.handle(request, response, new AccessDeniedException(e.getLocalizedMessage(), e));
-//            }
+            } catch (Exception e){
+                accessDeniedHandler.handle(request, response, new AccessDeniedException(e.getLocalizedMessage(), e));
+            }
 
     }
 

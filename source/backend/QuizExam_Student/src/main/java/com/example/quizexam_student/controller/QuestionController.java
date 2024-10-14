@@ -2,7 +2,6 @@ package com.example.quizexam_student.controller;
 
 import com.example.quizexam_student.bean.request.QuestionRequest;
 import com.example.quizexam_student.bean.response.QuestionResponse;
-import com.example.quizexam_student.entity.Answer;
 import com.example.quizexam_student.entity.Question;
 import com.example.quizexam_student.service.QuestionService;
 import jakarta.validation.Valid;
@@ -17,12 +16,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.UUID;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
+import java.util.*;
 
 import static org.springframework.http.MediaType.*;
 

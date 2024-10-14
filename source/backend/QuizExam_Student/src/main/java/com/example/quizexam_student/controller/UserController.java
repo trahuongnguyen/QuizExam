@@ -1,6 +1,5 @@
 package com.example.quizexam_student.controller;
 
-import com.example.quizexam_student.bean.request.PasswordRequest;
 import com.example.quizexam_student.bean.request.UserRequest;
 import com.example.quizexam_student.bean.response.EmpExcelExporter;
 import com.example.quizexam_student.bean.response.EmpPDFExporter;
@@ -9,7 +8,6 @@ import com.example.quizexam_student.bean.response.UserResponse;
 import com.example.quizexam_student.entity.Role;
 import com.example.quizexam_student.entity.User;
 import com.example.quizexam_student.exception.EmptyException;
-import com.example.quizexam_student.mapper.UserMapper;
 import com.example.quizexam_student.service.ExportService;
 import com.example.quizexam_student.service.RoleService;
 import com.example.quizexam_student.service.UserService;
@@ -19,16 +17,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -66,8 +60,7 @@ public class UserController {
     public List<Role> getRolePermissionToEmployees() {
         String email = ((org.springframework.security.core.userdetails.User) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
         Role role = userService.findUserByEmail(email).getRole();
-        List<Role> roles = roleService.findAllByPermissionToEmployee(role.getId());
-        return roles;
+        return roleService.findAllByPermissionToEmployee(role.getId());
     }
 
     @PostMapping("")

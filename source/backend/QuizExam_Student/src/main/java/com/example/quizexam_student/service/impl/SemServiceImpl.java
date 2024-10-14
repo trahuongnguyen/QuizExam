@@ -1,7 +1,6 @@
 package com.example.quizexam_student.service.impl;
 
 import com.example.quizexam_student.entity.Sem;
-import com.example.quizexam_student.exception.EmptyException;
 import com.example.quizexam_student.exception.NotFoundException;
 import com.example.quizexam_student.repository.SemRepository;
 import com.example.quizexam_student.service.SemService;
@@ -18,13 +17,12 @@ public class SemServiceImpl implements SemService {
 
     @Override
     public List<Sem> getAllSem() {
-        List<Sem> semList = semRepository.findAll();
-        return semList;
+        return semRepository.findAll();
     }
 
     @Override
     public Sem getSemById(int id) {
-        return semRepository.findById(id).orElseThrow(() -> new NotFoundException("EmptySem","Semeter not found"));
+        return semRepository.findById(id).orElseThrow(() -> new NotFoundException("EmptySem","Semester not found"));
     }
 
     @Override

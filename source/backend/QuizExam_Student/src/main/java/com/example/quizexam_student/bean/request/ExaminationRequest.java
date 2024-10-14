@@ -1,7 +1,5 @@
 package com.example.quizexam_student.bean.request;
 
-import com.example.quizexam_student.entity.Question;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
@@ -21,6 +19,4 @@ public class ExaminationRequest {
     @NotNull(message = "Subject is required")
     private int subjectId;
     private List<Integer> chapterIds;
-    private List<Integer> studentIds;
-    private List<Integer> classesIds;
 }
