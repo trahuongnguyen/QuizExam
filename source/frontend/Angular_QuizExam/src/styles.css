@@ -74,6 +74,71 @@
     }
 }
 
+:root,
+[QuizTech-theme=light-admin] {
+    --color-background: rgb(245, 247, 250);
+    --color-text: #000000;
+    --color-card: #ffffff;
+    --color-title: #ffc107;
+    --color-nav: #FFEDED;
+    /* menu user */
+    --color-menu: #f3f3f3;
+
+    /* profile user */
+    --color-change-password-form: #ffe4e4;
+
+
+    --color-sidebar: #ffffff;
+    --color-sidebar-active: #eaeaea;
+    --color-sidebar-hover: #eaeaea8a;
+
+    --color-page-hover: #e9e9e9;
+    --color-disable: #dcdcdc;
+
+    /* switch button light-dark */
+    --content-switch-button: "Light";
+    --color-switch: #d9d9d9;
+    --color-switch-button: #ffffff;
+    --color-switch-shadow: inset 0 0 15px rgba(0, 0, 0, 0.2);
+
+    .slider:after {
+        right: 0.5em;
+    }
+}
+
+[QuizTech-theme=dark-admin] {
+    --color-background: #333;
+    --color-text: #eeeeee;
+    --color-card: #35393f;
+    --color-title: #35393f;
+    --color-nav: #e6e6e6;
+
+    /* menu user */
+    --color-menu: #25292d;
+
+    /* profile user */
+    --color-change-password-form: #35393f;
+
+
+    --color-sidebar: #35393f;
+    --color-sidebar-active: #0e0e0e88;
+    --color-sidebar-hover: #0e0e0e39;
+
+    --color-page-hover: #3a3c3f;
+    --color-disable: #dcdcdc66;
+
+    /* switch button light-dark */
+    --content-switch-button: "Dark";
+    --color-switch: #35393f;
+    --color-switch-button: #25292d;
+    --color-switch-shadow: 0 0 1px #25292d;
+    --transform-switch-button: translateX(2.3em);
+
+    .slider:after {
+        left: 0.5em;
+    }
+}
+
 /* endregion switch light-dark */
 
 
@@ -193,26 +258,28 @@
 
 
 /* Table (admin) */
-.dataTables_wrapper .table {
-    font-size: 10px;
-}
-
 .dataTables_wrapper table.dataTable.no-footer {
     border-bottom: none;
+    border-radius: 6px;
+    overflow: hidden;
 }
 
 .dataTables_wrapper .table th {
     font-size: 14px;
-    border-bottom: none;
+    color: var(--color-text);
+    padding: 14px;
+    border-bottom: 2px solid #f3f3f3;
+    background-color: var(--color-sidebar);
 }
 
 .dataTables_wrapper .table td {
-    padding: 8px 18px;
+    padding: 14px;
     vertical-align: middle;
     font-size: 14px;
     color: var(--color-text);
-    background-color: var(--color-background);
-    border: none;
+    background-color: white;
+    border-bottom: 1px solid #f3f3f3;
+    background-color: var(--color-sidebar);
 }
 
 .dataTables_wrapper .table .icon-action {
