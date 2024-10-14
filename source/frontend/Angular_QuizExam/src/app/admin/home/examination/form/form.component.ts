@@ -6,6 +6,7 @@ import { AuthService } from '../../../service/auth.service';
 import { ToastrService } from 'ngx-toastr';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HomeComponent } from '../../home.component';
+declare var $: any;
 
 interface ExamForm {
   name: string; // Thuộc tính để lưu nội dung câu hỏi
@@ -24,7 +25,10 @@ interface ExamForm {
 })
 
 export class FormComponent implements OnInit {
-  constructor(private authService: AuthService, private home: HomeComponent, private http: HttpClient, public toastr: ToastrService, private router: Router, private activatedRoute: ActivatedRoute, public examComponent: ExaminationComponent) { }
+  constructor(private authService: AuthService, private home: HomeComponent, private http: HttpClient, public toastr: ToastrService, private router: Router, private activatedRoute: ActivatedRoute, public examComponent: ExaminationComponent) {
+
+  }
+
 
   subjects: any;
   subjectId: number = 1;
@@ -53,7 +57,9 @@ export class FormComponent implements OnInit {
     subjectId: 1,
     chapterIds: []
   };
+  checkedStates: any;
 
+  
   createExam() {
     const exam = {  // tạm thời
       name: this.examsForm.name,
@@ -152,6 +158,20 @@ export class FormComponent implements OnInit {
 
     console.log(this.examsForm.classes);
   }
+  allChecked = false;
+
+  toggleAll() {
+    this.allChecked = !this.allChecked;
+
+    if (this.allChecked) {
+      this.examsForm.chapterIds = [];
+      this.examsForm.chapterIds.push(...this.listChapter.map((chapter: any) => chapter.id ));
+    } else {
+      this.examsForm.chapterIds = [];
+    }
+    
+    console.log(this.examsForm.chapterIds);
+  }
 
   // Hàm này được gọi khi người dùng nhấn checkbox
   toggleChapterSelection(chapterId: number, event: Event) {
@@ -161,6 +181,7 @@ export class FormComponent implements OnInit {
       this.examsForm.chapterIds.push(chapterId);
     } else {
       this.examsForm.chapterIds = this.examsForm.chapterIds.filter(id => id !== chapterId);
+      this.allChecked = false;
     }
 
     console.log(this.examsForm.chapterIds);
@@ -199,5 +220,6 @@ export class FormComponent implements OnInit {
     this.isPopupChapter = false;
     this.popupChapterIndex = 0; // Reset khi đóng popup
   }
+
 
 }

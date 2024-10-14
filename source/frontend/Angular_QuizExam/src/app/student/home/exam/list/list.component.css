@@ -1,0 +1,202 @@
+.exam-container {
+    max-width: 1100px;
+    padding: 50px 0 50px 0;
+
+}
+
+.exam-header {
+    margin-bottom: 30px;
+}
+
+.exam-header h1 {
+    font-size: x-large;
+    border-bottom: 2px solid #ddd;
+    padding-bottom: 10px;
+    font-weight: bold;
+}
+.nav-pills .nav-link.active {
+    background-color: #E6E6E6;
+    color: black;
+    font-weight: bold;
+}
+.nav-link {
+    color: var(--color-text);
+}
+.card-content {
+    padding: 20px;
+}
+
+.card-title {
+    font-size: smaller;
+    font-weight: bold;
+}
+.content-time{
+    font-size: smaller;
+}
+.card-content .card-title {
+    margin-bottom: 10px;
+}
+
+.card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.card-image {
+    width: 95%;
+    margin: auto;
+}
+
+
+.card-image img {
+    width: 100%;
+    height: 200px;
+    border-radius: 5px;
+    margin-top: 3%;
+    object-fit: cover;
+}
+
+.card {
+    margin: auto;
+    cursor: pointer;
+    width: 250px;
+    height: 300px;
+}
+.font-text {
+    font-size: small;
+}
+@media (min-width: 1400px) {
+    .col-lg-3 {
+        flex: 0 0 auto;
+        width: 25%;
+    }
+}
+
+@media (max-width: 1200px) {
+    .col-md-4 {
+        flex: 0 0 auto;
+        width: 33.33%;
+    }
+}
+
+@media (max-width: 1100px) {
+    .col-sm-6 {
+        flex: 0 0 auto;
+        width: 50%;
+    }
+}
+
+@media (max-width: 800px) {
+    .col-xs-12 {
+        flex: 0 0 auto;
+        width: 100%;
+    }
+}
+.title {
+    width: 550px;
+}
+.popup-content-right{
+    width: 50%;
+    text-align: right;
+}
+
+.quiz-container {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    width: 600px;
+    margin: auto;
+}
+
+.quiz-container h2 {
+    margin-bottom: 10px;
+    color: #333;
+}
+
+.quiz-id {
+    font-size: 0.9em;
+    color: #888;
+    margin-bottom: 20px;
+}
+
+.quiz-info {
+    margin-bottom: 20px;
+}
+
+.info-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.icon {
+    font-size: 1.5em;
+    margin-right: 10px;
+}
+
+.info-text {
+    font-size: 1em;
+    color: #333;
+}
+
+.start-btn {
+    background-color: #AA1210;
+    color: white;
+    border: none;
+    padding: 6px 20px;
+    border-radius: 5px;
+    font-size: 1.05em;
+    cursor: pointer;
+}
+
+.start-btn:hover {
+    background-color: #990000;
+}
+
+/* Popup */
+.modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
+.close-icon {
+    font-size: 24px;
+    /* Tăng kích thước dấu "X" */
+    cursor: pointer;
+}
+.modal-header {
+    border-radius: 10px 10px 0 0;
+    /* Tăng kích thước padding cho header */
+    font-size: 20px;
+    /* Tăng kích thước font chữ của header */
+    font-weight: bold;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.modal-body {
+    padding: 20px;
+    /* Tăng kích thước padding cho body */
+    font-size: 18px;
+    border-radius: 8px;
+    /* Tăng kích thước font chữ cho nội dung */
+    /* background-color: var(--color-background); */
+}
+
+.exam-info-span .span {
+    display: inline-flex;
+    width: 450px;
+    align-items: center;
+}

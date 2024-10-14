@@ -10,6 +10,7 @@ public class QuestionRecordMapper {
     public static QuestionRecordResponse convertToResponse(QuestionRecord questionRecord) {
         QuestionRecordResponse questionRecordResponse = new QuestionRecordResponse();
         questionRecordResponse.setId(questionRecord.getId());
+        questionRecordResponse.setImage(questionRecord.getImage());
         questionRecordResponse.setContent(questionRecord.getContent());
         questionRecordResponse.setOptionA(questionRecord.getOptionA());
         questionRecordResponse.setOptionB(questionRecord.getOptionB());
