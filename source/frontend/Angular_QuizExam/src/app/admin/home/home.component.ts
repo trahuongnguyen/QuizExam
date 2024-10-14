@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { AppComponent } from '../../app.component';
 import { NavigationEnd, Router } from '@angular/router';
 import { filter } from 'rxjs/operators';
 import { AuthService } from '../service/auth.service';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { AdminComponent } from '../admin.component';
 
 @Component({
   selector: 'app-home',
@@ -59,7 +59,7 @@ export class HomeComponent implements OnInit {
     }
   }
 
-  constructor(public app : AppComponent, private router: Router,  public authService: AuthService, private http: HttpClient) {
+  constructor(public admin : AdminComponent, private router: Router,  public authService: AuthService, private http: HttpClient) {
     this.loadToken();
     this.role = localStorage.getItem(authService.roleKey);
     this.router.events.pipe(

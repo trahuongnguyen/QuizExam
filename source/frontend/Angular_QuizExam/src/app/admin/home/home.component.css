@@ -2,13 +2,12 @@
 
 .header {
     color: var(--color-text);
-    background-color: var(--color-background);
-    padding: 10px 20px;
+    background-color: var(--color-sidebar);
     display: flex;
     justify-content: space-between;
     align-items: center;
     border-bottom: 1px solid var(--color-switch);
-    margin-left: 120px;
+    margin-left: 150px;
     z-index: 1000;
     height: 60px;
     transition: margin-left 0.3s ease;
@@ -71,9 +70,9 @@
 /* Sidebar */
 
 .sidebar {
-    width: 120px;
+    width: 150px;
     background-color: var(--color-sidebar);
-    border-right: 1px solid var(--color-sidebar);
+    border-right: 1px solid var(--color-switch);
     height: 100vh;
     position: fixed;
     top: 0;
@@ -101,7 +100,7 @@
     display: block;
     text-decoration: none;
     font-size: 14px;
-    padding: 12px 10px;
+    padding: 15px 15px;
     color: var(--color-text);
     transition: all 0.3s ease;
 }
@@ -158,25 +157,19 @@
 
 /* Nút toggle cho sidebar */
 .sidebar-toggle {
-    position: absolute;
-    top: 0px;
-    background-color: var(--color-sidebar);
-    border: 1px solid var(--color-switch);
-    width: 14px;
-    height: 20px;
+    width: 50px;
+    height: 50px;
     display: flex;
     justify-content: center;
     align-items: center;
     cursor: pointer;
     transition: all 0.3s ease;
     z-index: 1000;
-    border-radius: 6px;
-    right: 0;
 }
 
 /* Icon bên trong nút toggle */
-.sidebar-toggle .mdi {
-    font-size: 16px;
+.sidebar-toggle span {
+    font-size: 20px;
     color: var(--color-text);
 }
 
@@ -192,7 +185,7 @@
     padding: 20px 20px;
     border-top: 1px solid var(--color-switch);
     position: static;
-    margin-left: 120px;
+    margin-left: 150px;
     height: 50px;
     display: flex;
     align-items: center;
