@@ -1,28 +1,28 @@
-.content-wrapper {
-    padding: 0 20px;
-    margin: 0 0 60px 120px;
-    min-height: 80vh;
-    overflow-x: hidden;
-    transition: margin-left 0.3s ease;
-}
-
-.content-wrapper-collapsed {
-    margin-left: 30px;
-}
-
 .container {
     margin-top: 20px;
+    margin-bottom: 30px;
+    height: 600px;
 }
 
 .question-container {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     padding: 20px;
-    margin-bottom: 30px;
-    background-color: #fff;
+    background-color: var(--color-card);
+    max-height: 600px;
+    overflow-y: auto;
 }
 
 .answer-options {
     margin-left: 20px;
+}
+.answer-options label {
+    margin-left: 5px;
+}
+.answer-options input[type="radio"],
+.answer-options input[type="checkbox"] {
+    width: 14px;
+    height: 14px;
+    accent-color: black; /* Customize color for radio/checkbox */
 }
 
 .question img {
@@ -30,38 +30,22 @@
     margin-left: auto;
     margin-right: auto;
     max-width: 100%;
+    height: 250px;
 }
 
-.submit-btn {
-    background-color: #d8202a;
-    color: white;
-    border: none;
-}
 
-.submit-btn:hover {
-    background-color: #a51922;
-}
-
-/* Scrollable area for questions */
-.scrollable-questions {
-    height: 80vh;
-    overflow-y: auto;
-    padding-right: 15px;
-}
-
-/* Sticky sidebar */
+/*sidebar */
 .sidebar-container {
     width: 300px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     padding: 20px;
-    background-color: #fff;
-    position: sticky;
+    background-color: var(--color-card);
     top: 0;
 }
 
-.sidebar-container h5,
-p {
+.sidebar-container h5, p {
     text-align: center;
+    color: var(--color-text);
 }
 
 .count {
@@ -101,4 +85,38 @@ p {
     box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
     /* Hiệu ứng đổ bóng cho các ô */
     padding: 5px;
+}
+
+.question-td {
+    width: 40px;
+    height: 40px;
+    border: 1px solid #ddd;
+    background-color: #e9ecef;
+    text-align: center;
+    vertical-align: middle;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+    border-radius: 5px;
+  }
+  
+  .question-td.completed {
+    background-color: #28a745;
+    color: white;
+  }
+  
+  .question-td:hover {
+    background-color: #007bff;
+    color: white;
+  }
+  
+
+.submit-btn {
+    background-color: #d8202a;
+    color: white;
+    border: none;
+}
+
+.submit-btn:hover {
+    background-color: #a51922;
 }

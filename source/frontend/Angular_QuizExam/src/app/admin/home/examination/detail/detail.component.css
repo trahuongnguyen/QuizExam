@@ -38,7 +38,7 @@
 
 /* Exam details section with box shadow */
 .exam-details {
-    background-color: #f8f9fa;
+    background-color: var(--color-card);
     padding: 10px;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -108,7 +108,7 @@
 
 /* Question section with box shadow (same as exam-details) */
 .question-section-container {
-    background-color: #f8f9fa;
+    background-color: var(--color-card);
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -151,7 +151,6 @@
 /* Style for the label */
 .answer-option label {
     font-size: 16px;
-    color: #555;
     cursor: pointer;
     flex-grow: 1;
 }

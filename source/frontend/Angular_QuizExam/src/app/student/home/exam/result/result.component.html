@@ -1,1 +1,36 @@
-<p>result works!</p>
+<div class="container mt-5" style="max-width: 600px;">
+    <!-- Result Section -->
+    <div class="result text-center mb-4">
+        <h2>Results</h2>
+    </div>
+    <hr class="line">
+
+    <div class="score">
+        <div class="row text-center my-4">
+            <div class="col-4">
+                <div class="icon">
+                    <span class="mdi mdi-library-books"></span>
+                </div>
+                <p>HTML, CSS and Javascript</p>
+            </div>
+            <div class="col-4">
+                <div class="icon-chart">
+                    <canvas id="doughnutChart" width="100px" height="100px"></canvas>
+                </div>
+                <p>{{ currentScore }}/{{ maxScore }}</p>
+            </div>
+            <div class="col-4">
+                <div class="icon">
+                    <span class="mdi mdi-timer-sand"></span>
+                </div>
+                <p>15:00</p>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Progress Section with Horizontal Chart -->
+    <div class="progress-section">
+        <canvas id="progressChart"></canvas>
+    </div>
+</div>

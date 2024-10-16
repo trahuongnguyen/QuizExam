@@ -1,101 +1,80 @@
-<div class="content-wrapper">
-    <div class="container">
-        <div class="row">
-            <!-- Main Quiz Area -->
-            <div class="col-md-8 scrollable-questions">
-                <div class="question-container">
-                    <div class="question">
-                        <h5>Question 1: Qwerty uiop asdfgh jkl zxcv bnm yhwy ...</h5>
-                        <div class="answer-options">
-                            <input type="radio" id="q1a" name="q1" value="A">
-                            <label for="q1a">A. Answer A</label><br>
-                            <input type="radio" id="q1b" name="q1" value="B">
-                            <label for="q1b">B. Answer B</label><br>
-                            <input type="radio" id="q1c" name="q1" value="C">
-                            <label for="q1c">C. Answer C</label><br>
-                            <input type="radio" id="q1d" name="q1" value="D">
-                            <label for="q1d">D. Answer D</label>
-                        </div>
+<div class="container">
+    <div class="row">
+        <!-- Main Quiz Area -->
+        <div class="col-md-8 scrollable-questions">
+            <div class="question-container">
+                <div *ngFor="let question of selectedExam.questionRecordResponses; let i = index"
+                    class="question-section">
+                    <h6>Question {{ i + 1 }} : {{ question.content }}</h6>
+
+                    <div *ngIf="question.image">
+                        <img [src]="question.image" alt="Question Image">
                     </div>
 
-                    <div class="question mt-4">
-                        <h5>Question 2: Abcdef Ghi.</h5>
-                        <div>
-                            <img src="https://via.placeholder.com/600x300" class="img-fluid" alt="question image">
+                    <ng-container *ngIf="question.type === 1; else multipleAnswers">
+                        <div class="answer-option">
+                            <input type="radio" [name]="question.id" [id]="question.optionA">
+                            <label [for]="question.id">{{ question.optionA }}</label>
                         </div>
-                        <div class="answer-options mt-3">
-                            <input type="radio" id="q2a" name="q2" value="A">
-                            <label for="q2a">A. Answer A</label><br>
-                            <input type="radio" id="q2b" name="q2" value="B">
-                            <label for="q2b">B. Answer B</label><br>
-                            <input type="radio" id="q2c" name="q2" value="C">
-                            <label for="q2c">C. Answer C</label><br>
-                            <input type="radio" id="q2d" name="q2" value="D">
-                            <label for="q2d">D. Answer D</label>
+                        <div class="answer-option">
+                            <input type="radio" [name]="question.id" [id]="question.optionB">
+                            <label [for]="question.id">{{ question.optionB }}</label>
                         </div>
-                    </div>
+                        <div class="answer-option">
+                            <input type="radio" [name]="question.id" [id]="question.optionC">
+                            <label [for]="question.id">{{ question.optionC }}</label>
+                        </div>
+                        <div class="answer-option">
+                            <input type="radio" [name]="question.id" [id]="question.optionD">
+                            <label [for]="question.id">{{ question.optionD }}</label>
+                        </div>
+                    </ng-container>
 
-                    <div class="question mt-4">
-                        <h5>Question 3: Qwerty uiop asdfgh jkl zxcv bnm ...</h5>
-                        <div class="answer-options">
-                            <input type="checkbox" id="q3a" name="q3" value="A" checked>
-                            <label for="q3a">A. Answer A</label><br>
-                            <input type="checkbox" id="q3b" name="q3" value="B">
-                            <label for="q3b">B. Answer B</label><br>
-                            <input type="checkbox" id="q3c" name="q3" value="C">
-                            <label for="q3c">C. Answer C</label><br>
-                            <input type="checkbox" id="q3d" name="q3" value="D">
-                            <label for="q3d">D. Answer D</label>
+                    <ng-template #multipleAnswers>
+                        <div class="answer-option">
+                            <input type="checkbox" [name]="question.id" [id]="question.optionA">
+                            <label [for]="question.id">{{ question.optionA }}</label>
                         </div>
-                    </div>
+                        <div class="answer-option">
+                            <input type="checkbox" [name]="question.id" [id]="question.optionB">
+                            <label [for]="question.id">{{ question.optionB }}</label>
+                        </div>
+                        <div class="answer-option">
+                            <input type="checkbox" [name]="question.id" [id]="question.optionC">
+                            <label [for]="question.id">{{ question.optionC }}</label>
+                        </div>
+                        <div class="answer-option">
+                            <input type="checkbox" [name]="question.id" [id]="question.optionD">
+                            <label [for]="question.id">{{ question.optionD }}</label>
+                        </div>
+                    </ng-template>
                 </div>
-
-                <!-- Add more questions here as needed -->
-
             </div>
 
-            <!-- Sidebar Area -->
-            <div class="col-md-4">
-                <div class="sidebar-container">
-                    <h5>HTML5, CSS, JavaScript</h5>
-                    <p><i class="bi bi-clock"></i> 10:20</p>
+            <!-- Add more questions here as needed -->
 
-                    <hr class="w-100 my-3">
+        </div>
 
-                    <div class="count mb-3">
-                        <input value="9/16" readonly>
-                    </div>
-                    <div class="calendar mb-3">
-                        <table class="table text-center">
-                            <tr>
-                                <td>1</td>
-                                <td>2</td>
-                                <td>3</td>
-                                <td>4</td>
-                                <td>5</td>
-                            </tr>
-                            <tr>
-                                <td>6</td>
-                                <td>7</td>
-                                <td>8</td>
-                                <td>9</td>
-                                <td>10</td>
-                            </tr>
-                            <tr>
-                                <td>11</td>
-                                <td>12</td>
-                                <td>13</td>
-                                <td>14</td>
-                                <td>15</td>
-                            </tr>
-                            <tr>
-                                <td>16</td>
-                            </tr>
-                        </table>
-                    </div>
-                    <hr class="w-100 my-3">
-                    <button class="btn submit-btn w-100">Submit</button>
+        <!-- Sidebar Area -->
+        <div class="col-md-4">
+            <div class="sidebar-container">
+                <h5>HTML5, CSS, JavaScript</h5>
+                <p><span class="mdi mdi-clock" style="margin-right: 5px;"></span>10:20</p>
+
+                <hr class="w-100 my-3">
+
+                <div class="count mb-3">
+                    <input value="10/16" readonly>
                 </div>
+                <div class="calendar mb-3">
+                    <table class="table text-center">
+                        <div *ngFor="let question of questions; let i = index" id="question-{{i + 1}}"
+                            class="question-container" [ngClass]="{'active': i === 0}">
+                        </div>
+                    </table>
+                </div>
+                <hr class="w-100 my-3">
+                <button class="btn submit-btn w-100">Submit</button>
             </div>
         </div>
     </div>
