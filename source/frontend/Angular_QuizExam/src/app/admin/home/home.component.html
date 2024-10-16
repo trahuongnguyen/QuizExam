@@ -1,11 +1,14 @@
 <div class="header" [ngClass]="{'header-collapsed': isSidebarCollapsed}">
+    <div class="sidebar-toggle" (click)="toggleSidebar()">
+        <span class="fa fa-bars"></span>
+    </div>
     <div class="toggle-switch">
         <label class="switch">
-            <input type="checkbox" id="buttonSwitch" (click)="app.toggleTheme()">
+            <input type="checkbox" id="buttonSwitch" (click)="admin.toggleTheme()">
             <span class="slider"></span>
         </label>
     </div>
-    <div class="d-flex" (click)="app.menuToggle()">
+    <div class="d-flex" (click)="admin.menuToggle()">
         <div class="user-section">
             <div class="user-info">
                 <span class="user-name">{{ userName }}</span>
@@ -27,9 +30,6 @@
 </div>
 
 <div class="sidebar" [ngClass]="{'sidebar-collapsed': isSidebarCollapsed}">
-    <div class="sidebar-toggle" (click)="toggleSidebar()">
-        <span class="mdi" [ngClass]="isSidebarCollapsed ? 'mdi-arrow-right' : 'mdi-arrow-left'"></span>
-    </div>
     <div class="block-wrapper" *ngIf="!isSidebarCollapsed">
         <img class="block-image" alt="" src="../../../../img/logo.png" />
     </div>
@@ -63,7 +63,7 @@
     </a>
 </div>
 
-<router-outlet class="content-wrapper" [ngClass]="{'content-wrapper-collapsed': isSidebarCollapsed}">
+<router-outlet>
 </router-outlet>
 
 <footer class="footer" [ngClass]="{'footer-collapsed': isSidebarCollapsed}">

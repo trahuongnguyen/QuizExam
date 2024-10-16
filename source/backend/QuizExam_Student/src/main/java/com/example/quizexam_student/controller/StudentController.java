@@ -1,14 +1,8 @@
 package com.example.quizexam_student.controller;
 
-import com.example.quizexam_student.bean.request.StudentRequest;
-import com.example.quizexam_student.bean.request.UpdateClassRequest;
-import com.example.quizexam_student.bean.request.UserAndStudentRequest;
-import com.example.quizexam_student.bean.request.UserRequest;
+import com.example.quizexam_student.bean.request.*;
 import com.example.quizexam_student.bean.response.*;
-import com.example.quizexam_student.entity.StudentDetail;
-import com.example.quizexam_student.entity.Subject;
-import com.example.quizexam_student.service.ExportService;
-import com.example.quizexam_student.service.StudentService;
+import com.example.quizexam_student.service.*;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

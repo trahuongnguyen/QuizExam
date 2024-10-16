@@ -1,7 +1,6 @@
 package com.example.quizexam_student.bean.request;
 
 import com.example.quizexam_student.entity.Mark;
-import com.example.quizexam_student.entity.Status;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
 import lombok.Data;

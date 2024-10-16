@@ -30,9 +30,7 @@ public class GlobalExceptionHandle {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public List<ErrorResponse> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
         List<ErrorResponse> errors = new ArrayList<>();
-        e.getBindingResult().getAllErrors().forEach((error) -> {
-            errors.add(new ErrorResponse(HttpStatus.BAD_REQUEST, ((FieldError) error).getField(), error.getDefaultMessage()));
-        });
+        e.getBindingResult().getAllErrors().forEach((error) -> errors.add(new ErrorResponse(HttpStatus.BAD_REQUEST, ((FieldError) error).getField(), error.getDefaultMessage())));
         return errors;
     }
 

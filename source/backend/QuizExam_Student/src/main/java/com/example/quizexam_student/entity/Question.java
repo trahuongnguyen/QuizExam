@@ -1,12 +1,10 @@
 package com.example.quizexam_student.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -15,7 +13,7 @@ import java.util.Set;
 @NoArgsConstructor
 @Getter
 @Setter
-@EqualsAndHashCode(exclude = {"examinations", "subject"})
+@EqualsAndHashCode(exclude = {"subject", "chapters", "examinations"})
 public class Question {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

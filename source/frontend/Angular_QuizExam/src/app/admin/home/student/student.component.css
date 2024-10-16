@@ -2,7 +2,7 @@
 /* Body */
 .content-wrapper {
     padding: 0 20px;
-    margin: 0 0 60px 120px;
+    margin: 20px 0 60px 150px;
     min-height: 80vh;
     overflow-x: hidden;
     transition: margin-left 0.3s ease;

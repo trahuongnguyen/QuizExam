@@ -1,24 +1,17 @@
 package com.example.quizexam_student.service.impl;
 
-import com.example.quizexam_student.bean.request.PasswordRequest;
-import com.example.quizexam_student.bean.request.UserRequest;
+import com.example.quizexam_student.bean.request.*;
 import com.example.quizexam_student.bean.response.UserResponse;
-import com.example.quizexam_student.entity.Role;
-import com.example.quizexam_student.entity.User;
-import com.example.quizexam_student.exception.EmptyException;
+import com.example.quizexam_student.entity.*;
 import com.example.quizexam_student.mapper.*;
-import com.example.quizexam_student.exception.DuplicatedEmailException;
-import com.example.quizexam_student.exception.DuplicatedPhoneException;
-import com.example.quizexam_student.exception.IncorrectEmailOrPassword;
-import com.example.quizexam_student.repository.RoleRepository;
-import com.example.quizexam_student.repository.UserRepository;
+import com.example.quizexam_student.exception.*;
+import com.example.quizexam_student.repository.*;
 import com.example.quizexam_student.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -58,8 +51,7 @@ public class UserServiceImpl implements UserService {
         if (existUserByPhone(userRequest.getPhoneNumber())) {
             throw new DuplicatedPhoneException("phoneNumber", "Phone number existed already");
         }
-        User user = new User();
-        user = UserMapper.convertFromRequest(userRequest);
+        User user = UserMapper.convertFromRequest(userRequest);
         user.setPassword(passwordEncoder.encode("@1234567"));
         Role role = roleRepository.findById(userRequest.getRoleId()).orElse(null);
         user.setRole(role);
@@ -68,23 +60,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserResponse> getAllUsers() {
-        return userRepository.findAll().stream().map(UserMapper::convertToResponse).collect(Collectors.toList());
-    }
-
-    @Override
     public List<UserResponse> getUserByRolePermission(Role role) {
         return userRepository.findByRole(role).stream().map(UserMapper::convertToResponse).collect(Collectors.toList());
     }
 
     @Override
-    public UserResponse getUserById(int id) {
-        return  UserMapper.convertToResponse(Objects.requireNonNull(userRepository.findById(id).orElse(null)));
-    }
-
-    @Override
     public User changePassword(int id, PasswordRequest passwordRequest) {
         User user = userRepository.findById(id).orElse(null);
+        assert user != null;
         if (!passwordEncoder.matches(passwordRequest.getCurrentPassword(), user.getPassword())){
             throw new IncorrectEmailOrPassword("password", "Your current password does not match");
         }

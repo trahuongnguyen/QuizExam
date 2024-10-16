@@ -1,13 +1,9 @@
 package com.example.quizexam_student.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
-import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -45,7 +41,7 @@ public class Examination {
     private Set<Mark> marks;
 
     @OneToMany(mappedBy = "examination")
-    private Set<QuestionRecord> questionRecords = new HashSet<>();
+    private Set<QuestionRecord> questionRecords;
 
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "rel_examination_question",

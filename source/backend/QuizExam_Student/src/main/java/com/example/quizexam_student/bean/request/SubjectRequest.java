@@ -1,6 +1,5 @@
 package com.example.quizexam_student.bean.request;
 
-import com.example.quizexam_student.entity.Sem;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
@@ -13,6 +12,6 @@ public class SubjectRequest {
     @NotBlank(message = "Subject name is required")
     private String name;
     private String image;
-    @NotNull(message = "Semeter is required")
+    @NotNull(message = "Semester is required")
     private Integer semId;
 }

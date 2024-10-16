@@ -1,8 +1,7 @@
 package com.example.quizexam_student.mapper;
 
 import com.example.quizexam_student.bean.request.StudentRequest;
-import com.example.quizexam_student.bean.response.StudentResponse;
-import com.example.quizexam_student.bean.response.UserResponse;
+import com.example.quizexam_student.bean.response.*;
 import com.example.quizexam_student.entity.StudentDetail;
 
 public class StudentMapper {

@@ -3,6 +3,7 @@ package com.example.quizexam_student.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.Set;
 
 @Entity
@@ -17,8 +18,14 @@ public class Mark {
     @Column(name = "mark_id")
     private int id;
 
-    @Column(name = "score", nullable = false)
-    private int score;
+    @Column(name = "score")
+    private Integer score;
+
+    @Column(name = "start_time")
+    private LocalDateTime startTime;
+
+    @Column(name = "end_time")
+    private LocalDateTime endTime;
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "examination_id")
