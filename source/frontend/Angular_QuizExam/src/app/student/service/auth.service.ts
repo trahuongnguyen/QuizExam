@@ -15,7 +15,7 @@ interface User {
 })
 export class AuthService {
 
-  private apiUrl = 'http://localhost:8080/api/auth';
+  public apiUrl = 'http://localhost:8080/api';
 
   constructor(private http: HttpClient, private router: Router) { }
 
