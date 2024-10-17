@@ -10,6 +10,8 @@ import java.util.List;
 
 @Service
 public interface StudentService {
+    List<StudentResponse> getAllStudents();
+
     StudentDetail getStudentDetailByUser(User user);
 
     List<StudentResponse> getAllStudentsNoneClass();

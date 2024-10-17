@@ -6,6 +6,7 @@ import { FormComponent } from './form/form.component';
 import { DetailComponent } from './detail/detail.component';
 import { FormsModule } from '@angular/forms';
 import { ExaminationRoutingModule } from './examination-routing.module';
+import { AddStudentComponent } from './add-student/add-student.component';
 
 
 @NgModule({
@@ -14,6 +15,7 @@ import { ExaminationRoutingModule } from './examination-routing.module';
     ListComponent,
     FormComponent,
     DetailComponent,
+    AddStudentComponent,
   ],
   imports: [
     CommonModule,

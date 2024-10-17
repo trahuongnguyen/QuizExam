@@ -1,6 +1,28 @@
 <div class="content-wrapper" [ngClass]="{'content-wrapper-collapsed': examComponent.home.isSidebarCollapsed}">
     <h4>Examination</h4>
     <hr class="line">
+    <div class="row bs-wizard">
+        <div class="col-xs-3 bs-wizard-step active">
+          <div class="text-center bs-wizard-stepnum">Step 1</div>
+          <div class="progress"><div class="progress-bar"></div></div>
+          <a href="#" class="bs-wizard-dot"></a>
+          <div class="bs-wizard-info text-center">Create Exam</div>
+        </div>
+        
+        <div class="col-xs-3 bs-wizard-step disabled"><!-- complete -->
+          <div class="text-center bs-wizard-stepnum">Step 2</div>
+          <div class="progress"><div class="progress-bar"></div></div>
+          <a href="#" class="bs-wizard-dot"></a>
+          <div class="bs-wizard-info text-center">Add Student</div>
+        </div>
+        
+        <div class="col-xs-3 bs-wizard-step disabled"><!-- complete -->
+          <div class="text-center bs-wizard-stepnum">Step 3</div>
+          <div class="progress"><div class="progress-bar"></div></div>
+          <a href="#" class="bs-wizard-dot"></a>
+          <div class="bs-wizard-info text-center">Detail</div>
+        </div>
+    </div>
     <div class="container">
         <div class="title">
             <h3 class="text-center mt-3">Create Examination</h3>
@@ -45,24 +67,6 @@
                 <div class="row">
                     <div class="col-md-6">
                         <div class="group-input">
-                            <label class="group-input-label" for="class">Class</label><br>
-                            <!-- <input type="text" name="class" id="class"> -->
-                            <button type="button" class="form-select" style="text-align: left;"
-                                (click)="openPopupClass()">Choose Class</button>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="group-input">
-                            <label class="group-input-label" for="">Student</label><br>
-                            <!-- <input type="text" name="student" id="student"> -->
-                            <button type="button" class="form-select" style="text-align: left;"
-                                (click)="openPopupStudent()">Choose Student</button>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="group-input">
                             <label class="group-input-label" for="">Subject</label><br>
                             <select [(ngModel)]="examsForm.subjectId" name="subjectId" id="subject"
                                 (change)="selectSubject($event)">
@@ -75,60 +79,18 @@
                     <div class="col-md-6">
                         <div class="group-input">
                             <label class="group-input-label" for="chapter">Chapter</label> <br>
-                            <button type="button" class="form-select" style="text-align: left;"
-                                (click)="openPopupChapter()">Choose Chapter</button>
+                            <button type="button" class="form-select button-chapter" style="text-align: left;"
+                                (click)="openPopupChapter()">{{ getSelectedChaptersNames() || 'Choose Chapter' }}</button>
                         </div>
                     </div>
                 </div>
                 <div class="form-group">
                     <label for="" class="label-title"></label>
                     <div class="w-30">
-                        <button type="submit" class="btn  button me-2">Submit</button>
+                        <button type="submit" class="btn button me-2">Next</button>
                     </div>
                 </div>
             </form>
-        </div>
-    </div>
-</div>
-
-<div *ngIf="isPopupClass" class="modal-backdrop" (click)="closePopupClass($event)">
-    <div class="modal-content" (click)="$event.stopPropagation()">
-        <div class="modal-header">
-            <span>Select Class</span>
-            <span class="close-icon" (click)="closePopupClass()">&times;</span>
-        </div>
-        <div class="modal-body">
-            <div class="form-chapter">
-                <div class="checkbox-group">
-                    <div class="checkbox-input" *ngFor="let _class of listClass">
-                        <input type="checkbox" (change)="toggleClassSelection(_class.id, $event)"
-                            [checked]="examsForm.classes.includes(_class.id)" id="class{{_class.id}}" />
-                        <label for="class{{_class.id}}">{{ _class.name }}</label>
-                    </div>
-                </div>
-            </div>
-            <button type="button" class="btn btn-primary button" (click)="closePopupClass()">OK</button>
-        </div>
-    </div>
-</div>
-
-<div *ngIf="isPopupStudent" class="modal-backdrop" (click)="closePopupStudent($event)">
-    <div class="modal-content" (click)="$event.stopPropagation()">
-        <div class="modal-header">
-            <span>Select Student</span>
-            <span class="close-icon" (click)="closePopupStudent()">&times;</span>
-        </div>
-        <div class="modal-body">
-            <div class="form-chapter">
-                <div class="checkbox-group">
-                    <div class="checkbox-input" *ngFor="let std of listStudent">
-                        <input type="checkbox" (change)="toggleChapterSelection(std.id, $event)"
-                            [checked]="examsForm.students.includes(std.id)" id="student{{std.id}}" />
-                        <label for="student{{std.id}}">{{std.userResponse.fullName}} - {{std.rollPortal}}</label>
-                    </div>
-                </div>
-            </div>
-            <button type="button" class="btn btn-primary button" (click)="closePopupStudent()">OK</button>
         </div>
     </div>
 </div>
@@ -141,13 +103,12 @@
         <div class="modal-body">
             <div class="form-chapter">
                 <div class="checkbox-input">
-                    <input type="checkbox"  id="checkAll" [checked]="allChecked"
-                        (change)="toggleAll()">
-                    <label for="checkAll">Check All</label>
+                    <input type="checkbox" id="selectAll" [checked]="allChecked" (change)="toggleAll()">
+                    <label for="selectAll">Select All</label>
                 </div>
                 <div class="checkbox-input" *ngFor="let chapter of listChapter">
-                    <input type="checkbox" class="check" (change)="toggleChapterSelection( chapter.id, $event)"
-                        [checked]="allChecked?allChecked:examsForm.chapterIds.includes(chapter.id)"
+                    <input type="checkbox" class="check" (change)="toggleChapterSelection(chapter.id, $event)"
+                        [checked]="allChecked ? allChecked:examsForm.chapterIds.includes(chapter.id)"
                         id="chapter{{chapter.id}}-{{popupChapterIndex}}" />
                     <label for="chapter{{chapter.id}}-{{popupChapterIndex}}">{{ chapter.name }}</label>
                 </div>

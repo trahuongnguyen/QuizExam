@@ -1,0 +1,86 @@
+<div class="content-wrapper" [ngClass]="{'content-wrapper-collapsed': home.isSidebarCollapsed}">
+    <h4>Students can participate in the exam</h4>
+    <hr class="line">
+
+    <div class="row bs-wizard">
+        <div class="col-xs-3 bs-wizard-step complete">
+          <div class="text-center bs-wizard-stepnum">Step 1</div>
+          <div class="progress"><div class="progress-bar"></div></div>
+          <a href="#" class="bs-wizard-dot"></a>
+          <div class="bs-wizard-info text-center">Create Exam</div>
+        </div>
+        
+        <div class="col-xs-3 bs-wizard-step active"><!-- complete -->
+          <div class="text-center bs-wizard-stepnum">Step 2</div>
+          <div class="progress"><div class="progress-bar"></div></div>
+          <a href="#" class="bs-wizard-dot"></a>
+          <div class="bs-wizard-info text-center">Add Student</div>
+        </div>
+        
+        <div class="col-xs-3 bs-wizard-step disabled"><!-- complete -->
+          <div class="text-center bs-wizard-stepnum">Step 3</div>
+          <div class="progress"><div class="progress-bar"></div></div>
+          <a href="#" class="bs-wizard-dot"></a>
+          <div class="bs-wizard-info text-center">Detail</div>
+        </div>
+    </div>
+
+    <!-- Bottom Actions (Create and Export) -->
+    <div class="bottom-actions">
+        <div>
+            <a class="btn btn-primary button" (click)="showStudentPopup()">Add Student</a>
+        </div>
+        <div>
+            <button class="btn btn-primary button" style="margin-right: 5px;" [disabled]="listStudentSelected.length == 0" (click)="addStudentInExam();">Next</button>
+        </div>
+    </div>
+
+    <table class="table" id="example">
+        <thead>
+            <tr>
+                <th>STT</th>
+                <th>Roll Number</th>
+                <th>Roll Portal</th>
+                <th>Full Name</th>
+                <th>Phone Number</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Add more rows as needed -->
+        </tbody>
+    </table>
+</div>
+
+<div *ngIf="isStudentPopup" class="modal-backdrop" (click)="closePopup($event)">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+            <span>Move Student to Class</span>
+            <span class="close-icon" (click)="closePopup($event)">&times;</span>
+        </div>
+        <div class="modal-body">
+            <form method="post" class="form-add">
+                <div class="form-group">
+                    <label for="roleId" class="text-popup">Class:</label>
+                    <!-- [(ngModel)]="roleId" name="roleId" -->
+                    <select class="form-select" [(ngModel)]="classId" name="classId" (change)="filterStudentsByClass()">
+                        <option value=0>Student (No Class)</option>
+                        <option *ngFor="let data of listClass" [value]="data.id">{{data.name}}</option>
+                    </select>
+                </div>
+                <div class="form-student">
+                    <div class="checkbox-group">
+                        <div class="checkbox-input" *ngIf="classId != 0">
+                            <input type="checkbox" id="student" [checked]="selectAllStatus[classId]" (change)="toggleSelectAll($event)"/>
+                            <label for="student">Select All</label>
+                        </div>
+                        <div class="checkbox-input" *ngFor="let student of listStudentByClass">
+                            <input type="checkbox" id="student{{student.userResponse.id}}" [checked]="isChecked(student.userResponse.id)" (change)="handleCheckboxChange(student.userResponse.id, $event)" />
+                            <label for="student{{student.userResponse.id}}">{{ student.userResponse.fullName }} - {{ student.userResponse.email }}</label>
+                        </div>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary button" (click)="closePopup($event)">Add</button>
+            </form>
+        </div>
+    </div>
+</div>

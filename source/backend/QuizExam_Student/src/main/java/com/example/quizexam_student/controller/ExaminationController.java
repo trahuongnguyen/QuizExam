@@ -3,11 +3,13 @@ package com.example.quizexam_student.controller;
 import com.example.quizexam_student.bean.request.ExaminationRequest;
 import com.example.quizexam_student.bean.response.ExaminationResponse;
 import com.example.quizexam_student.bean.response.ExaminationResponseNotIncludeQuestion;
+import com.example.quizexam_student.bean.response.RegisterResponse;
 import com.example.quizexam_student.bean.response.StudentResponse;
 import com.example.quizexam_student.entity.Examination;
 import com.example.quizexam_student.entity.StudentDetail;
 import com.example.quizexam_student.service.ExaminationService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -60,10 +62,11 @@ public class ExaminationController {
     }
 
     @PutMapping("/student/{examinationId}/{subjectId}")
-    public List<StudentDetail> updateStudentForExam(
+    public ResponseEntity updateStudentForExam(
             @PathVariable int examinationId,
             @PathVariable int subjectId,
             @RequestBody List<Integer> studentIds){
-        return examinationService.updateStudentForExam(examinationId, subjectId, studentIds);
+        examinationService.updateStudentForExam(examinationId, subjectId, studentIds);
+        return ResponseEntity.ok(new RegisterResponse("", "Modify student successfully"));
     }
 }

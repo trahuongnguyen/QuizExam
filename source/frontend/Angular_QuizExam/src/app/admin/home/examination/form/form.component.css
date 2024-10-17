@@ -18,7 +18,7 @@
     border: 1px solid #ddd;
     box-shadow: 0 2px 4px rgba(0.1, 0.1, 0.1, 0.1);
     border-radius: 6px;
-    margin-top: 80px;
+    margin-top: 50px;
     max-width: 750px;
 }
 
@@ -53,6 +53,17 @@ select {
 
 .group-input {
     padding-left: 5%;
+}
+
+.button-chapter {
+    white-space: nowrap;
+    /* Ngăn không cho nội dung xuống dòng */
+    overflow: hidden;
+    /* Ẩn nội dung vượt quá chiều rộng của nút */
+    text-overflow: ellipsis;
+    /* Hiển thị "..." khi nội dung bị cắt */
+    display: inline-block;
+    /* Để áp dụng các thuộc tính overflow */
 }
 
 .w-30 .button {

@@ -28,7 +28,15 @@ public class StudentServiceImpl implements StudentService {
     private final ClassesRepository classesRepository;
 
     private final PasswordEncoder passwordEncoder;
+
     private final UserService userService;
+
+    @Override
+    public List<StudentResponse> getAllStudents() {
+        Role role = roleRepository.findByName("STUDENT");
+        List<UserResponse> userResponses = userRepository.findByRole(role).stream().map(UserMapper::convertToResponse).toList();
+        return userResponses.stream().map(userResponse -> StudentMapper.convertToResponse(userResponse, studentRepository.findByUser(userRepository.findById(userResponse.getId()).orElse(null)))).collect(Collectors.toList());
+    }
 
     @Override
     public StudentDetail getStudentDetailByUser(User user) {
