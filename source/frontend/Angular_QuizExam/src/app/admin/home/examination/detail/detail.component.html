@@ -64,39 +64,39 @@
 
                 <ng-container *ngIf="question.type === 1; else multipleAnswers">
                     <div class="answer-option">
-                        <input type="radio" [name]="question.id" [id]="question.optionA">
-                        <label [for]="question.id">{{ question.optionA }}</label>
+                        <input type="radio" [name]="question.id" [id]="question.id +  '-' + question.optionA">
+                        <label [for]="question.id +  '-' + question.optionA">{{ question.optionA }}</label>
                     </div>
                     <div class="answer-option">
-                        <input type="radio" [name]="question.id" [id]="question.optionB">
-                        <label [for]="question.id">{{ question.optionB }}</label>
+                        <input type="radio" [name]="question.id" [id]="question.id +  '-' + question.optionB">
+                        <label [for]="question.id +  '-' + question.optionB">{{ question.optionB }}</label>
                     </div>
                     <div class="answer-option">
-                        <input type="radio" [name]="question.id" [id]="question.optionC">
-                        <label [for]="question.id">{{ question.optionC }}</label>
+                        <input type="radio" [name]="question.id" [id]="question.id +  '-' + question.optionC">
+                        <label [for]="question.id +  '-' + question.optionC">{{ question.optionC }}</label>
                     </div>
                     <div class="answer-option">
-                        <input type="radio" [name]="question.id" [id]="question.optionD">
-                        <label [for]="question.id">{{ question.optionD }}</label>
+                        <input type="radio" [name]="question.id" [id]="question.id +  '-' + question.optionD">
+                        <label [for]="question.id +  '-' + question.optionD">{{ question.optionD }}</label>
                     </div>
                 </ng-container>
 
                 <ng-template #multipleAnswers>
                     <div class="answer-option">
-                        <input type="checkbox" [name]="question.id" [id]="question.optionA">
-                        <label [for]="question.id">{{ question.optionA }}</label>
+                        <input type="checkbox" [name]="question.id" [id]="question.id +  '-' + question.optionA">
+                        <label [for]="question.id +  '-' + question.optionA">{{ question.optionA }}</label>
                     </div>
                     <div class="answer-option">
-                        <input type="checkbox" [name]="question.id" [id]="question.optionB">
-                        <label [for]="question.id">{{ question.optionB }}</label>
+                        <input type="checkbox" [name]="question.id" [id]="question.id +  '-' + question.optionB">
+                        <label [for]="question.id +  '-' + question.optionB">{{ question.optionB }}</label>
                     </div>
                     <div class="answer-option">
-                        <input type="checkbox" [name]="question.id" [id]="question.optionC">
-                        <label [for]="question.id">{{ question.optionC }}</label>
+                        <input type="checkbox" [name]="question.id" [id]="question.id +  '-' + question.optionC">
+                        <label [for]="question.id +  '-' + question.optionC">{{ question.optionC }}</label>
                     </div>
                     <div class="answer-option">
-                        <input type="checkbox" [name]="question.id" [id]="question.optionD">
-                        <label [for]="question.id">{{ question.optionD }}</label>
+                        <input type="checkbox" [name]="question.id" [id]="question.id +  '-' + question.optionD">
+                        <label [for]="question.id +  '-' + question.optionD">{{ question.optionD }}</label>
                     </div>
                 </ng-template>
             </div>

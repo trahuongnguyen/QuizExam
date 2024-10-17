@@ -16,12 +16,16 @@ public class Role {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "role_id")
     private int id;
-    @Column(name = "name", nullable = false)
+
+    @Column(name = "name", length = 20, nullable = false)
     private String name;
+
     @Column(name = "description")
     private String description;
+
     @OneToMany(mappedBy = "role")
     private Set<User> users;
+
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(
             name = "rel_role_permission",

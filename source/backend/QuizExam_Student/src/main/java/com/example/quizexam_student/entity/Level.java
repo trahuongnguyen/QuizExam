@@ -18,7 +18,7 @@ public class Level {
     @Column(name = "level_id")
     private int id;
 
-    @Column(name = "name", nullable = false)
+    @Column(name = "name", length = 10, nullable = false)
     private String name;
 
     @Column(name = "point", nullable = false)

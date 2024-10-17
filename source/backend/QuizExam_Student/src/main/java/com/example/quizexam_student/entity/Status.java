@@ -16,8 +16,10 @@ public class Status {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "status_id")
     private int id;
-    @Column(name = "name", nullable = false)
+
+    @Column(name = "name", length = 20, nullable = false)
     private String name;
+
     @OneToMany(mappedBy = "status")
     private Set<StudentDetail> studentDetails;
 }
