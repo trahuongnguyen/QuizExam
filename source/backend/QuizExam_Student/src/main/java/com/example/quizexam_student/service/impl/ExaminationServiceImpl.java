@@ -85,15 +85,14 @@ public class ExaminationServiceImpl implements ExaminationService {
         do {
             int randomNumber = random.nextInt(1000);
             String randomNumberStr = String.format("%03d",randomNumber);
-            String currentDate = new SimpleDateFormat("MM/yyyy").format(new Date());
+            String currentDate = new SimpleDateFormat("yyMM").format(new Date());
             exam.setCode(questions.get(0).getSubject().getName()+ "_" + randomNumberStr + "_" +currentDate);
         }while (examinationRepository.existsByCode(exam.getCode()));
         exam.setSubject(subjectRepository.findById(examinationRequest.getSubjectId()).orElse(null));
-        examinationRepository.save(exam);
         for (Question question : finalQuestions) {
             setAnswerForQuestion(exam, question);
         }
-        return exam;
+        return examinationRepository.save(exam);
     }
 
     @Override
@@ -123,6 +122,7 @@ public class ExaminationServiceImpl implements ExaminationService {
     @Override
     public List<StudentDetail> updateStudentForExam(int examinationId, int subjectId, List<Integer> studentIds) {
         List<Mark> markList = markRepository.findAllByExaminationIdAndScore(examinationId, null);
+        markList.stream().peek(mark -> {mark.setStudentDetail(null); mark.setExamination(null);}).toList();
         markRepository.deleteAll(markList);
         return studentRepository.findAllByUserIdIn(
                 studentIds.stream().peek(studentId->{

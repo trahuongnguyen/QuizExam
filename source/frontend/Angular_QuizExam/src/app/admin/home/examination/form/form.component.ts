@@ -34,16 +34,11 @@ export class FormComponent implements OnInit {
   subjectId: number = 1;
   subjectName: any;
   listChapter: any;
-
-  isPopupStudent = false;
-  isPopupClass = false;
+  
   isPopupChapter = false;
   popupChapterIndex: number = 0;
 
   selectedSubject: number = 1;
-
-  listClass: any = [];
-  listStudent: any = [];
 
   //classList: number[] = [];
 
@@ -59,9 +54,11 @@ export class FormComponent implements OnInit {
   };
   checkedStates: any;
 
+  createdExam: any;
+
   
   createExam() {
-    const exam = {  // tạm thời
+    const exam = {
       name: this.examsForm.name,
       duration: this.examsForm.duration,
       startTime: this.examsForm.startTime,
@@ -74,7 +71,8 @@ export class FormComponent implements OnInit {
         this.toastr.success('Create exam Successful!', 'Success', {
           timeOut: 2000,
         });
-        this.router.navigate(['/admin/home/exam/detail/1']);
+        this.createdExam = response;
+        this.router.navigate(['/admin/home/exam/addStudent/' + exam.subjectId + '/' + this.createdExam.id]);
       },
       error => {
         if (error.status === 401) {
@@ -105,16 +103,6 @@ export class FormComponent implements OnInit {
       this.subjects = response;
     });
     this.initializeChapter(this.subjectId);
-
-    this.http.get<any>(`${this.authService.apiUrl}/class`, this.home.httpOptions).subscribe(response => {
-      this.listClass = response;
-    });
-
-    this.http.get<any>(`${this.authService.apiUrl}/studentManagement`, this.home.httpOptions).subscribe(response => {
-      this.listStudent = response;
-    });
-
-
   }
 
   initializeChapter(subject: number): void {
@@ -122,9 +110,12 @@ export class FormComponent implements OnInit {
       this.listChapter = data;
     });
   }
+
   selectSubject(subject: any): void {
     this.selectedSubject = subject.target.value;
     this.subjectId = this.selectedSubject;
+    this.allChecked = false;
+    this.examsForm.chapterIds = [];
     // Thực hiện các logic nếu cần thiết khi chọn Sem
     // this.reloadTable(this.selectedSem);
     console.log('Selected Sem:', this.selectedSubject);
@@ -133,31 +124,13 @@ export class FormComponent implements OnInit {
 
   openPopupChapter() {
     this.isPopupChapter = true;
-    this.isPopupClass = false;
-    this.isPopupStudent = false;
-  }
-  openPopupStudent() {
-    this.isPopupChapter = false;
-    this.isPopupClass = false;
-    this.isPopupStudent = true;
-  }
-  openPopupClass() {
-    this.isPopupChapter = false;
-    this.isPopupClass = true;
-    this.isPopupStudent = false;
   }
 
-  toggleClassSelection(classId: number, event: Event) {
-    const checkbox = (event.target as HTMLInputElement);
-
-    if (checkbox.checked) {
-      this.examsForm.classes.push(classId);
-    } else {
-      this.examsForm.classes = this.examsForm.classes.filter(id => id !== classId);
-    }
-
-    console.log(this.examsForm.classes);
+  getSelectedChaptersNames(): string {
+    const selectedChapters = this.listChapter.filter((chapter: any) => this.examsForm.chapterIds.includes(chapter.id));
+    return selectedChapters.map((chapter: any) => `[${chapter.name}]`).join(' ');
   }
+  
   allChecked = false;
 
   toggleAll() {
@@ -198,21 +171,7 @@ export class FormComponent implements OnInit {
 
     console.log(this.examsForm.students);
   }
-
-  closePopupClass(event?: MouseEvent): void {
-    if (event) {
-      event.stopPropagation(); // Ngăn việc sự kiện click ra ngoài ảnh hưởng đến việc đóng modal
-    }
-    this.isPopupClass = false;
-    this.popupChapterIndex = 0; // Reset khi đóng popup
-  }
-  closePopupStudent(event?: MouseEvent): void {
-    if (event) {
-      event.stopPropagation(); // Ngăn việc sự kiện click ra ngoài ảnh hưởng đến việc đóng modal
-    }
-    this.isPopupStudent = false;
-    this.popupChapterIndex = 0; // Reset khi đóng popup
-  }
+  
   closePopupChapter(event?: MouseEvent): void {
     if (event) {
       event.stopPropagation(); // Ngăn việc sự kiện click ra ngoài ảnh hưởng đến việc đóng modal
@@ -220,6 +179,4 @@ export class FormComponent implements OnInit {
     this.isPopupChapter = false;
     this.popupChapterIndex = 0; // Reset khi đóng popup
   }
-
-
 }

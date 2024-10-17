@@ -26,8 +26,13 @@ public class StudentController {
     private final StudentService studentService;
     private final ExportService exportService;
 
-    @GetMapping("")
+    @GetMapping("all-student")
     public List<StudentResponse> getAllStudents(){
+        return studentService.getAllStudents();
+    }
+
+    @GetMapping("")
+    public List<StudentResponse> getAllStudentsNoneClass(){
         return studentService.getAllStudentsNoneClass();
     }
 

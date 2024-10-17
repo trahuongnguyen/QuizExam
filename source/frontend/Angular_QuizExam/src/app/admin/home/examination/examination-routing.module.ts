@@ -7,6 +7,7 @@ import { ExaminationComponent } from './examination.component';
 import { ListComponent } from './list/list.component';
 import { FormComponent } from './form/form.component';
 import { DetailComponent } from './detail/detail.component';
+import { AddStudentComponent } from './add-student/add-student.component';
 
 const routes: Routes = [
   {
@@ -22,10 +23,13 @@ const routes: Routes = [
         component: FormComponent
       },
       {
-        path: ':examId',
+        path: 'addStudent/:subjectId/:examId',
+        component: AddStudentComponent
+      },
+      {
+        path: 'detail/:examId',
         component: DetailComponent,
       },
-     
     ],
     canActivate: [AuthGuard],
     data: {roles: ['ADMIN', 'DIRECTOR', 'SRO']},
