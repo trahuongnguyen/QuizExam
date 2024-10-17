@@ -9,46 +9,41 @@ import { ProfileComponent } from './profile/profile.component';
 import { AuthGuard } from '../service/authguard.service';
 
 const routes: Routes = [
-    {
-    path: '', 
+  {
+    path: '',
     component: HomeComponent,
     canActivate: [AuthGuard],
-    data: {roles: ['ADMIN', 'DIRECTOR', 'TEACHER', 'SRO']},
+    data: { roles: ['ADMIN', 'DIRECTOR', 'TEACHER', 'SRO'] },
     children: [
       {
         path: '',
         component: DashboardComponent,
         canActivate: [AuthGuard],
-        data: {roles: ['ADMIN', 'DIRECTOR', 'TEACHER', 'SRO']},
+        data: { roles: ['ADMIN', 'DIRECTOR', 'TEACHER', 'SRO'] },
       },
-      // {
-      //   path: '',
-      //   redirectTo: 'dashboard',
-      //   pathMatch: 'full',
-      // },
       {
         path: 'employee',
         component: EmployeeComponent,
         canActivate: [AuthGuard],
-        data: {roles: ['ADMIN', 'DIRECTOR']},
+        data: { roles: ['ADMIN', 'DIRECTOR'] },
       },
       {
         path: 'class',
         component: ClassComponent,
         canActivate: [AuthGuard],
-        data: {roles: ['ADMIN', 'DIRECTOR', 'SRO']},
+        data: { roles: ['ADMIN', 'DIRECTOR', 'SRO'] },
       },
       {
         path: 'student',
         component: StudentComponent,
         canActivate: [AuthGuard],
-        data: {roles: ['ADMIN', 'SRO']},
+        data: { roles: ['ADMIN', 'SRO'] },
       },
       {
         path: 'class/:classId',
         component: StudentComponent,
         canActivate: [AuthGuard],
-        data: {roles: ['ADMIN', 'DIRECTOR', 'SRO']},
+        data: { roles: ['ADMIN', 'DIRECTOR', 'SRO'] },
       },
       {
         path: 'profile',
@@ -70,7 +65,7 @@ const routes: Routes = [
 ];
 
 @NgModule({
-    imports: [RouterModule.forChild(routes)],
-    exports: [RouterModule]
+  imports: [RouterModule.forChild(routes)],
+  exports: [RouterModule]
 })
 export class HomeRoutingModule { }

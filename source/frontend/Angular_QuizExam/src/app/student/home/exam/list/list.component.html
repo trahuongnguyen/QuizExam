@@ -1,5 +1,5 @@
 <div class="body">
-    <div class="container exam-container ">
+    <div class="exam-container ">
         <div class="exam-header ">
             <h1>Your Exams</h1>
         </div>
@@ -10,13 +10,29 @@
                 <li class="nav-item" role="presentation">
                     <button class="nav-link" [ngClass]="index===0?'active':''" [id]="'sem'+(index+1)+'-tab'"
                         data-bs-toggle="tab" [attr.data-bs-target]="'#sem'+(index+1)" type="button" role="tab"
-                        [attr.aria-controls]="'sem'+ (index+1)"
-                        [attr.aria-selected]="index===0?'true':'false'">{{sem}}</button>
+                        [attr.aria-controls]="'sem'+ (index+1)" [attr.aria-selected]="index===0?'true':'false'">Sem
+                        {{sem.name}}</button>
                 </li>
             </ng-template>
         </ul>
         <div class="row mt-4">
-            <div (click)="openPopupExam()" class="col-lg-3 col-md-4 col-sm-6 col-xs-12 mb-5">
+            <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12 mb-5" *ngFor="let exam of examList">
+                <div class="card" (click)="openPopupExam(exam.id)">
+                    <div class="card-image">
+                        <!-- <img [src]="exam.subject.img" alt="Quiz Thumbnail"> -->
+                        <img src="https://hermes.dio.me/articles/cover/8baa0855-4bd5-4abf-a007-48527a7c5859.png"
+                        alt="Quiz Thumbnail">
+                    </div>
+                    <div class="card-content">
+                        <p class="card-title">{{exam.subject.name}}</p>
+                        <span class="content-time">
+                            <i class="fa-regular fa-clock "></i> {{ exam.startTime | date: 'HH:mm dd/MM/yyyy' }} -
+                            {{exam.endTime | date: 'HH:mm dd/MM/yyyy' }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <!-- <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12 mb-5">
                 <div class="card">
                     <div class="card-image">
                         <img src="https://i.pinimg.com/564x/33/34/66/333466cd07d18eae8c6546e298f2b9c7.jpg"
@@ -71,70 +87,60 @@
                         </span>
                     </div>
                 </div>
-            </div>
-            <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12 mb-5">
-                <div class="card">
-                    <div class="card-image">
-                        <img src="https://i.pinimg.com/564x/33/34/66/333466cd07d18eae8c6546e298f2b9c7.jpg"
-                            alt="Quiz Thumbnail">
-                    </div>
-                    <div class="card-content">
-                        <p class="card-title">HTML, CSS AND JAVASCRIPT</p>
-                        <span class="content-time">
-                            <i class="fa-regular fa-clock "></i> 7h 16/07/2024
-                        </span>
-                    </div>
-                </div>
-            </div>
+            </div> -->
         </div>
     </div>
 </div>
 <div *ngIf="isPopupExam" class="modal-backdrop" (click)="closePopupExam($event)">
     <div class="modal-content" (click)="$event.stopPropagation()">
-
         <div class="modal-body">
-            <div class="quiz-container">
-                <div class="d-flex">           
-                    <div class="title">
-                        <h2>HTML5, CSS, JavaScript</h2>
-                    </div>
-                    <div class="modal-header">
-                        <span class="close-icon" (click)="closePopupExam()">&times;</span>
-                    </div>
+            <div class="d-flex">
+                <div class="title">
+                    <h2>{{selectedExam.subject.name}}</h2>
                 </div>
-                <p class="quiz-id">Quiz ID: 001</p>
-                <div class="quiz-info">
-                    <div class="exam-info-span d-flex">
-                        <div class="span">
-                            <span class="mdi mdi-clock icon"></span>
-                            <span class="ms-1">Time limit</span>
-                        </div>
-                        <div class="popup-content-right">45 minutes</div>
-                    </div>
-                    <div class="exam-info-span d-flex">
-                        <div class="span">
-                            <span class="mdi mdi-calendar-blank icon"></span>
-                            <span class="ms-1">Test time</span>
-                        </div>
-                        <div class="popup-content-right">14h-17h 17/07</div>
-                    </div>
-                    <div class="exam-info-span d-flex">
-                        <div class="span">
-                            <span class="mdi mdi-alert-circle-outline icon"></span>
-                            <span class="ms-1">Number of questions</span>
-                        </div>
-                        <div class="popup-content-right">16</div>
-                    </div>
-                    <div class="exam-info-span d-flex">
-                        <div class="span">
-                            <span class="mdi mdi-trophy-outline icon"></span>
-                            <span class="ms-1">Maximum score</span>
-                        </div>
-                        <div class="popup-content-right">20</div>
-                    </div>
+                <div class="modal-header">
+                    <span class="close-icon" (click)="closePopupExam()">&times;</span>
                 </div>
-                <button (click)="closePopupExam()" class="start-btn">Start the Exam</button>
             </div>
+            <p class="quiz-id">Code: {{selectedExam.code}}</p>
+            <div class="quiz-info">
+                <div class="exam-info-span d-flex">
+                    <div class="span">
+                        <span class="mdi mdi-clock icon"></span>
+                        <span class="ms-1">Time limit</span>
+                    </div>
+                    <div class="popup-content-right">{{selectedExam.duration}} minutes</div>
+                </div>
+                <div class="exam-info-span d-flex">
+                    <div class="span">
+                        <span class="mdi mdi-calendar-blank icon"></span>
+                        <span class="ms-1">Start time</span>
+                    </div>
+                    <div class="popup-content-right">{{selectedExam.startTime | date: 'dd/MM/yyyy HH:mm' }}</div>
+                </div>
+                <div class="exam-info-span d-flex">
+                    <div class="span">
+                        <span class="mdi mdi-calendar-blank icon"></span>
+                        <span class="ms-1">End time</span>
+                    </div>
+                    <div class="popup-content-right">{{selectedExam.endTime | date: 'dd/MM/yyyy HH:mm'}}</div>
+                </div>
+                <div class="exam-info-span d-flex">
+                    <div class="span">
+                        <span class="mdi mdi-alert-circle-outline icon"></span>
+                        <span class="ms-1">Number of questions</span>
+                    </div>
+                    <div class="popup-content-right">16</div>
+                </div>
+                <div class="exam-info-span d-flex">
+                    <div class="span">
+                        <span class="mdi mdi-trophy-outline icon"></span>
+                        <span class="ms-1">Maximum score</span>
+                    </div>
+                    <div class="popup-content-right">20</div>
+                </div>
+            </div>
+            <button class="start-btn">Start the Exam</button>
         </div>
 
     </div>

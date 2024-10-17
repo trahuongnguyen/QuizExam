@@ -4,28 +4,32 @@ import { HomeComponent } from './home.component';
 import { HomepageComponent } from './homepage/homepage.component';
 import { ProfileComponent } from './profile/profile.component';
 import { MarkComponent } from './mark/mark.component';
+import { AuthGuard } from '../service/authguard.service';
 
 const routes: Routes = [
   {
     path: '',
     component: HomeComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ['ADMIN', 'STUDENT'] },
     children: [
       {
         path: '',
         component: HomepageComponent,
+        canActivate: [AuthGuard],
+        data: { roles: ['ADMIN', 'STUDENT'] },
       },
-      // {
-      //   path: '',
-      //   redirectTo: 'homepage',
-      //   pathMatch: 'full'
-      // },
       {
         path: 'profile',
-        component: ProfileComponent
+        component: ProfileComponent,
+        canActivate: [AuthGuard],
+        data: { roles: ['ADMIN', 'STUDENT'] },
       },
       {
         path: 'mark',
-        component: MarkComponent
+        component: MarkComponent,
+        canActivate: [AuthGuard],
+        data: { roles: ['ADMIN', 'STUDENT'] },
       },
       {
         path: 'exam',

@@ -10,6 +10,8 @@ const routes: Routes = [
   {
     path: '',
     component: ExamComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ['ADMIN', 'STUDENT'] },
     children: [
       {
         path: '',

@@ -1,7 +1,6 @@
 .exam-container {
-    max-width: 1100px;
-    padding: 50px 0 50px 0;
-
+    padding: 50px 100px 50px 100px;
+    width: 100%;
 }
 
 .exam-header {
@@ -14,14 +13,17 @@
     padding-bottom: 10px;
     font-weight: bold;
 }
+
 .nav-pills .nav-link.active {
     background-color: #E6E6E6;
     color: black;
     font-weight: bold;
 }
+
 .nav-link {
     color: var(--color-text);
 }
+
 .card-content {
     padding: 20px;
 }
@@ -30,9 +32,11 @@
     font-size: smaller;
     font-weight: bold;
 }
-.content-time{
+
+.content-time {
     font-size: smaller;
 }
+
 .card-content .card-title {
     margin-bottom: 10px;
 }
@@ -61,12 +65,14 @@
 .card {
     margin: auto;
     cursor: pointer;
-    width: 250px;
+    width: 300px;
     height: 300px;
 }
+
 .font-text {
     font-size: small;
 }
+
 @media (min-width: 1400px) {
     .col-lg-3 {
         flex: 0 0 auto;
@@ -74,7 +80,7 @@
     }
 }
 
-@media (max-width: 1200px) {
+@media (max-width: 1400px) {
     .col-md-4 {
         flex: 0 0 auto;
         width: 33.33%;
@@ -94,22 +100,10 @@
         width: 100%;
     }
 }
-.title {
-    width: 550px;
-}
-.popup-content-right{
+
+.popup-content-right {
     width: 50%;
     text-align: right;
-}
-
-.quiz-container {
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    text-align: center;
-    width: 600px;
-    margin: auto;
 }
 
 .quiz-container h2 {
@@ -170,12 +164,25 @@
     align-items: center;
 }
 
+.modal-backdrop .title {
+    width: 100%;
+}
+
+.modal-content {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    width: 660px;
+}
 
 .close-icon {
     font-size: 24px;
     /* Tăng kích thước dấu "X" */
     cursor: pointer;
 }
+
 .modal-header {
     border-radius: 10px 10px 0 0;
     /* Tăng kích thước padding cho header */
@@ -186,8 +193,8 @@
     justify-content: space-between;
     align-items: center;
 }
+
 .modal-body {
-    padding: 20px;
     /* Tăng kích thước padding cho body */
     font-size: 18px;
     border-radius: 8px;
