@@ -4,7 +4,7 @@
         <div class="col-md-8 scrollable-questions">
             <div class="question-container">
                 <div *ngFor="let question of selectedExam.questionRecordResponses; let i = index"
-                    class="question-section">
+                    class="question-section" id="question-{{i + 1}}" >
                     <h6>Question {{ i + 1 }} : {{ question.content }}</h6>
 
                     <div *ngIf="question.image">
@@ -12,40 +12,40 @@
                     </div>
 
                     <ng-container *ngIf="question.type === 1; else multipleAnswers">
-                        <div class="answer-option">
-                            <input type="radio" [name]="question.id" [id]="question.optionA">
-                            <label [for]="question.id">{{ question.optionA }}</label>
+                        <div class="answer-options">
+                            <input type="radio" [name]="question.id" [id]="question.id +  '-' + question.optionA" (click)="markQuestionAsCompleted(i)">
+                            <label [for]="question.id +  '-' + question.optionA">{{ question.optionA }}</label>
                         </div>
-                        <div class="answer-option">
-                            <input type="radio" [name]="question.id" [id]="question.optionB">
-                            <label [for]="question.id">{{ question.optionB }}</label>
+                        <div class="answer-options">
+                            <input type="radio" [name]="question.id" [id]="question.id +  '-' + question.optionB" (click)="markQuestionAsCompleted(i)">
+                            <label [for]="question.id +  '-' + question.optionB">{{ question.optionB }}</label>
                         </div>
-                        <div class="answer-option">
-                            <input type="radio" [name]="question.id" [id]="question.optionC">
-                            <label [for]="question.id">{{ question.optionC }}</label>
+                        <div class="answer-options">
+                            <input type="radio" [name]="question.id" [id]="question.id +  '-' + question.optionC" (click)="markQuestionAsCompleted(i)">
+                            <label [for]="question.id +  '-' + question.optionC">{{ question.optionC }}</label>
                         </div>
-                        <div class="answer-option">
-                            <input type="radio" [name]="question.id" [id]="question.optionD">
-                            <label [for]="question.id">{{ question.optionD }}</label>
+                        <div class="answer-options">
+                            <input type="radio" [name]="question.id" [id]="question.id +  '-' + question.optionD" (click)="markQuestionAsCompleted(i)">
+                            <label [for]="question.id +  '-' + question.optionD">{{ question.optionD }}</label>
                         </div>
                     </ng-container>
 
                     <ng-template #multipleAnswers>
-                        <div class="answer-option">
-                            <input type="checkbox" [name]="question.id" [id]="question.optionA">
-                            <label [for]="question.id">{{ question.optionA }}</label>
+                        <div class="answer-options">
+                            <input type="checkbox" [name]="question.id" [id]="question.id +  '-' + question.optionA" (click)="markQuestionAsCompleted(i)">
+                            <label [for]="question.id +  '-' + question.optionA">{{ question.optionA }}</label>
                         </div>
-                        <div class="answer-option">
-                            <input type="checkbox" [name]="question.id" [id]="question.optionB">
-                            <label [for]="question.id">{{ question.optionB }}</label>
+                        <div class="answer-options">
+                            <input type="checkbox" [name]="question.id" [id]="question.id +  '-' + question.optionB" (click)="markQuestionAsCompleted(i)">
+                            <label [for]="question.id +  '-' + question.optionB">{{ question.optionB }}</label>
                         </div>
-                        <div class="answer-option">
-                            <input type="checkbox" [name]="question.id" [id]="question.optionC">
-                            <label [for]="question.id">{{ question.optionC }}</label>
+                        <div class="answer-options">
+                            <input type="checkbox" [name]="question.id" [id]="question.id +  '-' + question.optionC" (click)="markQuestionAsCompleted(i)">
+                            <label [for]="question.id +  '-' + question.optionC">{{ question.optionC }}</label>
                         </div>
-                        <div class="answer-option">
-                            <input type="checkbox" [name]="question.id" [id]="question.optionD">
-                            <label [for]="question.id">{{ question.optionD }}</label>
+                        <div class="answer-options">
+                            <input type="checkbox" [name]="question.id" [id]="question.id +  '-' + question.optionD" (click)="markQuestionAsCompleted(i)">
+                            <label [for]="question.id +  '-' + question.optionD">{{ question.optionD }}</label>
                         </div>
                     </ng-template>
                 </div>
@@ -57,21 +57,25 @@
 
         <!-- Sidebar Area -->
         <div class="col-md-4">
-            <div class="sidebar-container">
-                <h5>HTML5, CSS, JavaScript</h5>
-                <p><span class="mdi mdi-clock" style="margin-right: 5px;"></span>10:20</p>
-
+            <div class="sidebar-container" *ngIf="selectedExam">
+                <h5>{{ selectedExam.name }}</h5>
+                <p>
+                    <span class="mdi mdi-clock" style="margin-right: 5px;"></span>
+                    {{ remainingTime }} <!-- Hiển thị thời gian đếm ngược -->
+                </p>
                 <hr class="w-100 my-3">
 
                 <div class="count mb-3">
-                    <input value="10/16" readonly>
+                    <input value="{{ getCompletedQuestionsCount() }}/{{ selectedExam.questionRecordResponses.length }}" readonly>
                 </div>
                 <div class="calendar mb-3">
-                    <table class="table text-center">
-                        <div *ngFor="let question of questions; let i = index" id="question-{{i + 1}}"
-                            class="question-container" [ngClass]="{'active': i === 0}">
+                    <div class="row">
+                        <div *ngFor="let question of selectedExam.questionRecordResponses; 
+                                let i = index" id="question-{{i + 1}}" 
+                                class="question-td col-5" (click)="scrollToQuestion(i)"
+                                [ngClass]="{'btn-success': completedQuestions[i], 'btn-outline-primary': !completedQuestions[i]}">{{ i + 1 }}
                         </div>
-                    </table>
+                    </div>
                 </div>
                 <hr class="w-100 my-3">
                 <button class="btn submit-btn w-100">Submit</button>
