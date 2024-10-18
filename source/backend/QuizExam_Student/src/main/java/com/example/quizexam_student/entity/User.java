@@ -17,26 +17,35 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
     private int id;
-    @Column(name = "full_name", nullable = false)
+
+    @Column(name = "full_name", length = 100, nullable = false)
     private String fullName;
+
     @Column(name = "email", nullable = false)
     private String email;
+
     @Column(name = "password", nullable = false)
     private String password;
+
     @Column(name = "dob", nullable = false)
     private LocalDate dob;
-    @Column(name = "phone_number", nullable = false)
+
+    @Column(name = "phone_number", length = 10, nullable = false)
     private String phoneNumber;
+
     @Column(name = "address", nullable = false)
     private String address;
+
     @Column(name = "status", nullable = false)
     private int status;
+
     @Column(name = "gender", nullable = false)
     private int gender;
+
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "role_id")
     private Role role;
+
     @OneToOne(mappedBy = "user")
     private StudentDetail studentDetail;
 }
-

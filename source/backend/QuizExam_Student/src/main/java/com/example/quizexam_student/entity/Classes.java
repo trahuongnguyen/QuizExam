@@ -24,15 +24,15 @@ public class Classes {
     @Column(name = "class_id")
     private int id;
 
-    @Column(name = "name", nullable = false)
+    @Column(name = "name", length = 6, nullable = false)
     @NotBlank(message = "Class Name is required")
     private String name;
 
-    @Column(name = "class_day", nullable = false)
+    @Column(name = "class_day", length = 30, nullable = false)
     @NotBlank(message = "Class Day is required")
     private String classDay;
 
-    @Column(name = "class_time", nullable = false)
+    @Column(name = "class_time", length = 30, nullable = false)
     @NotBlank(message = "Class Time is required")
     private String classTime;
 

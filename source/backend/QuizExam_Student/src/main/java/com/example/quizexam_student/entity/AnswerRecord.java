@@ -17,8 +17,11 @@ public class AnswerRecord {
     @Column(name = "answer_record_id")
     private int id;
 
-    @Column(name = "correct_option", nullable = false, columnDefinition = "text")
-    private String correctOption;
+    @Column(name = "content", nullable = false, columnDefinition = "TEXT")
+    private String content;
+
+    @Column(name = "is_correct", nullable = false, columnDefinition = "TINYINT")
+    private int isCorrect;
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "question_record_id")

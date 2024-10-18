@@ -8,44 +8,20 @@
                     <h6>Question {{ i + 1 }} : {{ question.content }}</h6>
 
                     <div *ngIf="question.image">
-                        <img [src]="question.image" alt="Question Image">
+                        <img [src]="'../../../../../../img-question/' + question.image" alt="Question Image">
                     </div>
 
                     <ng-container *ngIf="question.type === 1; else multipleAnswers">
-                        <div class="answer-options">
-                            <input type="radio" [name]="question.id" [id]="question.id +  '-' + question.optionA" (click)="markQuestionAsCompleted(i)">
-                            <label [for]="question.id +  '-' + question.optionA">{{ question.optionA }}</label>
-                        </div>
-                        <div class="answer-options">
-                            <input type="radio" [name]="question.id" [id]="question.id +  '-' + question.optionB" (click)="markQuestionAsCompleted(i)">
-                            <label [for]="question.id +  '-' + question.optionB">{{ question.optionB }}</label>
-                        </div>
-                        <div class="answer-options">
-                            <input type="radio" [name]="question.id" [id]="question.id +  '-' + question.optionC" (click)="markQuestionAsCompleted(i)">
-                            <label [for]="question.id +  '-' + question.optionC">{{ question.optionC }}</label>
-                        </div>
-                        <div class="answer-options">
-                            <input type="radio" [name]="question.id" [id]="question.id +  '-' + question.optionD" (click)="markQuestionAsCompleted(i)">
-                            <label [for]="question.id +  '-' + question.optionD">{{ question.optionD }}</label>
+                        <div class="answer-options" *ngFor="let answer of question.answerRecords; let j = index">
+                            <input type="radio" [name]="question.id" [id]="answer.id" (click)="markQuestionAsCompleted(i)">
+                            <label [for]="answer.id">{{ answer.content }}</label>
                         </div>
                     </ng-container>
 
                     <ng-template #multipleAnswers>
-                        <div class="answer-options">
-                            <input type="checkbox" [name]="question.id" [id]="question.id +  '-' + question.optionA" (click)="markQuestionAsCompleted(i)">
-                            <label [for]="question.id +  '-' + question.optionA">{{ question.optionA }}</label>
-                        </div>
-                        <div class="answer-options">
-                            <input type="checkbox" [name]="question.id" [id]="question.id +  '-' + question.optionB" (click)="markQuestionAsCompleted(i)">
-                            <label [for]="question.id +  '-' + question.optionB">{{ question.optionB }}</label>
-                        </div>
-                        <div class="answer-options">
-                            <input type="checkbox" [name]="question.id" [id]="question.id +  '-' + question.optionC" (click)="markQuestionAsCompleted(i)">
-                            <label [for]="question.id +  '-' + question.optionC">{{ question.optionC }}</label>
-                        </div>
-                        <div class="answer-options">
-                            <input type="checkbox" [name]="question.id" [id]="question.id +  '-' + question.optionD" (click)="markQuestionAsCompleted(i)">
-                            <label [for]="question.id +  '-' + question.optionD">{{ question.optionD }}</label>
+                        <div class="answer-options" *ngFor="let answer of question.answerRecords; let j = index">
+                            <input type="checkbox" [name]="question.id" [id]="answer.id" (click)="markQuestionAsCompleted(i)">
+                            <label [for]="answer.id">{{ answer.content }}</label>
                         </div>
                     </ng-template>
                 </div>

@@ -16,11 +16,13 @@ public class Permission {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "permission_id")
     private int id;
-    @Column(name = "name", nullable = false)
+
+    @Column(name = "name", length = 50, nullable = false)
     private String name;
+
     @Column(name = "description")
     private String description;
+
     @ManyToMany(cascade = CascadeType.ALL, mappedBy = "permissions")
     private Set<Role> roles;
-
 }

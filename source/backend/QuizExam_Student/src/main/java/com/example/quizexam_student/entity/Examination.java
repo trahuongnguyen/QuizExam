@@ -19,7 +19,7 @@ public class Examination {
     @Column(name = "examination_id")
     private int id;
 
-    @Column(name = "name", nullable = false)
+    @Column(name = "name", length = 100, nullable = false)
     private String name;
 
     @Column(name = "start_time", nullable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
@@ -31,7 +31,7 @@ public class Examination {
     @Column(name = "duration", nullable = false)
     private Integer duration;
 
-    @Column(name = "code", nullable = false)
+    @Column(name = "code", length = 30, nullable = false)
     private String code;
 
     @Column(name = "status", nullable = false)

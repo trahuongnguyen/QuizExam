@@ -2,7 +2,7 @@
     <h4>Students can participate in the exam</h4>
     <hr class="line">
 
-    <div class="row bs-wizard">
+    <div class="row bs-wizard" [ngClass]="{'d-none': !examComponent.step}">
         <div class="col-xs-3 bs-wizard-step complete">
           <div class="text-center bs-wizard-stepnum">Step 1</div>
           <div class="progress"><div class="progress-bar"></div></div>
@@ -43,6 +43,7 @@
                 <th>Roll Portal</th>
                 <th>Full Name</th>
                 <th>Phone Number</th>
+                <th>Action</th>
             </tr>
         </thead>
         <tbody>
