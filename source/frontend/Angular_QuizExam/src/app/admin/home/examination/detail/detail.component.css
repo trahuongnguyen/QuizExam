@@ -120,12 +120,12 @@
 }
 
 .question-section {
-    margin-bottom: 20px;
+    margin-bottom: 30px;
 }
 
 .question-section img {
     margin: 10px 0px;
-    width: 20%;
+    width: 50%;
     height: auto;
     text-align: center;
 }

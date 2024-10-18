@@ -16,27 +16,21 @@ declare var $: any;
   styleUrl: './detail.component.css'
 })
 export class DetailComponent implements OnInit {
-  constructor(private authService: AuthService, private home: HomeComponent, private http: HttpClient, public toastr: ToastrService, private router: Router, private activatedRoute: ActivatedRoute, public examComponent: ExaminationComponent) { }
+  constructor(private authService: AuthService, public home: HomeComponent, private http: HttpClient, public toastr: ToastrService, private router: Router, private activatedRoute: ActivatedRoute, public examComponent: ExaminationComponent) { }
   apiData: any;
   examId: number = 0;
-  isSidebarCollapsed = false;
 
   exams: Exam[] = [];  // Danh sách bài thi
   selectedExam: any;  // Bài thi được chọn
-  toggleSidebar() {
-    this.isSidebarCollapsed = !this.isSidebarCollapsed;
-  }
 
   ngOnInit(): void {
     this.examId = Number(this.activatedRoute.snapshot.params['examId']) ?? 0;
 
-    this.isSidebarCollapsed = this.home.isSidebarCollapsed;
     this.authService.entityExporter = 'examination';
     this.http.get<any>(`${this.authService.apiUrl}/exam/${this.examId}`, this.home.httpOptions).subscribe((data: any) => {
       this.authService.listExporter = data;
       this.apiData = data;
       this.selectedExam = data;
-      console.log(this.selectedExam);
     });
   }  
 }

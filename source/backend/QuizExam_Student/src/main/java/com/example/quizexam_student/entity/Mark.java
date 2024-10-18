@@ -21,11 +21,11 @@ public class Mark {
     @Column(name = "score")
     private Integer score;
 
-    @Column(name = "start_time")
-    private LocalDateTime startTime;
+    @Column(name = "begin_time")
+    private LocalDateTime beginTime;
 
-    @Column(name = "end_time")
-    private LocalDateTime endTime;
+    @Column(name = "submitted_time")
+    private LocalDateTime submittedTime;
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "examination_id")

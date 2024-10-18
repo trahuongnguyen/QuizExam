@@ -1,8 +1,32 @@
-<div class="content-wrapper" [ngClass]="{'content-wrapper-collapsed': examComponent.home.isSidebarCollapsed}">
+<div class="content-wrapper" [ngClass]="{'content-wrapper-collapsed': home.isSidebarCollapsed}">
     <h4>Examination</h4>
     <hr class="line">
+    
+    <div class="row bs-wizard" [ngClass]="{'d-none': !examComponent.step}">
+        <div class="col-xs-3 bs-wizard-step complete">
+          <div class="text-center bs-wizard-stepnum">Step 1</div>
+          <div class="progress"><div class="progress-bar"></div></div>
+          <a href="#" class="bs-wizard-dot"></a>
+          <div class="bs-wizard-info text-center">Create Exam</div>
+        </div>
+        
+        <div class="col-xs-3 bs-wizard-step complete"><!-- complete -->
+          <div class="text-center bs-wizard-stepnum">Step 2</div>
+          <div class="progress"><div class="progress-bar"></div></div>
+          <a href="#" class="bs-wizard-dot"></a>
+          <div class="bs-wizard-info text-center">Add Student</div>
+        </div>
+        
+        <div class="col-xs-3 bs-wizard-step active"><!-- complete -->
+          <div class="text-center bs-wizard-stepnum">Step 3</div>
+          <div class="progress"><div class="progress-bar"></div></div>
+          <a href="#" class="bs-wizard-dot"></a>
+          <div class="bs-wizard-info text-center">Detail</div>
+        </div>
+    </div>
+
     <!-- Bottom Actions (Back and Export) -->
-    <div class="bottom-actions">
+    <div class="bottom-actions" [ngClass]="{'d-none': examComponent.step}">
         <div>
             <a href="./admin/home/exam"><span class="mdi mdi-keyboard-backspace" style="font-size: 18px; color: black;"
                     title="Back to List"></span></a>
@@ -59,44 +83,20 @@
                 <h6>Question {{ i + 1 }} : {{ question.content }}</h6>
 
                 <div *ngIf="question.image">
-                    <img [src]="question.image" alt="Question Image">
+                    <img [src]="'../../../../../../img-question/' + question.image" alt="Question Image">
                 </div>
 
                 <ng-container *ngIf="question.type === 1; else multipleAnswers">
-                    <div class="answer-option">
-                        <input type="radio" [name]="question.id" [id]="question.id +  '-' + question.optionA">
-                        <label [for]="question.id +  '-' + question.optionA">{{ question.optionA }}</label>
-                    </div>
-                    <div class="answer-option">
-                        <input type="radio" [name]="question.id" [id]="question.id +  '-' + question.optionB">
-                        <label [for]="question.id +  '-' + question.optionB">{{ question.optionB }}</label>
-                    </div>
-                    <div class="answer-option">
-                        <input type="radio" [name]="question.id" [id]="question.id +  '-' + question.optionC">
-                        <label [for]="question.id +  '-' + question.optionC">{{ question.optionC }}</label>
-                    </div>
-                    <div class="answer-option">
-                        <input type="radio" [name]="question.id" [id]="question.id +  '-' + question.optionD">
-                        <label [for]="question.id +  '-' + question.optionD">{{ question.optionD }}</label>
+                    <div class="answer-option" *ngFor="let answer of question.answerRecords; let j = index">
+                        <input type="radio" [name]="question.id" [id]="answer.id">
+                        <label [for]="answer.id">{{ answer.content }}</label>
                     </div>
                 </ng-container>
 
                 <ng-template #multipleAnswers>
-                    <div class="answer-option">
-                        <input type="checkbox" [name]="question.id" [id]="question.id +  '-' + question.optionA">
-                        <label [for]="question.id +  '-' + question.optionA">{{ question.optionA }}</label>
-                    </div>
-                    <div class="answer-option">
-                        <input type="checkbox" [name]="question.id" [id]="question.id +  '-' + question.optionB">
-                        <label [for]="question.id +  '-' + question.optionB">{{ question.optionB }}</label>
-                    </div>
-                    <div class="answer-option">
-                        <input type="checkbox" [name]="question.id" [id]="question.id +  '-' + question.optionC">
-                        <label [for]="question.id +  '-' + question.optionC">{{ question.optionC }}</label>
-                    </div>
-                    <div class="answer-option">
-                        <input type="checkbox" [name]="question.id" [id]="question.id +  '-' + question.optionD">
-                        <label [for]="question.id +  '-' + question.optionD">{{ question.optionD }}</label>
+                    <div class="answer-option" *ngFor="let answer of question.answerRecords; let j = index">
+                        <input type="checkbox" [name]="question.id" [id]="answer.id">
+                        <label [for]="answer.id">{{ answer.content }}</label>
                     </div>
                 </ng-template>
             </div>
