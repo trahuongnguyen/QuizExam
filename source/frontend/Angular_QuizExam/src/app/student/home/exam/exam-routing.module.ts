@@ -18,7 +18,7 @@ const routes: Routes = [
         component: ListComponent,
       },
       {
-        path: 'detail',
+        path: 'detail/:examId',
         component: DetailComponent
       },
       {

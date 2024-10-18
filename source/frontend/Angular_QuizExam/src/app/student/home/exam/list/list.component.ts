@@ -50,4 +50,8 @@ export class ListComponent implements OnInit {
     this.isPopupExam = false;
     this.popupExamIndex = 0; // Reset khi đóng popup
   }
+
+  startExam(examid:any): void {
+    this.router.navigateByUrl('/student/home/exam/detail/' + examid);
+  };
 }
