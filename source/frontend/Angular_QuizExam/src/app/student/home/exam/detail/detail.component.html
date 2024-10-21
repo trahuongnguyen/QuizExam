@@ -1,7 +1,7 @@
 <div class="container">
     <div class="row">
         <!-- Main Quiz Area -->
-        <div class="col-md-8 scrollable-questions">
+        <div class="col-md-9 scrollable-questions">
             <div class="question-container">
                 <div *ngFor="let question of selectedExam.questionRecordResponses; let i = index"
                     class="question-section" id="question-{{i + 1}}" >
@@ -32,7 +32,7 @@
         </div>
 
         <!-- Sidebar Area -->
-        <div class="col-md-4">
+        <div class="col-md-3">
             <div class="sidebar-container" *ngIf="selectedExam">
                 <h5>{{ selectedExam.name }}</h5>
                 <p>

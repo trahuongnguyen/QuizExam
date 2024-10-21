@@ -1,15 +1,12 @@
 .container {
     margin-top: 20px;
     margin-bottom: 30px;
-    height: 600px;
 }
 
 .question-container {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     padding: 20px;
     background-color: var(--color-card);
-    max-height: 600px;
-    overflow-y: auto;
 }
 
 .answer-options {
@@ -44,11 +41,13 @@
 
 /*sidebar */
 .sidebar-container {
-    width: 300px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     padding: 20px;
     background-color: var(--color-card);
     top: 0;
+    transition: transform 0.3s ease;
+    position: sticky;
+    transform: translate3d(0px, 0px, 0px);
 }
 
 .sidebar-container h5,

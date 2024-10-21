@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { AuthService } from '../../../service/auth.service';
 import { HttpClient } from '@angular/common/http';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -9,7 +9,7 @@ import { Timestamp } from 'rxjs';
   templateUrl: './detail.component.html',
   styleUrl: './detail.component.css'
 })
-export class DetailComponent implements OnInit {
+export class DetailComponent implements OnInit, OnDestroy {
   constructor(private authService: AuthService, private http: HttpClient, private router: Router, private activatedRoute: ActivatedRoute, public examComponent: ExamComponent) { }
   apiData: any;
   examId: number = 0;
@@ -27,8 +27,27 @@ export class DetailComponent implements OnInit {
       console.log(this.selectedExam);
       console.log(this.selectedExam.questionRecordResponses);
     });
+    this.setupScrollListener(); // Thêm sự kiện cuộn khi component được khởi tạo
     if (this.selectedExam) {
       this.completedQuestions = new Array(this.selectedExam.questionRecordResponses.length).fill(false);
+    }
+  }
+
+  setupScrollListener(): void {
+    window.addEventListener('scroll', this.handleScroll);
+  }
+
+  handleScroll = (): void => {
+    const sidebarContainer = document.querySelector('.sidebar-container') as HTMLElement;
+    if (sidebarContainer) {
+      const scrollPosition = window.scrollY || window.pageYOffset;
+      // Kiểm tra vị trí cuộn để thay đổi `transform`
+      if (scrollPosition > 50) {
+        sidebarContainer.style.transform = 'translate3d(0px, 100px, 0px)';
+        sidebarContainer.style.marginBottom = "100px";
+      } else {
+        sidebarContainer.style.transform = 'translate3d(0px, 0px, 0px)';
+      }
     }
   }
 
@@ -69,12 +88,6 @@ export class DetailComponent implements OnInit {
     alert('Time is up!');
   }
 
-  ngOnDestroy(): void {
-    if (this.countdown) {
-      clearInterval(this.countdown); // Hủy bỏ interval khi component bị hủy
-    }
-  }
-
   // Hàm đánh dấu câu hỏi đã hoàn thành
   markQuestionAsCompleted(index: number): void {
     this.completedQuestions[index] = true;
@@ -83,6 +96,13 @@ export class DetailComponent implements OnInit {
   // Hàm đếm số lượng câu hỏi đã hoàn thành
   getCompletedQuestionsCount(): number {
     return this.completedQuestions.filter(completed => completed).length;
+  }
+
+  ngOnDestroy(): void {
+    window.removeEventListener('scroll', this.handleScroll);
+    if (this.countdown) {
+      clearInterval(this.countdown); // Hủy bỏ interval khi component bị hủy
+    }
   }
 
 }
