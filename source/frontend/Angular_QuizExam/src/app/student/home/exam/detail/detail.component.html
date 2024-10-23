@@ -13,14 +13,14 @@
 
                     <ng-container *ngIf="question.type === 1; else multipleAnswers">
                         <div class="answer-options" *ngFor="let answer of question.answerRecords; let j = index">
-                            <input type="radio" [name]="question.id" [id]="answer.id" (click)="markQuestionAsCompleted(i)">
+                            <input type="radio" [name]="question.id" [id]="answer.id" [checked]="isSelectedAnswer(question.id, answer.id)" (click)="markQuestionAsCompleted(i)">
                             <label [for]="answer.id">{{ answer.content }}</label>
                         </div>
                     </ng-container>
 
                     <ng-template #multipleAnswers>
                         <div class="answer-options" *ngFor="let answer of question.answerRecords; let j = index">
-                            <input type="checkbox" [name]="question.id" [id]="answer.id" (click)="markQuestionAsCompleted(i)">
+                            <input type="checkbox" [name]="question.id" [id]="answer.id" [checked]="isSelectedAnswer(question.id, answer.id)" (click)="markQuestionAsCompleted(i)">
                             <label [for]="answer.id">{{ answer.content }}</label>
                         </div>
                     </ng-template>
@@ -54,7 +54,7 @@
                     </div>
                 </div>
                 <hr class="w-100 my-3">
-                <button class="btn submit-btn w-100">Submit</button>
+                <button class="btn submit-btn w-100" (click)="submitAnswers()">Submit</button>
             </div>
         </div>
     </div>
