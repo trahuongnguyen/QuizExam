@@ -1,10 +1,13 @@
 package com.example.quizexam_student.bean.request;
 
+import com.example.quizexam_student.entity.Level;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Data
 public class ExaminationRequest {
@@ -18,5 +21,5 @@ public class ExaminationRequest {
     private Integer duration;
     @NotNull(message = "Subject is required")
     private int subjectId;
-    private List<Integer> chapterIds;
+    private Map<Integer, Integer> levels;
 }
