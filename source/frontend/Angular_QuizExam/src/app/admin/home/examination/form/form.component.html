@@ -76,13 +76,6 @@
                             </select>
                         </div>
                     </div>
-                    <div class="col-md-6">
-                        <div class="group-input">
-                            <label class="group-input-label" for="chapter">Chapter</label> <br>
-                            <button type="button" class="form-select button-chapter" style="text-align: left;"
-                                (click)="openPopupChapter()">{{ getSelectedChaptersNames() || 'Choose Chapter' }}</button>
-                        </div>
-                    </div>
                 </div>
                 <div class="form-group">
                     <label for="" class="label-title"></label>
@@ -91,29 +84,6 @@
                     </div>
                 </div>
             </form>
-        </div>
-    </div>
-</div>
-<div *ngIf="isPopupChapter" class="modal-backdrop" (click)="closePopupChapter($event)">
-    <div class="modal-content" (click)="$event.stopPropagation()">
-        <div class="modal-header">
-            <span>Select Chapter</span>
-            <span class="close-icon" (click)="closePopupChapter()">&times;</span>
-        </div>
-        <div class="modal-body">
-            <div class="form-chapter">
-                <div class="checkbox-input">
-                    <input type="checkbox" id="selectAll" [checked]="allChecked" (change)="toggleAll()">
-                    <label for="selectAll">Select All</label>
-                </div>
-                <div class="checkbox-input" *ngFor="let chapter of listChapter">
-                    <input type="checkbox" class="check" (change)="toggleChapterSelection(chapter.id, $event)"
-                        [checked]="allChecked ? allChecked:examsForm.chapterIds.includes(chapter.id)"
-                        id="chapter{{chapter.id}}-{{popupChapterIndex}}" />
-                    <label for="chapter{{chapter.id}}-{{popupChapterIndex}}">{{ chapter.name }}</label>
-                </div>
-            </div>
-            <button type="button" class="btn btn-primary button" (click)="closePopupChapter()">OK</button>
         </div>
     </div>
 </div>
