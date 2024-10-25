@@ -74,11 +74,12 @@ public class ExaminationServiceImpl implements ExaminationService {
             }
             System.out.println(73);
             System.out.println(finalQuestions.size());
-            levelsRequest.entrySet().stream()
-                    .peek(entry -> entry.setValue(entry.getValue()-(int) finalQuestions.stream()
-                            .filter(question -> {
-                                    return question.getLevel().getId() == entry.getKey();
-            }).count()));
+            levelsRequest.entrySet().forEach(entry -> {
+                int count = (int) finalQuestions.stream()
+                        .filter(question -> question.getLevel().getId() == entry.getKey())
+                        .count();
+                entry.setValue(entry.getValue() - count);
+            });
             System.out.println(levelsRequest);
             if (finalQuestions.size()==totalQuestions){
                 System.out.println(finalQuestions.size());
