@@ -5,6 +5,8 @@ import { HomeComponent } from './home.component';
 import { HomeRoutingModule } from './home-routing.module';
 import { CommonModule, NgClass, NgFor, NgForOf } from '@angular/common';
 import { MarkComponent } from './mark/mark.component';
+import { FormsModule } from '@angular/forms';
+import { ProfileComponent } from './profile/profile.component';
 
 
 @NgModule({
@@ -12,13 +14,15 @@ import { MarkComponent } from './mark/mark.component';
     HomeComponent,
     HeaderComponent,
     FooterComponent,
-    MarkComponent
+    MarkComponent,
+    ProfileComponent
   ],
   imports: [
     HomeRoutingModule,
     NgClass,
     CommonModule,
-    NgForOf
+    NgForOf,
+    FormsModule
   ],
   providers: [
   ],
