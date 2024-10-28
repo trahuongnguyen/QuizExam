@@ -27,4 +27,7 @@ public class Level {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "level")
     @JsonIgnore
     private Set<Question> questions;
+
+    @Column(name = "status")
+    private int status;
 }

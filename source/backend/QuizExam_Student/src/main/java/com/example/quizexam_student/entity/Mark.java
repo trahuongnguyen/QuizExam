@@ -1,5 +1,6 @@
 package com.example.quizexam_student.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
