@@ -59,6 +59,11 @@ const routes: Routes = [
         loadChildren: () => import('./examination/examination.module')
           .then(m => m.ExaminationModule),
       },
+      {
+        path: 'practice',
+        loadChildren: () => import('./practice/practice.module')
+          .then(m => m.PracticeModule),
+      },
     ]
   },
 
