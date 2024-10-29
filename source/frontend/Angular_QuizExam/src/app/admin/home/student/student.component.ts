@@ -26,6 +26,8 @@ export class StudentComponent implements OnInit, OnDestroy {
   class: String = '';
   userIds: Number[] = [];
 
+  dateOfBirth: string = '';
+
   studentId: any;
 
   isSidebarCollapsed = false;
@@ -46,7 +48,7 @@ export class StudentComponent implements OnInit, OnDestroy {
 
   onDateChange(event: any) {
     // Khi người dùng thay đổi ngày, lưu giá trị đó lại
-    this.stdResponse.userResponse.dob = event; // Giá trị sẽ ở định dạng yyyy-MM-dd
+    this.dateOfBirth = event; // Giá trị sẽ ở định dạng yyyy-MM-dd
   }
 
   ngOnInit(): void {
@@ -224,7 +226,7 @@ export class StudentComponent implements OnInit, OnDestroy {
       userRequest: {
         fullName: this.stdResponse.userResponse.fullName,
         email: this.stdResponse.userResponse.email,
-        dob: this.stdResponse.userResponse.dob,
+        dob: this.dateOfBirth,
         phoneNumber: this.stdResponse.userResponse.phoneNumber,
         address: this.stdResponse.userResponse.address,
         gender: this.stdResponse.userResponse.gender,

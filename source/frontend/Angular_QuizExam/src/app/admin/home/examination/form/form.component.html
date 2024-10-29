@@ -98,20 +98,19 @@
 <div *ngIf="isPopupLevel" class="modal-backdrop" (click)="closePopupLevel($event)">
     <div class="modal-content" (click)="$event.stopPropagation()">
         <div class="modal-header">
-            <span>Select the number of questions by level</span>
+            <span>Enter the number of questions by level</span>
             <span class="close-icon" (click)="closePopupLevel()">&times;</span>
         </div>
         <div class="modal-body">
             <div class="form-level">
-                <div class="form-group" *ngFor="let key of getKeys(levelIds)">
+                <div class="form-group" *ngFor="let level of listLevel">
                     <div class="input-level">
-                        <label for="level{{key}}" class="text-popup">{{ findLevelById(key) }}:</label>
-                        <input type="number" class="form-control" [(ngModel)]="levelIds[key]" name="{{key}}" placeholder="Enter number">
+                        <label for="level{{level.id}}" class="text-popup">{{ level.name }}:</label>
+                        <input type="number" class="form-control" [(ngModel)]="levelId[level.id]" name="{{level.id}}" placeholder="Enter number">
                     </div>
-                    <span class="text-danger error">{{errorMessageLevel[key]}}</span>
+                    <span class="text-danger error">{{errorMessageLevel[level.id]}}</span>
                 </div>
                 <button type="submit" class="btn btn-primary button" (click)="closePopupLevel()">OK</button>
-                <span class="text-danger error">{{errorMessageQuestion}}</span>
             </div>
         </div>
     </div>

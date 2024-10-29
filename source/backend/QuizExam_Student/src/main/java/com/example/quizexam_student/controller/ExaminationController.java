@@ -8,6 +8,7 @@ import com.example.quizexam_student.bean.response.StudentResponse;
 import com.example.quizexam_student.entity.Examination;
 import com.example.quizexam_student.entity.StudentDetail;
 import com.example.quizexam_student.service.ExaminationService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -37,7 +38,7 @@ public class ExaminationController {
     }
 
     @PostMapping("")
-    public Examination save(@RequestBody ExaminationRequest examinationRequest) {
+    public Examination save(@RequestBody @Valid ExaminationRequest examinationRequest) {
         return examinationService.saveExamination(examinationRequest);
     }
 

@@ -31,32 +31,16 @@ import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
 @RequiredArgsConstructor
 @CrossOrigin(origins = "http://localhost:4200")
 @Validated
-@PreAuthorize("hasAnyRole('ADMIN', 'DIRECTOR')")
 public class SubjectController {
     private final SubjectService subjectService;
     private final ExportService exportService;
 
-    @Value("${uploads.dir}")
-    private String uploadDir;
+    @Value("${uploads.subject}")
+    private String uploadSubject;
 
     @GetMapping("")
     public List<Subject> getAll(){
         return subjectService.findAll();
-    }
-
-    //@PreAuthorize("hasRole('ADMIN') or hasRole('DIRECTOR')")
-    @PostMapping(consumes = {MULTIPART_FORM_DATA_VALUE, APPLICATION_JSON_VALUE}, path = "/save")
-    public ResponseEntity<Subject> saveSubject(@RequestPart(value = "file", required = false) MultipartFile file, @RequestPart("subject") @Valid SubjectRequest subjectRequest) throws IOException {
-        if (file != null) {
-            String fileName = "";
-            if (!file.isEmpty()) {
-                LocalDate date = LocalDate.now();
-                fileName = UUID.randomUUID() + "_" + date + "_" + file.getOriginalFilename();
-                Files.copy(file.getInputStream(), Paths.get(uploadDir).resolve(fileName));
-            }
-            subjectRequest.setImage(fileName);
-        }
-        return  ResponseEntity.ok(subjectService.save(subjectRequest));
     }
 
     @GetMapping("/{id}")
@@ -69,6 +53,23 @@ public class SubjectController {
         return subjectService.getAllSubjectBySem(id);
     }
 
+    //@PreAuthorize("hasRole('ADMIN') or hasRole('DIRECTOR')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'DIRECTOR')")
+    @PostMapping(consumes = {MULTIPART_FORM_DATA_VALUE, APPLICATION_JSON_VALUE}, path = "")
+    public ResponseEntity<Subject> saveSubject(@RequestPart(value = "file", required = false) MultipartFile file, @RequestPart("subject") @Valid SubjectRequest subjectRequest) throws IOException {
+        if (file != null) {
+            String fileName = "";
+            if (!file.isEmpty()) {
+                LocalDate date = LocalDate.now();
+                fileName = UUID.randomUUID() + "_" + date + "_" + file.getOriginalFilename();
+                Files.copy(file.getInputStream(), Paths.get(uploadSubject).resolve(fileName));
+            }
+            subjectRequest.setImage(fileName);
+        }
+        return  ResponseEntity.ok(subjectService.save(subjectRequest));
+    }
+
+    @PreAuthorize("hasAnyRole('ADMIN', 'DIRECTOR')")
     @PutMapping (consumes = {MULTIPART_FORM_DATA_VALUE, APPLICATION_JSON_VALUE}, path = "/{id}")
     public Subject updateSubject(@PathVariable int id, @RequestPart(value = "file", required = false) MultipartFile file, @RequestPart("subject") @Valid SubjectRequest subjectRequest) throws IOException {
         if (file != null) {
@@ -76,13 +77,14 @@ public class SubjectController {
             if (!file.isEmpty()) {
                 LocalDate date = LocalDate.now();
                 fileName = UUID.randomUUID() + "_" + date + "_" + file.getOriginalFilename();
-                Files.copy(file.getInputStream(), Paths.get(uploadDir).resolve(fileName));
+                Files.copy(file.getInputStream(), Paths.get(uploadSubject).resolve(fileName));
             }
             subjectRequest.setImage(fileName);
         }
         return subjectService.update(id,subjectRequest);
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'DIRECTOR')")
     @DeleteMapping("/{id}")
     public void deleteSubject(@PathVariable int id){
         subjectService.deleteById(id);
