@@ -2,41 +2,183 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { AuthService } from '../../../service/auth.service';
 import { HttpClient } from '@angular/common/http';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ExamComponent } from '../exam.component';
 import { ToastrService } from 'ngx-toastr';
 import { HomeComponent } from '../../home.component';
+import { ExamComponent } from '../exam.component';
+import { forkJoin } from 'rxjs';
+
 @Component({
   selector: 'app-detail',
   templateUrl: './detail.component.html',
-  styleUrl: './detail.component.css'
+  styleUrls: ['./detail.component.css']
 })
 export class DetailComponent implements OnInit, OnDestroy {
-  constructor(private authService: AuthService, private http: HttpClient, public home: HomeComponent, private router: Router, public toastr: ToastrService, private activatedRoute: ActivatedRoute, public examComponent: ExamComponent) { }
-  apiData: any;
   examId: number = 0;
-  remainingTime: string = ''; // Thời gian còn lại ở định dạng HH:mm:ss
-  countdown: any; // Biến để lưu interval
-
-  selectedExam: any;
-  completedQuestions: boolean[] = []; // Mảng câu hỏi với thông tin về trạng thái hoàn thành
-
+  endTime: any;
+  remainingTime: string = '';
+  countdown: any;
+  examDetail: any;
+  questionStatus: boolean[] = [];
   studentAnswers: { questionRecordId: number; selectedAnswerIds: number[] }[] = [];
+
+  showPopupConfirm: boolean = false;
+  showPopupWarning: boolean = false;
+  warningMessage: string = '';
+
+  constructor(
+    private authService: AuthService,
+    private http: HttpClient,
+    private home: HomeComponent,
+    private examComponent: ExamComponent,
+    private router: Router,
+    private toastr: ToastrService,
+    private activatedRoute: ActivatedRoute
+  ) {}
 
   ngOnInit(): void {
     this.examId = Number(this.activatedRoute.snapshot.paramMap.get('examId'));
-    this.http.get<any>(`${this.authService.apiUrl}/exam/` + this.examId, this.home.httpOptions).subscribe((data: any) => {
-      this.apiData = data;
-      this.selectedExam = data;
-      this.startCountdown(this.selectedExam.duration * 60); 
-      console.log(this.selectedExam);
-      console.log(this.selectedExam.questionRecordResponses);
+    this.loadData();
+    this.setupScrollListener();
+    this.setupAntiCheatMonitoring();
+  }
 
+  loadData(): void {
+    const markRequest = this.http.get<any>(`${this.authService.apiUrl}/mark/${this.examId}`, this.home.httpOptions);
+    const examRequest = this.http.get<any>(`${this.authService.apiUrl}/exam/${this.examId}`, this.home.httpOptions);
+
+    forkJoin([markRequest, examRequest]).subscribe(([markData, examData]) => {
+      this.examComponent.mark = markData;
+      this.examDetail = examData;
+
+      if (this.examComponent.mark.score != null) {
+        this.router.navigateByUrl('/student/home/exam/result/' + this.examId);
+      }
+      if (this.examComponent.mark.beginTime == null) {
+        this.http.put(`${this.authService.apiUrl}/mark/${this.examComponent.mark.id}`, this.home.httpOptions).subscribe(
+          response => {
+            console.log('Update Begin Time successful: ', response);
+          },
+          err => {
+            console.log('Update Begin Time fail: ', err);
+          }
+        );
+      }
+      this.questionStatus = Array(this.examDetail.questionRecordResponses.length).fill(false);
+      this.calculateNewDuration();
       this.loadFromSession();
     });
-    this.setupScrollListener(); // Thêm sự kiện cuộn khi component được khởi tạo
-    if (this.selectedExam) {
-      this.completedQuestions = new Array(this.selectedExam.questionRecordResponses.length).fill(false);
+  }
+
+  calculateNewDuration(): void {
+    const beginTime = this.examComponent.mark.beginTime ? new Date(this.examComponent.mark.beginTime) : new Date(); // Chuyển đổi string thành Date
+    const durationMinutes = this.examDetail.duration;
+
+    // Tính toán endTime.
+    const endTime = new Date(beginTime.getTime() + durationMinutes * 60000); // thêm phút vào thời gian bắt đầu
+
+    // Lấy thời gian hiện tại.
+    const now = new Date();
+
+    // Tính toán số giây còn lại.
+    const remainingDuration = endTime > now ? Math.floor((endTime.getTime() - now.getTime()) / 1000) : 0; // Nếu thời gian đã qua, đặt thành 0
+    
+    this.remainingTime = this.formatTime(remainingDuration); // Cập nhật remainingTime
+    this.startCountdown(remainingDuration); // Bắt đầu đếm ngược từ remainingDuration (bằng giây)
+  }
+
+  startCountdown(duration: number): void {
+    let remainingSeconds = duration;
+    const warningTimes = [180, 120, 60]; // Các mốc thời gian cần thông báo (giây)
+  
+    this.countdown = setInterval(() => {
+      if (remainingSeconds <= 0) {
+        clearInterval(this.countdown);
+        this.submitExam(); // Optionally submit answers when time is up
+        return;
+      }
+
+      // Kiểm tra và gửi thông báo cho các mốc thời gian
+      if (warningTimes.includes(remainingSeconds)) {
+        this.toastr.warning(`Only ${remainingSeconds / 60} minute(s) left!`);
+      }
+  
+      remainingSeconds--;
+      this.remainingTime = this.formatTime(remainingSeconds);
+    }, 1000);
+  }
+
+  formatTime(seconds: number): string {
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    const secs = seconds % 60;
+    return `${this.padNumber(hours)}:${this.padNumber(minutes)}:${this.padNumber(secs)}`;
+  }
+
+  padNumber(num: number): string {
+    return num < 10 ? '0' + num : num.toString();
+  }
+
+  setupAntiCopyAndDevTools() {
+    document.addEventListener('keydown', (event) => {
+      // Ngăn mở Developer Tools
+      if (event.key === 'F12' || (event.ctrlKey && event.key === 'u')) {
+        event.preventDefault();
+        this.toastr.warning("This action is disabled.");
+      }
+    });
+
+    // Kiểm tra khi sao chép nội dung
+    document.addEventListener('copy', (event) => {
+      event.preventDefault();
+      this.toastr.warning("Copying content is not allowed.");
+    });
+
+    // Ngăn chặn menu chuột phải hiển thị
+    document.addEventListener('contextmenu', (event) => {
+      event.preventDefault();
+      this.toastr.warning("Right-click is disabled.");
+    });
+  }
+
+  trackInactivity() {
+    let inactivityTime = 0;
+    const warningTime = 2; // Thời gian không hoạt động trước khi cảnh báo (phút)
+
+    // Theo dõi thời gian không hoạt động
+    function resetTimer() {
+      inactivityTime = 0; // Đặt lại thời gian không hoạt động
     }
+
+    // Gán các sự kiện để theo dõi hoạt động của người dùng
+    document.addEventListener('mousemove', resetTimer); // Được kích hoạt khi di chuyển chuột.
+    document.addEventListener('keydown', resetTimer); // Được kích hoạt khi nhấn phím.
+    document.addEventListener('click', resetTimer); // Được kích hoạt khi nhấp chuột vào bất kỳ vị trí nào trên trang.
+    document.addEventListener('touchstart', resetTimer); // Được kích hoạt khi chạm vào màn hình (trong trường hợp các thiết bị cảm ứng).
+
+    setInterval(() => {
+      inactivityTime++;
+      if (inactivityTime >= warningTime * 60) { // Không hoạt động trong 2 phút (120 giây)
+        this.toastr.warning("You have been inactive for too long. Please return to the exam!");
+      }
+    }, 2000); // Kiểm tra mỗi 2 giây
+  }
+
+  setupAntiCheatMonitoring() {
+    // Kiểm tra sự kiện khi tab chuyển đổi
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'hidden') {
+        this.toastr.warning("You have switched to another window.");
+      }
+    });
+
+    // Kiểm tra khi click chuột ra ngoài bài thi
+    window.addEventListener('blur', () => {
+      this.showPopupWarning = true;
+      this.warningMessage = "Please do not click outside the test.";
+    });
+
+    this.setupAntiCopyAndDevTools();
+    this.trackInactivity();
   }
 
   setupScrollListener(): void {
@@ -46,162 +188,102 @@ export class DetailComponent implements OnInit, OnDestroy {
   handleScroll = (): void => {
     const sidebarContainer = document.querySelector('.sidebar-container') as HTMLElement;
     if (sidebarContainer) {
-      const scrollPosition = window.scrollY || window.pageYOffset;
-      // Kiểm tra vị trí cuộn để thay đổi `transform`
-      if (scrollPosition > 50) {
-        sidebarContainer.style.transform = 'translate3d(0px, 100px, 0px)';
-        sidebarContainer.style.marginBottom = "100px";
-      } else {
-        sidebarContainer.style.transform = 'translate3d(0px, 0px, 0px)';
-      }
+      sidebarContainer.style.transform = window.scrollY > 50 ? 'translate3d(0px, 100px, 0px)' : 'translate3d(0px, 0px, 0px)';
+      sidebarContainer.style.marginBottom = window.scrollY > 50 ? "100px" : "0";
     }
   }
 
-  // Hàm cuộn đến câu hỏi tương ứng
   scrollToQuestion(index: number): void {
     const questionElement = document.getElementById(`question-${index + 1}`);
     if (questionElement) {
-      questionElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      const headerOffset = 80; // Chiều cao của header
+      const elementPosition = questionElement.getBoundingClientRect().top;
+      const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth'
+      });
     }
-  }
-
-  //Đếm ngược thời gian thi
-  startCountdown(durationInSeconds: number): void {
-    let timer = durationInSeconds;
-    this.countdown = setInterval(() => {
-      const hours = Math.floor(timer / 3600);
-      const minutes = Math.floor((timer % 3600) / 60);
-      const seconds = timer % 60;
-
-      this.remainingTime = 
-        `${this.padNumber(hours)}:${this.padNumber(minutes)}:${this.padNumber(seconds)}`;
-
-      if (timer > 0) {
-        timer--;
-      } else {
-        clearInterval(this.countdown);
-        this.onTimeUp();
-      }
-    }, 1000); // Cập nhật mỗi giây
-  }
-
-  padNumber(num: number): string {
-    return num < 10 ? '0' + num : num.toString();
-  }
-
-  onTimeUp(): void {
-    this.submitAnswers();
-  }
-
-  getSelectedAnswerId(index: number): number | null {
-    const answers = this.selectedExam.questionRecordResponses[index].answerRecords;
-    const selectedRadio = answers.find((answer: any) => {
-        const element = document.getElementById(answer.id) as HTMLInputElement; // Khai báo rõ loại
-        return element ? element.checked : false; // Kiểm tra thuộc tính checked
-    });
-    return selectedRadio ? selectedRadio.id : null; // Trả về ID của câu trả lời đã chọn
-}
-
-  getSelectedAnswerIds(index: number): number[] {
-    const answers = this.selectedExam.questionRecordResponses[index].answerRecords;
-    return answers.filter((answer: any) => {
-      const element = document.getElementById(answer.id) as HTMLInputElement;
-      return element ? element.checked : false;
-    }).map((answer: any) => answer.id);
-  }
-
-  // Hàm đánh dấu câu hỏi đã hoàn thành
-  markQuestionAsCompleted(index: number): void {
-    const question = this.selectedExam.questionRecordResponses[index];
-    let selectedAnswerIds: number[];
-
-    if (question.type === 1) { // Đối với câu hỏi đơn lựa chọn
-        const answerId = this.getSelectedAnswerId(index);
-        selectedAnswerIds = answerId !== null ? [answerId] : [];
-    }
-    else { // Đối với câu hỏi nhiều lựa chọn
-        selectedAnswerIds = this.getSelectedAnswerIds(index);
-    }
-
-    this.completedQuestions[index] = true;
-
-    // Cập nhật câu trả lời
-    this.studentAnswers[index] = {
-        questionRecordId: question.id,
-        selectedAnswerIds: selectedAnswerIds
-    };
-
-    // Lưu vào session storage
-    this.saveToSession();
   }
 
   isSelectedAnswer(questionId: number, answerId: number): boolean {
-    const questionIndex = this.selectedExam.questionRecordResponses.findIndex((q: any) => q.id === questionId);
+    const questionIndex = this.examDetail.questionRecordResponses.findIndex((q: any) => q.id === questionId);
     
     if (questionIndex !== -1) {
-        const studentAnswer = this.studentAnswers[questionIndex];
-        if (studentAnswer) {
-            return studentAnswer.selectedAnswerIds.includes(answerId);
-        }
+      const studentAnswer = this.studentAnswers[questionIndex];
+      if (studentAnswer) {
+        return studentAnswer.selectedAnswerIds.includes(answerId);
+      }
     }
     return false;
   }
 
+  markQuestionAsCompleted(index: number): void {
+    const question = this.examDetail.questionRecordResponses[index];
+    const selectedAnswerIds = question.type === 1 
+      ? [this.getSelectedAnswerId(index)].filter((id): id is number => id !== null) 
+      : this.getSelectedAnswerIds(index);
+
+    this.questionStatus[index] = true;
+    this.studentAnswers[index] = { questionRecordId: question.id, selectedAnswerIds };
+    this.saveToSession();
+  }
+
+  getSelectedAnswerId(index: number): number | null {
+    const selectedAnswer = this.examDetail.questionRecordResponses[index].answerRecords.find((answer: any) => 
+      (document.getElementById(answer.id) as HTMLInputElement)?.checked
+    );
+    return selectedAnswer ? selectedAnswer.id : null;
+  }
+
+  getSelectedAnswerIds(index: number): number[] {
+    return this.examDetail.questionRecordResponses[index].answerRecords.filter((answer: any) => 
+      (document.getElementById(answer.id) as HTMLInputElement)?.checked
+    ).map((answer: any) => answer.id);
+  }
+
   saveToSession(): void {
-    const sessionData = {
-        completedQuestions: this.completedQuestions,
-        studentAnswers: this.studentAnswers,
-        remainingTime: this.remainingTime,
-    };
-    sessionStorage.setItem('examSessionData', JSON.stringify(sessionData));
+    localStorage.setItem('examSessionData', JSON.stringify({ questionStatus: this.questionStatus, studentAnswers: this.studentAnswers, remainingTime: this.remainingTime }));
   }
 
   loadFromSession(): void {
-    const sessionData = sessionStorage.getItem('examSessionData');
+    const sessionData = localStorage.getItem('examSessionData');
     if (sessionData) {
-        const { completedQuestions, studentAnswers, remainingTime } = JSON.parse(sessionData);
-        this.completedQuestions = completedQuestions;
-        this.studentAnswers = studentAnswers;
-        this.remainingTime = remainingTime;
-
-        console.log(studentAnswers);
-        // Nếu cần, khôi phục lại giao diện người dùng dựa trên dữ liệu đã lưu
-    }
-    else {
-        this.completedQuestions = new Array(this.selectedExam.questionRecordResponses.length).fill(false);
-        this.studentAnswers = new Array(this.selectedExam.questionRecordResponses.length);
+      const { questionStatus, studentAnswers, remainingTime } = JSON.parse(sessionData);
+      this.questionStatus = questionStatus;
+      this.studentAnswers = studentAnswers;
+      this.remainingTime = remainingTime;
     }
   }
 
-  // Hàm đếm số lượng câu hỏi đã hoàn thành
-  getCompletedQuestionsCount(): number {
-    return this.completedQuestions.filter(completed => completed).length;
+  getOptionLabel(index: number): string {
+    return String.fromCharCode(65 + index); // 65 là mã ASCII cho 'A'
   }
 
-  submitAnswers(): void {
-    const body = {
-        markId: 1,
-        studentQuestionAnswers: this.studentAnswers
-    };
+  getQuestionsStatusCount(): number {
+    return this.questionStatus.filter(Boolean).length;
+  }
 
+  openPopupConfirm(): void {
+    this.showPopupConfirm = true;
+  }
+
+  closePopup(): void {
+    this.showPopupConfirm = false;
+    this.showPopupWarning = false;
+  }
+
+  submitExam(): void {
+    const body = { markId: this.examComponent.mark.id, studentQuestionAnswers: this.studentAnswers };
     this.http.post(`${this.authService.apiUrl}/student-answers`, body, this.home.httpOptions).subscribe(
-      response => {
-        this.toastr.success('Submission successful', 'Success', {
-          timeOut: 2000,
-        });
-      },
-      error => {
-        this.toastr.error('Submission failed', 'Failed', {
-          timeOut: 2000,
-        });
-      });
+      () => this.toastr.success('Submission successful'),
+      () => this.toastr.error('Submission failed')
+    );
   }
 
   ngOnDestroy(): void {
     window.removeEventListener('scroll', this.handleScroll);
-    if (this.countdown) {
-      clearInterval(this.countdown); // Hủy bỏ interval khi component bị hủy
-    }
+    clearInterval(this.countdown);
   }
-
 }

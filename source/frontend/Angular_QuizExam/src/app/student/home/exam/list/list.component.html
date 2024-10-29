@@ -19,7 +19,6 @@
             <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12 mb-5" *ngFor="let exam of examList">
                 <div class="card" (click)="openPopupExam(exam.id)">
                     <div class="card-image">
-                        <!-- <img [src]="exam.subject.img" alt="Quiz Thumbnail"> -->
                         <img src="https://hermes.dio.me/articles/cover/8baa0855-4bd5-4abf-a007-48527a7c5859.png"
                         alt="Quiz Thumbnail">
                     </div>
@@ -32,62 +31,6 @@
                     </div>
                 </div>
             </div>
-            <!-- <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12 mb-5">
-                <div class="card">
-                    <div class="card-image">
-                        <img src="https://i.pinimg.com/564x/33/34/66/333466cd07d18eae8c6546e298f2b9c7.jpg"
-                            alt="Quiz Thumbnail">
-                    </div>
-                    <div class="card-content">
-                        <p class="card-title">HTML, CSS AND JAVASCRIPT</p>
-                        <span class="content-time">
-                            <i class="fa-regular fa-clock "></i> 7h 16/07/2024
-                        </span>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12 mb-5">
-                <div class="card">
-                    <div class="card-image">
-                        <img src="https://i.pinimg.com/564x/33/34/66/333466cd07d18eae8c6546e298f2b9c7.jpg"
-                            alt="Quiz Thumbnail">
-                    </div>
-                    <div class="card-content">
-                        <p class="card-title">HTML, CSS AND JAVASCRIPT</p>
-                        <span class="content-time">
-                            <i class="fa-regular fa-clock "></i> 7h 16/07/2024
-                        </span>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12 mb-5">
-                <div class="card">
-                    <div class="card-image">
-                        <img src="https://i.pinimg.com/564x/33/34/66/333466cd07d18eae8c6546e298f2b9c7.jpg"
-                            alt="Quiz Thumbnail">
-                    </div>
-                    <div class="card-content">
-                        <p class="card-title">HTML, CSS AND JAVASCRIPT</p>
-                        <span class="content-time">
-                            <i class="fa-regular fa-clock "></i> 7h 16/07/2024
-                        </span>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12 mb-5">
-                <div class="card">
-                    <div class="card-image">
-                        <img src="https://i.pinimg.com/564x/33/34/66/333466cd07d18eae8c6546e298f2b9c7.jpg"
-                            alt="Quiz Thumbnail">
-                    </div>
-                    <div class="card-content">
-                        <p class="card-title">HTML, CSS AND JAVASCRIPT</p>
-                        <span class="content-time">
-                            <i class="fa-regular fa-clock "></i> 7h 16/07/2024
-                        </span>
-                    </div>
-                </div>
-            </div> -->
         </div>
     </div>
 </div>
@@ -142,6 +85,5 @@
             </div>
             <button (click)="startExam(selectedExam.id)" class="start-btn">Start the Exam</button>
         </div>
-
     </div>
 </div>

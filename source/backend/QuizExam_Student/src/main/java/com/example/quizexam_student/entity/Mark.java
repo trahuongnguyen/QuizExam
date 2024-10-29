@@ -17,7 +17,7 @@ public class Mark {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "mark_id")
-    private int id;
+    private Integer id;
 
     @Column(name = "score")
     private Integer score;
@@ -27,6 +27,9 @@ public class Mark {
 
     @Column(name = "submitted_time")
     private LocalDateTime submittedTime;
+
+    @Column(name = "warning")
+    private Integer warning;
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "examination_id")

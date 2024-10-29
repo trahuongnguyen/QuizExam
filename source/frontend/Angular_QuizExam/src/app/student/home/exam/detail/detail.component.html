@@ -3,59 +3,67 @@
         <!-- Main Quiz Area -->
         <div class="col-md-9 scrollable-questions">
             <div class="question-container">
-                <div *ngFor="let question of selectedExam.questionRecordResponses; let i = index"
-                    class="question-section" id="question-{{i + 1}}" >
-                    <h6>Question {{ i + 1 }} : {{ question.content }}</h6>
-
+                <div *ngFor="let question of examDetail.questionRecordResponses; let i = index" class="question-section"
+                    id="question-{{i + 1}}">
+                    <h6><b>Question {{ i + 1 }}: </b>{{ question.content }}</h6>
                     <div *ngIf="question.image">
                         <img [src]="'../../../../../../img-question/' + question.image" alt="Question Image">
                     </div>
-
-                    <ng-container *ngIf="question.type === 1; else multipleAnswers">
-                        <div class="answer-options" *ngFor="let answer of question.answerRecords; let j = index">
-                            <input type="radio" [name]="question.id" [id]="answer.id" [checked]="isSelectedAnswer(question.id, answer.id)" (click)="markQuestionAsCompleted(i)">
-                            <label [for]="answer.id">{{ answer.content }}</label>
-                        </div>
-                    </ng-container>
-
-                    <ng-template #multipleAnswers>
-                        <div class="answer-options" *ngFor="let answer of question.answerRecords; let j = index">
-                            <input type="checkbox" [name]="question.id" [id]="answer.id" [checked]="isSelectedAnswer(question.id, answer.id)" (click)="markQuestionAsCompleted(i)">
-                            <label [for]="answer.id">{{ answer.content }}</label>
-                        </div>
-                    </ng-template>
+                    <div class="answer-options" *ngFor="let answer of question.answerRecords; let j = index">
+                        <input [type]="question.type === 1 ? 'radio' : 'checkbox'" [name]="question.id" [id]="answer.id"
+                            [checked]="isSelectedAnswer(question.id, answer.id)" (click)="markQuestionAsCompleted(i)">
+                        <label [for]="answer.id"><b>{{ getOptionLabel(j) }}. </b>{{ answer.content }}</label>
+                    </div>
                 </div>
             </div>
-
-            <!-- Add more questions here as needed -->
-
         </div>
 
         <!-- Sidebar Area -->
         <div class="col-md-3">
-            <div class="sidebar-container" *ngIf="selectedExam">
-                <h5>{{ selectedExam.name }}</h5>
+            <div class="sidebar-container" *ngIf="examDetail">
+                <h4><b>{{ examDetail.name }}</b></h4>
                 <p>
-                    <span class="mdi mdi-clock" style="margin-right: 5px;"></span>
-                    {{ remainingTime }} <!-- Hiển thị thời gian đếm ngược -->
+                    <span class="mdi mdi-clock"></span>
+                    {{ remainingTime }}
                 </p>
                 <hr class="w-100 my-3">
-
                 <div class="count mb-3">
-                    <input value="{{ getCompletedQuestionsCount() }}/{{ selectedExam.questionRecordResponses.length }}" readonly>
+                    <input value="{{ getQuestionsStatusCount() }}/{{ examDetail.questionRecordResponses.length }}"
+                        readonly>
                 </div>
                 <div class="calendar mb-3">
                     <div class="row">
-                        <div *ngFor="let question of selectedExam.questionRecordResponses; 
-                                let i = index" id="question-{{i + 1}}" 
-                                class="question-td col-5" (click)="scrollToQuestion(i)"
-                                [ngClass]="{'btn-success': completedQuestions[i], 'btn-outline-primary': !completedQuestions[i]}">{{ i + 1 }}
+                        <div *ngFor="let question of examDetail.questionRecordResponses; let i = index"
+                            class="question-td col-5" (click)="scrollToQuestion(i)"
+                            [ngClass]="{'btn-success': questionStatus[i], 'btn-outline-primary': !questionStatus[i]}">
+                            {{ i + 1 }}
                         </div>
                     </div>
                 </div>
                 <hr class="w-100 my-3">
-                <button class="btn submit-btn w-100" (click)="submitAnswers()">Submit</button>
+                <button class="btn submit-btn w-100" (click)="openPopupConfirm()">Submit</button>
             </div>
         </div>
+    </div>
+</div>
+
+<!-- Popup xác nhận -->
+<div class="custom-popup" *ngIf="showPopupConfirm">
+    <div class="popup-content">
+        <h4 class="modal-title"><b>Confirm submission</b></h4>
+        <hr/>
+        <p>Are you sure you want to submit?</p>
+        <button class="btn submit-btn" (click)="submitExam()">Submit</button>
+        <button class="btn btn-secondary" (click)="closePopup()">Cancel</button>
+    </div>
+</div>
+
+<!-- Popup cảnh báo -->
+<div class="custom-popup" *ngIf="showPopupWarning">
+    <div class="popup-content">
+        <h4 class="modal-title"><b>Warning</b></h4>
+        <hr/>
+        <p>{{ warningMessage }}</p>
+        <button class="btn btn-warning" (click)="closePopup()">Close</button>
     </div>
 </div>
