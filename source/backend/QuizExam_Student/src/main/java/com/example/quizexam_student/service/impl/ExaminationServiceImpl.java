@@ -48,7 +48,7 @@ public class ExaminationServiceImpl implements ExaminationService {
             questionsByLevels.put(key,questionsByLevel);
         });
 
-        List<Examination> examinations = examinationRepository.findAllBySubjectOrderByIdDesc(subject).stream().limit(3).toList();
+        List<Examination> examinations = examinationRepository.findTop3BySubjectOrderByIdDesc(subject);
         Map<Integer, List<Question>> questionsByExams = new HashMap<>();
         examinations.forEach(examination -> {
             questionsByExams.put(examination.getId(), examination.getQuestions().stream().toList());
@@ -59,31 +59,22 @@ public class ExaminationServiceImpl implements ExaminationService {
             generatedCount++;
             List<Question> selectedQuestion = generateQuestion(allQuestions, levelsRequest);
             if (!questionsByExams.isEmpty()){
-                System.out.println(questionsByExams.keySet());
                 for (Map.Entry<Integer, List<Question>> entry : questionsByExams.entrySet()) {
                     allQuestions.removeAll(selectedQuestion);
                     selectedQuestion = checkDuplicatedQuestionInExamination(allQuestions, entry.getValue(), selectedQuestion);
-                    System.out.println(67);
-                    System.out.println(selectedQuestion.size());
-                    System.out.println(69);
                 }
                 finalQuestions.addAll(selectedQuestion);
             } else {
                 allQuestions.removeAll(selectedQuestion);
                 finalQuestions.addAll(selectedQuestion);
             }
-            System.out.println(73);
-            System.out.println(finalQuestions.size());
             levelsRequest.entrySet().forEach(entry -> {
                 int count = (int) finalQuestions.stream()
                         .filter(question -> question.getLevel().getId() == entry.getKey())
                         .count();
                 entry.setValue(entry.getValue() - count);
             });
-            System.out.println(levelsRequest);
             if (finalQuestions.size()==totalQuestions){
-                System.out.println(finalQuestions.size());
-                System.out.println(83);
                 break;
             }
             if (generatedCount == 3){
@@ -91,20 +82,25 @@ public class ExaminationServiceImpl implements ExaminationService {
             }
         } while (true);
 
+        int maxScore = 0;
         for (Question question : finalQuestions) {
             generateAnswerForQuestion(question);
+            maxScore += question.getLevel().getPoint();
         }
+
         Examination exam = ExaminationMapper.convertFromRequest(examinationRequest);
         exam.setStatus(1);
-        exam.setMaxScore(totalQuestions);
+        exam.setMaxScore(maxScore);
         exam.setQuestions(new HashSet<>(finalQuestions));
+        exam.setSubject(subject);
+
         do {
             int randomNumber = random.nextInt(1000);
             String randomNumberStr = String.format("%03d",randomNumber);
             String currentDate = new SimpleDateFormat("yyMM").format(new Date());
             exam.setCode(allQuestions.get(0).getSubject().getName()+ "_" + randomNumberStr + "_" +currentDate);
-        }while (examinationRepository.existsByCode(exam.getCode()));
-        exam.setSubject(subjectRepository.findById(examinationRequest.getSubjectId()).orElse(null));
+        } while (examinationRepository.existsByCode(exam.getCode()));
+
         for (Question question : finalQuestions) {
             setAnswerForQuestion(exam, question);
         }

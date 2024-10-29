@@ -13,4 +13,5 @@ public interface ExaminationRepository extends JpaRepository<Examination, Intege
     List<Examination> findAllBySubjectOrderByIdDesc(Subject subject);
     List<Examination> findAllByStatus(int status);
     boolean existsByCode(String code);
+    List<Examination> findTop3BySubjectOrderByIdDesc(Subject subject);
 }
