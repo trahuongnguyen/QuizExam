@@ -152,24 +152,33 @@ export class ListComponent implements OnInit, OnDestroy {
     this.isPopupUpdate = false;
   }
 
+  selectedImage: File | null = null;
+
+  onFileSelected(event: any): void {
+    this.selectedImage = event.target.files[0];
+  }
+
 
   semId: number = 1;
   name: String = '';
   image: String = '';
 
   createSubject(): void {
-    const _subject =
-    {
-      semId: this.semId, name: this.name, image: this.image,
+    const formData = new FormData();
+    
+    const subject = { semId: this.semId, name: this.name }
+    if (this.selectedImage) {
+      formData.append('file', this.selectedImage);
     }
+    formData.append('subject', new Blob([JSON.stringify(subject)], { type: 'application/json' }));
 
-    this.http.post(`${this.authService.apiUrl}/subject/save`, _subject, this.home.httpOptions).subscribe(
+    this.http.post(`${this.authService.apiUrl}/subject`, formData, this.home.httpOptions).subscribe(
       response => {
         this.toastr.success('Create Successful!', 'Success', {
           timeOut: 2000,
         });
         console.log('Create successfully', response);
-        this.selectedSem = _subject.semId;
+        this.selectedSem = subject.semId;
         this.reloadTable(this.selectedSem);
       },
       error => {
@@ -182,18 +191,21 @@ export class ListComponent implements OnInit, OnDestroy {
   }
 
   updateSubject() {
-    const _subject =
-    {
-      semId: this.subjectDetail.sem.id, name: this.subjectDetail.name, image: this.subjectDetail.image,
-    }
+    const formData = new FormData();
 
-    this.http.put(`${this.authService.apiUrl}/subject/${this.subjectId}`, _subject, this.home.httpOptions).subscribe(
+    const subject = { semId: this.semId, name: this.subjectDetail.name }
+    if (this.selectedImage) {
+      formData.append('file', this.selectedImage);
+    }
+    formData.append('subject', new Blob([JSON.stringify(subject)], { type: 'application/json' }));
+
+    this.http.put(`${this.authService.apiUrl}/subject/${this.subjectId}`, formData, this.home.httpOptions).subscribe(
       response => {
         this.toastr.success('Update Successful!', 'Success', {
           timeOut: 2000,
         });
         console.log('Update successfully', response);
-        this.reloadTable(_subject.semId);
+        this.reloadTable(subject.semId);
       },
       error => {
         this.toastr.error('Error', 'Error', {

@@ -47,8 +47,8 @@ export class FormComponent implements OnInit {
   examsForm: ExamForm = {
     name: '',
     duration: 30,
-    startTime: new Date(),
-    endTime: new Date(),
+    startTime: "",
+    endTime: "",
     classes: [],
     students: [],
     subjectId: 1,
@@ -67,45 +67,44 @@ export class FormComponent implements OnInit {
       startTime: this.examsForm.startTime,
       endTime: this.examsForm.endTime,
       subjectId: this.examsForm.subjectId,
-      levelId: this.levelIds
+      levels: this.levelId
     };
-    this.http.post(`${this.authService.apiUrl}/exam`, exam, this.home.httpOptions).subscribe(
-      response => {
-        this.toastr.success('Create exam Successful!', 'Success', {
-          timeOut: 2000,
-        });
-        this.createdExam = response;
-        this.examComponent.step = true;
-        this.router.navigate(['/admin/home/exam/addStudent/1/1']);
-      },
-      error => {
-        if (error.status === 401) {
-          this.toastr.error('Unauthorized', 'Failed', {
+
+    if (!this.validateLevel()) {
+      this.http.post(`${this.authService.apiUrl}/exam`, exam, this.home.httpOptions).subscribe(
+        response => {
+          this.toastr.success('Create exam Successful!', 'Success', {
             timeOut: 2000,
           });
-        } else {
-          let msg = '';
-          if (error.error.message) {
-            msg = error.error.message;
+          this.createdExam = response;
+          this.examComponent.step = true;
+          this.router.navigate(['/admin/home/exam/addStudent/1/1']);
+        },
+        error => {
+          if (error.status === 401) {
+            this.toastr.error('Unauthorized', 'Failed', {
+              timeOut: 2000,
+            });
           } else {
-            error.error.forEach((err: any) => {
-              msg += ' ' + err.message;
-            })
+            let msg = '';
+            if (error.error.message) {
+              msg = error.error.message;
+            } else {
+              error.error.forEach((err: any) => {
+                msg += ' ' + err.message;
+              })
+            }
+            this.toastr.error(msg, 'Failed', {
+              timeOut: 2000,
+            });
           }
-          this.toastr.error(msg, 'Failed', {
-            timeOut: 2000,
-          });
+          console.log('Error', error);
         }
-        console.log('Error', error);
-      }
-    )
+      )
+    }
   }
 
-  levelIds: { [key: string]: number; } = {};
-
-  getKeys(obj: any) {
-    return Object.keys(obj);
-  }
+  levelId: { [key: string]: number; } = {};
 
   ngOnInit(): void {
     //this.subjectId = Number(this.activatedRoute.snapshot.params['subjectId']) ?? 0;
@@ -115,14 +114,17 @@ export class FormComponent implements OnInit {
     this.initializeLevel(this.subjectId);
 
     this.listLevel.forEach((element:any) => {
-      this.levelIds[element.id as string] = 0;
-      console.log(this.levelIds);
+      this.levelId[element.id as string] = 0;
+      console.log(this.levelId);
     });
   }
 
   initializeLevel(subject: number): void {
-    this.http.get<any>(`${this.authService.apiUrl}/`, this.home.httpOptions).subscribe((data: any) => {
-      this.listLevel = data;
+    this.http.get<any>(`${this.authService.apiUrl}/level`, this.home.httpOptions).subscribe((data: any) => {
+      this.listLevel = data; 
+      console.log(this.listLevel);
+    }, error => {
+      console.error('Error fetching levels:', error); 
     });
   }
 
@@ -163,34 +165,35 @@ export class FormComponent implements OnInit {
   }
 
   errorMessageLevel: { [key: string]: string } = {};
-  errorMessageQuestion: string = "";
 
-  closePopupLevel(event?: MouseEvent): void {
+  validateLevel(): boolean {
     var flag = false;
     var totalQuestions = 0;
     this.listLevel.forEach((element:any) => {
-      if (this.levelIds[element.id as string] < 0) {
-        this.errorMessageLevel[element.id] = "a dai dep trai";
+      if (this.levelId[element.id as string] < 0) {
+        this.errorMessageLevel[element.id] = "Thieu cau hoi";
         flag = true;
       }
       else {
         this.errorMessageLevel[element.id] = "";
       }
-      totalQuestions += this.levelIds[element.id as string];
+      totalQuestions += this.levelId[element.id as string];
     });
-
-    if (flag) {
-      return;
-    }
+    
     if (totalQuestions < 16 || totalQuestions > 25) {
-      this.errorMessageQuestion = "Tổng số câu hỏi phải ít nhất 16 câu và nhiều nhất 25 câu."
-      return;
+      this.toastr.error('Tổng số câu hỏi trong level phải ít nhất 16 câu và nhiều nhất 25 câu.', 'Error', {
+        timeOut: 2000,
+      });
+      flag = true;
     }
-    else {
-      this.errorMessageQuestion = "";
-    }
+    return flag;
+  }
+
+  closePopupLevel(event?: MouseEvent): void {
+    var flag = false;
+
     if (event) {
-      event.stopPropagation(); // Ngăn việc sự kiện click ra ngoài ảnh hưởng đến việc đóng modal
+      event.stopPropagation();
     }
     this.isPopupLevel = false;
   }
