@@ -111,7 +111,7 @@ export class FormComponent implements OnInit {
     this.http.get<any>(`${this.authService.apiUrl}/subject`, this.home.httpOptions).subscribe(response => {
       this.subjects = response;
     });
-    this.initializeLevel(this.subjectId);
+    this.initializeLevel();
 
     this.listLevel.forEach((element:any) => {
       this.levelId[element.id as string] = 0;
@@ -119,7 +119,7 @@ export class FormComponent implements OnInit {
     });
   }
 
-  initializeLevel(subject: number): void {
+  initializeLevel(): void {
     this.http.get<any>(`${this.authService.apiUrl}/level`, this.home.httpOptions).subscribe((data: any) => {
       this.listLevel = data; 
       console.log(this.listLevel);
@@ -138,7 +138,7 @@ export class FormComponent implements OnInit {
     this.examsForm.chapterIds = [];
     this.allChecked = false;
     console.log('Selected Sem:', this.selectedSubject);
-    this.initializeLevel(this.selectedSubject);
+    this.initializeLevel();
   }
 
   allChecked = false;
@@ -171,7 +171,7 @@ export class FormComponent implements OnInit {
     var totalQuestions = 0;
     this.listLevel.forEach((element:any) => {
       if (this.levelId[element.id as string] < 0) {
-        this.errorMessageLevel[element.id] = "Thieu cau hoi";
+        this.errorMessageLevel[element.id] = "Question number cannot be negative.";
         flag = true;
       }
       else {
@@ -181,7 +181,7 @@ export class FormComponent implements OnInit {
     });
     
     if (totalQuestions < 16 || totalQuestions > 25) {
-      this.toastr.error('Tổng số câu hỏi trong level phải ít nhất 16 câu và nhiều nhất 25 câu.', 'Error', {
+      this.toastr.error('Total of number questions must be between 16 and 25 (Level).', 'Error', {
         timeOut: 2000,
       });
       flag = true;
@@ -189,8 +189,10 @@ export class FormComponent implements OnInit {
     return flag;
   }
 
-  closePopupLevel(event?: MouseEvent): void {
-    var flag = false;
+  closePopupLevel(event?: MouseEvent, flag?: Boolean): void {
+    if (this.validateLevel() && flag) {
+      return;
+    }
 
     if (event) {
       event.stopPropagation();

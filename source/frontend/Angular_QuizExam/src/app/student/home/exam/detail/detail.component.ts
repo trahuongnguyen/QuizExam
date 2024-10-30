@@ -24,6 +24,9 @@ export class DetailComponent implements OnInit, OnDestroy {
   showPopupConfirm: boolean = false;
   showPopupWarning: boolean = false;
   warningMessage: string = '';
+  isNote: boolean = false;
+  inactivityTime: number = 0;
+  countdownTrackInactivity: any;
 
   constructor(
     private authService: AuthService,
@@ -50,11 +53,21 @@ export class DetailComponent implements OnInit, OnDestroy {
       this.examComponent.mark = markData;
       this.examDetail = examData;
 
+      const startTime = new Date(this.examDetail.startTime); // Chuyển đổi startTime sang Date
+      const currentTime = new Date(); // Lấy thời gian hiện tại
+
+      if (startTime > currentTime) {
+        this.router.navigateByUrl('/student/home/exam');
+        return;
+      }
+
       if (this.examComponent.mark.score != null) {
         this.router.navigateByUrl('/student/home/exam/result/' + this.examId);
+        return;
       }
+      
       if (this.examComponent.mark.beginTime == null) {
-        this.http.put(`${this.authService.apiUrl}/mark/${this.examComponent.mark.id}`, this.home.httpOptions).subscribe(
+        this.http.put(`${this.authService.apiUrl}/mark/begin-time/${this.examComponent.mark.id}`, this.home.httpOptions).subscribe(
           response => {
             console.log('Update Begin Time successful: ', response);
           },
@@ -92,7 +105,6 @@ export class DetailComponent implements OnInit, OnDestroy {
   
     this.countdown = setInterval(() => {
       if (remainingSeconds <= 0) {
-        clearInterval(this.countdown);
         this.submitExam(); // Optionally submit answers when time is up
         return;
       }
@@ -118,66 +130,85 @@ export class DetailComponent implements OnInit, OnDestroy {
     return num < 10 ? '0' + num : num.toString();
   }
 
-  setupAntiCopyAndDevTools() {
-    document.addEventListener('keydown', (event) => {
-      // Ngăn mở Developer Tools
-      if (event.key === 'F12' || (event.ctrlKey && event.key === 'u')) {
-        event.preventDefault();
-        this.toastr.warning("This action is disabled.");
-      }
+  updateWarning(): void {
+    console.log(this.examComponent.mark.id);
+    const mark = { warning: this.examComponent.mark.warning }
+    this.http.put(`${this.authService.apiUrl}/mark/warning/${this.examComponent.mark.id}`, mark, this.home.httpOptions).subscribe({
+      next: () => {},
+      error: () => {}
     });
+  }
 
-    // Kiểm tra khi sao chép nội dung
-    document.addEventListener('copy', (event) => {
+  preventDeveloperTools = (event: KeyboardEvent) => {
+    if (event.key === 'F12' || (event.ctrlKey && event.key === 'u')) {
       event.preventDefault();
-      this.toastr.warning("Copying content is not allowed.");
-    });
+      this.toastr.warning("This action is disabled.");
+    }
+  };
 
-    // Ngăn chặn menu chuột phải hiển thị
-    document.addEventListener('contextmenu', (event) => {
-      event.preventDefault();
-      this.toastr.warning("Right-click is disabled.");
-    });
+  preventCopy = (event: ClipboardEvent) => {
+    event.preventDefault();
+    this.toastr.warning("Copying content is not allowed.");
+  };
+
+  preventRightClick = (event: MouseEvent) => {
+    event.preventDefault();
+    this.toastr.warning("Right-click is disabled.");
+  };
+
+  handleVisibilityChange = () => {
+    if (document.visibilityState === 'hidden') {
+      this.toastr.warning("You have switched to another window.");
+    }
+  };
+
+  handleBlur = () => {
+    // this.examComponent.mark.warning++;
+    // this.updateWarning();
+    // if (this.examComponent.mark.warning >= 3) {
+    //   this.submitExam();
+    //   return;
+    // }
+    // this.isNote = true;
+    // this.showPopupWarning = true;
+    // this.warningMessage = `Please do not click outside the test (${this.examComponent.mark.warning}).`;
+  };
+
+  handleFocus = () => {
+    clearInterval(this.countdown);
+    this.calculateNewDuration();
+  };
+
+  // Hàm đặt lại timer không hoạt động
+  resetInactivityTimer = () => {
+    this.inactivityTime = 0;
   }
 
   trackInactivity() {
-    let inactivityTime = 0;
     const warningTime = 2; // Thời gian không hoạt động trước khi cảnh báo (phút)
 
-    // Theo dõi thời gian không hoạt động
-    function resetTimer() {
-      inactivityTime = 0; // Đặt lại thời gian không hoạt động
-    }
-
     // Gán các sự kiện để theo dõi hoạt động của người dùng
-    document.addEventListener('mousemove', resetTimer); // Được kích hoạt khi di chuyển chuột.
-    document.addEventListener('keydown', resetTimer); // Được kích hoạt khi nhấn phím.
-    document.addEventListener('click', resetTimer); // Được kích hoạt khi nhấp chuột vào bất kỳ vị trí nào trên trang.
-    document.addEventListener('touchstart', resetTimer); // Được kích hoạt khi chạm vào màn hình (trong trường hợp các thiết bị cảm ứng).
+    document.addEventListener('mousemove', this.resetInactivityTimer); // Được kích hoạt khi di chuyển chuột.
+    document.addEventListener('keydown', this.resetInactivityTimer); // Được kích hoạt khi nhấn phím.
+    document.addEventListener('click', this.resetInactivityTimer); // Được kích hoạt khi nhấp chuột vào bất kỳ vị trí nào trên trang.
+    document.addEventListener('touchstart', this.resetInactivityTimer); // Được kích hoạt khi chạm vào màn hình (trong trường hợp các thiết bị cảm ứng).
 
-    setInterval(() => {
-      inactivityTime++;
-      if (inactivityTime >= warningTime * 60) { // Không hoạt động trong 2 phút (120 giây)
-        this.toastr.warning("You have been inactive for too long. Please return to the exam!");
+    this.countdownTrackInactivity = setInterval(() => {
+      this.inactivityTime++;
+      if (this.inactivityTime >= warningTime * 60) { // Không hoạt động trong 2 phút (120 giây)
+        this.showPopupWarning = true;
+        this.warningMessage = `You have been inactive for too long. Please return to the exam!`;
       }
-    }, 2000); // Kiểm tra mỗi 2 giây
+    }, 1000); // Kiểm tra mỗi giây
   }
 
   setupAntiCheatMonitoring() {
-    // Kiểm tra sự kiện khi tab chuyển đổi
-    document.addEventListener('visibilitychange', () => {
-      if (document.visibilityState === 'hidden') {
-        this.toastr.warning("You have switched to another window.");
-      }
-    });
-
-    // Kiểm tra khi click chuột ra ngoài bài thi
-    window.addEventListener('blur', () => {
-      this.showPopupWarning = true;
-      this.warningMessage = "Please do not click outside the test.";
-    });
-
-    this.setupAntiCopyAndDevTools();
+    document.addEventListener('keydown', this.preventDeveloperTools); // Ngăn chặn mở Developer Tools
+    document.addEventListener('copy', this.preventCopy); // Ngăn chặn sao chép nội dung
+    document.addEventListener('contextmenu', this.preventRightClick); // Ngăn chặn menu chuột phải
+    document.addEventListener('visibilitychange', this.handleVisibilityChange); // Xử lý sự kiện visibility change (Check chuyển đổi tab - khi tab đó bị ẩn đi)
+    window.addEventListener('blur', this.handleBlur); // Xử lý sự kiện blur (Check cửa sổ đó bị mất tiêu điểm)
+    window.addEventListener('focus', this.handleFocus); // Xử lý sự kiện focus
     this.trackInactivity();
   }
 
@@ -272,18 +303,33 @@ export class DetailComponent implements OnInit, OnDestroy {
   closePopup(): void {
     this.showPopupConfirm = false;
     this.showPopupWarning = false;
+    this.isNote = false;
   }
 
   submitExam(): void {
     const body = { markId: this.examComponent.mark.id, studentQuestionAnswers: this.studentAnswers };
     this.http.post(`${this.authService.apiUrl}/student-answers`, body, this.home.httpOptions).subscribe(
-      () => this.toastr.success('Submission successful'),
+      () => this.router.navigateByUrl('/student/home/exam/result/' + this.examId),
       () => this.toastr.error('Submission failed')
     );
   }
 
   ngOnDestroy(): void {
+    document.removeEventListener('keydown', this.preventDeveloperTools);
+    document.removeEventListener('copy', this.preventCopy);
+    document.removeEventListener('contextmenu', this.preventRightClick);
+    document.removeEventListener('visibilitychange', this.handleVisibilityChange);
+    window.removeEventListener('blur', this.handleBlur);
+    window.removeEventListener('focus', this.handleFocus);
+
+    document.removeEventListener('mousemove', this.resetInactivityTimer);
+    document.removeEventListener('keydown', this.resetInactivityTimer);
+    document.removeEventListener('click', this.resetInactivityTimer);
+    document.removeEventListener('touchstart', this.resetInactivityTimer);
+
     window.removeEventListener('scroll', this.handleScroll);
+    
     clearInterval(this.countdown);
+    clearInterval(this.countdownTrackInactivity);
   }
 }

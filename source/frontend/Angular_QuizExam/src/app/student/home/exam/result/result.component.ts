@@ -59,7 +59,7 @@ export class ResultComponent implements AfterViewInit {
     });
 
     const ctx2 = document.getElementById('doughnutChart') as HTMLCanvasElement;
-    ctx.style.backgroundColor = '#DDDDDD';
+    ctx.style.backgroundColor = '#FFFFFF';
     // Tạo biểu đồ Doughnut Chart
     new Chart(ctx2, {
       type: 'doughnut',

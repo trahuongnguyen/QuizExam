@@ -21,14 +21,9 @@ export class HomeComponent {
     this.windowScrolled = Math.round(window.scrollY) != 0;
   }
 
-  userId: number = 0;
-  fullName: string = '';
-
   ngOnInit() {
     this.http.get<any>(`${this.authService.apiUrl}/auth/profile`, this.httpOptions).subscribe((student: any) => {
       this.authService.myUser = student;
-      this.userId = student.user.id;
-      this.fullName = student.user.fullName;
     });
   }
 

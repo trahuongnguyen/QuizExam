@@ -6,6 +6,7 @@ import com.example.quizexam_student.entity.User;
 import com.example.quizexam_student.mapper.MarkMapper;
 import com.example.quizexam_student.service.MarkService;
 import com.example.quizexam_student.service.UserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
@@ -37,8 +38,13 @@ public class MarkController {
         return markService.getOneScoredByExam(user.getStudentDetail(), examId);
     }
 
-    @PutMapping("/{id}")
-    public MarkResponse updateBeginTime(@PathVariable int id){
+    @PutMapping("/begin-time/{id}")
+    public MarkResponse updateBeginTime(@PathVariable int id) {
         return MarkMapper.convertToResponse(markService.updateBeginTime(id));
+    }
+
+    @PutMapping("/warning/{id}")
+    public MarkResponse updateWarning(@PathVariable int id, @RequestBody @Valid Mark mark) {
+        return MarkMapper.convertToResponse(markService.updateWarning(id, mark));
     }
 }

@@ -262,6 +262,7 @@ public class ExaminationServiceImpl implements ExaminationService {
         questionRecord.setExamination(examination);
         questionRecord.setContent(question.getContent());
         questionRecord.setImage(question.getImage());
+        questionRecord.setLevel(question.getLevel().getName());
         questionRecord.setPoint(question.getLevel().getPoint());
 
         List<Answer> answers = question.getAnswers().stream().toList();

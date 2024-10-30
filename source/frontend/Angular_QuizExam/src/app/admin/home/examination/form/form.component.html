@@ -95,11 +95,11 @@
     </div>
 </div>
 
-<div *ngIf="isPopupLevel" class="modal-backdrop" (click)="closePopupLevel($event)">
+<div *ngIf="isPopupLevel" class="modal-backdrop" (click)="closePopupLevel($event, false)">
     <div class="modal-content" (click)="$event.stopPropagation()">
         <div class="modal-header">
             <span>Enter the number of questions by level</span>
-            <span class="close-icon" (click)="closePopupLevel()">&times;</span>
+            <span class="close-icon" (click)="closePopupLevel($event, false)">&times;</span>
         </div>
         <div class="modal-body">
             <div class="form-level">
@@ -110,7 +110,7 @@
                     </div>
                     <span class="text-danger error">{{errorMessageLevel[level.id]}}</span>
                 </div>
-                <button type="submit" class="btn btn-primary button" (click)="closePopupLevel()">OK</button>
+                <button type="submit" class="btn btn-primary button" (click)="closePopupLevel($event, true)">OK</button>
             </div>
         </div>
     </div>

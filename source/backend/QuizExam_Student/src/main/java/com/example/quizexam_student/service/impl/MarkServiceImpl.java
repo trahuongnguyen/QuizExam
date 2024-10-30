@@ -47,4 +47,14 @@ public class MarkServiceImpl implements MarkService {
         mark.setBeginTime(LocalDateTime.now());
         return markRepository.save(mark);
     }
+
+    @Override
+    public Mark updateWarning(int id, Mark markInput) {
+        Mark mark = markRepository.findById(id).orElse(null);
+        if (Objects.isNull(mark) || mark.getScore() != null) {
+            throw new NotFoundException("mark", "Mark not found.");
+        }
+        mark.setWarning(markInput.getWarning());
+        return markRepository.save(mark);
+    }
 }

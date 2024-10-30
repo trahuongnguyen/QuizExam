@@ -62,15 +62,7 @@ export class HomeComponent implements OnInit {
   constructor(public admin : AdminComponent, private router: Router,  public authService: AuthService, private http: HttpClient) {
     this.loadToken();
     this.role = localStorage.getItem(authService.roleKey);
-    this.router.events.pipe(
-      filter(event => event instanceof NavigationEnd)
-    ).subscribe(() => {
-      this.currentRoute = this.router.url;
-      console.log(this.currentRoute)
-    });
   }
-
-  currentRoute: string = '';
 
   isActive(roles: Array<String>): boolean {
     return roles.includes(this.role);

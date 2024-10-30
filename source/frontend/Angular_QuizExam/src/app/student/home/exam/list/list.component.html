@@ -10,8 +10,7 @@
                 <li class="nav-item" role="presentation">
                     <button class="nav-link" [ngClass]="index===0?'active':''" [id]="'sem'+(index+1)+'-tab'"
                         data-bs-toggle="tab" [attr.data-bs-target]="'#sem'+(index+1)" type="button" role="tab"
-                        [attr.aria-controls]="'sem'+ (index+1)" [attr.aria-selected]="index===0?'true':'false'">Sem
-                        {{sem.name}}</button>
+                        [attr.aria-controls]="'sem'+ (index+1)" [attr.aria-selected]="index===0?'true':'false'">{{sem.name}}</button>
                 </li>
             </ng-template>
         </ul>

@@ -37,27 +37,27 @@
         <span class="mdi mdi-chart-bar icon"></span>
         <span class="link-text" *ngIf="!isSidebarCollapsed">Dashboard</span>
     </a>
-    <a [routerLink]="'subject'" *ngIf="isActive(['ADMIN','DIRECTOR'])" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" class="sidebar-link">
+    <a [routerLink]="'subject'" *ngIf="isActive(['ADMIN','DIRECTOR'])" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: false }" class="sidebar-link">
         <span class="mdi mdi-book-open-variant icon"></span>
         <span class="link-text" *ngIf="!isSidebarCollapsed">Subject</span>
     </a>
-    <a [routerLink]="'class'" *ngIf="isActive(['ADMIN','DIRECTOR','SRO'])" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" class="sidebar-link">
+    <a [routerLink]="'class'" *ngIf="isActive(['ADMIN','DIRECTOR','SRO'])" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: false }" class="sidebar-link">
         <span class="mdi mdi-home-outline icon"></span>
         <span class="link-text" *ngIf="!isSidebarCollapsed">Class</span>
     </a>
-    <a [routerLink]="'student'" *ngIf="isActive(['ADMIN','SRO'])" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" class="sidebar-link">
+    <a [routerLink]="'student'" *ngIf="isActive(['ADMIN','SRO'])" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: false }" class="sidebar-link">
         <span class="mdi mdi-account-multiple icon"></span>
         <span class="link-text" *ngIf="!isSidebarCollapsed">Student</span>
     </a>
-    <a [routerLink]="'exam'" *ngIf="isActive(['ADMIN','DIRECTOR','SRO'])" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" class="sidebar-link">
+    <a [routerLink]="'exam'" *ngIf="isActive(['ADMIN','DIRECTOR','SRO'])" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: false }" class="sidebar-link">
         <span class="mdi mdi-monitor icon"></span>
         <span class="link-text" *ngIf="!isSidebarCollapsed">Exam</span>
     </a>
-    <a [routerLink]="'authorize'" *ngIf="isActive(['ADMIN','DIRECTOR'])" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" class="sidebar-link">
+    <a [routerLink]="'authorize'" *ngIf="isActive(['ADMIN','DIRECTOR'])" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: false }" class="sidebar-link">
         <span class="mdi mdi-clipboard-outline icon"></span>
         <span class="link-text" *ngIf="!isSidebarCollapsed">Authorize</span>
     </a>
-    <a [routerLink]="'employee'" *ngIf="isActive(['ADMIN','DIRECTOR'])" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" class="sidebar-link active">
+    <a [routerLink]="'employee'" *ngIf="isActive(['ADMIN','DIRECTOR'])" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: false }" class="sidebar-link active">
         <span class="mdi mdi-account-multiple icon"></span>
         <span class="link-text" *ngIf="!isSidebarCollapsed">Employee</span>
     </a>

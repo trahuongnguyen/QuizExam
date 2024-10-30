@@ -29,7 +29,7 @@
                     <div class="img-preview mt-3 mb-3" [ngClass]="{'hidden-border': hasImage}">
                         <input type="file" name="file" class="form-control-file" accept="image/*" (change)="chooseImage($event)" />
                         <button *ngIf="!hasImage" class="choose-file-btn" type="button">Choose file</button>
-                        <img id="imageQuestion" [src]="hasImage ? ('../../../../../../img-question/' + question.image) : null" alt="Image Question" [style.display]="hasImage ? 'block' : 'none'" />
+                        <img id="imageQuestion" [src]="hasImage ? ('img-question/' + question.image) : null" alt="Image Question" [style.display]="hasImage ? 'block' : 'none'" />
                 
                         <!-- Dấu X để xóa ảnh -->
                         <span *ngIf="hasImage" class="remove-image" (click)="removeImage()"><b>x</b></span>
