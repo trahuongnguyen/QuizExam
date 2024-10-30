@@ -7,4 +7,8 @@ public class AnswerRecordResponse {
     private int id;
 
     private String content;
+
+    public String getAnswerLabel(int index) {
+        return String.valueOf((char) ('A' + index));
+    }
 }

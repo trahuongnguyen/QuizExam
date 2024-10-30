@@ -27,4 +27,8 @@ public class Answer {
     @JoinColumn(name = "question_id")
     @JsonIgnore
     private Question question;
+
+    public String getAnswerLabel(int index) {
+        return String.valueOf((char) ('A' + index));
+    }
 }

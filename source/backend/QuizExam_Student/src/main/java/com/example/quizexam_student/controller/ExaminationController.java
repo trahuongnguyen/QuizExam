@@ -1,20 +1,24 @@
 package com.example.quizexam_student.controller;
 
 import com.example.quizexam_student.bean.request.ExaminationRequest;
-import com.example.quizexam_student.bean.response.ExaminationResponse;
-import com.example.quizexam_student.bean.response.ExaminationResponseNotIncludeQuestion;
-import com.example.quizexam_student.bean.response.RegisterResponse;
-import com.example.quizexam_student.bean.response.StudentResponse;
+import com.example.quizexam_student.bean.response.*;
+import com.example.quizexam_student.entity.Classes;
 import com.example.quizexam_student.entity.Examination;
 import com.example.quizexam_student.entity.StudentDetail;
 import com.example.quizexam_student.service.ExaminationService;
+import com.example.quizexam_student.service.ExportService;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -24,8 +28,10 @@ import java.util.List;
 @Validated
 @PreAuthorize("permitAll()")
 public class ExaminationController {
-
     private final ExaminationService examinationService;
+    private final ExportService exportService;
+    @Value("${uploads.question}")
+    private String uploadDir;
 
     @GetMapping("/{examinationId}")
     public ExaminationResponse getDetailExamination(@PathVariable int examinationId) {
@@ -69,5 +75,15 @@ public class ExaminationController {
             @RequestBody List<Integer> studentIds){
         examinationService.updateStudentForExam(examinationId, subjectId, studentIds);
         return ResponseEntity.ok(new RegisterResponse("", "Modify student successfully"));
+    }
+
+    @PostMapping(value = "/export/pdf", produces = MediaType.APPLICATION_PDF_VALUE)
+    public ResponseEntity<String> exportToPDF(HttpServletResponse response,
+                                              @RequestBody ExaminationResponse examinationResponse)
+            throws IOException {
+        exportService.export(response, examinationResponse.getName() + "_exam", "pdf");
+        ExamPDFExporter pdfExporter = new ExamPDFExporter(examinationResponse, uploadDir);
+        pdfExporter.export(response);
+        return new ResponseEntity<>("Export To PDF Successfully", HttpStatus.OK);
     }
 }
