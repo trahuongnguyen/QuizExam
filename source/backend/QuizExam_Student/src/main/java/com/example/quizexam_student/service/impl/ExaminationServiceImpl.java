@@ -130,6 +130,11 @@ public class ExaminationServiceImpl implements ExaminationService {
     }
 
 //    @Override
+//    public Examination getExamination(int examinationId) {
+//        return examinationRepository.findById(examinationId).orElse(null);
+//    }
+
+//    @Override
 //    public List<ExaminationResponse> getAllExaminations() {
 //        return examinationRepository.findAll().stream().map(ExaminationMapper::convertToResponse).collect(Collectors.toList());
 //    }
@@ -146,16 +151,18 @@ public class ExaminationServiceImpl implements ExaminationService {
     }
 
     @Override
-    public List<StudentDetail> updateStudentForExam(int examinationId, int subjectId, List<Integer> studentIds) {
+    public List<StudentDetail> updateStudentForExam(int examinationId, List<Integer> studentIds) {
         List<Mark> markList = markRepository.findAllByExaminationIdAndScore(examinationId, null);
         markList.stream().peek(mark -> {mark.setStudentDetail(null); mark.setExamination(null);}).toList();
+        Examination examination = examinationRepository.findById(examinationId).orElse(null);
         markRepository.deleteAll(markList);
         return studentRepository.findAllByUserIdIn(
                 studentIds.stream().peek(studentId->{
                     Mark mark = new Mark();
-                    mark.setExamination(examinationRepository.findById(examinationId).orElse(null));
+                    mark.setExamination(examination);
                     mark.setStudentDetail(studentRepository.findById(studentId).orElse(null));
-                    mark.setSubject(subjectRepository.findById(subjectId).orElse(null));
+                    assert examination != null;
+                    mark.setSubject(examination.getSubject());
                     markRepository.save(mark);
                 }).toList()
         );

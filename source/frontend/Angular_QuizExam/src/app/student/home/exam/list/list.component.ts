@@ -27,7 +27,7 @@ export class ListComponent implements OnInit {
       this.semesters = response;
     })
 
-    this.http.get<any>(`${this.authService.apiUrl}/exam`, this.home.httpOptions).subscribe((data: any) => {
+    this.http.get<any>(`${this.authService.apiUrl}/exam/exams`, this.home.httpOptions).subscribe((data: any) => {
       this.examList = data;
       this.examList.forEach((element: any) => {
         let id = element.id;
@@ -51,7 +51,7 @@ export class ListComponent implements OnInit {
     this.popupExamIndex = 0; // Reset khi đóng popup
   }
 
-  startExam(examId:any): void {
+  startExam(examId: any): void {
     const startTime = new Date(this.selectedExam.startTime); // Chuyển đổi startTime sang Date
     const currentTime = new Date(); // Lấy thời gian hiện tại
 

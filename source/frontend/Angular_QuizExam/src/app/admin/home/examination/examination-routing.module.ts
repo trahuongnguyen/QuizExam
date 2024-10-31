@@ -32,7 +32,7 @@ const routes: Routes = [
       },
     ],
     canActivate: [AuthGuard],
-    data: {roles: ['ADMIN', 'DIRECTOR', 'SRO']},
+    data: { roles: ['ADMIN', 'DIRECTOR', 'SRO'] },
   },
 ];
 

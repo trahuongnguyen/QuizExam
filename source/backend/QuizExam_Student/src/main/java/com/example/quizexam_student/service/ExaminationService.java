@@ -17,9 +17,10 @@ public interface ExaminationService {
     ExaminationResponse getDetailExamination(int examinationId);
     List<ExaminationResponse> getAllExaminations();
     Examination updateExamination(int examinationId, ExaminationRequest examinationRequest);
-    List<StudentDetail> updateStudentForExam(int examinationId, int subjectId, List<Integer> studentIds);
+    List<StudentDetail> updateStudentForExam(int examinationId, List<Integer> studentIds);
     ExaminationResponseNotIncludeQuestion getExaminationNotIncludeQuestion(int examinationId);
     List<StudentResponse> getStudentsForExamination(int examinationId);
     List<StudentDetail> getListStudentsToAddForExamination(int examinationId);
     List<ExaminationResponse> getAllExaminationsForStudent(List<Mark> mark);
+    //Examination getExamination(int examinationId);
 }
