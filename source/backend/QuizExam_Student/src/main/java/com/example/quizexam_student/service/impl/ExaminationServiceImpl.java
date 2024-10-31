@@ -117,8 +117,22 @@ public class ExaminationServiceImpl implements ExaminationService {
 
     @Override
     public List<ExaminationResponse> getAllExaminations() {
-        return examinationRepository.findAll().stream().map(ExaminationMapper::convertToResponse).collect(Collectors.toList());
+        return examinationRepository.findAllByStatus(1).stream().map(ExaminationMapper::convertToResponse).collect(Collectors.toList());
     }
+
+    @Override
+    public List<ExaminationResponse> getAllExaminationsForStudent(List<Mark> marks) {
+        List<Examination> examinations = new ArrayList<>();
+        marks.forEach(mark -> {
+            examinations.add(examinationRepository.findByMarksContainingAndStatus(mark, 1));
+        });
+        return examinations.stream().map(ExaminationMapper::convertToResponse).collect(Collectors.toList());
+    }
+
+//    @Override
+//    public List<ExaminationResponse> getAllExaminations() {
+//        return examinationRepository.findAll().stream().map(ExaminationMapper::convertToResponse).collect(Collectors.toList());
+//    }
 
     @Override
     public Examination updateExamination(int examinationId, ExaminationRequest examinationRequest) {
