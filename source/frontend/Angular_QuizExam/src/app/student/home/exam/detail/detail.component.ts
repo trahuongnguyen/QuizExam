@@ -158,21 +158,30 @@ export class DetailComponent implements OnInit, OnDestroy {
 
   handleVisibilityChange = () => {
     if (document.visibilityState === 'hidden') {
-      this.toastr.warning("You have switched to another window.");
+      this.examComponent.mark.warning++;
+      this.updateWarning();
+      if (this.examComponent.mark.warning >= 3) {
+        this.submitExam();
+        return;
+      }
+      this.isNote = true;
+      this.showPopupWarning = true;
+      this.warningMessage = `Please do not click outside the test (${this.examComponent.mark.warning}).`;
+      //this.toastr.warning("You have switched to another window.");
     }
   };
 
-  handleBlur = () => {
-    // this.examComponent.mark.warning++;
-    // this.updateWarning();
-    // if (this.examComponent.mark.warning >= 3) {
-    //   this.submitExam();
-    //   return;
-    // }
-    // this.isNote = true;
-    // this.showPopupWarning = true;
-    // this.warningMessage = `Please do not click outside the test (${this.examComponent.mark.warning}).`;
-  };
+  // handleBlur = () => {
+  //   this.examComponent.mark.warning++;
+  //   this.updateWarning();
+  //   if (this.examComponent.mark.warning >= 3) {
+  //     this.submitExam();
+  //     return;
+  //   }
+  //   this.isNote = true;
+  //   this.showPopupWarning = true;
+  //   this.warningMessage = `Please do not click outside the test (${this.examComponent.mark.warning}).`;
+  // };
 
   handleFocus = () => {
     clearInterval(this.countdown);
@@ -207,7 +216,7 @@ export class DetailComponent implements OnInit, OnDestroy {
     document.addEventListener('copy', this.preventCopy); // Ngăn chặn sao chép nội dung
     document.addEventListener('contextmenu', this.preventRightClick); // Ngăn chặn menu chuột phải
     document.addEventListener('visibilitychange', this.handleVisibilityChange); // Xử lý sự kiện visibility change (Check chuyển đổi tab - khi tab đó bị ẩn đi)
-    window.addEventListener('blur', this.handleBlur); // Xử lý sự kiện blur (Check cửa sổ đó bị mất tiêu điểm)
+    //window.addEventListener('blur', this.handleBlur); // Xử lý sự kiện blur (Check cửa sổ đó bị mất tiêu điểm)
     window.addEventListener('focus', this.handleFocus); // Xử lý sự kiện focus
     this.trackInactivity();
   }
@@ -309,7 +318,10 @@ export class DetailComponent implements OnInit, OnDestroy {
   submitExam(): void {
     const body = { markId: this.examComponent.mark.id, studentQuestionAnswers: this.studentAnswers };
     this.http.post(`${this.authService.apiUrl}/student-answers`, body, this.home.httpOptions).subscribe(
-      () => this.router.navigateByUrl('/student/home/exam/result/' + this.examId),
+      () => {
+        localStorage.removeItem('examSessionData'); // Clear session data
+        this.router.navigateByUrl('/student/home/exam/result/' + this.examId);
+      },
       () => this.toastr.error('Submission failed')
     );
   }
@@ -319,7 +331,7 @@ export class DetailComponent implements OnInit, OnDestroy {
     document.removeEventListener('copy', this.preventCopy);
     document.removeEventListener('contextmenu', this.preventRightClick);
     document.removeEventListener('visibilitychange', this.handleVisibilityChange);
-    window.removeEventListener('blur', this.handleBlur);
+    //window.removeEventListener('blur', this.handleBlur);
     window.removeEventListener('focus', this.handleFocus);
 
     document.removeEventListener('mousemove', this.resetInactivityTimer);

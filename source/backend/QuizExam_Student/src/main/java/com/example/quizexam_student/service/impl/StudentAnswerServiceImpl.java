@@ -2,23 +2,17 @@ package com.example.quizexam_student.service.impl;
 
 import com.example.quizexam_student.bean.request.StudentAnswerRequest;
 import com.example.quizexam_student.bean.request.StudentQuestionAnswer;
-import com.example.quizexam_student.entity.AnswerRecord;
-import com.example.quizexam_student.entity.Mark;
-import com.example.quizexam_student.entity.QuestionRecord;
-import com.example.quizexam_student.entity.StudentAnswer;
+import com.example.quizexam_student.entity.*;
 import com.example.quizexam_student.exception.AlreadyExistException;
-import com.example.quizexam_student.repository.AnswerRecordRepository;
-import com.example.quizexam_student.repository.MarkRepository;
-import com.example.quizexam_student.repository.QuestionRecordRepository;
-import com.example.quizexam_student.repository.StudentAnswerRepository;
+import com.example.quizexam_student.exception.NotFoundException;
+import com.example.quizexam_student.repository.*;
 import com.example.quizexam_student.service.StudentAnswerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -30,6 +24,8 @@ public class StudentAnswerServiceImpl implements StudentAnswerService {
     private final QuestionRecordRepository questionRecordRepository;
 
     private final AnswerRecordRepository answerRecordRepository;
+
+    private final LevelRepository levelRepository;
 
     @Override
     public StudentAnswerRequest saveStudentAnswers(StudentAnswerRequest studentAnswerRequest) {
@@ -82,5 +78,53 @@ public class StudentAnswerServiceImpl implements StudentAnswerService {
             markRepository.save(mark);
         }
         return studentAnswerRequest;
+    }
+
+    public Map<String, Integer> scoreByLevel(StudentDetail studentDetail, Integer examinationId) {
+        Mark mark = markRepository.findByStudentDetailAndExaminationId(studentDetail, examinationId);
+
+        if (Objects.isNull(mark)) {
+            throw new NotFoundException("mark", "Mark not found");
+        }
+
+        // Lấy danh sách câu hỏi và câu trả lời liên quan đến bài thi
+        List<QuestionRecord> questionRecords = questionRecordRepository.findQuestionRecordsByExaminationId(mark.getExamination().getId());
+        List<StudentAnswer> studentAnswers = studentAnswerRepository.findByMarkId(mark.getId());
+
+        List<Level> levels = levelRepository.findAllByStatus(1);
+        Map<String, Integer> scoreByLevel = new HashMap<>();
+
+        // Khởi tạo điểm cho từng level
+        for (Level level : levels) {
+            scoreByLevel.put(level.getName(), 0); // Gán điểm khởi tạo là 0
+        }
+
+        int totalScore = 0;
+
+        // Duyệt qua từng câu hỏi
+        for (QuestionRecord questionRecord : questionRecords) {
+            // Lấy các đáp án cho câu hỏi
+            List<AnswerRecord> answerRecords = answerRecordRepository.findAllByQuestionRecord(questionRecord);
+
+            // Lưu các ID đáp án đúng
+            Set<Integer> correctAnswerIds = answerRecords.stream()
+                    .filter(answerRecord -> answerRecord.getIsCorrect() == 1)
+                    .map(AnswerRecord::getId)
+                    .collect(Collectors.toSet());
+
+            // Lấy ID đáp án của học sinh cho câu hỏi này
+            Set<Integer> selectedAnswerIds = studentAnswers.stream()
+                    .filter(ans -> ans.getQuestionRecord().equals(questionRecord))
+                    .map(StudentAnswer::getSelectedAnswer)
+                    .collect(Collectors.toSet());
+
+            // Nếu tất cả đáp án đúng đều được học sinh chọn, cộng điểm
+            if (selectedAnswerIds.containsAll(correctAnswerIds)) {
+                String level = questionRecord.getLevel();
+                scoreByLevel.put(level, scoreByLevel.getOrDefault(level, 0) + questionRecord.getPoint()); // Cộng điểm cho level tương ứng
+            }
+        }
+
+        return scoreByLevel;
     }
 }
