@@ -23,7 +23,7 @@ const routes: Routes = [
         component: FormComponent
       },
       {
-        path: 'addStudent/:subjectId/:examId',
+        path: 'addStudent/:examId',
         component: AddStudentComponent
       },
       {
