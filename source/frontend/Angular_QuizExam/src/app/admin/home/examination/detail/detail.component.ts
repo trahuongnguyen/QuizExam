@@ -24,15 +24,33 @@ export class DetailComponent implements OnInit {
   selectedExam: any;  // Bài thi được chọn
 
   ngOnInit(): void {
+    this.authService.entityExporter = 'exam';
     this.examId = Number(this.activatedRoute.snapshot.params['examId']) ?? 0;
-
-    this.authService.entityExporter = 'examination';
     this.http.get<any>(`${this.authService.apiUrl}/exam/${this.examId}`, this.home.httpOptions).subscribe((data: any) => {
       this.authService.listExporter = data;
       this.apiData = data;
       this.selectedExam = data;
     });
-  }  
+  }
+  
+  exportPDF() {
+    this.authService.listExporter = this.apiData;
+    this.authService.exportDataPDF().subscribe(
+      (response) => {
+        const url = window.URL.createObjectURL(new Blob([response], { type: 'blob' }));
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'exam_pdf.pdf'; // Thay đổi tên file nếu cần
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+      },
+      (error) => {
+        console.error('Export failed', error);
+      }
+    );
+  }
 }
 
 
