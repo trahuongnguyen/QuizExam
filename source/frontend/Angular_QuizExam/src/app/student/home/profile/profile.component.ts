@@ -23,6 +23,7 @@ export class ProfileComponent implements OnInit {
     // this.httpOptions = this.home.httpOptions;
     this.http.get<any>(`${this.authService.apiUrl}/auth/profile`, this.home.httpOptions).subscribe((data: any) => {
       this.user = data;
+      console.log(this.user);
       // this.fullName = this.user.fullName;
       // this.email = this.user.email;
       // this.dob = this.user.dob;

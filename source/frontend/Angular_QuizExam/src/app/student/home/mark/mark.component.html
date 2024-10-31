@@ -34,11 +34,11 @@
                         <tbody>
                             <ng-template ngFor let-sub let-subIndex="index" [ngForOf]="subjects">
                                 <tr>
-                                    <td>{{sub.name}}</td>
-                                    <td>{{sub.mark}}</td>
-                                    <td>{{sub.maxMark}}</td>
+                                    <td>{{sub.subjectName}}</td>
+                                    <td>{{sub.score}}</td>
+                                    <td>{{sub.maxScore}}</td>
                                     <td>{{getOverall(subIndex)}}%</td>
-                                    <td>{{sub.status}}</td>
+                                    <td>{{getStatus(sub.score, sub.maxScore)}}</td>
                                 </tr>
                             </ng-template>
                         </tbody>

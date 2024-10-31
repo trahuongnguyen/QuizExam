@@ -124,10 +124,11 @@
 }
 
 .question-section img {
-    margin: 10px 0px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
     width: 50%;
     height: auto;
-    text-align: center;
 }
 
 .form-check-label {

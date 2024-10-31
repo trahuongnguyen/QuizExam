@@ -83,14 +83,6 @@ public class QuestionController {
         return questionService.updateQuestion(id,questionRequest);
     }
 
-    @GetMapping("/export/pdf")
-    public ResponseEntity<String> exportToPDF(HttpServletResponse response
-            ) throws IOException {
-        exportService.export(response, "question", "pdf");
-        QuestionPDFExporter pdfExporter = new QuestionPDFExporter(questionService.getAllQuestionsBySubjectId(1), uploadDir);
-        pdfExporter.export(response);
-        return new ResponseEntity<>("Export To PDF Successfully", HttpStatus.OK);
-    }
 
     @PostMapping(value = "/export/pdf", produces = MediaType.APPLICATION_PDF_VALUE)
     public ResponseEntity<String> exportToPDF(HttpServletResponse response,
