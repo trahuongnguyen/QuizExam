@@ -1,7 +1,7 @@
 <div class="container mt-5" style="max-width: 600px;">
     <!-- Result Section -->
     <div class="result text-center mb-4">
-        <h2>Results</h2>
+        <h2><b>Result</b></h2>
     </div>
     <hr class="line">
 
@@ -14,8 +14,9 @@
                 <p>{{ subjectName }}</p>
             </div>
             <div class="col-4">
-                <div class="icon-chart">
+                <div class="icon-chart" style="position: relative;">
                     <canvas id="doughnutChart" width="100px" height="100px"></canvas>
+                    <div id="percentageLabel" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 18px; font-weight: bold; color: #000;"></div>
                 </div>
                 <p>{{ score }}/{{ maxScore }}</p>
             </div>
