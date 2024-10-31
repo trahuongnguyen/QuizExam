@@ -134,15 +134,15 @@ export class AddStudentComponent implements OnInit, OnDestroy {
       const isChecked = checkbox.checked; // Truy cập thuộc tính checked.
 
       if (isChecked) {
-          if (!this.studentIds.includes(id)) { // Kiểm tra xem id có nằm trong mảng studentIds hay không.
-              this.studentIds.push(id); // Nếu không có thì thêm vào mảng.
-          }
+        if (!this.studentIds.includes(id)) { // Kiểm tra xem id có nằm trong mảng studentIds hay không.
+          this.studentIds.push(id); // Nếu không có thì thêm vào mảng.
+        }
       }
       else {
-          const index = this.studentIds.indexOf(id); // Tìm vị trí index của id.
-          if (index > -1) {
-              this.studentIds.splice(index, 1); // Nếu điều kiện trên là đúng, câu lệnh này sẽ xóa phần tử.
-          }
+        const index = this.studentIds.indexOf(id); // Tìm vị trí index của id.
+        if (index > -1) {
+          this.studentIds.splice(index, 1); // Nếu điều kiện trên là đúng, câu lệnh này sẽ xóa phần tử.
+        }
       }
       this.updateSelectAllStatus();
       this.updateDataTable();
@@ -161,21 +161,21 @@ export class AddStudentComponent implements OnInit, OnDestroy {
     const isChecked = checkbox.checked;
 
     if (isChecked) {
-        // Nếu chọn "Select All", thêm tất cả sinh viên của lớp vào studentIds
-        this.listStudentByClass.forEach((student: any) => {
-            if (!this.studentIds.includes(student.userResponse.id)) {
-                this.studentIds.push(student.userResponse.id);
-            }
-        });
+      // Nếu chọn "Select All", thêm tất cả sinh viên của lớp vào studentIds
+      this.listStudentByClass.forEach((student: any) => {
+        if (!this.studentIds.includes(student.userResponse.id)) {
+          this.studentIds.push(student.userResponse.id);
+        }
+      });
     }
     else {
-        // Nếu bỏ chọn "Select All", xóa tất cả sinh viên của lớp khỏi studentIds
-        this.listStudentByClass.forEach((student: any) => {
-            const index = this.studentIds.indexOf(student.userResponse.id);
-            if (index > -1) {
-                this.studentIds.splice(index, 1);
-            }
-        });
+      // Nếu bỏ chọn "Select All", xóa tất cả sinh viên của lớp khỏi studentIds
+      this.listStudentByClass.forEach((student: any) => {
+        const index = this.studentIds.indexOf(student.userResponse.id);
+        if (index > -1) {
+          this.studentIds.splice(index, 1);
+        }
+      });
     }
 
     this.updateSelectAllStatus(); // Cập nhật trạng thái select all
@@ -185,8 +185,8 @@ export class AddStudentComponent implements OnInit, OnDestroy {
   }
 
   updateSelectAllStatus(): void {
-    const allSelected = this.listStudentByClass.every((student: any) => 
-        this.studentIds.includes(student.userResponse.id)
+    const allSelected = this.listStudentByClass.every((student: any) =>
+      this.studentIds.includes(student.userResponse.id)
     );
     this.selectAllStatus[this.classId] = allSelected; // Cập nhật trạng thái cho lớp hiện tại
   }
@@ -211,7 +211,7 @@ export class AddStudentComponent implements OnInit, OnDestroy {
 
   addStudentInExam(): void {
     if (this.listStudentSelected.length > 0) {
-      this.http.put(`${this.authService.apiUrl}/exam/student/${this.examId}/${this.subjectId}`, this.studentIds, this.home.httpOptions).subscribe(
+      this.http.put(`${this.authService.apiUrl}/exam/student/${this.examId}`, this.studentIds, this.home.httpOptions).subscribe(
         response => {
           this.toastr.success('Add Student in Exam Successful!', 'Success', {
             timeOut: 2000,

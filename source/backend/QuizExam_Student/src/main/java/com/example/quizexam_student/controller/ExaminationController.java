@@ -2,14 +2,12 @@ package com.example.quizexam_student.controller;
 
 import com.example.quizexam_student.bean.request.ExaminationRequest;
 import com.example.quizexam_student.bean.response.*;
-import com.example.quizexam_student.entity.Classes;
-import com.example.quizexam_student.entity.Examination;
-import com.example.quizexam_student.entity.Mark;
-import com.example.quizexam_student.entity.StudentDetail;
+import com.example.quizexam_student.entity.*;
 import com.example.quizexam_student.repository.MarkRepository;
 import com.example.quizexam_student.repository.UserRepository;
 import com.example.quizexam_student.service.ExaminationService;
 import com.example.quizexam_student.service.ExportService;
+import com.example.quizexam_student.service.SubjectService;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -36,6 +34,7 @@ public class ExaminationController {
     private final ExportService exportService;
     private final MarkRepository markRepository;
     private final UserRepository userRepository;
+    private final SubjectService subjectService;
     @Value("${uploads.question}")
     private String uploadDir;
 
@@ -82,12 +81,11 @@ public class ExaminationController {
         return examinationService.updateExamination(examinationId, examinationRequest);
     }
 
-    @PutMapping("/student/{examinationId}/{subjectId}")
+    @PutMapping("/student/{examinationId}")
     public ResponseEntity updateStudentForExam(
             @PathVariable int examinationId,
-            @PathVariable int subjectId,
             @RequestBody List<Integer> studentIds){
-        examinationService.updateStudentForExam(examinationId, subjectId, studentIds);
+        examinationService.updateStudentForExam(examinationId, studentIds);
         return ResponseEntity.ok(new RegisterResponse("", "Modify student successfully"));
     }
 
