@@ -8,6 +8,7 @@ import com.example.quizexam_student.exception.*;
 import com.example.quizexam_student.repository.*;
 import com.example.quizexam_student.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -65,14 +66,16 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User changePassword(int id, PasswordRequest passwordRequest) {
-        User user = userRepository.findById(id).orElse(null);
+    public User changePassword(PasswordRequest passwordRequest) {
+        String email = ((org.springframework.security.core.userdetails.User)
+                SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
+        User user = findUserByEmail(email);
         assert user != null;
         if (!passwordEncoder.matches(passwordRequest.getCurrentPassword(), user.getPassword())){
             throw new IncorrectEmailOrPassword("password", "Your current password does not match");
         }
         if (passwordEncoder.matches(passwordRequest.getNewPassword(), user.getPassword())){
-            throw new IncorrectEmailOrPassword("password", "Your new password must different old password");
+            throw new IncorrectEmailOrPassword("password", "Your new password must different current password");
         }
         if (!passwordRequest.getNewPassword().equals(passwordRequest.getConfirmPassword())){
             throw new IncorrectEmailOrPassword("password", "Your confirm password does not match");

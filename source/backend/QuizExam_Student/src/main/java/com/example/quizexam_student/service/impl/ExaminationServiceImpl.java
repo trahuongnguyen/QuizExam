@@ -38,7 +38,7 @@ public class ExaminationServiceImpl implements ExaminationService {
             totalQuestions += entry.getValue();
         }
         Map<Integer, List<Question>> questionsByLevels = new HashMap<>();
-        List<Question> allQuestions = questionRepository.findAllBySubjectAndStatus(subject,1);
+        List<Question> allQuestions = questionRepository.findAllBySubjectAndStatusOrderByIdDesc(subject,1);
 
         levelsRequest.forEach((key, value) -> {
             List<Question> questionsByLevel = allQuestions.stream().filter(question -> question.getLevel().getId() == key).toList();
@@ -189,10 +189,12 @@ public class ExaminationServiceImpl implements ExaminationService {
     }
 
     private ExaminationResponse setQuestionRecord(ExaminationResponse examinationResponse){
-        examinationResponse.setQuestionRecordResponses(
-                new ArrayList<>(questionRecordRepository.findAllByExamination(examinationRepository.findById(examinationResponse.getId()).orElse(null)))
-                        .stream().map(QuestionRecordMapper::convertToResponse)
-                        .collect(Collectors.toList()));
+        List<QuestionRecord> questionRecords = questionRecordRepository.findAllByExamination(examinationRepository.findById(examinationResponse.getId()).orElse(null));
+        List<QuestionRecordResponse> questionRecordResponses = questionRecords.stream()
+                .map(QuestionRecordMapper::convertToResponse)
+                .collect(Collectors.toList());
+        Collections.shuffle(questionRecordResponses);
+        examinationResponse.setQuestionRecordResponses(questionRecordResponses);
         return examinationResponse;
     }
 

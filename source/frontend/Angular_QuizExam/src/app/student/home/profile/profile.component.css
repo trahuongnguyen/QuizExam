@@ -54,11 +54,11 @@
     margin-left: 10%;
 }
 
-.container {
+.eye {
+    font-size: 19px;
+    text-align: center;
     cursor: pointer;
-
 }
-
 
 .w-95 {
     width: 95%;

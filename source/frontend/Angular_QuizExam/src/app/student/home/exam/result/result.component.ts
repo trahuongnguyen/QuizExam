@@ -4,7 +4,7 @@ import { AuthService } from '../../../service/auth.service';
 import { HttpClient } from '@angular/common/http';
 import { HomeComponent } from '../../home.component';
 import { ExamComponent } from '../exam.component';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { forkJoin } from 'rxjs';
 
 @Component({
@@ -32,6 +32,7 @@ export class ResultComponent implements OnInit {
     private http: HttpClient,
     private home: HomeComponent,
     private examComponent: ExamComponent,
+    private router: Router,
     private activatedRoute: ActivatedRoute
   ) {}
 
@@ -47,6 +48,11 @@ export class ResultComponent implements OnInit {
     forkJoin([markRequest, levelRequest, scoreByLevelRequest]).subscribe(([markData, levelData, scoreByLevelData]) => {
       // Lưu dữ liệu bài kiểm tra
       this.examComponent.mark = markData;
+      if (this.examComponent.mark.score == null) {
+        this.router.navigateByUrl('/student/home/exam');
+        return;
+      }
+
       this.listLevel = Object.keys(levelData); // Lấy danh sách các cấp độ
       this.maxScoreByLevel = levelData;
       this.scoreByLevel = scoreByLevelData;
@@ -68,11 +74,14 @@ export class ResultComponent implements OnInit {
   }
 
   calculateTimeTaken(submittedTime: string, beginTime: string): void {
-    // Tính toán thời gian làm bài và chuyển đổi thành định dạng mm:ss
+    // Tính toán thời gian làm bài và chuyển đổi thành định dạng hh:mm:ss
     const timeTakenInMs = new Date(submittedTime).getTime() - new Date(beginTime).getTime();
-    const minutes = Math.floor(timeTakenInMs / 60000);
-    const seconds = Math.floor((timeTakenInMs % 60000) / 1000);
-    this.timeTaken = `${minutes < 10 ? '0' + minutes : minutes}:${seconds < 10 ? '0' + seconds : seconds}`;
+    const totalSeconds = Math.floor(timeTakenInMs / 1000); // Chuyển đổi milliseconds thành giây
+    const hours = Math.floor(totalSeconds / 3600); // Tính số giờ
+    const minutes = Math.floor((totalSeconds % 3600) / 60); // Tính số phút
+    const seconds = totalSeconds % 60; // Tính số giây
+
+    this.timeTaken = `${hours < 10 ? '0' + hours : hours}:${minutes < 10 ? '0' + minutes : minutes}:${seconds < 10 ? '0' + seconds : seconds}`;
   }
 
   calculatePercentageByLevel(): void {

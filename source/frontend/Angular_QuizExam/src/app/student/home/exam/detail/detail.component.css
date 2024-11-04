@@ -62,9 +62,10 @@ p {
     text-align: center;
 }
 
-.count input {
-    width: 70px;
-    text-align: center;
+.count .summary-count {
+    border: 1px solid;
+    border-radius: 3px;
+    padding: 3px 20px;
 }
 
 .calendar table {
@@ -145,7 +146,7 @@ p {
     border-radius: 8px;
     text-align: center;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
-    width: 400px; /* Đặt chiều rộng để có kích thước hợp lý */
+    width: 450px; /* Đặt chiều rộng để có kích thước hợp lý */
 }
 
 .popup-content h5 {

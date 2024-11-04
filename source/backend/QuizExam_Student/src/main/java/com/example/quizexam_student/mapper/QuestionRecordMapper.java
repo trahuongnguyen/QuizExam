@@ -5,6 +5,7 @@ import com.example.quizexam_student.bean.response.QuestionRecordResponse;
 import com.example.quizexam_student.entity.AnswerRecord;
 import com.example.quizexam_student.entity.QuestionRecord;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -25,6 +26,7 @@ public class QuestionRecordMapper {
                 })
                 .collect(Collectors.toList());
 
+        Collections.shuffle(answerRecords);
         questionRecordResponse.setAnswerRecords(answerRecords);
         return questionRecordResponse;
     }

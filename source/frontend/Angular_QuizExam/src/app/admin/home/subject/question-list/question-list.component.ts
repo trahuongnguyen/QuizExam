@@ -47,7 +47,6 @@ export class QuestionListComponent {
 
     this.http.get<any>(`${this.authService.apiUrl}/subject/${this._subjectId}`, this.home.httpOptions).subscribe((data: any) => {
       this.semId = data.sem.id;
-      console.log(this.semId);
       this.http.get<any>(`${this.authService.apiUrl}/subject/sem/${this.semId}`, this.home.httpOptions).subscribe(response => {
         this.subjects = response;
         for (let sub of this.subjects) {
@@ -83,7 +82,6 @@ export class QuestionListComponent {
           data: 'chapters',
           render: function (data: any, type: any, row: any) {
             let value: any = '';
-            console.log(row);
             data.forEach((val: any) => {
               value += '[' + val.name + '] ';
             });

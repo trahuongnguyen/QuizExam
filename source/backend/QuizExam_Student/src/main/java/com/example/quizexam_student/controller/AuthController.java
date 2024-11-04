@@ -55,8 +55,9 @@ public class AuthController {
         return ResponseEntity.ok(userResponse);
     }
 
-    @PutMapping("/changePassword/{id}")
-    public ResponseEntity<User> updateProfile(@PathVariable int id, @RequestBody @Valid PasswordRequest passwordRequest) {
-        return ResponseEntity.ok(userService.changePassword(id, passwordRequest));
+    @PutMapping("/changePassword")
+    public ResponseEntity<UserResponse> updateProfile(@RequestBody @Valid PasswordRequest passwordRequest) {
+        UserResponse userResponse = UserMapper.convertToResponse(userService.changePassword(passwordRequest));
+        return ResponseEntity.ok(userResponse);
     }
 }

@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -18,6 +19,7 @@ import java.util.List;
 
 @SpringBootApplication
 @RequiredArgsConstructor
+@EnableScheduling
 public class QuizExamStudentApplication {
 
     private final ClassesRepository classesRepository;
@@ -55,7 +57,7 @@ public class QuizExamStudentApplication {
     public void updateStatusForExamination() {
         List<Examination> examinations = examinationRepository.findAllByStatus(1);
         examinations = examinations.stream().peek(examination -> {
-            if (LocalDateTime.now().isBefore(examination.getEndTime())) {
+            if (LocalDateTime.now().isAfter(examination.getEndTime())) {
                 examination.setStatus(2);
                 examinationRepository.save(examination);
             }
