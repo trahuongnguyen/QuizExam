@@ -7,6 +7,7 @@ import { ClassComponent } from './class/class.component';
 import { StudentComponent } from './student/student.component';
 import { ProfileComponent } from './profile/profile.component';
 import { AuthGuard } from '../service/authguard.service';
+import { LevelComponent } from './level/level.component';
 
 const routes: Routes = [
   {
@@ -46,8 +47,14 @@ const routes: Routes = [
         data: { roles: ['ADMIN', 'DIRECTOR', 'SRO'] },
       },
       {
+        path: 'level',
+        component: LevelComponent,
+      },
+      {
         path: 'profile',
-        component: ProfileComponent
+        component: ProfileComponent,
+        canActivate: [AuthGuard],
+        data: { roles: ['ADMIN'] },
       },
       {
         path: 'subject',
