@@ -18,10 +18,13 @@ export class LevelComponent implements OnInit, OnDestroy {
   apiData: any;
   _level: any = {
     id: 0,
-    name: ''
+    name: '',
   };
   levelId: any;
   name: String = '';
+  point: number = 1;
+
+  isPopupConfirm: boolean = false;
 
   ngOnInit(): void {
 
@@ -29,7 +32,6 @@ export class LevelComponent implements OnInit, OnDestroy {
         this.apiData = data;
         this.initializeDataTable();
       });
-    
   }
 
   initializeDataTable(): void {
@@ -82,8 +84,20 @@ export class LevelComponent implements OnInit, OnDestroy {
           this.name = '';
           $('#updateLevel').removeClass('show');
         });
+        $('.delete-icon').on('click', (event: any) => {
+          const id = $(event.currentTarget).data('id');
+          this.levelId = id;
+          this.isPopupConfirm = true;
+        });
       }
     });
+  }
+
+  closePopup(event?: MouseEvent): void {
+    if (event) {
+      event.stopPropagation(); // Ngăn việc sự kiện click ra ngoài ảnh hưởng đến việc đóng modal
+    }
+    this.isPopupConfirm = false;
   }
 
   updateDataTable(newData: any[]): void {
@@ -94,8 +108,8 @@ export class LevelComponent implements OnInit, OnDestroy {
     }
   }
 
-  reloadTable(id: number): void {
-    this.http.get<any>(`${this.authService.apiUrl}/level/${id}`, this.home.httpOptions).subscribe((data: any) => {
+  reloadTable(): void {
+    this.http.get<any>(`${this.authService.apiUrl}/level`, this.home.httpOptions).subscribe((data: any) => {
       this.apiData = data;
       this.updateDataTable(this.apiData); // Cập nhật bảng với dữ liệu mới
     });
@@ -106,6 +120,7 @@ export class LevelComponent implements OnInit, OnDestroy {
     const level =
     {
       name: this.name,
+      point: this.point
     }
 
     this.http.post(`${this.authService.apiUrl}/level`, level, this.home.httpOptions).subscribe(
@@ -113,7 +128,7 @@ export class LevelComponent implements OnInit, OnDestroy {
         this.toastr.success('Create new level Successful!', 'Success', {
           timeOut: 2000,
         });
-      //  this.reloadTable(this._subjectId);
+       this.reloadTable();
       },
       error => {
         if (error.status === 401) {
@@ -141,16 +156,17 @@ export class LevelComponent implements OnInit, OnDestroy {
   updateLevel(): void {
     const level =
     {
+      id: this.levelId,
       name: this._level.name,
-      id: this.levelId
+      point: this.point
     }
 
     this.http.put(`${this.authService.apiUrl}/level/${this.levelId}`, level, this.home.httpOptions).subscribe(
       response => {
-        this.toastr.success('Create new level Successful!', 'Success', {
+        this.toastr.success('Update level Successful!', 'Success', {
           timeOut: 2000,
         });
-       // this.reloadTable(this._subjectId);
+       this.reloadTable();
       },
       error => {
         if (error.status === 401) {
@@ -173,6 +189,19 @@ export class LevelComponent implements OnInit, OnDestroy {
         console.log('Error', error);
       }
     )
+  }
+
+  deleteLevel(id: number): void {
+    this.isPopupConfirm = false;
+    this.http.put(`${this.authService.apiUrl}/level/delete/${id}`, this.home.httpOptions).subscribe(
+      () => {
+        console.log(`Level with ID ${id} deleted successfully`);
+        this.reloadTable();
+      },
+      error => {
+        console.error('Error deleting item:', error);
+      }
+    );
   }
 
   closeform() {
