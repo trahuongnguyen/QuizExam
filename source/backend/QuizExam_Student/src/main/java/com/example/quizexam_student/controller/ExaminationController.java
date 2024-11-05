@@ -48,6 +48,11 @@ public class ExaminationController {
         return examinationService.getAllExaminations();
     }
 
+    @GetMapping("/sem/{semId}")
+    public List<ExaminationResponse> getExaminationBySemId(@PathVariable int semId) {
+        return examinationService.getAllExamBySemId(semId);
+    }
+
     @GetMapping("/exams")
     public List<ExaminationResponse> getAllExaminationsForStudent() {
         String email = ((org.springframework.security.core.userdetails.User)

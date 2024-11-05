@@ -23,4 +23,5 @@ public interface ExaminationService {
     List<StudentDetail> getListStudentsToAddForExamination(int examinationId);
     List<ExaminationResponse> getAllExaminationsForStudent(List<Mark> mark);
     //Examination getExamination(int examinationId);
+    List<ExaminationResponse> getAllExamBySemId(int semId);
 }

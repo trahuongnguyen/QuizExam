@@ -44,6 +44,7 @@ public class SecurityConfig {
                 .requestMatchers("/api/student-answers/**").permitAll()
                 .requestMatchers("/api/mark/**").permitAll()
                 .requestMatchers("/api/level/**").permitAll()
+                .requestMatchers("/api/role/**").permitAll()
                 .requestMatchers("/api/question-record/**").permitAll()
                 .anyRequest().authenticated()
                 
