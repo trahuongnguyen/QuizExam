@@ -9,4 +9,6 @@ import java.util.List;
 @Repository
 public interface LevelRepository extends JpaRepository<Level, Integer> {
     List<Level> findAllByStatus(int status);
+    Level findByIdAndStatus(int id, int status);
+    Level findByName(String name);
 }
