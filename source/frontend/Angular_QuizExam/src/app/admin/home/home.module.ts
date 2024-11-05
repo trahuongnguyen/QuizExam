@@ -12,6 +12,7 @@ import { ProfileComponent } from './profile/profile.component';
 import { FormsModule } from '@angular/forms';
 import { SubjectModule } from './subject/subject.module';
 import { ExaminationModule } from './examination/examination.module';
+import { LevelComponent } from './level/level.component';
 
 
 @NgModule({
@@ -22,6 +23,7 @@ import { ExaminationModule } from './examination/examination.module';
     ClassComponent,
     EmployeeComponent,
     ProfileComponent,
+    LevelComponent,
 
   ],
   imports: [

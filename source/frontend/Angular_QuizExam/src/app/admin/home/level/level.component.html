@@ -1,0 +1,72 @@
+<div class="content-wrapper">
+    <h4>Level</h4>
+    <hr class="line">
+    <div class="d-flex">
+        <div class="level">
+            <!-- Bottom Actions  -->
+            <div class="bottom-actions m-2"></div>            
+            <div class="m-2 mt-4">
+                <table class="table" id="example">
+                    <thead>
+                        <tr>
+                            <th>STT</th>
+                            <th>Level</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+                <div class=" collapse add-level mt-5" id="addlevel">
+                    <form method="post" (ngSubmit)="createLevel()">
+                        <div class="add">
+                            <div class="row mb-3 align-items-center">
+                                <label for="level" class="col-sm-2 col-form-label">Level New:</label>
+                                <div class="col-sm-10">
+                                    <input type="text" id="name" name="name" [(ngModel)]="name" class="form-control">
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-sm-10 offset-sm-5">
+                                    <button type="submit" class="btn btn-danger me-2">Save</button>
+                                    <span (click)="closeform()" class="btn cancel-btn">Cancel</span>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class=" collapse add-level mt-5" id="updatelevel">
+                    <form (ngSubmit)="updateLevel()">
+                        <div class="add">
+                            <div class="row mb-3 align-items-center">
+                                <label for="level" class="col-sm-2 col-form-label">Level New:</label>
+                                <div class="col-sm-10">
+                                    <input type="text" id="level" name="_level.name" 
+                                        class="form-control">
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-sm-10 offset-sm-5">
+                                    <button type="submit" class="btn btn-danger me-2">Save</button>
+                                    <span (click)="closeform()" class="btn cancel-btn">Cancel</span>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="btn-level">
+            <div class="btn-add">
+                <i data-bs-toggle="collapse" href="#addlevel" role="button" aria-expanded="false"
+                    aria-controls="collapseExample" class="fa-solid fa-circle-plus"></i>
+            </div>
+            <div id="returnSubject" class="btn-list">
+                <i class="fa-solid fa-arrow-left"></i>
+            </div>
+        </div>
+    </div>
+
+</div>
