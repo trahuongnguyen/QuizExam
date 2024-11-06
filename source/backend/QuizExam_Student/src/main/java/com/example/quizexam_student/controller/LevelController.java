@@ -36,7 +36,7 @@ public class LevelController {
     }
 
     @PutMapping("/delete/{id}")
-    public void deleteLevel(@PathVariable int id) {
-        levelService.deleteLevelById(id);
+    public Level deleteLevel(@PathVariable int id) {
+        return levelService.deleteLevelById(id);
     }
 }

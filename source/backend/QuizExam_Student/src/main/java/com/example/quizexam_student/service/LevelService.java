@@ -11,5 +11,5 @@ public interface LevelService {
     Level addLevel(Level level);
     Level editLevel(Integer id, Level level);
     Level getLevelById(Integer id);
-    void deleteLevelById(Integer id);
+    Level deleteLevelById(Integer id);
 }

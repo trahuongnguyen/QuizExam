@@ -48,9 +48,9 @@ public class LevelServiceImpl implements LevelService {
     }
 
     @Override
-    public void deleteLevelById(Integer id) {
+    public Level deleteLevelById(Integer id) {
         Level level = levelRepository.findByIdAndStatus(id,1);
         level.setStatus(0);
-        levelRepository.save(level);
+        return levelRepository.save(level);
     }
 }
