@@ -71,6 +71,11 @@ const routes: Routes = [
         loadChildren: () => import('./practice/practice.module')
           .then(m => m.PracticeModule),
       },
+      {
+        path: 'authorize',
+        loadChildren: () => import('./authorize/authorize.module')
+          .then(m => m.AuthorizeModule),
+      },
     ]
   },
 

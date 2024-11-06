@@ -21,7 +21,7 @@
     margin-bottom: 15px;
 }
 
-.button {
+.button-create {
     font-size: 12px;
     background-color: #aa1210;
     border: none;
@@ -32,7 +32,15 @@
     background-color: #8f0a0a;
 }
 
-.bottom-actions .icon {
+.button-pdf {
+    font-size: 12px;
+    background: #efcaca;
+    color: #bf0000;
+    border: none;
+    border-radius: 6px;
+}
+
+.icon {
     line-height: normal;
-    margin-right: 8px;
+    margin-right: 4px;
 }
