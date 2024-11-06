@@ -1,10 +1,9 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '../../service/auth.service';
 import { HomeComponent } from '../home.component';
-import { response } from 'express';
 declare var $: any;
 
 @Component({
@@ -23,7 +22,6 @@ export class LevelComponent implements OnInit, OnDestroy {
   };
   levelId: any;
   name: String = '';
-  point: number = 1;
 
   isPopupConfirm: boolean = false;
 
@@ -132,7 +130,6 @@ export class LevelComponent implements OnInit, OnDestroy {
     const level =
     {
       name: this.name,
-      point: this.point
     }
 
     this.http.post(`${this.authService.apiUrl}/level`, level, this.home.httpOptions).subscribe(
@@ -171,7 +168,6 @@ export class LevelComponent implements OnInit, OnDestroy {
     {
       id: this.levelId,
       name: this._level.name,
-      point: this.point
     }
 
     this.http.put(`${this.authService.apiUrl}/level/${this.levelId}`, level, this.home.httpOptions).subscribe(

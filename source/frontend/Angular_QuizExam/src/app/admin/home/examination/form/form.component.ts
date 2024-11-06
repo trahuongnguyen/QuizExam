@@ -9,10 +9,10 @@ import { HomeComponent } from '../../home.component';
 declare var $: any;
 
 interface ExamForm {
-  name: string; 
-  duration: number; 
-  startTime: any; 
-  endTime: any; 
+  name: string;
+  duration: number;
+  startTime: any;
+  endTime: any;
   classes: number[];
   students: number[];
   subjectId: number;
@@ -34,12 +34,8 @@ export class FormComponent implements OnInit {
   subjectName: any;
 
   selectedSubject: number = 1;
-  listLevel = [
-    { id: 1, name: 'Easy'},
-    { id: 2, name: 'Medium'},
-    { id: 3, name: 'Hard'}
-  ];
-  
+  listLevel: any = [];
+
   isPopupLevel = false;
 
   //classList: number[] = [];
@@ -59,7 +55,7 @@ export class FormComponent implements OnInit {
 
   createdExam: any;
 
-  
+
   createExam() {
     const exam = {
       name: this.examsForm.name,
@@ -67,7 +63,7 @@ export class FormComponent implements OnInit {
       startTime: this.examsForm.startTime,
       endTime: this.examsForm.endTime,
       subjectId: this.examsForm.subjectId,
-      levels: this.levelId
+      levels: this.levelIdModel
     };
 
     if (!this.validateLevel()) {
@@ -105,6 +101,7 @@ export class FormComponent implements OnInit {
   }
 
   levelId: { [key: string]: number; } = {};
+  levelIdModel: { [key: string]: number; } = {};
 
   ngOnInit(): void {
     //this.subjectId = Number(this.activatedRoute.snapshot.params['subjectId']) ?? 0;
@@ -112,19 +109,19 @@ export class FormComponent implements OnInit {
       this.subjects = response;
     });
     this.initializeLevel();
-
-    this.listLevel.forEach((element:any) => {
-      this.levelId[element.id as string] = 0;
-      console.log(this.levelId);
-    });
   }
 
   initializeLevel(): void {
     this.http.get<any>(`${this.authService.apiUrl}/level`, this.home.httpOptions).subscribe((data: any) => {
-      this.listLevel = data; 
+      this.listLevel = data;
+      this.listLevel.forEach((element: any) => {
+        this.levelId[element.id as string] = 0;
+        this.levelIdModel[element.id as string] = 0;
+        console.log(this.levelId);
+      });
       console.log(this.listLevel);
     }, error => {
-      console.error('Error fetching levels:', error); 
+      console.error('Error fetching levels:', error);
     });
   }
 
@@ -147,11 +144,6 @@ export class FormComponent implements OnInit {
     this.isPopupLevel = true;
   }
 
-  getSelectedLevelsNames(): string {
-    const selectedLevels = this.listLevel.filter((level: any) => this.examsForm.levelIds.includes(level.id));
-    return selectedLevels.map((level: any) => `[${level.name}]`).join(' ');
-  }
-
   toggleStudentSelection(studentId: number, event: Event) {
     const checkbox = (event.target as HTMLInputElement);
 
@@ -169,7 +161,7 @@ export class FormComponent implements OnInit {
   validateLevel(): boolean {
     var flag = false;
     var totalQuestions = 0;
-    this.listLevel.forEach((element:any) => {
+    this.listLevel.forEach((element: any) => {
       if (this.levelId[element.id as string] < 0) {
         this.errorMessageLevel[element.id] = "Question number cannot be negative.";
         flag = true;
@@ -179,7 +171,7 @@ export class FormComponent implements OnInit {
       }
       totalQuestions += this.levelId[element.id as string];
     });
-    
+
     if (totalQuestions < 16 || totalQuestions > 25) {
       this.toastr.error('Total of number questions must be between 16 and 25 (Level).', 'Error', {
         timeOut: 2000,
@@ -189,14 +181,34 @@ export class FormComponent implements OnInit {
     return flag;
   }
 
-  closePopupLevel(event?: MouseEvent, flag?: Boolean): void {
-    if (this.validateLevel() && flag) {
-      return;
-    }
+  selectedLevelsText: string = '';
 
+  closePopupLevel(event?: MouseEvent): void {
     if (event) {
       event.stopPropagation();
     }
+
+    this.isPopupLevel = false;
+    this.listLevel.forEach((element: any) => {
+      this.levelId[element.id as string] = this.levelIdModel[element.id as string];
+      console.log(this.levelId);
+    });
+  }
+
+  confirmLevel(): void {
+    if (this.validateLevel()) {
+      return;
+    }
+
+    // Tạo chuỗi thông tin về số câu hỏi của các level
+    this.selectedLevelsText = this.listLevel.map((level: any) =>
+      `${level.name}: ${this.levelId[level.id]}`
+    ).join(', ');  // Tạo chuỗi "EASY: 10, MEDIUM: 6, HARD: 0"
+    this.listLevel.forEach((element: any) => {
+      this.levelIdModel[element.id as string] = this.levelId[element.id as string];
+      console.log(this.levelId);
+    });
+
     this.isPopupLevel = false;
   }
 }

@@ -24,7 +24,6 @@ public class Level {
     @NotBlank(message = "Level name is required.")
     private String name;
 
-    @NotNull(message = "Point is required.")
     @Column(name = "point", nullable = false)
     private Integer point;
 
