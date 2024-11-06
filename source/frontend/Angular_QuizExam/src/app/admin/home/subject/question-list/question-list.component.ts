@@ -40,21 +40,13 @@ export class QuestionListComponent {
       this.http.get<any>(`${this.authService.apiUrl}/question/${this._subjectId}`, this.home.httpOptions).subscribe((data: any) => {
         this.apiData = data;
         this.subjectId = this._subjectId;
-        this.authService.apiUrl = data;
+        this.authService.listExporter = data;
         this.initializeDataTable();
       });
     }
 
     this.http.get<any>(`${this.authService.apiUrl}/subject/${this._subjectId}`, this.home.httpOptions).subscribe((data: any) => {
-      this.semId = data.sem.id;
-      this.http.get<any>(`${this.authService.apiUrl}/subject/sem/${this.semId}`, this.home.httpOptions).subscribe(response => {
-        this.subjects = response;
-        for (let sub of this.subjects) {
-          if (sub.id == this._subjectId) {
-            this._subjectName = sub.name;
-          }
-        }
-      });
+      this._subjectName = data.name;
     });
   }
 
@@ -83,9 +75,9 @@ export class QuestionListComponent {
           render: function (data: any, type: any, row: any) {
             let value: any = '';
             data.forEach((val: any) => {
-              value += '[' + val.name + '] ';
+              value += `[${val.name}] `;
             });
-            return value;
+            return `<div class="chapter-names">${value}</div>`;
           }
         },
         { title: 'Level', data: 'level.name' },
@@ -93,7 +85,7 @@ export class QuestionListComponent {
           title: 'Action',
           data: null,
           render: function (data: any, type: any, row: any) {
-            return `<span  class="mdi mdi-pencil icon-action edit-icon" title="Edit" data-id="${row.id}"></span>`;
+            return `<span class="mdi mdi-pencil icon-action edit-icon" title="Edit" data-id="${row.id}"></span>`;
 
           }
         }

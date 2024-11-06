@@ -308,6 +308,13 @@
     color: #d7da2e;
 }
 
+.dataTables_wrapper .table td .chapter-names {
+    width: 300px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 /* Ghi đè CSS cho Pagination của DataTables */
 .dataTables_wrapper .dataTables_paginate {
     float: none;
