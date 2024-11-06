@@ -134,7 +134,7 @@ export class ResultComponent implements OnInit {
       doughnutChart.update();
     
       // Cập nhật phần trăm vào phần tử HTML
-      const percentage = Math.floor((currentScore / this.maxScore) * 100);
+      const percentage = Math.round((currentScore / this.maxScore) * 100);
       document.getElementById('percentageLabel')!.innerText = `${percentage}%`;
     
       if (currentScore < this.score) {

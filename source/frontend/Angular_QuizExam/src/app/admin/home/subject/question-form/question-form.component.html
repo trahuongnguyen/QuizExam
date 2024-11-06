@@ -4,16 +4,17 @@
     <form class="d-flex" (ngSubmit)="saveQuestions()">
         <div id="question-forms">
             <div *ngFor="let question of questionForms; let i = index" class="question-form" [id]="'question-form-' + i">
+                <div class="mb-4 mt-2"><b>Question {{ i + 1 }}:</b></div>
                 <div class="form-row">
                     <input type="hidden" [(ngModel)]="question.subjectId" name="question.subjectId{{i}}" class="form-control" />
                     
-                    <div class="form-group-row col me-3">
+                    <div class="form-group-row form-select-chapter col me-3">
                         <label for="chapter" class="label-fix">Chapter:</label>
-                        <button type="button" class="form-select button-chapter" style="text-align: left;" (click)="openPopup(i)">{{ getSelectedChaptersNames(question) || 'Choose Chapter' }}</button>
+                        <button type="button" class="form-select button-chapter" style="text-align: left;" (click)="openPopup(i)">{{ getSelectedChaptersNames(question) }}</button>
                     </div>
-                    <div class="form-group-row col me-0">
+                    <div class="form-group-row form-selectlevel col me-0">
                         <label for="level">Level:</label>
-                        <select class="form-select" [(ngModel)]="question.levelId" name="question.levelId{{i}}">
+                        <select class="form-select" [(ngModel)]="question.levelId" name="question.levelId{{i}}" style="cursor: pointer;">
                             <option *ngFor="let level of listLevel" [value]="level.id">{{ level.name }}</option>
                         </select>
                     </div>
@@ -51,12 +52,12 @@
                     </div>
                 </div>
 
-                <div class="mt-3">
+                <div class="mt-3 mb-2">
                     <button type="button" class="add-answer" (click)="addAnswer(i)"><span class="mdi mdi-plus icon-button"></span> Another choice</button>
                     <button type="button" class="remove-question" style="float: right;" (click)="removeQuestionForm(i)"><span class="mdi mdi-delete-forever icon-button"></span> Remove Question</button>
                 </div>
 
-                <div *ngIf="isPopupChapter" class="modal-backdrop" (click)="closePopup($event)">
+                <div *ngIf="isPopupChapter[i]" class="modal-backdrop">
                     <div class="modal-content" (click)="$event.stopPropagation()">
                         <div class="modal-header">
                             <span>Select Chapter</span>
@@ -85,18 +86,13 @@
     </form>
 </div>
 
-<div *ngIf="isCancelPopup" class="modal-backdrop-confirm" (click)="closePopup($event)">
-    <div class="modal-content-confirm" (click)="$event.stopPropagation()">
-        <div class="modal-header-confirm">
-            <span>Are you sure?</span>
-            <span class="close-icon" (click)="closePopup($event)">&times;</span>
-        </div>
-        <div class="modal-body-confirm">
-            <p>Are you sure you want to cancel? Any unsaved changes will be lost.</p>
-        </div>
-        <div class="modal-footer-confirm">
-            <button type="button" class="btn btn-primary button button-yes" (click)="confirmCancel()">Yes</button>
-            <button type="button" class="btn btn-secondary button button-no" (click)="closePopup($event)">No</button>
-        </div>
+<!-- Popup xác nhận -->
+<div class="custom-popup" *ngIf="showPopupConfirm">
+    <div class="popup-content">
+        <h4 class="modal-title"><b>Are you sure?</b></h4>
+        <hr/>
+        <p>Do you really want to cancel? Any unsaved changes will be lost.</p>
+        <button class="btn yes-button button" (click)="confirmCancel()">Yes</button>
+        <button class="btn no-button button" (click)="closePopup()">No</button>
     </div>
 </div>
