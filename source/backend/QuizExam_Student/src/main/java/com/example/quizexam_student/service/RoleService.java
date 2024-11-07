@@ -1,5 +1,6 @@
 package com.example.quizexam_student.service;
 
+import com.example.quizexam_student.entity.Permission;
 import com.example.quizexam_student.entity.Role;
 import org.springframework.stereotype.Service;
 
@@ -11,4 +12,5 @@ public interface RoleService {
     Role findById(int id);
     List<Role> findAll();
     List<Role> findAllByPermissionToEmployee(int id);
+    List<Permission> findPermissionsByRole(int id);
 }

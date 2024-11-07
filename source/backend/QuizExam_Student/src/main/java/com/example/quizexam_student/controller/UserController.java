@@ -69,7 +69,7 @@ public class UserController {
         return ResponseEntity.ok(new RegisterResponse(userRequest.getEmail(), "Employee created successfully"));
     }
 
-    @GetMapping("/{id}")
+    @PutMapping("/remove/{id}")
     public ResponseEntity<String> remove(@PathVariable int id){
         userService.deleteUserById(id);
         return new ResponseEntity<>("User deleted successfully", HttpStatus.OK);

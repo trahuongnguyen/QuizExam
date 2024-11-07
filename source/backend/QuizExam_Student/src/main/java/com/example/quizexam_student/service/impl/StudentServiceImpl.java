@@ -23,8 +23,6 @@ public class StudentServiceImpl implements StudentService {
 
     private final StudentRepository studentRepository;
 
-    private final StatusRepository statusRepository;
-
     private final ClassesRepository classesRepository;
 
     private final PasswordEncoder passwordEncoder;
@@ -71,9 +69,7 @@ public class StudentServiceImpl implements StudentService {
         }
         User user = userService.saveUser(studentRequest.getUserRequest());
         StudentDetail studentDetail = StudentMapper.convertFromRequest(studentRequest);
-        Status status = statusRepository.findById(1).orElse(null);
         Classes classes = classesRepository.findById(studentRequest.getClassId()).orElse(null);
-        studentDetail.setStatus(status);
         studentDetail.setUser(user);
         studentDetail.set_class(classes);
         return studentRepository.save(studentDetail);
@@ -123,41 +119,10 @@ public class StudentServiceImpl implements StudentService {
             throw new NotFoundException("class", "Class not found.");
         }
         List<StudentDetail> students = studentRepository.findAllByUserIdIn(userIds);
-        Status status = statusRepository.findById(2).orElse(null);
         for (StudentDetail student : students) {
             student.set_class(newClass);
-            student.setStatus(status);
         }
         studentRepository.saveAll(students);
     }
 
-//    public User addUser(UserRequest userRequest) {
-//        if (userRepository.existsByEmail(userRequest.getEmail())) {
-//            throw new AlreadyExistException("email", "Email already exists.");
-//        }
-//        if (userRepository.existsByPhoneNumber(userRequest.getPhoneNumber())) {
-//            throw new AlreadyExistException("phoneNumber", "Phone Number already exists.");
-//        }
-//        User user = new User();
-//        user.setEmail(userRequest.getEmail());
-//        user.setPassword(passwordEncoder.encode("@1234567"));
-//        user.setDob(userRequest.getDob());
-//        user.setGender(userRequest.getGender());
-//        user.setFullName(userRequest.getFullName());
-//        user.setAddress(userRequest.getAddress());
-//        user.setPhoneNumber(userRequest.getPhoneNumber());
-//        Role role = roleRepository.findById(5).orElse(null);
-//        user.setRole(role);
-//        user.setStatus(1);
-//        return userRepository.save(user);
-//    }
-
-//    public void setUser(User userUpdate, UserRequest userInput) {
-//        userUpdate.setEmail(userInput.getEmail());
-//        userUpdate.setDob(userInput.getDob());
-//        userUpdate.setGender(userInput.getGender());
-//        userUpdate.setFullName(userInput.getFullName());
-//        userUpdate.setAddress(userInput.getAddress());
-//        userUpdate.setPhoneNumber(userInput.getPhoneNumber());
-//    }
 }

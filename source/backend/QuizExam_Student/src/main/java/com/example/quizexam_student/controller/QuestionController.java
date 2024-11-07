@@ -54,7 +54,6 @@ public class QuestionController {
         if (files.length != questionRequests.size()) {
             throw new IllegalArgumentException("The number of image files does not match the number of questions.");
         }
-
         List<Question> savedQuestions = new ArrayList<>();
         for (int i = 0; i < questionRequests.size(); i++) {
             QuestionRequest questionRequest = questionRequests.get(i);
@@ -81,6 +80,11 @@ public class QuestionController {
             questionRequest.setImage(fileName);
         }
         return questionService.updateQuestion(id,questionRequest);
+    }
+
+    @PutMapping("/remove/{id}")
+    public Question removeQuestion(@PathVariable int id) {
+        return questionService.deleteQuestion(id);
     }
 
 

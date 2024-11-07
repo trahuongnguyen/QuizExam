@@ -85,7 +85,7 @@ public class SubjectController {
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'DIRECTOR')")
-    @DeleteMapping("/{id}")
+    @PutMapping("/remove/{id}")
     public void deleteSubject(@PathVariable int id){
         subjectService.deleteById(id);
     }

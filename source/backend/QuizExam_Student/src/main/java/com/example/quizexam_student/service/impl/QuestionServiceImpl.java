@@ -87,4 +87,14 @@ public class QuestionServiceImpl implements QuestionService {
         answerRepository.saveAll(answers);
         return question;
     }
+
+    @Override
+    public Question deleteQuestion(int questionId) {
+        Question question = questionRepository.findByIdAndStatus(questionId, 1);
+        if (Objects.isNull(question) || question.getStatus() == 0) {
+            throw new NotFoundException("question", "Question not found.");
+        }
+        question.setStatus(0);
+        return questionRepository.save(question);
+    }
 }

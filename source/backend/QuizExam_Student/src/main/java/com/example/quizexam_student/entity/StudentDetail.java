@@ -29,10 +29,6 @@ public class StudentDetail {
     private String rollNumber;
 
     @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "status_id")
-    private Status status;
-
-    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "class_id")
     private Classes _class;
 
