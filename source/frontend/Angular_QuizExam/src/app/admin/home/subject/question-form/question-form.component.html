@@ -33,7 +33,7 @@
                         <img id="imageQuestion{{i}}" src="#" alt="Image Question" style="display:none;" />
                 
                         <!-- Dấu X để xóa ảnh -->
-                        <span *ngIf="question.imageFile" class="remove-image" (click)="removeImage(i)"><b>x</b></span>
+                        <span *ngIf="question.imageFile" class="remove-image" (click)="removeImage(i)"><b>&times;</b></span>
                     </div>
                 </div>
 
@@ -44,8 +44,8 @@
                                 <div class="input-group-text">
                                     <input type="checkbox" [(ngModel)]="answer.isCorrect" (change)="toggleIsCorrect(answer)" />
                                 </div>
-                                <input type="text" [(ngModel)]="answer.content" name="answer.content{{i}}{{j}}" class="form-control" [checked]="answer.isCorrect == 1" />
-                                <span class="remove-answer" (click)="removeAnswer(i, j)">X</span>
+                                <input type="text" [(ngModel)]="answer.content" name="answer.content{{i}}{{j}}" class="form-control" />
+                                <span class="remove-answer" (click)="showPopupDeleteAnswer(i, j)">&times;</span>
                             </div>
                             <div class="text-danger error answersError" *ngIf="answersError[i] && answersError[i][j]">{{ answersError[i][j] }}</div>
                         </div>
@@ -61,18 +61,18 @@
                     <div class="modal-content" (click)="$event.stopPropagation()">
                         <div class="modal-header">
                             <span>Select Chapter</span>
-                            <span class="close-icon" (click)="closePopup()">&times;</span>
+                            <span class="close-icon" (click)="closePopupChapter()">&times;</span>
                         </div>
                         <div class="modal-body">
                             <div class="form-chapter">
                                 <div class="checkbox-group">
                                     <div class="checkbox-input" *ngFor="let chapter of listChapter">
-                                        <input type="checkbox" (change)="toggleChapterSelection(popupChapterIndex, chapter.id, $event)" [checked]="questionForms[popupChapterIndex].chapters.includes(chapter.id)" id="chapter{{chapter.id}}-{{popupChapterIndex}}" />
+                                        <input type="checkbox" (change)="toggleChapterSelection(chapter.id, $event)" [checked]="questionForms[popupChapterIndex].chapters.includes(chapter.id)" id="chapter{{chapter.id}}-{{popupChapterIndex}}" />
                                         <label for="chapter{{chapter.id}}-{{popupChapterIndex}}">{{ chapter.name }}</label>
                                     </div>
                                 </div>
                             </div>
-                            <button type="button" class="btn btn-primary button" (click)="closePopup()">OK</button>
+                            <button type="button" class="btn btn-primary button" (click)="confirmChapterSelection()">OK</button>
                         </div>
                     </div>
                 </div>
@@ -81,18 +81,55 @@
         <div class="btn-action">
             <button type="button" class="mdi mdi-plus-circle-outline icon-action" title="Add Question" (click)="addQuestionForm()"></button>
             <button type="submit" class="mdi mdi-checkbox-marked-circle-outline icon-action" title="Save"></button>
-            <button type="button" class="mdi mdi-close-circle-outline icon-action" title="Cancel" (click)="cancel()"></button>
+            <button type="button" class="mdi mdi-close-circle-outline icon-action" title="Cancel" (click)="showPopupConfirmCancel()"></button>
         </div>
     </form>
 </div>
 
-<!-- Popup xác nhận -->
-<div class="custom-popup" *ngIf="showPopupConfirm">
+<!-- Popup thông tin -->
+<div class="custom-popup" *ngIf="isPopupNotice">
+    <div class="popup-content">
+        <h4 class="modal-title"><b>Notice</b></h4>
+        <hr/>
+        <p>At least one question must remain.</p>
+        <button class="btn yes-button button" (click)="closePopupNotice()">OK</button>
+    </div>
+</div>
+
+<!-- Popup xác nhận xóa câu hỏi -->
+<div class="custom-popup" *ngIf="isPopupDeleteQuestion">
+    <div class="popup-content">
+        <h4 class="modal-title"><b>Are you sure?</b></h4>
+        <hr/>
+        <p *ngIf="questionIndexToDelete !== null">Do you really want to delete this <b>Question {{questionIndexToDelete + 1}}</b>? This action cannot be undone.</p>
+        <button class="btn yes-button button" (click)="confirmDeleteQuestion()">Yes</button>
+        <button class="btn no-button button" (click)="closePopupDeleteQuestion()">No</button>
+    </div>
+</div>
+
+<!-- Popup xác nhận xóa câu trả lời -->
+<div class="custom-popup" *ngIf="isPopupDeleteAnswer">
+    <div class="popup-content">
+        <h4 class="modal-title"><b>{{ this.cannotDeleteMessage ? 'Notice' : 'Are you sure?' }}</b></h4>
+        <hr/>
+        <p>{{ this.cannotDeleteMessage ? cannotDeleteMessage : 'Do you really want to delete this answer? This action cannot be undone.' }}</p>
+        <div *ngIf="cannotDeleteMessage">
+            <button class="btn yes-button button" (click)="closePopupDeleteAnswer()">OK</button>
+        </div>
+        <div *ngIf="!cannotDeleteMessage">
+            <button class="btn yes-button button" (click)="confirmDeleteAnswer()">Yes</button>
+            <button class="btn no-button button" (click)="closePopupDeleteAnswer()">No</button>
+        </div>
+    </div>
+</div>
+
+<!-- Popup xác nhận hủy -->
+<div class="custom-popup" *ngIf="isPopupConfirmCancel">
     <div class="popup-content">
         <h4 class="modal-title"><b>Are you sure?</b></h4>
         <hr/>
         <p>Do you really want to cancel? Any unsaved changes will be lost.</p>
         <button class="btn yes-button button" (click)="confirmCancel()">Yes</button>
-        <button class="btn no-button button" (click)="closePopup()">No</button>
+        <button class="btn no-button button" (click)="closePopupConfirmCancel()">No</button>
     </div>
 </div>
