@@ -170,7 +170,7 @@ public class ExaminationServiceImpl implements ExaminationService {
 
     @Override
     public List<ExaminationResponse> getAllExamBySemId(int semId) {
-        List<ExaminationResponse> exam = examinationRepository.findAll().stream()
+        List<ExaminationResponse> exam = examinationRepository.findAllByStatus(1).stream()
                 .map(ExaminationMapper::convertToResponse).collect(Collectors.toList());
         List<ExaminationResponse> examBySemId = exam.stream().filter(
                 ex -> ex.getSubject().getSem().getId() == semId).collect(Collectors.toList());

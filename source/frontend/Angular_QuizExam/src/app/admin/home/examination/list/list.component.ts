@@ -16,42 +16,40 @@ declare var $: any;
 export class ListComponent implements OnInit {
   constructor(private authService: AuthService, public home: HomeComponent, private http: HttpClient, public toastr: ToastrService, private router: Router, public examComponent: ExaminationComponent) { }
 
-  dataList: any;
-  apiData: any;
-  subjectDetail: any = null;
-  isPopupDetail = false;
-
-  examList: any;
-
   examId: any;
-  subjectId: any;
   semId: number = 1;
   name: String = '';
-  image: String = '';
   sem: any;
   selectedSem: number = 1; // Default chọn Sem 1
+
+  examList: any = [];
+  filteredExamList: any = [];
+  searchTerm: string = '';
   
+  pagedExamList: any = [];
+  currentPage: number = 1; // Trang hiện tại
+  itemsPerPage: number = 4; // Số phần tử trên mỗi trang
+  totalPages: number = 0; // Tổng số trang
+  pages: number[] = []; // Mảng số trang
+
   ngOnInit(): void {
-    this.authService.entityExporter = 'subject';
-    // this.http.get<any>(`${this.authService.apiUrl}/subject/sem/${this.selectedSem}`, this.home.httpOptions).subscribe((data: any) => {
-    //   this.apiData = data;
-    //   this.initializeDataTable();
-    // });
+
+    this.selectSem(this.selectedSem);
 
     this.http.get<any>(`${this.authService.apiUrl}/sem`, this.home.httpOptions).subscribe(response => {
       this.sem = response;
     })
-
-    this.http.get<any>(`${this.authService.apiUrl}/exam`, this.home.httpOptions).subscribe((data: any) => {
-      this.examList = data;
-    });
   }
 
   selectSem(sem: number): void {
     this.selectedSem = sem;
+    this.http.get<any>(`${this.authService.apiUrl}/exam/sem/${this.selectedSem}`, this.home.httpOptions).subscribe((data: any) => {
+      this.examList = data;
+      this.filteredExamList = data;
+      this.calculatePagination();
+      this.updatePagedList();
+    });
     this.semId = sem;
-    // Thực hiện các logic nếu cần thiết khi chọn Sem
-    //this.reloadTable(this.selectedSem);
     console.log('Selected Sem:', sem);
   }
 
@@ -60,11 +58,47 @@ export class ListComponent implements OnInit {
     this.router.navigate([`/admin/home/exam/detail/${id}`])
   }
 
-  ngOnDestroy(): void {
-    if (this.dataList) {
-      this.dataList.destroy();
+  onSearch(): void {
+    const term = this.searchTerm.toLowerCase();
+    this.filteredExamList = this.examList.filter((exam: any) =>
+      exam.name.toLowerCase().includes(term) || exam.code.toLowerCase().includes(term)
+    );
+    this.calculatePagination();
+    this.updatePagedList();
+  }
+//  paginstion
+  calculatePagination(): void {
+    this.totalPages = Math.ceil(this.filteredExamList.length / this.itemsPerPage);
+    this.pages = Array.from({ length: this.totalPages }, (_, i) => i + 1);
+  }
+
+  updatePagedList(): void {
+    const start = (this.currentPage - 1) * this.itemsPerPage;
+    const end = start + this.itemsPerPage;
+    this.pagedExamList = this.filteredExamList.slice(start, end);
+  }
+
+  goToPage(page: number): void {
+    if (page >= 1 && page <= this.totalPages) {
+      this.currentPage = page;
+      this.updatePagedList();
     }
   }
+
+  previousPage(): void {
+    if (this.currentPage > 1) {
+      this.currentPage--;
+      this.updatePagedList();
+    }
+  }
+
+  nextPage(): void {
+    if (this.currentPage < this.totalPages) {
+      this.currentPage++;
+      this.updatePagedList();
+    }
+  }
+
 }
 
 
