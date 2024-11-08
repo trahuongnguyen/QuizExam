@@ -125,6 +125,71 @@
     /* Màu nền khi được chọn */
     font-weight: bold;
 }
+/* search */
+.d-flex {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.search-container {
+    width: 300px; /* Điều chỉnh độ rộng nếu cần */
+    position: relative;/* Moves search input to the right */
+}
+
+.search-container .form-control {
+    width: 100%;
+    padding-right: 30px; /* Tạo khoảng trống cho biểu tượng */
+    font-size: 14px;
+}
+.search-container .form-control:focus {
+    border-color: #dee2e6;
+    box-shadow: none;
+}
+.search-container .form-control::placeholder {
+    color: rgba(0, 0, 0, 0.4); /* Điều chỉnh độ mờ (0.5 = 50%) */
+}
+.search-icon {
+    position: absolute;
+    top: 50%;
+    right: 10px; /* Đặt biểu tượng ở bên phải */
+    transform: translateY(-50%);
+    color: #888; /* Điều chỉnh màu sắc nếu cần */
+}
+
+/* CSS for Pagination */
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: Arial, sans-serif;
+    margin-top: 20px;
+}
+
+.pagination a, .pagination span {
+    padding: 8px 12px;
+    margin: 0 5px;
+    text-decoration: none;
+    color: #333;
+    cursor: pointer;
+}
+
+.pagination .current {
+    color: #fff !important;
+    border: none;
+    border-radius: 6px;
+    background: none;
+    background-color: rgba(170, 18, 16, 0.93);
+    padding: 2px 10px;
+}
+
+.pagination .disabled {
+    color: lightgray;
+    pointer-events: none;
+}
+
+
+
 
 @media (min-width: 1400px) {
     .col-lg-3 {
