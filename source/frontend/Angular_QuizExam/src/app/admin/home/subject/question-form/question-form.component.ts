@@ -6,6 +6,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { HomeComponent } from '../../home.component';
 import { SubjectComponent } from '../subject.component';
 import { forkJoin } from 'rxjs';
+import { Title } from '@angular/platform-browser';
 
 interface Answer {
   content: string;
@@ -33,13 +34,17 @@ export class QuestionFormComponent implements OnInit {
   subjectName: string = '';
   listChapter: any = [];
   listLevel: any = [];
+  
   isPopupChapter: boolean[] = [];
   popupChapterIndex: number = 0;
 
+  searchChapter: string = '';
+  filterChapters: any = [];
   tempSelectedChapters: number[] = [];
 
   constructor(
     private authService: AuthService,
+    private titleService: Title,
     private home: HomeComponent,
     private http: HttpClient,
     private toastr: ToastrService,
@@ -49,6 +54,7 @@ export class QuestionFormComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    this.titleService.setTitle('Add New Question');
     this.subjectId = Number(this.activatedRoute.snapshot.params['subjectId']) || 0;
     this.loadData();
     this.initializeQuestion();
@@ -88,6 +94,13 @@ export class QuestionFormComponent implements OnInit {
     this.popupChapterIndex = questionIndex;
     this.isPopupChapter[questionIndex] = true;
     this.tempSelectedChapters = this.questionForms[questionIndex].chapters.slice();
+    this.searchChapter = '';
+    this.onSearchChange();
+  }
+
+  onSearchChange() {
+    this.filterChapters = this.listChapter
+      .filter((chapter: any) => chapter.name.toLowerCase().includes(this.searchChapter.toLowerCase()));
   }
 
   toggleChapterSelection(chapterId: number, event: Event) {
@@ -109,6 +122,7 @@ export class QuestionFormComponent implements OnInit {
   confirmChapterSelection() {
     // Cập nhật chapters cho câu hỏi
     this.questionForms[this.popupChapterIndex].chapters = this.tempSelectedChapters;
+    console.log(this.questionForms);
     
     // Đóng popup
     this.closePopupChapter();

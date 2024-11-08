@@ -17,7 +17,6 @@ public class StudentMapper {
         studentResponse.setUserResponse(userResponse);
         studentResponse.setRollPortal(studentDetail.getRollPortal());
         studentResponse.setRollNumber(studentDetail.getRollNumber());
-        studentResponse.setStatus(studentDetail.getStatus());
         studentResponse.set_class(studentDetail.get_class());
         studentResponse.setMarks(studentDetail.getMarks().stream().toList());
         return studentResponse;

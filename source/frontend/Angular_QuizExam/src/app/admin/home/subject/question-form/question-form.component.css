@@ -18,7 +18,6 @@
 #question-forms {
     width: 100%;
     margin-right: 50px;
-    overflow-y: auto; /* Cho phép cuộn dọc */
 }
 
 .question-form {
@@ -177,8 +176,12 @@ input[type="checkbox"] {
     text-align: center;
 }
 
+.add-answer:hover {
+    color: green;
+}
+
 .remove-question:hover {
-    color: red;
+    color: rgb(225, 10, 10);
 }
 
 .icon-button {
@@ -203,77 +206,114 @@ input[type="checkbox"] {
 }
 
 
-/* Popup */
-.modal-backdrop, .modal-backdrop-confirm {
+/* Popup Container */
+.popup-container {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
     display: flex;
     justify-content: center;
     align-items: center;
+    background-color: rgba(0, 0, 0, 0.5);
     z-index: 9999;
 }
 
-.modal-content {
-    background-color: #fff;
-    border-radius: 8px;
+.popup-container .popup-content {
+    display: flex;
+    flex-direction: column;
     width: 500px;
-    /* Tăng chiều rộng của modal */
+    max-height: 80vh;
+    background-color: var(--color-background);
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
     border: 1px solid #ddd;
-    font-size: 18px;
-    /* Tăng kích thước font chữ */
+    border-radius: 8px;
 }
 
-.modal-header {
-    background-color: #aa1210;
-    border-radius: 10px 10px 0 0;
-    color: white;
-    padding: 15px;
-    /* Tăng kích thước padding cho header */
-    font-size: 20px;
-    /* Tăng kích thước font chữ của header */
-    font-weight: bold;
+.popup-container .popup-content .popup-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 1px solid #ddd;
+    color: white;
+    font-size: 20px;
+    font-weight: bold;
+    background-color: #aa1210;
+    border-radius: 8px 8px 0 0;
+    padding: 15px;
 }
 
+.popup-container .popup-content .popup-body {
+    background-color: var(--color-background);
+    padding: 0 20px;
+    overflow-y: auto;
+}
+
+.popup-container .popup-content .popup-footer {
+    padding: 10px;
+    background-color: var(--color-background);
+    border-radius: 0px 0px 8px 8px;
+}
+
+.popup-container .popup-content .search-container {
+    position: relative;
+    margin: 10px;
+}
+
+.popup-container .popup-content .popup-header
 .close-icon {
     font-size: 24px;
     cursor: pointer;
 }
 
-.modal-body {
-    padding: 20px;
-    /* Tăng kích thước padding cho body */
-    font-size: 18px;
-    border-radius: 8px;
-    /* Tăng kích thước font chữ cho nội dung */
-    background-color: var(--color-background);
-}
-
-.form-chapter input[type="checkbox"] {
-    margin-right: 10px; /* Khoảng cách giữa checkbox và nhãn */
-}
-
-.form-chapter .checkbox-group {
-    margin-bottom: 20px; /* Khoảng cách dưới cùng */
+.popup-container .popup-content .search-container
+.search-input {
     width: 100%;
+    padding: 8px 33px 8px 8px;
+    font-size: 14px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
 }
 
+.popup-container .popup-content .search-container
+.search-input:focus {
+    outline: none;
+    border-color: #aa1210;
+}
+
+.popup-container .popup-content .search-container
+.search-icon {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 18px;
+    color: black;
+    pointer-events: none;
+}
+
+.popup-container
+.popup-content
+.popup-body
+.form-chapter input[type="checkbox"] {
+    margin-right: 10px;
+}
+
+.popup-container
+.popup-content
+.popup-body
 .form-chapter .checkbox-input {
-    margin-bottom: 10px; /* Khoảng cách giữa các dòng */
+    margin-bottom: 10px;
+}
+
+.popup-container .popup-content .popup-footer
+.button {
+    width: 100px;
 }
 
 
-
-/* Popup confirm */
-.custom-popup {
+/* Dialog Popup */
+.dialog-popup {
     position: fixed;
     top: 0;
     left: 0;
@@ -283,11 +323,12 @@ input[type="checkbox"] {
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 1000; /* Đảm bảo popup nằm trên cùng */
+    z-index: 9999;
 }
 
-.popup-content {
-    background: white;
+.dialog-popup .dialog-content {
+    background-color: var(--color-background);
+    color: var(--color-text);
     padding: 20px;
     border-radius: 8px;
     text-align: center;
@@ -295,21 +336,17 @@ input[type="checkbox"] {
     width: 450px; /* Đặt chiều rộng để có kích thước hợp lý */
 }
 
-.popup-content h5 {
-    margin-bottom: 15px;
-}
-
-.popup-content button {
+.dialog-popup .dialog-content button {
     margin: 10px;
     width: 100px; /* Đặt chiều rộng cho button */
 }
 
-.popup-content .yes-button {
+.dialog-popup .dialog-content .yes-button {
     color: white;
     background-color: green;
 }
 
-.popup-content .no-button {
+.dialog-popup .dialog-content .no-button {
     color: white;
     background-color: #aa1210;
 }

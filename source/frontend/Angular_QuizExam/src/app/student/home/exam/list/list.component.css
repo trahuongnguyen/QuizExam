@@ -14,16 +14,6 @@
     font-weight: bold;
 }
 
-.nav-pills .nav-link.active {
-    background-color: #E6E6E6;
-    color: black;
-    font-weight: bold;
-}
-
-.nav-link {
-    color: var(--color-text);
-}
-
 .card-content {
     padding: 20px;
 }

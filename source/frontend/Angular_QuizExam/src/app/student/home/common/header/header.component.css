@@ -17,8 +17,6 @@
 }
 
 .navbar-nav .nav-link {
-    margin-left: 10px;
-    margin-right: 20px;
     text-decoration: none;
     color: var(--color-text);
     font-weight: bold;
@@ -27,8 +25,9 @@
 
 .nav-item .active {
     color: #000;
-    background-color: #f5f5f5;
+    background-color: #e6e6e6;
     border-radius: 8px;
+    padding: 5px 8px;
 }
 
 .user-info {
