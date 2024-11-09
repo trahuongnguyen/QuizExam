@@ -24,6 +24,7 @@
     cursor: pointer;
     width: 220px;
     height: 300px;
+    border: none;
 }
 
 .card-image {
@@ -41,6 +42,8 @@
 .card-content {
     padding: 20px;
     text-align: center;
+    border: 1px solid black;
+    border-radius: 5px;
 }
 
 .card-title {

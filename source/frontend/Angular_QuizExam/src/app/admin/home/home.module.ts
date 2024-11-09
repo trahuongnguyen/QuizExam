@@ -14,6 +14,8 @@ import { SubjectModule } from './subject/subject.module';
 import { ExaminationModule } from './examination/examination.module';
 import { LevelComponent } from './level/level.component';
 
+import { NgApexchartsModule } from "ng-apexcharts";
+import { NgScrollbarModule } from 'ngx-scrollbar';
 
 @NgModule({
   declarations: [
@@ -31,7 +33,9 @@ import { LevelComponent } from './level/level.component';
     HomeRoutingModule,
     FormsModule,
     SubjectModule,
-    ExaminationModule
+    ExaminationModule,
+    NgApexchartsModule,
+    NgScrollbarModule
   ]
 })
 export class HomeModule { }

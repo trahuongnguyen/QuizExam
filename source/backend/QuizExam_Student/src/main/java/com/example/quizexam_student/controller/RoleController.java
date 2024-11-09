@@ -26,7 +26,7 @@ public class RoleController {
         return roleService.findById(id);
     }
 
-    @GetMapping("/permission/{id}")
+    @GetMapping("/ /{id}")
     public List<Role> getRolesByPermissionId(@PathVariable int id) {
         return roleService.findAllByPermissionToEmployee(id);
     }

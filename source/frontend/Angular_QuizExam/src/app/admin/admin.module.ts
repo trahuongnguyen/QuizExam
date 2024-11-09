@@ -22,7 +22,6 @@ import { ErrorInterceptor } from './service/error.interceptor';
     FormsModule,
     ToastrModule,
     ReactiveFormsModule
-   
   ],
   providers: [
     NgModule,
