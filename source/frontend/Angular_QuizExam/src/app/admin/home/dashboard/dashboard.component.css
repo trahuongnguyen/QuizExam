@@ -1,6 +1,6 @@
 .content-wrapper {
     padding: 20px;
-    margin: 0 0 60px 120px;
+    margin: 0 0 60px 150px;
     min-height: 80vh;
     overflow-x: hidden;
     transition: margin-left 0.3s ease;
@@ -10,58 +10,67 @@
     margin-left: 30px;
 }
 
-.mt-5 {
-    margin-top: 0.1rem !important;
-    margin-left: 224px;
-    position: fixed;
-    left: 8px;
+.order-card {
+    background-color: #536dfe; /* Màu chính */
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
-@media (min-width: 1400px) {
-    .container, .container-lg, .container-md, .container-sm, .container-xl, .container-xxl {
-        width: 1270px;
-        height: 200px;
-        background-color: var(--color-card);
-        border-radius: 10px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    }
+
+.order-card h6,
+.order-card h2,
+.order-card p {
+    margin: 0;
+    color: #ffffff;
 }
-.row{
-    padding-top: 10px;
+
+.cardTitle {
+    background-color: #ffffff;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
-.mt-4 {
-    margin-top: 0.2rem !important;
+
+.cardClass {
+    background-color: #3949ab;
+    padding: 20px;
+    border-radius: 8px;
+    color: #ffffff;
 }
-.row h6{
-    padding-top: 12px;
-    padding-left: 10px;
-    font-size: 16px !important;
-    font-weight: bold;
+
+.table-hover thead th {
+    background-color: #536dfe;
+    color: #ffffff;
+    border: none;
 }
-.row .col-sm-6{
-    margin-left: 46px;
+
+.table-hover tbody tr:hover {
+    background-color: #e3f2fd;
 }
-.card {
-    border-radius: 10px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    text-align: left;
-    padding-left: 22px;
-    padding-top: 14px;
-    padding-bottom: 14px;
-    color: #1a1a1a;
+
+.text-c-green {
+    color: #4caf50; /* Màu xanh lá */
 }
-.card-icon {
-    font-size: 25px; /* Giảm kích thước icon */
-    margin-bottom: 8px;
+
+.text-primary {
+    color: #2196f3; /* Màu xanh da trời */
 }
-.card-value {
-    font-size: 18px; /* Giảm kích thước số */
-    font-weight: bold;
+
+.fas, .feather {
+    font-size: 16px;
 }
-.card-label {
-    font-size: 14px; /* Giảm kích thước chữ */
+
+.ng-scrollbar {
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
 }
-.card-attempt { background-color: #ffecec; }
-.card-exam { background-color: #fff6e5; }
-.card-class { background-color: #e6ffed; }
-.card-student { background-color: #e6ffed; }
-.card-employee { background-color: #f0e6ff; }
+.row2 {
+    margin-top: 50px;
+}
+
+.chart-container {
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    height: 100%;
+}

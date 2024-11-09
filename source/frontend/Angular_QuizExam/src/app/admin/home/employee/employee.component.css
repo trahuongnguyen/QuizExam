@@ -23,7 +23,9 @@
 
 .button-create {
     font-size: 12px;
-    background-color: #aa1210;
+    font-weight: 600;
+    background-color: #f9c9cd;
+    color: #a90312;
     border: none;
     border-radius: 6px;
 }
