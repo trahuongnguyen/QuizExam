@@ -6,14 +6,7 @@
         <!-- Bottom Actions (Create and Export) -->
         <div class="bottom-actions">
             <div class="sem-container">
-                <a class="btn btn-outline-light" [ngClass]="{'active': selectedSem === 1}" (click)="selectSem(1)">Sem
-                    1</a>
-                <a class="btn btn-outline-light" [ngClass]="{'active': selectedSem === 2}" (click)="selectSem(2)">Sem
-                    2</a>
-                <a class="btn btn-outline-light" [ngClass]="{'active': selectedSem === 3}" (click)="selectSem(3)">Sem
-                    3</a>
-                <a class="btn btn-outline-light" [ngClass]="{'active': selectedSem === 4}" (click)="selectSem(4)">Sem
-                    4</a>
+                <a class="btn btn-outline-light" *ngFor="let sem of semester" [ngClass]="{'active': selectedSem === sem.id}" (click)="selectSem(sem.id)">{{ sem.name }}</a>
             </div>
         </div>
         <!-- Search Input -->

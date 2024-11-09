@@ -1,7 +1,11 @@
+.main-body {
+    background-color: var(--color-background);
+    color: var(--color-text);
+}
+
 .profile-container {
     max-width: 750px;
     padding: 50px 0 50px 0;
-
 }
 
 .profile-header {
@@ -26,15 +30,19 @@
 .profile-info a {
     color: dodgerblue;
     text-decoration: none;
+    cursor: pointer;
 }
+
 .profile-info-span {
     font-size: 1.1rem;
     margin-bottom: 20px;
 }
+
 .profile-info-span .span {
     display: inline-flex;
     width: 150px;
 }
+
 .profile-info input {
     border: none !important;
     cursor: pointer;
@@ -47,11 +55,19 @@
 }
 
 .change-password-form {
+    height: 0;
+    overflow: hidden;
+    transition: height 0.5s ease-out, padding 0.5s ease-out;
     background-color: var(--color-change-password-form);
-    padding: 20px;
+    padding: 0 20px;
     border-radius: 8px;
     max-width: 600px;
     margin-left: 10%;
+}
+
+.change-password-form.open {
+    height: 350px;
+    padding: 20px;
 }
 
 .eye {

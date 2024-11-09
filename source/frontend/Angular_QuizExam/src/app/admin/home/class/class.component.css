@@ -1,14 +1,15 @@
 /* Body */
 .content-wrapper {
-    padding: 0 20px;
-    margin: 20px 0 60px 150px;
-    min-height: 80vh;
+    padding: 80px 20px 60px 170px;
+    min-height: 100vh;
     overflow-x: hidden;
-    transition: margin-left 0.3s ease;
+    background-color: var(--color-background);
+    color: var(--color-text);
+    transition: all 0.5s ease;
 }
 
 .content-wrapper-collapsed {
-    margin-left: 30px;
+    padding-left: 50px;
 }
 
 .line {
@@ -21,34 +22,45 @@
     margin-bottom: 15px;
 }
 
+.button {
+    font-size: 12px;
+    font-weight: 500;
+    border-radius: 6px;
+    text-decoration: none;
+    padding: 8px;
+    cursor: pointer;
+    transition: all 0.5s ease;
+}
+
 .button-create {
-    font-size: 12px;
-    background-color: #aa1210;
-    border: none;
-    border-radius: 6px;
-}
-
-.button:active {
-    background-color: #8f0a0a;
-}
-
-.button-excel {
-    font-size: 12px;
-    color: #008c04 ;
-    background: #a2ecb5 ;
-    border: none;
-    border-radius: 6px;
+    background-color: #ffbbbb;
+    color: #df6f6f;
 }
 
 .button-pdf {
-    font-size: 12px;
-    background: #efcaca;
+    background-color: #efcaca;
     color: #bf0000;
-    border: none;
-    border-radius: 6px;
 }
 
-.icon {
+.button-excel {
+    background-color: #a2ecb5;
+    color: #008c04 ;
+    margin-right: 5px;
+}
+
+.button-create:hover {
+    background-color: #ffd5d5;
+}
+
+.button-pdf:hover {
+    background-color: #ffaaac;
+}
+
+.button-excel:hover {
+    background-color: #5cdca0;
+}
+
+.button .icon {
     line-height: normal;
     margin-right: 4px;
 }

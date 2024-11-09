@@ -42,6 +42,10 @@ export class QuestionFormComponent implements OnInit {
   filterChapters: any = [];
   tempSelectedChapters: number[] = [];
 
+  dialogTitle: string = '';
+  dialogMessage: string = '';
+  isConfirmationPopup: boolean = false;
+
   constructor(
     private authService: AuthService,
     private titleService: Title,
@@ -134,16 +138,6 @@ export class QuestionFormComponent implements OnInit {
     this.tempSelectedChapters = [];
   }
 
-  isPopupNotice: boolean = false;
-
-  showPopupNotice() {
-    this.isPopupNotice = true;
-  }
-
-  closePopupNotice() {
-    this.isPopupNotice = false;
-  }
-
   addQuestionForm() {
     this.questionForms.push({
       content: '',
@@ -159,29 +153,26 @@ export class QuestionFormComponent implements OnInit {
   isPopupDeleteQuestion: boolean = false;
   questionIndexToDelete: number | null = null;
 
-  showPopupDeleteQuestion() {
+  showPopupDeleteQuestion(index: number) {
+    if (this.questionForms.length > 1) {
+      this.questionIndexToDelete = index;
+      this.dialogTitle = 'Are you sure?';
+      this.dialogMessage = `Do you really want to delete this <b>Question ${index + 1}</b>? This action cannot be undone.`;
+      this.isConfirmationPopup = true;
+    }
+    else {
+      this.dialogTitle = 'Notice';
+      this.dialogMessage = 'At least one question must remain.';
+      this.isConfirmationPopup = false;
+    }
     this.isPopupDeleteQuestion = true;
-  }
-
-  closePopupDeleteQuestion() {
-    this.questionIndexToDelete = null;
-    this.isPopupDeleteQuestion = false;
   }
 
   confirmDeleteQuestion() {
     if (this.questionIndexToDelete !== null) {
       this.questionForms.splice(this.questionIndexToDelete, 1);
-      this.closePopupDeleteQuestion();
-    }
-  }
-
-  removeQuestionForm(index: number) {
-    if (this.questionForms.length > 1) {
-      this.questionIndexToDelete = index;
-      this.showPopupDeleteQuestion();
-    }
-    else {
-      this.showPopupNotice();
+      this.closePopupDialog();
+      this.toastr.success('The question has been deleted.', '', { timeOut: 2000 });
     }
   }
 
@@ -196,31 +187,31 @@ export class QuestionFormComponent implements OnInit {
   isPopupDeleteAnswer: boolean = false;
   questionIndexToDeleteAnswer: number | null = null; // Lưu chỉ mục câu hỏi
   answerIndexToDelete: number | null = null; // Lưu chỉ mục câu trả lời
-  cannotDeleteMessage: string = ''; // Lưu thông báo khi không thể xóa
 
   showPopupDeleteAnswer(questionIndex: number, answerIndex: number) {
     const question = this.questionForms[questionIndex];
-    this.questionIndexToDeleteAnswer = questionIndex;
-    this.answerIndexToDelete = answerIndex;
-    this.isPopupDeleteAnswer = true;
 
-    // Kiểm tra nếu câu hỏi có ít hơn hoặc bằng 4 câu trả lời
-    if (question.answers.length <= 4) {
-      this.cannotDeleteMessage = 'You cannot delete any answer because at least 4 answers are required for each question.';
+    // Kiểm tra nếu câu hỏi có nhiều hơn 4 câu trả lời
+    if (question.answers.length > 4) {
+      this.questionIndexToDeleteAnswer = questionIndex;
+      this.answerIndexToDelete = answerIndex;
+      this.dialogTitle = 'Are you sure?'
+      this.dialogMessage = 'Do you really want to delete this answer? This action cannot be undone.';
+      this.isConfirmationPopup = true;
     }
-  }
-
-  closePopupDeleteAnswer() {
-    this.questionIndexToDeleteAnswer = null;
-    this.answerIndexToDelete = null;
-    this.cannotDeleteMessage = '';
-    this.isPopupDeleteAnswer = false;
+    else {
+      this.dialogTitle = 'Notice'
+      this.dialogMessage = 'You cannot delete any answer because at least 4 answers are required for each question.';
+      this.isConfirmationPopup = false;
+    }
+    this.isPopupDeleteAnswer = true;
   }
 
   confirmDeleteAnswer() {
     if (this.questionIndexToDeleteAnswer !== null && this.answerIndexToDelete !== null) {
       this.questionForms[this.questionIndexToDeleteAnswer].answers.splice(this.answerIndexToDelete, 1);
-      this.closePopupDeleteAnswer();
+      this.closePopupDialog();
+      this.toastr.success('The answer has been deleted.', '', { timeOut: 2000 });
     }
   }
 
@@ -361,15 +352,29 @@ export class QuestionFormComponent implements OnInit {
   isPopupConfirmCancel: boolean = false;
 
   showPopupConfirmCancel() {
+    this.dialogTitle = 'Are you sure?';
+    this.dialogMessage = 'Do you really want to cancel? Any unsaved changes will be lost.';
+    this.isConfirmationPopup = true;
     this.isPopupConfirmCancel = true;
   }
 
-  closePopupConfirmCancel() {
-    this.isPopupConfirmCancel = false;
+  confirmCancel() {
+    this.closePopupDialog();
+    this.router.navigate([`/admin/home/subject/${this.subjectId}/questionList`]);
   }
 
-  confirmCancel() {
+  closePopupDialog() {
+    this.dialogTitle = '';
+    this.dialogMessage = '';
+    this.isConfirmationPopup = false;
+
+    this.questionIndexToDelete = null;
+    this.isPopupDeleteQuestion = false;
+
+    this.questionIndexToDeleteAnswer = null;
+    this.answerIndexToDelete = null;
+    this.isPopupDeleteAnswer = false;
+
     this.isPopupConfirmCancel = false;
-    this.router.navigate([`/admin/home/subject/${this.subjectId}/questionList`]);
   }
 }

@@ -19,7 +19,7 @@ export class ListComponent implements OnInit {
   examId: any;
   semId: number = 1;
   name: String = '';
-  sem: any;
+  semester: any;
   selectedSem: number = 1; // Default chọn Sem 1
 
   examList: any = [];
@@ -37,7 +37,7 @@ export class ListComponent implements OnInit {
     this.selectSem(this.selectedSem);
 
     this.http.get<any>(`${this.authService.apiUrl}/sem`, this.home.httpOptions).subscribe(response => {
-      this.sem = response;
+      this.semester = response;
     })
   }
 

@@ -8,6 +8,7 @@ import { SubjectComponent } from './subject.component';
 import { QuestionListComponent } from './question-list/question-list.component';
 import { QuestionFormComponent } from './question-form/question-form.component';
 import { QuestionUpdateComponent } from './question-update/question-update.component';
+import { SharedModule } from '../../../shared/shared.module';
 
 
 @NgModule({
@@ -22,6 +23,7 @@ import { QuestionUpdateComponent } from './question-update/question-update.compo
   imports: [
     CommonModule,
     FormsModule,
+    SharedModule,
     SubjectRoutingModule
   ]
 })

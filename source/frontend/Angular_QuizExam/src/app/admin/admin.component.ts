@@ -39,7 +39,7 @@ export class AdminComponent implements OnInit {
 
   // Cập nhật lớp CSS
   updateBodyClass(isDarkMode: boolean): void {
-    const body = document.getElementById('body');
+    const body = document.getElementById('app');
     if (body) {
       if (isDarkMode) {
         body.setAttribute('QuizTech-theme', 'dark-admin');

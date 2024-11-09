@@ -1,14 +1,15 @@
 /* Body */
 .content-wrapper {
-    padding: 0 20px;
-    margin: 20px 0 60px 150px;
-    min-height: 80vh;
+    padding: 80px 20px 60px 170px;
+    min-height: 100vh;
     overflow-x: hidden;
-    transition: margin-left 0.3s ease;
+    background-color: var(--color-background);
+    color: var(--color-text);
+    transition: all 0.5s ease;
 }
 
 .content-wrapper-collapsed {
-    margin-left: 30px;
+    padding-left: 50px;
 }
 
 .line {
@@ -66,11 +67,22 @@
     text-overflow: ellipsis; /* Hiển thị "..." khi nội dung bị cắt */
 }
 
-.contentError {
+.select-level {
+    cursor: pointer;
+}
+
+.button-chapter, .select-level, .form-control, .search-input {
+    background-color: var(--color-input);
+    color: var(--color-text);
+    transition: all 0.5s ease;
+}
+
+.content-error {
     margin-left: 85px;
 }
 
-.answersError {
+.answer-error {
+    color: #aa1210;
     margin-left: 35px;
 }
 
@@ -161,7 +173,6 @@
     margin-left: 10px;
 }
 
-input[type="radio"],
 input[type="checkbox"] {
     cursor: pointer;
     transform: scale(1.5);
@@ -174,14 +185,15 @@ input[type="checkbox"] {
     border: none;
     background-color: unset;
     text-align: center;
+    transition: all 0.5s ease;
 }
 
 .add-answer:hover {
-    color: green;
+    color: darkgreen;
 }
 
 .remove-question:hover {
-    color: rgb(225, 10, 10);
+    color: firebrick;
 }
 
 .icon-button {
@@ -203,6 +215,7 @@ input[type="checkbox"] {
     background-color: unset;
     border: none;
     cursor: pointer;
+    transition: all 0.5s ease;
 }
 
 
@@ -288,7 +301,6 @@ input[type="checkbox"] {
     top: 50%;
     transform: translateY(-50%);
     font-size: 18px;
-    color: black;
     pointer-events: none;
 }
 
@@ -309,44 +321,4 @@ input[type="checkbox"] {
 .popup-container .popup-content .popup-footer
 .button {
     width: 100px;
-}
-
-
-/* Dialog Popup */
-.dialog-popup {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.7);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 9999;
-}
-
-.dialog-popup .dialog-content {
-    background-color: var(--color-background);
-    color: var(--color-text);
-    padding: 20px;
-    border-radius: 8px;
-    text-align: center;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
-    width: 450px; /* Đặt chiều rộng để có kích thước hợp lý */
-}
-
-.dialog-popup .dialog-content button {
-    margin: 10px;
-    width: 100px; /* Đặt chiều rộng cho button */
-}
-
-.dialog-popup .dialog-content .yes-button {
-    color: white;
-    background-color: green;
-}
-
-.dialog-popup .dialog-content .no-button {
-    color: white;
-    background-color: #aa1210;
 }

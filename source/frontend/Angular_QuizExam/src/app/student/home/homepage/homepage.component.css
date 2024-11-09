@@ -1,4 +1,7 @@
-
+.main-body {
+    background-color: var(--color-background);
+    color: var(--color-text);
+}
 
 .bg-card {
     background-color: var(--color-card);

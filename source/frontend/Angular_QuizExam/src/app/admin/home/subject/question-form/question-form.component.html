@@ -16,7 +16,7 @@
                     </div>
                     <div class="form-group-row form-selectlevel col me-0">
                         <label for="level">Level:</label>
-                        <select class="form-select" [(ngModel)]="question.levelId" name="question.levelId{{i}}" style="cursor: pointer;">
+                        <select class="form-select select-level" [(ngModel)]="question.levelId" name="question.levelId{{i}}">
                             <option *ngFor="let level of listLevel" [value]="level.id">{{ level.name }}</option>
                         </select>
                     </div>
@@ -26,7 +26,7 @@
                     <label for="question" class="label-fix">Question:</label>
                     <textarea class="form-control" [(ngModel)]="question.content" name="question.content{{i}}" rows="3" style="flex-grow: 1"></textarea>
                 </div>
-                <div class="text-danger error contentError" *ngIf="contentError[i]">{{ contentError[i] }}</div>
+                <div class="text-danger content-error" *ngIf="contentError[i]">{{ contentError[i] }}</div>
 
                 <div class="form-group form-image">
                     <div class="img-preview mt-3 mb-3" [ngClass]="{'hidden-border': question.imageFile}">
@@ -49,7 +49,7 @@
                                 <input type="text" [(ngModel)]="answer.content" name="answer.content{{i}}{{j}}" class="form-control" />
                                 <span class="remove-answer" (click)="showPopupDeleteAnswer(i, j)">&times;</span>
                             </div>
-                            <div class="text-danger error answersError" *ngIf="answersError[i] && answersError[i][j]">{{ answersError[i][j] }}</div>
+                            <div class="text-danger answer-error" *ngIf="answersError[i] && answersError[i][j]">{{ answersError[i][j] }}</div>
                         </div>
                     </div>
                 </div>
@@ -58,7 +58,7 @@
                     <button type="button" class="add-answer" (click)="addAnswer(i)">
                         <span class="mdi mdi-plus icon-button"></span> Another choice
                     </button>
-                    <button type="button" class="remove-question" style="float: right;" (click)="removeQuestionForm(i)">
+                    <button type="button" class="remove-question" style="float: right;" (click)="showPopupDeleteQuestion(i)">
                         <span class="mdi mdi-delete-forever icon-button"></span> Remove Question
                     </button>
                 </div>
@@ -101,53 +101,32 @@
     </form>
 </div>
 
-<!-- Popup thông báo -->
-<div class="dialog-popup" *ngIf="isPopupNotice">
-    <div class="dialog-content">
-        <h4 class="dialog-title"><b>Notice</b></h4>
-        <hr/>
-        <p>At least one question must remain.</p>
-        <button class="btn yes-button button" (click)="closePopupNotice()">OK</button>
-    </div>
-</div>
-
 <!-- Popup xác nhận xóa câu hỏi -->
-<div class="dialog-popup" *ngIf="isPopupDeleteQuestion">
-    <div class="dialog-content">
-        <h4 class="dialog-title"><b>Are you sure?</b></h4>
-        <hr/>
-        <p *ngIf="questionIndexToDelete !== null">
-            Do you really want to delete this 
-            <b>Question {{questionIndexToDelete + 1}}</b>? This action cannot be undone.
-        </p>
-        <button class="btn yes-button button" (click)="confirmDeleteQuestion()">Yes</button>
-        <button class="btn no-button button" (click)="closePopupDeleteQuestion()">No</button>
-    </div>
-</div>
+<app-dialog-popup
+  [isVisible]="isPopupDeleteQuestion"
+  [title]="dialogTitle"
+  [message]="dialogMessage"
+  [isConfirmationPopup]="isConfirmationPopup"
+  (confirm)="confirmDeleteQuestion()"
+  (close)="closePopupDialog()">
+</app-dialog-popup>
 
 <!-- Popup xác nhận xóa câu trả lời -->
-<div class="dialog-popup" *ngIf="isPopupDeleteAnswer">
-    <div class="dialog-content">
-        <h4 class="dialog-title"><b>{{ this.cannotDeleteMessage ? 'Notice' : 'Are you sure?' }}</b></h4>
-        <hr/>
-        <p>{{ this.cannotDeleteMessage ? cannotDeleteMessage : 'Do you really want to delete this answer? This action cannot be undone.' }}</p>
-        <div *ngIf="cannotDeleteMessage">
-            <button class="btn yes-button button" (click)="closePopupDeleteAnswer()">OK</button>
-        </div>
-        <div *ngIf="!cannotDeleteMessage">
-            <button class="btn yes-button button" (click)="confirmDeleteAnswer()">Yes</button>
-            <button class="btn no-button button" (click)="closePopupDeleteAnswer()">No</button>
-        </div>
-    </div>
-</div>
+<app-dialog-popup
+  [isVisible]="isPopupDeleteAnswer"
+  [title]="dialogTitle"
+  [message]="dialogMessage"
+  [isConfirmationPopup]="isConfirmationPopup"
+  (confirm)="confirmDeleteAnswer()"
+  (close)="closePopupDialog()">
+</app-dialog-popup>
 
 <!-- Popup xác nhận hủy -->
-<div class="dialog-popup" *ngIf="isPopupConfirmCancel">
-    <div class="dialog-content">
-        <h4 class="dialog-title"><b>Are you sure?</b></h4>
-        <hr/>
-        <p>Do you really want to cancel? Any unsaved changes will be lost.</p>
-        <button class="btn yes-button button" (click)="confirmCancel()">Yes</button>
-        <button class="btn no-button button" (click)="closePopupConfirmCancel()">No</button>
-    </div>
-</div>
+<app-dialog-popup
+  [isVisible]="isPopupConfirmCancel"
+  [title]="dialogTitle"
+  [message]="dialogMessage"
+  [isConfirmationPopup]="isConfirmationPopup"
+  (confirm)="confirmCancel()"
+  (close)="closePopupDialog()">
+</app-dialog-popup>

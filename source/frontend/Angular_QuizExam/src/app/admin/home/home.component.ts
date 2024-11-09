@@ -15,6 +15,7 @@ export class HomeComponent implements OnInit {
   thisRouter = '/admin/home'
   windowScrolled = false;
   isSidebarCollapsed = false;
+  contentSidebar = true;
 
   userName: string = '';
   userRole: string = ''; 
@@ -75,5 +76,13 @@ export class HomeComponent implements OnInit {
 
   toggleSidebar() {
     this.isSidebarCollapsed = !this.isSidebarCollapsed;
+    if (this.isSidebarCollapsed) {
+      this.contentSidebar = false;
+    }
+    else {
+      setTimeout(() => {
+        this.contentSidebar = true;
+      }, 300);
+    }
   }
 }

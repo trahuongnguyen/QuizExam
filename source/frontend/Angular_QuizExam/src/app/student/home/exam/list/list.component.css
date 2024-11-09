@@ -1,3 +1,8 @@
+.main-body {
+    background-color: var(--color-background);
+    color: var(--color-text);
+}
+
 .exam-container {
     padding: 50px 100px 50px 100px;
     width: 100%;

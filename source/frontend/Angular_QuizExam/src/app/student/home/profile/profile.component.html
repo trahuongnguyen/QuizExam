@@ -1,4 +1,4 @@
-<div class="body">
+<div class="main-body">
     <div class="container profile-container ">
         <div class="profile-header ">
             <h1>Profile</h1>
@@ -20,56 +20,55 @@
                 <div class="span"><strong>Roll Number</strong></div>
                 <span>{{authService.myUser.rollNumber}}</span>
             </div>
-            <div id="userPassword">
+            <div id="change-password" *ngIf="isChangePasswordButtonVisible">
                 <div class="d-flex">
                     <div class="d-flex profile-info-span">
                         <div class="span"><strong>Password</strong></div>
-                        <span><input type="password" name="password" id="password" value="AptechVietNam"></span>
-                    </div>
-                    <div>
-                        <a id="changePassword" onclick="document.getElementById('userPassword').style.display='none'"
-                            data-bs-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false"
-                            aria-controls="collapseExample">
-                            <span>Change password</span>
-                        </a>
+                        <div>
+                            <a (click)="showChangePasswordForm()">Change password</a>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-        <form (submit)="changePassword()">
-            <div class="collapse change-password-form" id="collapseExample">
-                <div class="mb-3">
-                    <label for="currentPassword" class="form-label">Current Password</label>
-                    <div class="d-flex form-control">
-                        <input type="password" name="currentPassword" [(ngModel)]="currentPassword" class="w-95 border-none" id="currentPassword" placeholder="Enter current password">
-                        <div class="toggle-password eye" id="togglecurrentPassword" (click)="visiblePassword('currentPassword', 'icon1')">
-                            <span id="icon1" class="mdi mdi-eye-off-outline"></span>
-                        </div>
+        <form (submit)="changePassword()" class="change-password-form" [ngClass]="{'open': isPasswordChangeOpen}">
+            <div class="mb-3">
+                <label for="currentPassword" class="form-label">Current Password</label>
+                <div class="d-flex form-control">
+                    <input type="password" name="currentPassword" [(ngModel)]="currentPassword" class="w-95 border-none"
+                        id="currentPassword" placeholder="Enter current password">
+                    <div class="toggle-password eye" id="togglecurrentPassword"
+                        (click)="visiblePassword('currentPassword', 'icon1')">
+                        <span id="icon1" class="mdi mdi-eye-off-outline"></span>
                     </div>
                 </div>
-                <div class="mb-3">
-                    <label for="newPassword" class="form-label">New Password</label>
-                    <div class="d-flex form-control">
-                        <input type="password" name="newPassword" [(ngModel)]="newPassword" class="w-95 border-none" id="newPassword" placeholder="Enter new password">
-                        <div class="toggle-newPassword eye" id="togglenewPassword" (click)="visiblePassword('newPassword', 'icon2')">
-                            <span id="icon2" class="mdi mdi-eye-off-outline"></span>
-                        </div>
-                    </div>
-                </div>
-                <div class="mb-3">
-                    <label for="confirmPassword" class="form-label">Confirm Password</label>
-                    <div class="d-flex form-control">
-                        <input type="password" name="confirmPassword" [(ngModel)]="confirmPassword" class="w-95 border-none" id="confirmPassword" placeholder="Confirm new password">
-                        <div class="toggle-confirmPassword eye" id="toggleconfirmPassword" (click)="visiblePassword('confirmPassword', 'icon3')">
-                            <span id="icon3" class="mdi mdi-eye-off-outline"></span>
-                        </div>
-                    </div>
-
-                </div>
-                <button type="submit" class="btn btn-danger btn-profile">Save</button>
-                <button type="button" class="btn btn-secondary btn-profile"
-                    onclick="document.getElementById('userPassword').style = ''; document.getElementById('collapseExample').classList.remove('show')">Cancel</button>
             </div>
+            <div class="mb-3">
+                <label for="newPassword" class="form-label">New Password</label>
+                <div class="d-flex form-control">
+                    <input type="password" name="newPassword" [(ngModel)]="newPassword" class="w-95 border-none"
+                        id="newPassword" placeholder="Enter new password">
+                    <div class="toggle-newPassword eye" id="togglenewPassword"
+                        (click)="visiblePassword('newPassword', 'icon2')">
+                        <span id="icon2" class="mdi mdi-eye-off-outline"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="confirmPassword" class="form-label">Confirm Password</label>
+                <div class="d-flex form-control">
+                    <input type="password" name="confirmPassword" [(ngModel)]="confirmPassword" class="w-95 border-none"
+                        id="confirmPassword" placeholder="Confirm new password">
+                    <div class="toggle-confirmPassword eye" id="toggleconfirmPassword"
+                        (click)="visiblePassword('confirmPassword', 'icon3')">
+                        <span id="icon3" class="mdi mdi-eye-off-outline"></span>
+                    </div>
+                </div>
+
+            </div>
+            <button type="submit" class="btn btn-danger btn-profile">Save</button>
+            <button type="button" class="btn btn-secondary btn-profile"
+                (click)="hideChangePasswordForm();">Cancel</button>
         </form>
     </div>
 </div>

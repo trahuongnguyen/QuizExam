@@ -72,12 +72,22 @@ export  class DashboardComponent {
         categories: ['1/11/2000', '2/11/2000', '3/11/2000', '4/11/2000', '5/11/2000', '6/11/2000'],
         axisBorder: {
           show: false
+        },
+        labels: {
+          style: {
+            colors: 'var(--color-text)', // Màu chữ của nhãn trục x
+          }
         }
       },
       yaxis: {
         show: true,
         min: 10,
-        max: 70
+        max: 70,
+        labels: {
+          style: {
+            colors: 'var(--color-text)', // Màu chữ của nhãn trục y
+          }
+        }
       },
       colors: ['#73b4ff', '#59e0c5'],
       fill: {
@@ -166,7 +176,7 @@ export  class DashboardComponent {
           left: 0
         }
       },
-      colors: ['#fff', '#2ed8b6'],
+      colors: ['#d9d9d9', '#2ed8b6'],
       fill: {
         opacity: [1, 1]
       },

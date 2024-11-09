@@ -1,14 +1,15 @@
 /* Body */
 .content-wrapper {
-    padding: 0 20px;
-    margin: 20px 0 60px 150px;
-    min-height: 80vh;
+    padding: 80px 20px 60px 170px;
+    min-height: 100vh;
     overflow-x: hidden;
-    transition: margin-left 0.3s ease;
+    background-color: var(--color-background);
+    color: var(--color-text);
+    transition: all 0.5s ease;
 }
 
 .content-wrapper-collapsed {
-    margin-left: 30px;
+    padding-left: 50px;
 }
 
 .line {
@@ -60,6 +61,16 @@
     overflow: hidden; /* Ẩn nội dung vượt quá chiều rộng của nút */
     text-overflow: ellipsis; /* Hiển thị "..." khi nội dung bị cắt */
     display: inline-block; /* Để áp dụng các thuộc tính overflow */
+}
+
+.select-level {
+    cursor: pointer;
+}
+
+.button-chapter, .select-level, .form-control, .search-input {
+    background-color: var(--color-input);
+    color: var(--color-text);
+    transition: all 0.5s ease;
 }
 
 .contentError {
@@ -170,6 +181,7 @@ input[type="checkbox"] {
     border: none;
     background-color: unset;
     text-align: center;
+    transition: all 0.5s ease;
 }
 
 .remove-question:hover {
