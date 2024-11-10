@@ -1,8 +1,14 @@
-.profile-container {
-    position: static;
-    padding: 20px;
-    /* min-height: 607px; */
-    margin-left: 200px;
+.content-wrapper {
+    padding: 80px 20px 60px 170px;
+    min-height: 100vh;
+    overflow-x: hidden;
+    background-color: var(--color-background);
+    color: var(--color-text);
+    transition: all 0.5s ease;
+}
+
+.content-wrapper-collapsed {
+    padding-left: 50px;
 }
 
 .profile-header {

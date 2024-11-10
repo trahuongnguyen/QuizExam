@@ -5,6 +5,8 @@ import { ToastrService } from 'ngx-toastr';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HomeComponent } from '../../home.component';
 import { SubjectComponent } from '../subject.component';
+import { Title } from '@angular/platform-browser';
+import { AdminComponent } from '../../../admin.component';
 declare var $: any;
 
 @Component({
@@ -13,7 +15,16 @@ declare var $: any;
   styleUrl: './question-list.component.css'
 })
 export class QuestionListComponent {
-  constructor(private authService: AuthService, private home: HomeComponent, private http: HttpClient, public toastr: ToastrService, private router: Router, private activatedRoute: ActivatedRoute, public subjectComponent: SubjectComponent) { }
+  constructor(
+    private authService: AuthService,
+    private titleService: Title,
+    public admin : AdminComponent,
+    private home: HomeComponent,
+    private http: HttpClient,
+    private toastr: ToastrService,
+    private router: Router,
+    private activatedRoute: ActivatedRoute
+  ) { }
 
   dataTable: any;
   apiData: any;
@@ -34,6 +45,7 @@ export class QuestionListComponent {
   name: String = '';
 
   ngOnInit(): void {
+    this.titleService.setTitle('List of Questions');
     this.authService.entityExporter = 'question';
     this._subjectId = Number(this.activatedRoute.snapshot.params['subjectId']) ?? 0;
     if (this._subjectId > 0 && !Number.isNaN(this._subjectId)) {

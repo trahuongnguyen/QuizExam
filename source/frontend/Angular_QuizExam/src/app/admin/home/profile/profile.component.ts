@@ -2,14 +2,58 @@ import { Component, OnInit } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { AuthService } from '../../service/auth.service';
 import { ToastrService } from 'ngx-toastr';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { HomeComponent } from '../home.component';
+import { Title } from '@angular/platform-browser';
+import { AdminComponent } from '../../admin.component';
 @Component({
   selector: 'app-profile',
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.css'
 })
 export class ProfileComponent implements OnInit {
+  user: any;
+  httpOptions: any;
+
+  fullName: String = '';
+  email: String = '';
+  dob: any;
+  phoneNumber: String = '';
+  address: String = '';
+  gender: number = 1;
+  roleId: number = 4;
+  oldPassword: any;
+  newPassword: any;
+  confirmPassword: any;
+  id: number = 1;
+
+  constructor(
+    private authService: AuthService,
+    private titleService: Title,
+    public admin : AdminComponent,
+    private home: HomeComponent,
+    private http: HttpClient,
+    private toastr: ToastrService,
+    private router: Router,
+    private activatedRoute: ActivatedRoute
+  ) { }
+
+  ngOnInit(): void {
+    //this.loadToken();
+    this.titleService.setTitle('Profile');
+    this.httpOptions = this.home.httpOptions;
+    this.http.get<any>(`${this.authService.apiUrl}/auth/profile`, this.httpOptions).subscribe((data: any) => {
+      this.user = data;
+      this.fullName = this.user.fullName;
+      this.email = this.user.email;
+      this.dob = this.user.dob;
+      this.phoneNumber = this.user.phoneNumber;
+      this.address = this.user.address;
+      this.gender = this.user.gender;
+      this.id = this.user.id;
+    });
+  }
+
   showEditForm() {
     (document.getElementById('infor') as HTMLElement).style.display = 'none';
     (document.getElementById('form-infor') as HTMLElement).style.display = 'block';
@@ -114,40 +158,6 @@ export class ProfileComponent implements OnInit {
     )
 
   }
-
-  constructor(private authService: AuthService, private http: HttpClient, public toastr: ToastrService, private router: Router, public home: HomeComponent) { }
-
-  user: any;
-  httpOptions: any;
-
-
-  ngOnInit(): void {
-    //this.loadToken();
-    this.httpOptions = this.home.httpOptions;
-    this.http.get<any>(`${this.authService.apiUrl}/auth/profile`, this.httpOptions).subscribe((data: any) => {
-      this.user = data;
-      this.fullName = this.user.fullName;
-      this.email = this.user.email;
-      this.dob = this.user.dob;
-      this.phoneNumber = this.user.phoneNumber;
-      this.address = this.user.address;
-      this.gender = this.user.gender;
-      this.id = this.user.id;
-    });
-
-  }
-
-  fullName: String = '';
-  email: String = '';
-  dob: any;
-  phoneNumber: String = '';
-  address: String = '';
-  gender: number = 1;
-  roleId: number = 4;
-  oldPassword: any;
-  newPassword: any;
-  confirmPassword: any;
-  id: number = 1;
 
   visiblePassword(inputId: string, iconId: string): void {
     // Tìm phần tử đầu vào mật khẩu và icon bằng ID

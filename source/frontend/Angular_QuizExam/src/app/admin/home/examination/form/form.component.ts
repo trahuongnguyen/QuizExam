@@ -6,6 +6,8 @@ import { AuthService } from '../../../service/auth.service';
 import { ToastrService } from 'ngx-toastr';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HomeComponent } from '../../home.component';
+import { Title } from '@angular/platform-browser';
+import { AdminComponent } from '../../../admin.component';
 declare var $: any;
 
 interface ExamForm {
@@ -26,9 +28,18 @@ interface ExamForm {
 })
 
 export class FormComponent implements OnInit {
-  constructor(private authService: AuthService, private home: HomeComponent, private http: HttpClient, public toastr: ToastrService, private router: Router, private activatedRoute: ActivatedRoute, public examComponent: ExaminationComponent) {
+  constructor(
+    private authService: AuthService,
+    private titleService: Title,
+    public admin : AdminComponent,
+    private home: HomeComponent,
+    public examComponent: ExaminationComponent,
+    private http: HttpClient,
+    private toastr: ToastrService,
+    private router: Router,
+    private activatedRoute: ActivatedRoute
+  ) { }
 
-  }
   subjects: any;
   subjectId: number = 1;
   subjectName: any;
@@ -55,6 +66,13 @@ export class FormComponent implements OnInit {
 
   createdExam: any;
 
+  ngOnInit(): void {
+    this.titleService.setTitle('Create Exam');
+    this.http.get<any>(`${this.authService.apiUrl}/subject`, this.home.httpOptions).subscribe(response => {
+      this.subjects = response;
+    });
+    this.initializeLevel();
+  }
 
   createExam() {
     const exam = {
@@ -74,7 +92,7 @@ export class FormComponent implements OnInit {
           });
           this.createdExam = response;
           this.examComponent.step = true;
-          this.router.navigate(['/admin/home/exam/addStudent/' + this.createdExam.id]);
+          this.router.navigate(['/admin/home/exam/add-student/' + this.createdExam.id]);
         },
         error => {
           if (error.status === 401) {
@@ -102,14 +120,6 @@ export class FormComponent implements OnInit {
 
   levelId: { [key: string]: number; } = {};
   levelIdModel: { [key: string]: number; } = {};
-
-  ngOnInit(): void {
-    //this.subjectId = Number(this.activatedRoute.snapshot.params['subjectId']) ?? 0;
-    this.http.get<any>(`${this.authService.apiUrl}/subject`, this.home.httpOptions).subscribe(response => {
-      this.subjects = response;
-    });
-    this.initializeLevel();
-  }
 
   initializeLevel(): void {
     this.http.get<any>(`${this.authService.apiUrl}/level`, this.home.httpOptions).subscribe((data: any) => {

@@ -6,6 +6,8 @@ import { ToastrService } from 'ngx-toastr';
 import { Router } from 'express';
 import { ActivatedRoute } from '@angular/router';
 import { PracticeComponent } from '../practice.component';
+import { Title } from '@angular/platform-browser';
+import { AdminComponent } from '../../../admin.component';
 declare var $: any;
 
 interface Answer {
@@ -28,7 +30,17 @@ interface QuestionForm {
   styleUrl: './add-form.component.css'
 })
 export class AddFormComponent implements OnInit {
-  constructor(private authService: AuthService, private home: HomeComponent, private http: HttpClient, public toastr: ToastrService, private router: Router, private activatedRoute: ActivatedRoute, public practiceComponent: PracticeComponent) { }
+  constructor(
+    private authService: AuthService,
+    private titleService: Title,
+    public admin : AdminComponent,
+    private home: HomeComponent,
+    public practiceComponent: PracticeComponent,
+    private http: HttpClient,
+    private toastr: ToastrService,
+    private router: Router,
+    private activatedRoute: ActivatedRoute
+  ) { }
 
   subjects: any;
   subjectId: number = 0;
@@ -43,6 +55,7 @@ export class AddFormComponent implements OnInit {
   questionForms: QuestionForm[] = [];
 
   ngOnInit(): void {
+    this.titleService.setTitle('Create Practice');
     this.subjectId = Number(this.activatedRoute.snapshot.params['subjectId']) ?? 0;
 
     this.http.get<any>(`${this.authService.apiUrl}/subject/${this.subjectId}`, this.home.httpOptions).subscribe((data: any) => {

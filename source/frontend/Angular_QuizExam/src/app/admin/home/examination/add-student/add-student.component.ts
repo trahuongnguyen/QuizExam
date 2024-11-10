@@ -5,6 +5,8 @@ import { ToastrService } from 'ngx-toastr';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HomeComponent } from '../../home.component';
 import { ExaminationComponent } from '../examination.component';
+import { Title } from '@angular/platform-browser';
+import { AdminComponent } from '../../../admin.component';
 declare var $: any;
 
 @Component({
@@ -13,7 +15,17 @@ declare var $: any;
   styleUrl: './add-student.component.css'
 })
 export class AddStudentComponent implements OnInit, OnDestroy {
-  constructor(private authService: AuthService, public home: HomeComponent, public examComponent: ExaminationComponent, private http: HttpClient, public toastr: ToastrService, private router: Router, private activatedRoute: ActivatedRoute) { }
+  constructor(
+    private authService: AuthService,
+    private titleService: Title,
+    public admin : AdminComponent,
+    private home: HomeComponent,
+    public examComponent: ExaminationComponent,
+    private http: HttpClient,
+    private toastr: ToastrService,
+    private router: Router,
+    private activatedRoute: ActivatedRoute
+  ) { }
 
   dataTable: any;
 
@@ -26,6 +38,16 @@ export class AddStudentComponent implements OnInit, OnDestroy {
   listStudentSelected: any = [];
 
   dataExam: any;
+
+  ngOnInit(): void {
+    this.titleService.setTitle('Add Students to Exam');
+    this.examId = Number(this.activatedRoute.snapshot.params['examId']) ?? 0;
+    this.subjectId = Number(this.activatedRoute.snapshot.params['subjectId']) ?? 0;
+
+    this.checkExam();
+    this.getList();
+    this.initializeDataTable();
+  }
 
   checkExam(): void {
     //Cần làm thêm get mark (kiểm tra nếu có học sinh rồi thì không thể vào trang add nữa, mà chỉ có thể vào trang update)
@@ -54,15 +76,6 @@ export class AddStudentComponent implements OnInit, OnDestroy {
     this.http.get<any>(`${this.authService.apiUrl}/studentManagement/all-student`, this.home.httpOptions).subscribe(response => {
       this.listStudent = response;
     });
-  }
-
-  ngOnInit(): void {
-    this.examId = Number(this.activatedRoute.snapshot.params['examId']) ?? 0;
-    this.subjectId = Number(this.activatedRoute.snapshot.params['subjectId']) ?? 0;
-
-    this.checkExam();
-    this.getList();
-    this.initializeDataTable();
   }
 
   initializeDataTable(): void {

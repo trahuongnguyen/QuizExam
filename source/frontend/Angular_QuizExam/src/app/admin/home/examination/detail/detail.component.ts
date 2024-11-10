@@ -8,6 +8,8 @@ import { ExaminationComponent } from '../examination.component';
 import { response } from 'express';
 import { Observable } from 'rxjs/internal/Observable';
 import { Timestamp } from 'rxjs';
+import { Title } from '@angular/platform-browser';
+import { AdminComponent } from '../../../admin.component';
 declare var $: any;
 
 @Component({
@@ -16,7 +18,18 @@ declare var $: any;
   styleUrl: './detail.component.css'
 })
 export class DetailComponent implements OnInit {
-  constructor(private authService: AuthService, public home: HomeComponent, private http: HttpClient, public toastr: ToastrService, private router: Router, private activatedRoute: ActivatedRoute, public examComponent: ExaminationComponent) { }
+  constructor(
+    private authService: AuthService,
+    private titleService: Title,
+    public admin : AdminComponent,
+    private home: HomeComponent,
+    public examComponent: ExaminationComponent,
+    private http: HttpClient,
+    private toastr: ToastrService,
+    private router: Router,
+    private activatedRoute: ActivatedRoute
+  ) { }
+
   apiData: any;
   examId: number = 0;
 
@@ -24,6 +37,7 @@ export class DetailComponent implements OnInit {
   selectedExam: any;  // Bài thi được chọn
 
   ngOnInit(): void {
+    this.titleService.setTitle('Exam Details');
     this.authService.entityExporter = 'exam';
     this.examId = Number(this.activatedRoute.snapshot.params['examId']) ?? 0;
     this.http.get<any>(`${this.authService.apiUrl}/exam/${this.examId}`, this.home.httpOptions).subscribe((data: any) => {

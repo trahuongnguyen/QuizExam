@@ -1,6 +1,6 @@
 import { Component, ViewChild  } from '@angular/core';
 import { HomeComponent } from '../home.component';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '../../service/auth.service';
 import { HttpClient } from '@angular/common/http';
 import { ApexTheme, NgApexchartsModule } from 'ng-apexcharts';
@@ -20,6 +20,9 @@ import {
   ApexTooltip,
   ApexMarkers
 } from 'ng-apexcharts';
+import { Title } from '@angular/platform-browser';
+import { AdminComponent } from '../../admin.component';
+import { ToastrService } from 'ngx-toastr';
 
 
 @Component({
@@ -38,7 +41,17 @@ export  class DashboardComponent {
   chartOptions_3!: Partial<ChartOptions>;
 
   // constructor
-  constructor(public home : HomeComponent, private router: Router,  public authService: AuthService, private http: HttpClient) {
+  constructor(
+    private authService: AuthService,
+    private titleService: Title,
+    public admin : AdminComponent,
+    private home: HomeComponent,
+    private http: HttpClient,
+    private toastr: ToastrService,
+    private router: Router,
+    private activatedRoute: ActivatedRoute
+  ) {
+    this.titleService.setTitle('Dashboard');
     this.chartOptions = {
       chart: {
         height: 205,

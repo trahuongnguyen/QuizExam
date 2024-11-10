@@ -5,6 +5,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '../../../service/auth.service';
 import { AuthorizeComponent } from '../authorize.component';
 import { HomeComponent } from '../../home.component';
+import { Title } from '@angular/platform-browser';
+import { AdminComponent } from '../../../admin.component';
 declare var $: any;
 
 @Component({
@@ -13,7 +15,17 @@ declare var $: any;
   styleUrl: './detail.component.css'
 })
 export class DetailComponent implements OnInit{
-  constructor(private authService: AuthService, public home: HomeComponent, private http: HttpClient, public toastr: ToastrService, private router: Router, private activatedRoute: ActivatedRoute , public authorizeComponent: AuthorizeComponent) { }
+  constructor(
+    private authService: AuthService,
+    private titleService: Title,
+    public admin : AdminComponent,
+    private home: HomeComponent,
+    private http: HttpClient,
+    private toastr: ToastrService,
+    private router: Router,
+    private activatedRoute: ActivatedRoute,
+    public authorizeComponent: AuthorizeComponent
+  ) { }
 
   dataTable: any;
   apiData: any;
@@ -21,7 +33,9 @@ export class DetailComponent implements OnInit{
   roleName: string = '';
   name: String = '';
   description: String = '';
+
   ngOnInit(): void {
+    this.titleService.setTitle('Authorize Details');
     this.roleId = Number(this.activatedRoute.snapshot.params['roleId']) ?? 0;
     this.http.get<any>(`${this.authService.apiUrl}/role/permission/${this.roleId}`, this.home.httpOptions).subscribe((data: any) => {
       this.apiData = data;

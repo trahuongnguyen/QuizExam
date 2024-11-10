@@ -4,6 +4,8 @@ import { AuthService } from '../../service/auth.service';
 import { ToastrService } from 'ngx-toastr';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HomeComponent } from '../home.component';
+import { Title } from '@angular/platform-browser';
+import { AdminComponent } from '../../admin.component';
 declare var $: any;
 
 @Component({
@@ -12,7 +14,16 @@ declare var $: any;
   styleUrl: './student.component.css'
 })
 export class StudentComponent implements OnInit, OnDestroy {
-  constructor(private authService: AuthService, public home: HomeComponent, private http: HttpClient, public toastr: ToastrService, private router: Router, private activatedRoute: ActivatedRoute) { }
+  constructor(
+    private authService: AuthService,
+    private titleService: Title,
+    public admin : AdminComponent,
+    private home: HomeComponent,
+    private http: HttpClient,
+    private toastr: ToastrService,
+    private router: Router,
+    private activatedRoute: ActivatedRoute
+  ) { }
 
   dataTable: any;
   apiData: any;
@@ -30,12 +41,6 @@ export class StudentComponent implements OnInit, OnDestroy {
 
   studentId: any;
 
-  isSidebarCollapsed = false;
-
-  toggleSidebar() {
-    this.isSidebarCollapsed = !this.isSidebarCollapsed;
-  }
-
   get formattedDob(): string {
     const dob = this.stdResponse.userResponse.dob;
     // Chuyển đổi chuỗi "dd-MM-yyyy" sang định dạng "yyyy-MM-dd"
@@ -52,6 +57,7 @@ export class StudentComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.titleService.setTitle('List of Students');
     this.authService.entityExporter = 'studentManagement';
     this._classId = Number(this.activatedRoute.snapshot.params['classId']) ?? 0;
     if (this._classId != 0 && !Number.isNaN(this._classId)) {

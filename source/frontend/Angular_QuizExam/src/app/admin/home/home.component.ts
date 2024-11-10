@@ -14,34 +14,26 @@ export class HomeComponent implements OnInit {
   title = 'Angular_QuizExam';
   thisRouter = '/admin/home'
   windowScrolled = false;
-  isSidebarCollapsed = false;
-  contentSidebar = true;
 
   userName: string = '';
-  userRole: string = ''; 
+  userRole: string = '';
+
+  httpOptions: any;
+  role: any;
+
+  constructor(public authService: AuthService, public admin : AdminComponent, private http: HttpClient, private router: Router) {
+    this.loadToken();
+    this.role = localStorage.getItem(authService.roleKey);
+  }
 
   ngOnInit() {
     this.http.get<any>(`${this.authService.apiUrl}/auth/profile`, this.httpOptions).subscribe((user: any) => {
       this.authService.myUser = user;
       console.log(user);
-      //user = this.authService.myUser;
       this.userName = user.fullName;
       this.userRole = user.role.name;
     });
-    // const user = this.authService.myUser;
-    // this.userName = user.userName;
-    // this.userRole = user.role;
   }
-
-  scrollToTop(): void {
-    window.scrollTo(0, 0);
-  }
-  scrolled() : void {
-    this.windowScrolled = Math.round(window.scrollY) !=0;
-  }
-
-  httpOptions: any;
-  role: any;
 
   private loadToken() {
     if (this.authService.isLoggedIn()) {
@@ -60,29 +52,19 @@ export class HomeComponent implements OnInit {
     }
   }
 
-  constructor(public admin : AdminComponent, private router: Router,  public authService: AuthService, private http: HttpClient) {
-    this.loadToken();
-    this.role = localStorage.getItem(authService.roleKey);
-  }
-
   isActive(roles: Array<String>): boolean {
     return roles.includes(this.role);
   }
 
-   // Logout process
-  onLogout() {
-    this.authService.logoutAdmin(); // call method logout
+  scrollToTop(): void {
+    window.scrollTo(0, 0);
   }
 
-  toggleSidebar() {
-    this.isSidebarCollapsed = !this.isSidebarCollapsed;
-    if (this.isSidebarCollapsed) {
-      this.contentSidebar = false;
-    }
-    else {
-      setTimeout(() => {
-        this.contentSidebar = true;
-      }, 300);
-    }
+  scrolled() : void {
+    this.windowScrolled = Math.round(window.scrollY) !=0;
+  }
+
+  onLogout() {
+    this.authService.logoutAdmin();
   }
 }

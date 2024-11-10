@@ -2,10 +2,12 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { AuthService } from '../../../service/auth.service';
 import { ToastrService } from 'ngx-toastr';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { HomeComponent } from '../../home.component';
 import { response } from 'express';
 import { ExaminationComponent } from '../examination.component';
+import { AdminComponent } from '../../../admin.component';
+import { Title } from '@angular/platform-browser';
 declare var $: any;
 
 @Component({
@@ -14,7 +16,17 @@ declare var $: any;
   styleUrl: './list.component.css'
 })
 export class ListComponent implements OnInit {
-  constructor(private authService: AuthService, public home: HomeComponent, private http: HttpClient, public toastr: ToastrService, private router: Router, public examComponent: ExaminationComponent) { }
+  constructor(
+    private authService: AuthService,
+    private titleService: Title,
+    public admin : AdminComponent,
+    private home: HomeComponent,
+    public examComponent: ExaminationComponent,
+    private http: HttpClient,
+    private toastr: ToastrService,
+    private router: Router,
+    private activatedRoute: ActivatedRoute
+  ) { }
 
   examId: any;
   semId: number = 1;
@@ -33,9 +45,8 @@ export class ListComponent implements OnInit {
   pages: number[] = []; // Mảng số trang
 
   ngOnInit(): void {
-
+    this.titleService.setTitle('List of Exams');
     this.selectSem(this.selectedSem);
-
     this.http.get<any>(`${this.authService.apiUrl}/sem`, this.home.httpOptions).subscribe(response => {
       this.semester = response;
     })

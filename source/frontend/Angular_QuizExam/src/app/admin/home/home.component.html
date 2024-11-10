@@ -1,5 +1,5 @@
-<div class="header" [ngClass]="{'header-collapsed': isSidebarCollapsed}">
-    <div class="sidebar-toggle" (click)="toggleSidebar()">
+<div class="header" [ngClass]="{'header-collapsed': admin.isSidebarCollapsed}">
+    <div class="sidebar-toggle" (click)="admin.toggleSidebar()">
         <span class="fa fa-bars"></span>
     </div>
     <div class="toggle-switch">
@@ -29,43 +29,43 @@
     </div>
 </div>
 
-<div class="sidebar" [ngClass]="{'sidebar-collapsed': isSidebarCollapsed}">
+<div class="sidebar" [ngClass]="{'sidebar-collapsed': admin.isSidebarCollapsed}">
     <div class="block-wrapper">
-        <img class="block-image" *ngIf="contentSidebar" alt="" src="../../../../img/logo.png" />
+        <img class="block-image" *ngIf="admin.contentSidebar" alt="" src="../../../../img/logo.png" />
     </div>
     <a [routerLink]="'./'" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" class="sidebar-link">
         <span class="mdi mdi-chart-bar icon"></span>
-        <span class="link-text" *ngIf="contentSidebar">Dashboard</span>
+        <span class="link-text" *ngIf="admin.contentSidebar">Dashboard</span>
     </a>
     <a [routerLink]="'subject'" *ngIf="isActive(['ADMIN','DIRECTOR'])" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: false }" class="sidebar-link">
         <span class="mdi mdi-book-open-variant icon"></span>
-        <span class="link-text" *ngIf="contentSidebar">Subject</span>
+        <span class="link-text" *ngIf="admin.contentSidebar">Subject</span>
     </a>
     <a [routerLink]="'class'" *ngIf="isActive(['ADMIN','DIRECTOR','SRO'])" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: false }" class="sidebar-link">
         <span class="mdi mdi-home-outline icon"></span>
-        <span class="link-text" *ngIf="contentSidebar">Class</span>
+        <span class="link-text" *ngIf="admin.contentSidebar">Class</span>
     </a>
     <a [routerLink]="'student'" *ngIf="isActive(['ADMIN','SRO'])" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: false }" class="sidebar-link">
         <span class="mdi mdi-account-multiple icon"></span>
-        <span class="link-text" *ngIf="contentSidebar">Student</span>
+        <span class="link-text" *ngIf="admin.contentSidebar">Student</span>
     </a>
     <a [routerLink]="'exam'" *ngIf="isActive(['ADMIN','DIRECTOR','SRO'])" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: false }" class="sidebar-link">
         <span class="mdi mdi-monitor icon"></span>
-        <span class="link-text" *ngIf="contentSidebar">Exam</span>
+        <span class="link-text" *ngIf="admin.contentSidebar">Exam</span>
     </a>
     <a [routerLink]="'authorize'" *ngIf="isActive(['ADMIN','DIRECTOR'])" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: false }" class="sidebar-link">
         <span class="mdi mdi-clipboard-outline icon"></span>
-        <span class="link-text" *ngIf="contentSidebar">Authorize</span>
+        <span class="link-text" *ngIf="admin.contentSidebar">Authorize</span>
     </a>
     <a [routerLink]="'employee'" *ngIf="isActive(['ADMIN','DIRECTOR'])" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: false }" class="sidebar-link active">
         <span class="mdi mdi-account-multiple icon"></span>
-        <span class="link-text" *ngIf="contentSidebar">Employee</span>
+        <span class="link-text" *ngIf="admin.contentSidebar">Employee</span>
     </a>
 </div>
 
 <router-outlet>
 </router-outlet>
 
-<footer class="footer" [ngClass]="{'footer-collapsed': isSidebarCollapsed}">
+<footer class="footer" [ngClass]="{'footer-collapsed': admin.isSidebarCollapsed}">
     <b>Copyright © 2024</b>
 </footer>
