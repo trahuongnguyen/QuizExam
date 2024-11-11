@@ -37,7 +37,7 @@
         <span class="mdi mdi-chart-bar icon"></span>
         <span class="link-text" *ngIf="admin.contentSidebar">Dashboard</span>
     </a>
-    <a [routerLink]="'subject'" *ngIf="isActive(['ADMIN','DIRECTOR'])" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: false }" class="sidebar-link">
+    <a [routerLink]="'subject'" *ngIf="isActive(['ADMIN', 'DIRECTOR','DIRECTOR'])" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: false }" class="sidebar-link">
         <span class="mdi mdi-book-open-variant icon"></span>
         <span class="link-text" *ngIf="admin.contentSidebar">Subject</span>
     </a>
@@ -52,6 +52,10 @@
     <a [routerLink]="'exam'" *ngIf="isActive(['ADMIN','DIRECTOR','SRO'])" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: false }" class="sidebar-link">
         <span class="mdi mdi-monitor icon"></span>
         <span class="link-text" *ngIf="admin.contentSidebar">Exam</span>
+    </a>
+    <a [routerLink]="'level'" *ngIf="isActive(['ADMIN','DIRECTOR'])" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: false }" class="sidebar-link">
+        <span class="mdi mdi-signal icon"></span>
+        <span class="link-text" *ngIf="admin.contentSidebar">Level</span>
     </a>
     <a [routerLink]="'authorize'" *ngIf="isActive(['ADMIN','DIRECTOR'])" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: false }" class="sidebar-link">
         <span class="mdi mdi-clipboard-outline icon"></span>

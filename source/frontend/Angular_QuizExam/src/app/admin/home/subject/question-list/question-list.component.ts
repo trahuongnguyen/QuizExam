@@ -116,7 +116,7 @@ export class QuestionListComponent {
         // Click vào info icon sẽ hiện ra popup
         $('.edit-icon').on('click', (event: any) => {
           const id = $(event.currentTarget).data('id');
-          this.router.navigate([`/admin/home/subject/${this.subjectId}/questionUpdate/${id}`]);
+          this.router.navigate([`/admin/home/subject/${this.subjectId}/edit-question/${id}`]);
         });
       }
     });

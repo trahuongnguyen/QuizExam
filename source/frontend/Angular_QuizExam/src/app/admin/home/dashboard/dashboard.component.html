@@ -1,45 +1,17 @@
 <div class="content-wrapper" [ngClass]="{'content-wrapper-collapsed': admin.isSidebarCollapsed}">
-    <div class="container">
-        <div class="row">
-            <!-- order-card start -->
-            <div class="col-md-3 col-xl-3 mb-3">
-                <div class="order-card" style="background-color: #4099ff;">
-                    <h6 class="text-white">Exam</h6>
-                    <h2 class="text-end text-white">
-                        <span class="mdi mdi-library-books float-start"></span>
-                        <span>21</span>
-                    </h2>
-                </div>
-            </div>
-            <div class="col-md-3 col-xl-3 mb-3">
-                <div class="order-card" style="background-color: #2ed8b6;">
-                    <h6 class="text-white">Class</h6>
-                    <h2 class="text-end text-white">
-                        <span class="mdi mdi-home-outline float-start"></span>
-                        <span>15</span>
-                    </h2>
-                </div>
-            </div>
-            <div class="col-md-3 col-xl-3 mb-3">
-                <div class="order-card" style="background-color: #ffb64d;">
-                    <h6 class="text-white">Student</h6>
-                    <h2 class="text-end text-white">
-                        <span class="mdi mdi-account float-start"></span>
-                        <span>85</span>
-                    </h2>
-                </div>
-            </div>
-            <div class="col-md-3 col-xl-3 mb-3">
-                <div class="order-card" style="background-color: #ff5370;">
-                    <h6 class="text-white">Employee</h6>
-                    <h2 class="text-end text-white">
-                        <span class="mdi mdi-account-card-details float-start"></span>
-                        <span>12</span>
-                    </h2>
-                </div>
+    <h4>Dashboard</h4>
+    <hr class="line">
+    <div class="row">
+        <div class="col-md-6 col-xl-3">
+            <div class="order-card" style="background-color: #4099ff;">
+                <h6 class="text-white">Exam</h6>
+                <h2 class="text-end text-white">
+                    <span class="mdi mdi-library-books float-start"></span>
+                    <span>21</span>
+                </h2>
             </div>
         </div>
-        <div class="col-md-3 col-xl-3">
+        <div class="col-md-6 col-xl-3">
             <div class="order-card" style="background-color: #2ed8b6;">
                 <h6 class="text-white">Class</h6>
                 <h2 class="text-end text-white">
@@ -48,7 +20,7 @@
                 </h2>
             </div>
         </div>
-        <div class="col-md-3 col-xl-3">
+        <div class="col-md-6 col-xl-3">
             <div class="order-card" style="background-color: #ffb64d;">
                 <h6 class="text-white">Student</h6>
                 <h2 class="text-end text-white">
@@ -57,7 +29,7 @@
                 </h2>
             </div>
         </div>
-        <div class="col-md-3 col-xl-3">
+        <div class="col-md-6 col-xl-3">
             <div class="order-card" style="background-color: #ff5370;">
                 <h6 class="text-white">Employee</h6>
                 <h2 class="text-end text-white">
@@ -66,134 +38,144 @@
                 </h2>
             </div>
         </div>
-
-        <!-- order-card end -->
-        <div class="col-xl-6 col-md-12 chart-container row2 chart1" [ngClass]="{'collapsed': home.isSidebarCollapsed}">
-            <div cardTitle="Unique Visitor">
-                <apx-chart [chart]="chartOptions.chart" [dataLabels]="chartOptions.dataLabels"
-                    [stroke]="chartOptions.stroke" [series]="chartOptions.series" [xaxis]="chartOptions.xaxis"
-                    [colors]="chartOptions.colors" [fill]="chartOptions.fill" [markers]="chartOptions.markers"
-                    [yaxis]="chartOptions.yaxis"></apx-chart>
-            </div>
-        </div>
-        <div class="col-xl-6 col-md-12 row2">
-            <div class="row" style="margin-left: 14px;">
-                <div class="col-md-6 chart-container chart2" [ngClass]="{'collapsed': home.isSidebarCollapsed}">
-                    <div class="col-auto">
-                        <span>Overview all subject</span>
-                    </div>
-                    <div class="col text-end">
-                        <h2 class="mb-0">826</h2>
-                        <span class="text-c-green">8.2% <i class="feather icon-trending-up ms-1"></i> </span>
-                    </div>
-                    <apx-chart [series]="chartOptions_1.series!" [chart]="chartOptions_1.chart!"
-                        [stroke]="chartOptions_1.stroke!" [dataLabels]="chartOptions_1.dataLabels!"
-                        [labels]="chartOptions_1.labels!" [legend]="chartOptions_1.legend!"
-                        [colors]="chartOptions_1.colors!" [fill]="chartOptions_1.fill!" [grid]="chartOptions_1.grid!"
-                        [plotOptions]="chartOptions_1.plotOptions!" [tooltip]="chartOptions_1.tooltip!"></apx-chart>
-                    <div class="row mt-3 text-center">
-                        <div class="col">
-                            <h3 class="m-0">
-                                <i class="fas fa-circle f-10 m-r-5 text-success"></i> 674
-                            </h3>
-                            <span class="ms-3">New</span>
-                        </div>
-                        <div class="col">
-                            <h3 class="m-0">
-                                <i class="fas fa-circle text-primary f-10 m-r-5"></i> 182
-                            </h3>
-                            <span class="ms-3">Return</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-6 chart-container chart3" [ngClass]="{'collapsed': home.isSidebarCollapsed}">
-                    <div cardClass="bg-primary">
-                        <div class="col-auto">
-                            <span>Each subject</span>
-                        </div>
-                        <div class="col text-end">
-                            <h2 class="mb-0">826</h2>
-                            <span class="text-white">
-                                8.2%
-                                <i class="feather icon-trending-up ms-1"></i>
-                            </span>
-                        </div>
-                    </div>
-                    <apx-chart [series]="chartOptions_2.series!" [chart]="chartOptions_2.chart!"
-                        [stroke]="chartOptions_2.stroke!" [dataLabels]="chartOptions_2.dataLabels!"
-                        [labels]="chartOptions_2.labels!" [legend]="chartOptions_2.legend!"
-                        [colors]="chartOptions_2.colors!" [fill]="chartOptions_2.fill!" [grid]="chartOptions_2.grid!"
-                        [plotOptions]="chartOptions_2.plotOptions!" [tooltip]="chartOptions_2.tooltip!"></apx-chart>
-                    <div class="row mt-3 text-center">
-                        <div class="col">
-                            <h3 class="m-0">
-                                <i class="fas fa-circle f-10 m-r-5 "></i> 674
-                            </h3>
-                            <span class="ms-3">New</span>
-                        </div>
-                        <div class="col">
-                            <h3 class="m-0 ">
-                                <i class="fas fa-circle f-10 m-r-5"></i> 182
-                            </h3>
-                            <span class="ms-3">Return</span>
-                        </div>
-                    </div>
+    </div>
+    <div class="row">
+        <div class="col-xl-6 col-md-12">
+            <div class="card chart-container">
+                <div class="card-body">
+                    <apx-chart [chart]="chartOptions.chart" [dataLabels]="chartOptions.dataLabels"
+                        [stroke]="chartOptions.stroke" [series]="chartOptions.series" [xaxis]="chartOptions.xaxis"
+                        [colors]="chartOptions.colors" [fill]="chartOptions.fill" [markers]="chartOptions.markers"
+                        [yaxis]="chartOptions.yaxis"></apx-chart>
                 </div>
             </div>
         </div>
-
-        <div class="col-md-12 chart-container table1">
-            <h5 class="title-table">Điểm thi từng bài thi</h5>
-            <div class="d-flex">
-                <div class="form-group-row form-selectlevel">
-                    <label for="level">Level:</label>
-                    <select class="form-select short-select" style="cursor: pointer;">
-                        <option selected>1</option>
-                        <option>2</option>
-                        <option>3</option>
-                    </select>
+        <div class="col-xl-6 col-md-12">
+            <div class="row">
+                <div class="col-xl-6 col-md-12">
+                    <div class="card chart-container donut-chart">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-auto"><span>Overview all subject</span></div>
+                                <div class="col text-end">
+                                    <h2 class="mb-0">826</h2>
+                                    <span class="text-c-green">8.2% <i class="feather icon-trending-up ms-1"></i></span>
+                                </div>
+                            </div>
+                            <apx-chart [series]="chartOptions_1.series!" [chart]="chartOptions_1.chart!"
+                                [stroke]="chartOptions_1.stroke!" [dataLabels]="chartOptions_1.dataLabels!"
+                                [labels]="chartOptions_1.labels!" [legend]="chartOptions_1.legend!"
+                                [colors]="chartOptions_1.colors!" [fill]="chartOptions_1.fill!"
+                                [grid]="chartOptions_1.grid!" [plotOptions]="chartOptions_1.plotOptions!"
+                                [tooltip]="chartOptions_1.tooltip!"></apx-chart>
+                            <div class="row mt-3 text-center">
+                                <div class="col">
+                                    <h3 class="m-0"><i class="fas fa-circle text-success"></i> 674 </h3>
+                                    <span class="ms-3">New</span>
+                                </div>
+                                <div class="col">
+                                    <h3 class="m-0"><i class="fas fa-circle text-primary"></i> 182 </h3>
+                                    <span class="ms-3">Return</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="form-group-row form-selectsubject" style="margin-left: 10px;">
-                    <label for="subject">Subject:</label>
-                    <select class="form-select short-select" style="cursor: pointer;">
-                        <option selected>Math</option>
-                        <option>Science</option>
-                        <option>History</option>
-                    </select>
-                </div>
-                <!-- Search Input -->
-                <div class="search-container">
-                    <input type="text" class="form-control pl-4" placeholder="Search by name">
-                    <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                <div class="col-xl-6 col-md-12">
+                    <div class="card chart-container donut-chart">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-auto"><span>Each subject</span></div>
+                                <div class="col text-end">
+                                    <h2 class="mb-0">826</h2>
+                                    <span class="text-c-green">8.2% <i class="feather icon-trending-up ms-1"></i></span>
+                                </div>
+                            </div>
+                            <apx-chart [series]="chartOptions_2.series!" [chart]="chartOptions_2.chart!"
+                                [stroke]="chartOptions_2.stroke!" [dataLabels]="chartOptions_2.dataLabels!"
+                                [labels]="chartOptions_2.labels!" [legend]="chartOptions_2.legend!"
+                                [colors]="chartOptions_2.colors!" [fill]="chartOptions_2.fill!"
+                                [grid]="chartOptions_2.grid!" [plotOptions]="chartOptions_2.plotOptions!"
+                                [tooltip]="chartOptions_2.tooltip!"></apx-chart>
+                            <div class="row mt-3 text-center">
+                                <div class="col">
+                                    <h3 class="m-0"><i class="fas fa-circle text-success"></i> 674 </h3>
+                                    <span class="ms-3">New</span>
+                                </div>
+                                <div class="col">
+                                    <h3 class="m-0"><i class="fas fa-circle text-primary"></i> 182 </h3>
+                                    <span class="ms-3">Return</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <table class="table table-hover">
-                <thead>
-                    <tr>
-                        <th>Tên</th>
-                        <th>Re-Exam</th>
-                        <th>Pass</th>
-                        <th>Credit</th>
-                        <th>Distinction</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>08-11-2016</td>
-                        <td>Max</td>
-                        <td>1</td>
-                        <td>1</td>
-                        <td>1</td>
-                    </tr>
-                    <tr>
-                        <td>15-10-2016</td>
-                        <td>Value</td>
-                        <td>2</td>
-                        <td>2</td>
-                        <td>2</td>
-                    </tr>
-                </tbody>
-            </table>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="title">Điểm của mỗi bài thi</h5>
+                </div>
+                <div class="card-body nav-fill">
+                    <div class="d-flex">
+                        <div class="form-group-row me-4">
+                            <label for="level" class="me-2">Level:</label>
+                            <select class="form-select select-field">
+                                <option>1</option>
+                                <option>2</option>
+                                <option>3</option>
+                            </select>
+                        </div>
+                        <div class="form-group-row">
+                            <label for="subject" class="me-2">Subject:</label>
+                            <select class="form-select select-field">
+                                <option>Math</option>
+                                <option>Science</option>
+                                <option>History</option>
+                            </select>
+                        </div>
+                        <!-- Search Input -->
+                        <div class="search-container">
+                            <input type="text" class="form-control pl-4" placeholder="Search by name">
+                            <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                        </div>
+                    </div>
+                    <div class="tab-content mt-2">
+                        <div class="tab-pane fade show active">
+                            <table class="table table-hover m-b-0 mt-3">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Re-Exam</th>
+                                        <th>Pass</th>
+                                        <th>Credit</th>
+                                        <th>Distinction</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>08-11-2016</td>
+                                        <td>Max</td>
+                                        <td>1</td>
+                                        <td>1</td>
+                                        <td>1</td>
+                                    </tr>
+                                    <tr>
+                                        <td>15-10-2016</td>
+                                        <td>Value</td>
+                                        <td>2</td>
+                                        <td>2</td>
+                                        <td>2</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>

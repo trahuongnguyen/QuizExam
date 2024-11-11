@@ -49,7 +49,7 @@
 }
 
 .button-create:hover {
-    background-color: #ffd5d5;
+    background-color: #ffa1a1;
 }
 
 .button-pdf:hover {
@@ -63,31 +63,6 @@
 .button .icon {
     line-height: normal;
     margin-right: 4px;
-}
-
-.pagination .page-item .page-link {
-    color: var(--color-text);
-    background-color: var(--color-background);
-    border: none;
-    border-radius: 8px;
-    padding: 5px 13px;
-    margin: 5px;
-    transition: none
-}
-
-.pagination .page-item .page-link:hover {
-    background-color: var(--color-page-hover);
-}
-
-.pagination .page-item .active,
-.pagination .page-item .active:hover {
-    color: #fff;
-    background-color: rgba(170, 18, 16, 0.93);
-}
-
-.pagination .page-item .disabled {
-    color: var(--color-disable);
-    background-color: transparent;
 }
 
 

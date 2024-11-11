@@ -4,7 +4,6 @@ import { AuthService } from '../../../service/auth.service';
 import { ToastrService } from 'ngx-toastr';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HomeComponent } from '../../home.component';
-import { SubjectComponent } from '../subject.component';
 import { forkJoin } from 'rxjs';
 import { Title } from '@angular/platform-browser';
 import { AdminComponent } from '../../../admin.component';
@@ -16,7 +15,6 @@ interface Answer {
 
 interface QuestionForm {
   content: string;
-  subjectId: number;
   chapters: number[];
   levelId: number;
   imageFile?: File | null;
@@ -26,7 +24,7 @@ interface QuestionForm {
 @Component({
   selector: 'app-question-form',
   templateUrl: './question-form.component.html',
-  styleUrls: ['./question-form.component.css']
+  styleUrls: ['./../../../../shared/styles/admin/question-common.css']
 })
 export class QuestionFormComponent implements OnInit {
   questionForms: QuestionForm[] = [];
@@ -59,7 +57,7 @@ export class QuestionFormComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.titleService.setTitle('Add New Question');
+    this.titleService.setTitle('Add new Question');
     this.subjectId = Number(this.activatedRoute.snapshot.params['subjectId']) || 0;
     this.loadData();
     this.initializeQuestion();
@@ -82,7 +80,6 @@ export class QuestionFormComponent implements OnInit {
   initializeQuestion() {
     this.questionForms = [{
       content: '',
-      subjectId: this.subjectId,
       chapters: [],
       levelId: this.listLevel[0]?.id || 1,
       answers: [{ content: '', isCorrect: 0 }, { content: '', isCorrect: 0 }, { content: '', isCorrect: 0 }, { content: '', isCorrect: 0 }]
@@ -127,7 +124,6 @@ export class QuestionFormComponent implements OnInit {
   confirmChapterSelection() {
     // Cập nhật chapters cho câu hỏi
     this.questionForms[this.popupChapterIndex].chapters = this.tempSelectedChapters;
-    console.log(this.questionForms);
     
     // Đóng popup
     this.closePopupChapter();
@@ -142,7 +138,6 @@ export class QuestionFormComponent implements OnInit {
   addQuestionForm() {
     this.questionForms.push({
       content: '',
-      subjectId: this.subjectId,
       chapters: [],
       levelId: this.listLevel[0]?.id || 1,
       answers: [{ content: '', isCorrect: 0 }, { content: '', isCorrect: 0 }, { content: '', isCorrect: 0 }, { content: '', isCorrect: 0 }]
@@ -260,7 +255,7 @@ export class QuestionFormComponent implements OnInit {
     this.contentError = [];
     this.answersError = this.questionForms.map(() => []);
     let formData = new FormData();
-    let valid = false;
+    let errors = false;
     let errorMessage = '';
     let questionNumber = -1;
   
@@ -268,18 +263,18 @@ export class QuestionFormComponent implements OnInit {
       // Kiểm tra nếu câu hỏi chưa có nội dung
       if (!this.questionForms[i].content.trim()) {
         this.contentError[i] = 'Content Question is required';
-        valid = true;
+        errors = true;
       }
   
       // Kiểm tra nếu câu trả lời không có nội dung
       this.questionForms[i].answers.forEach((answer, j) => {
         if (!answer.content.trim()) {
           this.answersError[i][j] = 'Content Answer is required';
-          valid = true;
+          errors = true;
         }
       });
 
-      if (valid) {
+      if (errors) {
         questionNumber = i;
         errorMessage = `Please fill out all fields correctly. (Question ${i + 1})`;
         break;
@@ -289,7 +284,7 @@ export class QuestionFormComponent implements OnInit {
       if (this.questionForms[i].answers.length < 4) {
         errorMessage = `Must have at least 4 answers. (Question ${i + 1})`;
         questionNumber = i;
-        valid = true;
+        errors = true;
         break;
       }
   
@@ -297,7 +292,7 @@ export class QuestionFormComponent implements OnInit {
       if (!this.validateAnswers(this.questionForms[i].answers)) {
         errorMessage = `Must have at least one correct and one incorrect answer. (Question ${i + 1})`;
         questionNumber = i;
-        valid = true;
+        errors = true;
         break;
       }
 
@@ -307,12 +302,12 @@ export class QuestionFormComponent implements OnInit {
       if (answerContents.length !== uniqueAnswers.size) {
         errorMessage = `Answers must be unique. (Question ${i + 1})`;
         questionNumber = i;
-        valid = true;
+        errors = true;
         break;
       }
     }
   
-    if (valid) {
+    if (errors) {
       this.toastr.error(errorMessage, 'Error', { timeOut: 3000 });
   
       // Di chuyển đến form có lỗi
@@ -329,7 +324,7 @@ export class QuestionFormComponent implements OnInit {
     // Nếu không có lỗi, tiếp tục với việc lưu câu hỏi
     const questionsList = this.questionForms.map(question => ({
       content: question.content,
-      subjectId: question.subjectId,
+      subjectId: this.subjectId,
       chapters: question.chapters,
       levelId: question.levelId,
       answers: question.answers
@@ -342,7 +337,7 @@ export class QuestionFormComponent implements OnInit {
     this.http.post(`${this.authService.apiUrl}/question`, formData, this.home.httpOptions).subscribe(
       () => {
         this.toastr.success('Questions saved successfully!');
-        this.router.navigate([`/admin/home/subject/${this.subjectId}/questionList`]);
+        this.router.navigate([`/admin/home/subject/${this.subjectId}/question-list`]);
       },
       err => {
         this.toastr.error(err.error.message, 'Error');
@@ -361,7 +356,7 @@ export class QuestionFormComponent implements OnInit {
 
   confirmCancel() {
     this.closePopupDialog();
-    this.router.navigate([`/admin/home/subject/${this.subjectId}/questionList`]);
+    this.router.navigate([`/admin/home/subject/${this.subjectId}/question-list`]);
   }
 
   closePopupDialog() {

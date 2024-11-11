@@ -116,8 +116,6 @@
 
 .sidebar .sidebar-link .icon {
     font-size: 14px;
-    vertical-align: middle;
-    margin: 0px 0px 0px 8px;
 }
 
 .sidebar .link-text {
@@ -146,7 +144,7 @@
 }
 
 .sidebar-collapsed .sidebar-link .icon {
-    margin: 0px 0px 0px 0px;
+    margin: 0;
 }
 
 .sidebar-collapsed .block-wrapper {

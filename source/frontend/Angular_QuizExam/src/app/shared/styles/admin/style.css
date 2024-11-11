@@ -1,0 +1,65 @@
+.content-wrapper {
+    padding: 80px 20px 60px 170px;
+    min-height: 100vh;
+    overflow-x: hidden;
+    background-color: var(--color-background);
+    color: var(--color-text);
+    transition: all 0.5s ease;
+}
+
+.content-wrapper-collapsed {
+    padding-left: 50px;
+}
+
+.line {
+    margin-top: 0;
+}
+
+.bottom-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 15px;
+}
+
+.button {
+    font-size: 12px;
+    font-weight: 500;
+    border-radius: 6px;
+    text-decoration: none;
+    padding: 8px;
+    cursor: pointer;
+    transition: all 0.5s ease;
+}
+
+.button-create {
+    background-color: #ffbbbb;
+    color: #df6f6f;
+}
+
+.button-pdf {
+    background-color: #efcaca;
+    color: #bf0000;
+}
+
+.button-excel {
+    background-color: #a2ecb5;
+    color: #008c04 ;
+    margin-right: 5px;
+}
+
+.button-create:hover {
+    background-color: #ffa1a1;
+}
+
+.button-pdf:hover {
+    background-color: #ffaaac;
+}
+
+.button-excel:hover {
+    background-color: #5cdca0;
+}
+
+.button .icon {
+    line-height: normal;
+    margin-right: 4px;
+}

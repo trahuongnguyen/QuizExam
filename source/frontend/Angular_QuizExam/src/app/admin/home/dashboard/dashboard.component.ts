@@ -28,7 +28,7 @@ import { ToastrService } from 'ngx-toastr';
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
-  styleUrl: './dashboard.component.css'
+  styleUrls: ['./../../../shared/styles/admin/style.css', './dashboard.component.css']
 })
 
 export  class DashboardComponent {
@@ -55,7 +55,7 @@ export  class DashboardComponent {
     this.chartOptions = {
       chart: {
         height: 300,
-        width: 650,
+        width: '100%',
         type: 'bar',
         toolbar: {
           show: false

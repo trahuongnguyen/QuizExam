@@ -6,15 +6,13 @@
             <div *ngFor="let question of questionForms; let i = index" class="question-form" [id]="'question-form-' + i">
                 <div class="mb-4 mt-2"><b>Question {{ i + 1 }}:</b></div>
                 <div class="form-row">
-                    <input type="hidden" [(ngModel)]="question.subjectId" name="question.subjectId{{i}}" class="form-control" />
-                    
                     <div class="form-group-row form-select-chapter col me-3">
                         <label for="chapter" class="label-fix">Chapter:</label>
                         <button type="button" class="form-select button-chapter" style="text-align: left;" (click)="openPopup(i)">
                             {{ getSelectedChaptersNames(question) }}
                         </button>
                     </div>
-                    <div class="form-group-row form-selectlevel col me-0">
+                    <div class="form-group-row form-select-level col me-0">
                         <label for="level">Level:</label>
                         <select class="form-select select-level" [(ngModel)]="question.levelId" name="question.levelId{{i}}">
                             <option *ngFor="let level of listLevel" [value]="level.id">{{ level.name }}</option>
