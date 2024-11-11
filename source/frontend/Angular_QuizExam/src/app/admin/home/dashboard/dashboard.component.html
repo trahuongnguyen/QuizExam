@@ -39,10 +39,36 @@
                 </div>
             </div>
         </div>
-        <!-- account-section start -->
-    </div>
-    <div class="container">
-        <div class="line-chart">
+        <div class="col-md-3 col-xl-3">
+            <div class="order-card" style="background-color: #2ed8b6;">
+                <h6 class="text-white">Class</h6>
+                <h2 class="text-end text-white">
+                    <span class="mdi mdi-home-outline float-start"></span>
+                    <span>15</span>
+                </h2>
+            </div>
+        </div>
+        <div class="col-md-3 col-xl-3">
+            <div class="order-card" style="background-color: #ffb64d;">
+                <h6 class="text-white">Student</h6>
+                <h2 class="text-end text-white">
+                    <span class="mdi mdi-account float-start"></span>
+                    <span>85</span>
+                </h2>
+            </div>
+        </div>
+        <div class="col-md-3 col-xl-3">
+            <div class="order-card" style="background-color: #ff5370;">
+                <h6 class="text-white">Employee</h6>
+                <h2 class="text-end text-white">
+                    <span class="mdi mdi-account-card-details float-start"></span>
+                    <span>12</span>
+                </h2>
+            </div>
+        </div>
+
+        <!-- order-card end -->
+        <div class="col-xl-6 col-md-12 chart-container row2 chart1" [ngClass]="{'collapsed': home.isSidebarCollapsed}">
             <div cardTitle="Unique Visitor">
                 <apx-chart [chart]="chartOptions.chart" [dataLabels]="chartOptions.dataLabels"
                     [stroke]="chartOptions.stroke" [series]="chartOptions.series" [xaxis]="chartOptions.xaxis"
@@ -50,11 +76,11 @@
                     [yaxis]="chartOptions.yaxis"></apx-chart>
             </div>
         </div>
-        <div class="donut-chart">
-            <div class="row">
-                <div class="chart-container col me-3 mb-3">
+        <div class="col-xl-6 col-md-12 row2">
+            <div class="row" style="margin-left: 14px;">
+                <div class="col-md-6 chart-container chart2" [ngClass]="{'collapsed': home.isSidebarCollapsed}">
                     <div class="col-auto">
-                        <span>Customers 1</span>
+                        <span>Overview all subject</span>
                     </div>
                     <div class="col text-end">
                         <h2 class="mb-0">826</h2>
@@ -80,13 +106,18 @@
                         </div>
                     </div>
                 </div>
-                <div class="chart-container col mb-3">
-                    <div class="col-auto">
-                        <span>Customers 2</span>
-                    </div>
-                    <div class="col text-end">
-                        <h2 class="mb-0">826</h2>
-                        <span class="text-c-green">8.2% <i class="feather icon-trending-up ms-1"></i></span>
+                <div class="col-md-6 chart-container chart3" [ngClass]="{'collapsed': home.isSidebarCollapsed}">
+                    <div cardClass="bg-primary">
+                        <div class="col-auto">
+                            <span>Each subject</span>
+                        </div>
+                        <div class="col text-end">
+                            <h2 class="mb-0">826</h2>
+                            <span class="text-white">
+                                8.2%
+                                <i class="feather icon-trending-up ms-1"></i>
+                            </span>
+                        </div>
                     </div>
                     <apx-chart [series]="chartOptions_2.series!" [chart]="chartOptions_2.chart!"
                         [stroke]="chartOptions_2.stroke!" [dataLabels]="chartOptions_2.dataLabels!"
@@ -110,33 +141,59 @@
                 </div>
             </div>
         </div>
-    </div>
-    <div class="container">
-        <ng-scrollbar class="" visibility="hover" track="all">
+
+        <div class="col-md-12 chart-container table1">
+            <h5 class="title-table">Điểm thi từng bài thi</h5>
+            <div class="d-flex">
+                <div class="form-group-row form-selectlevel">
+                    <label for="level">Level:</label>
+                    <select class="form-select short-select" style="cursor: pointer;">
+                        <option selected>1</option>
+                        <option>2</option>
+                        <option>3</option>
+                    </select>
+                </div>
+                <div class="form-group-row form-selectsubject" style="margin-left: 10px;">
+                    <label for="subject">Subject:</label>
+                    <select class="form-select short-select" style="cursor: pointer;">
+                        <option selected>Math</option>
+                        <option>Science</option>
+                        <option>History</option>
+                    </select>
+                </div>
+                <!-- Search Input -->
+                <div class="search-container">
+                    <input type="text" class="form-control pl-4" placeholder="Search by name">
+                    <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                </div>
+            </div>
             <table class="table table-hover">
                 <thead>
                     <tr>
-                        <th>Date</th>
-                        <th>Title</th>
+                        <th>Tên</th>
+                        <th>Re-Exam</th>
+                        <th>Pass</th>
+                        <th>Credit</th>
+                        <th>Distinction</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
                         <td>08-11-2016</td>
-                        <td>
-                            Title
-                            <div class="mt-1">abc</div>
-                        </td>
+                        <td>Max</td>
+                        <td>1</td>
+                        <td>1</td>
+                        <td>1</td>
                     </tr>
                     <tr>
                         <td>15-10-2016</td>
-                        <td>
-                            Value
-                            <div class="mt-1">xyz</div>
-                        </td>
+                        <td>Value</td>
+                        <td>2</td>
+                        <td>2</td>
+                        <td>2</td>
                     </tr>
                 </tbody>
             </table>
-        </ng-scrollbar>
+        </div>
     </div>
 </div>
