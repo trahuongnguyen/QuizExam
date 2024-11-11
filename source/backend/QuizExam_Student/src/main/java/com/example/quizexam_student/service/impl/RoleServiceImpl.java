@@ -22,11 +22,27 @@ public class RoleServiceImpl implements RoleService {
         return roleRepository.findById(id).orElseThrow(() -> new NotFoundException("roleNotFound", "Role is not exist"));
     }
 
-
-
     @Override
-    public List<Role> findAll(){
-        return  roleRepository.findAll();
+    public List<Role> findAllToAuthorize(Role role){
+        List<Role> roles = roleRepository.findAll();
+        roles.removeIf(x->x.getName().equals("STUDENT"));
+        if(role.getName().equals("ADMIN")){
+            return roles;
+        }
+        roles.removeIf(x->x.getName().equals("ADMIN"));
+        if(role.getName().equals("DIRECTOR")){
+            return roles;
+        }
+        roles.removeIf(x->x.getName().equals("DIRECTOR"));
+        if(role.getName().equals("SRO")){
+            roles.removeIf(x->x.getName().equals("TEACHER"));
+            return roles;
+        }
+        if(role.getName().equals("TEACHER")){
+            roles.removeIf(x->x.getName().equals("SRO"));
+            return roles;
+        }
+        return null;
     }
 
     @Override
@@ -49,11 +65,5 @@ public class RoleServiceImpl implements RoleService {
             return roles;
         }
         return null;
-    }
-
-    @Override
-    public List<Permission> findPermissionsByRole(int id) {
-        Role role = roleRepository.findById(id).orElseThrow(() -> new NotFoundException("roleNotFound", "Role is not exist"));
-        return permissionRepository.findByRolesContains(role);
     }
 }

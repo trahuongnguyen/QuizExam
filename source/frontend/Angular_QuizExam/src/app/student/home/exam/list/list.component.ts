@@ -27,7 +27,7 @@ export class ListComponent implements OnInit {
       this.semesters = response;
     })
 
-    this.http.get<any>(`${this.authService.apiUrl}/exam/exams`, this.home.httpOptions).subscribe((data: any) => {
+    this.http.get<any>(`${this.authService.apiUrl}/exam`, this.home.httpOptions).subscribe((data: any) => {
       this.examList = data;
       this.examList.forEach((element: any) => {
         let id = element.id;

@@ -2,8 +2,12 @@ package com.example.quizexam_student.controller;
 
 import com.example.quizexam_student.entity.Permission;
 import com.example.quizexam_student.entity.Role;
+import com.example.quizexam_student.service.PermissionService;
 import com.example.quizexam_student.service.RoleService;
+import com.example.quizexam_student.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,19 +20,19 @@ import java.util.List;
 @Validated
 public class RoleController {
     private final RoleService roleService;
+    private final UserService userService;
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'DIRECTOR', 'TEACHER', 'SRO')")
     @GetMapping
     public List<Role> getAllRoles() {
-        return roleService.findAll();
+        String email = ((org.springframework.security.core.userdetails.User) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
+        Role role = userService.findUserByEmail(email).getRole();
+        return roleService.findAllToAuthorize(role);
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'DIRECTOR', 'TEACHER', 'SRO')")
     @GetMapping("/{id}")
     public Role getRoleById(@PathVariable int id) {
         return roleService.findById(id);
-    }
-
-    @GetMapping("/permission/{id}")
-    public List<Permission> getPermissionByRoleId(@PathVariable int id) {
-        return roleService.findPermissionsByRole(id);
     }
 }

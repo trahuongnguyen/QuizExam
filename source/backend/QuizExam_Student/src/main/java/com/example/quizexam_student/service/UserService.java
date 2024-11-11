@@ -20,4 +20,5 @@ public interface UserService {
     User changePassword(PasswordRequest passwordRequest);
     void deleteUserById(int id);
     User updateUser(int id, UserRequest userRequest);
+    User resetPassword(int id);
 }

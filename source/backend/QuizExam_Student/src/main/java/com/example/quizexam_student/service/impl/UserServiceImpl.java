@@ -105,4 +105,11 @@ public class UserServiceImpl implements UserService {
         user.setId(id);
         return userRepository.save(user);
     }
+
+    @Override
+    public User resetPassword(int id){
+        User user = findById(id);
+        user.setPassword(passwordEncoder.encode("@1234567"));
+        return userRepository.save(user);
+    }
 }

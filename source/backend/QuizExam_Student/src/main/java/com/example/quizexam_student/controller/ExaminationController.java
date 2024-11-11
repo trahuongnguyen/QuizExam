@@ -28,7 +28,6 @@ import java.util.List;
 @RequiredArgsConstructor
 @CrossOrigin(origins = "http://localhost:4200")
 @Validated
-@PreAuthorize("permitAll()")
 public class ExaminationController {
     private final ExaminationService examinationService;
     private final ExportService exportService;
@@ -43,17 +42,14 @@ public class ExaminationController {
         return examinationService.getDetailExamination(examinationId);
     }
 
-    @GetMapping("")
-    public List<ExaminationResponse> getAllExamination() {
-        return examinationService.getAllExaminations();
-    }
-
+    @PreAuthorize("hasAnyRole('ADMIN', 'SRO')")
     @GetMapping("/sem/{semId}")
     public List<ExaminationResponse> getExaminationBySemId(@PathVariable int semId) {
         return examinationService.getAllExamBySemId(semId);
     }
 
-    @GetMapping("/exams")
+    @PreAuthorize("hasRole('STUDENT')")
+    @GetMapping("")
     public List<ExaminationResponse> getAllExaminationsForStudent() {
         String email = ((org.springframework.security.core.userdetails.User)
                 SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
@@ -61,31 +57,31 @@ public class ExaminationController {
         return examinationService.getAllExaminationsForStudent(marks);
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'SRO')")
     @PostMapping("")
     public Examination save(@RequestBody @Valid ExaminationRequest examinationRequest) {
         return examinationService.saveExamination(examinationRequest);
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'SRO')")
     @GetMapping("{examinationId}/students")
     public List<StudentResponse> getStudentsByExamination(@PathVariable int examinationId) {
         return examinationService.getStudentsForExamination(examinationId);
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'SRO')")
     @GetMapping("{examinationId}/studentsToAdd")
     public List<StudentDetail> getStudentsToAddByExamination(@PathVariable int examinationId) {
         return examinationService.getListStudentsToAddForExamination(examinationId);
     }
 
-    @GetMapping("/inform/{examinationId}")
-    public ExaminationResponseNotIncludeQuestion getInformExamination(@PathVariable int examinationId) {
-        return examinationService.getExaminationNotIncludeQuestion(examinationId);
-    }
-
+    @PreAuthorize("hasAnyRole('ADMIN', 'SRO')")
     @PutMapping("/{examinationId}")
     public Examination update(@PathVariable int examinationId, @RequestBody ExaminationRequest examinationRequest) {
         return examinationService.updateExamination(examinationId, examinationRequest);
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'SRO')")
     @PutMapping("/student/{examinationId}")
     public ResponseEntity updateStudentForExam(
             @PathVariable int examinationId,
@@ -94,6 +90,7 @@ public class ExaminationController {
         return ResponseEntity.ok(new RegisterResponse("", "Modify student successfully"));
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'SRO')")
     @PostMapping(value = "/export/pdf", produces = MediaType.APPLICATION_PDF_VALUE)
     public ResponseEntity<String> exportToPDF(
             HttpServletResponse response,

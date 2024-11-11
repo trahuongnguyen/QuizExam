@@ -6,6 +6,9 @@ import {ToastrModule, ToastrService} from 'ngx-toastr';
 import { StudentComponent } from './student.component';
 import { LoginComponent } from './login/login.component';
 import { CommonModule } from '@angular/common';
+import { AuthGuard } from './service/authguard.service';
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
+import { ErrorInterceptor } from './service/error.interceptor';
 
 
 @NgModule({
@@ -21,7 +24,13 @@ import { CommonModule } from '@angular/common';
     ReactiveFormsModule
   ],
   providers: [
-    NgModule
+    NgModule,
+    AuthGuard,
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: ErrorInterceptor,
+      multi: true
+    }
   ],
   bootstrap: []
 })

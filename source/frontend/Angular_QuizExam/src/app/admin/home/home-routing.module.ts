@@ -13,14 +13,10 @@ const routes: Routes = [
   {
     path: '',
     component: HomeComponent,
-    canActivate: [AuthGuard],
-    data: { roles: ['ADMIN', 'DIRECTOR', 'TEACHER', 'SRO'] },
     children: [
       {
         path: '',
-        component: DashboardComponent,
-        canActivate: [AuthGuard],
-        data: { roles: ['ADMIN', 'DIRECTOR', 'TEACHER', 'SRO'] },
+        component: DashboardComponent
       },
       {
         path: 'employee',
@@ -32,7 +28,7 @@ const routes: Routes = [
         path: 'class',
         component: ClassComponent,
         canActivate: [AuthGuard],
-        data: { roles: ['ADMIN', 'DIRECTOR', 'SRO'] },
+        data: { roles: ['ADMIN', 'SRO'] },
       },
       {
         path: 'student',
@@ -44,37 +40,47 @@ const routes: Routes = [
         path: 'class/:classId',
         component: StudentComponent,
         canActivate: [AuthGuard],
-        data: { roles: ['ADMIN', 'DIRECTOR', 'SRO'] },
+        data: { roles: ['ADMIN', 'SRO'] },
       },
       {
         path: 'level',
         component: LevelComponent,
+        canActivate: [AuthGuard],
+        data: { roles: ['ADMIN', 'TEACHER'] },
       },
       {
         path: 'profile',
         component: ProfileComponent,
         canActivate: [AuthGuard],
-        data: { roles: ['ADMIN'] },
+        data: { roles: ['ADMIN', 'DIRECTOR', 'TEACHER', 'SRO'] },
       },
       {
         path: 'subject',
         loadChildren: () => import('./subject/subject.module')
           .then(m => m.SubjectModule),
+        canActivate: [AuthGuard],
+        data: { roles: ['ADMIN', 'DIRECTOR', 'TEACHER'] },
       },
       {
         path: 'exam',
         loadChildren: () => import('./examination/examination.module')
           .then(m => m.ExaminationModule),
+        canActivate: [AuthGuard],
+        data: { roles: ['ADMIN', 'SRO'] },
       },
       {
         path: 'practice',
         loadChildren: () => import('./practice/practice.module')
           .then(m => m.PracticeModule),
+        canActivate: [AuthGuard],
+        data: { roles: ['ADMIN', 'TEACHER'] },
       },
       {
         path: 'authorize',
         loadChildren: () => import('./authorize/authorize.module')
           .then(m => m.AuthorizeModule),
+        canActivate: [AuthGuard],
+        data: { roles: ['ADMIN', 'DIRECTOR', 'TEACHER', 'SRO'] },
       },
     ]
   },
