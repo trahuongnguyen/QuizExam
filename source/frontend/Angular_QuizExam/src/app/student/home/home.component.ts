@@ -42,7 +42,7 @@ export class HomeComponent {
       };
     }
     else {
-      this.router.navigate(['student/login']);
+      this.router.navigate(['login']);
     }
   }
 

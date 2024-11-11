@@ -11,7 +11,7 @@ const routes: Routes = [
     path: '',
     component: ExamComponent,
     canActivate: [AuthGuard],
-    data: { roles: ['ADMIN', 'STUDENT'] },
+    data: { roles: ['STUDENT'] },
     children: [
       {
         path: '',
@@ -27,8 +27,6 @@ const routes: Routes = [
       },
 
     ],
-    // canActivate: [AuthGuard],
-    // data: {roles: ['ADMIN', 'STUDENT']},
   },
 ];
 

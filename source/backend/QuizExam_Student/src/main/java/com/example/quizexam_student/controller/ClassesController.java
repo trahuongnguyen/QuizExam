@@ -21,7 +21,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @CrossOrigin(origins = "http://localhost:4200")
 @Validated
-@PreAuthorize("hasAnyRole('ADMIN', 'DIRECTOR', 'SRO')")
+@PreAuthorize("hasAnyRole('ADMIN', 'SRO')")
 public class ClassesController {
     private final ClassesService classesService;
     private final ExportService exportService;

@@ -8,9 +8,7 @@ import java.util.List;
 
 @Service
 public interface RoleService {
-    //Role findByRoleName(String roleName);
     Role findById(int id);
-    List<Role> findAll();
+    List<Role> findAllToAuthorize(Role role);
     List<Role> findAllByPermissionToEmployee(int id);
-    List<Permission> findPermissionsByRole(int id);
 }

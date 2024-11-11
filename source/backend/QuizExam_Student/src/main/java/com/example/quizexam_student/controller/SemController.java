@@ -17,7 +17,6 @@ import java.util.List;
 @RequiredArgsConstructor
 @CrossOrigin(origins = "http://localhost:4200")
 @Validated
-@PreAuthorize("hasAnyRole('ADMIN', 'DIRECTOR')")
 public class SemController {
     private final SemService semService;
     @GetMapping("")

@@ -31,7 +31,6 @@ import static org.springframework.http.MediaType.*;
 @RequiredArgsConstructor
 @CrossOrigin(origins = "http://localhost:4200")
 @Validated
-@PreAuthorize("permitAll()")
 public class QuestionController {
     private final QuestionService questionService;
     private final ExportService exportService;

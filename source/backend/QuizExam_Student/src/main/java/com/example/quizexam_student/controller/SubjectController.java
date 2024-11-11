@@ -31,6 +31,7 @@ import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
 @RequiredArgsConstructor
 @CrossOrigin(origins = "http://localhost:4200")
 @Validated
+//@PreAuthorize("hasAnyRole('ADMIN', 'DIRECTOR', 'SRO', 'TEACHER')")
 public class SubjectController {
     private final SubjectService subjectService;
     private final ExportService exportService;
@@ -53,7 +54,6 @@ public class SubjectController {
         return subjectService.getAllSubjectBySem(id);
     }
 
-    //@PreAuthorize("hasRole('ADMIN') or hasRole('DIRECTOR')")
     @PreAuthorize("hasAnyRole('ADMIN', 'DIRECTOR')")
     @PostMapping(consumes = {MULTIPART_FORM_DATA_VALUE, APPLICATION_JSON_VALUE}, path = "")
     public ResponseEntity<Subject> saveSubject(@RequestPart(value = "file", required = false) MultipartFile file, @RequestPart("subject") @Valid SubjectRequest subjectRequest) throws IOException {

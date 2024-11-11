@@ -17,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -30,7 +31,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @CrossOrigin(origins = "http://localhost:4200")
 @Validated
-//@PreAuthorize("hasAnyRole('ADMIN','DIRECTOR')")
+@PreAuthorize("hasAnyRole('ADMIN','DIRECTOR')")
 public class UserController {
     private final UserService userService;
     private final RoleService roleService;
@@ -78,6 +79,11 @@ public class UserController {
     @PutMapping("/{id}")
     public ResponseEntity<User> updateUser(@PathVariable int id, @RequestBody @Valid UserRequest userRequest) {
         return ResponseEntity.ok(userService.updateUser(id, userRequest));
+    }
+
+    @PutMapping("/resetPassword/{id}")
+    public ResponseEntity<User> resetPassword(@PathVariable int id) {
+        return ResponseEntity.ok(userService.resetPassword(id));
     }
 
     @PostMapping("/export/excel")

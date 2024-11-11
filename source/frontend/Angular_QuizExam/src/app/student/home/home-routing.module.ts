@@ -10,35 +10,32 @@ const routes: Routes = [
   {
     path: '',
     component: HomeComponent,
-    canActivate: [AuthGuard],
-    data: { roles: ['ADMIN', 'STUDENT'] },
     children: [
       {
         path: '',
-        component: HomepageComponent,
-        canActivate: [AuthGuard],
-        data: { roles: ['ADMIN', 'STUDENT'] },
+        component: HomepageComponent
       },
       {
         path: 'profile',
         component: ProfileComponent,
         canActivate: [AuthGuard],
-        data: { roles: ['ADMIN', 'STUDENT'] },
+        data: { roles: ['STUDENT'] },
       },
       {
         path: 'mark',
         component: MarkComponent,
         canActivate: [AuthGuard],
-        data: { roles: ['ADMIN', 'STUDENT'] },
+        data: { roles: ['STUDENT'] },
       },
       {
         path: 'exam',
         loadChildren: () => import('./exam/exam.module')
           .then(m => m.ExamModule),
+        canActivate: [AuthGuard],
+        data: { roles: ['STUDENT'] },
       },
     ]
   },
-
 ];
 
 @NgModule({

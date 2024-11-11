@@ -43,7 +43,7 @@ export class LoginComponent implements AfterContentInit {
               console.log('User logged in successfully', response);
               window.localStorage.setItem('userLogged', response);
               this.authService.userLogged = response;
-              this.router.navigate(['/admin/home']);
+              this.router.navigate(['/admin']);
             } else {
               this.toastr.error('Full authentication is required to access this resource', 'Failed', {
                 timeOut: 2000,

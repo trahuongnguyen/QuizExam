@@ -48,11 +48,11 @@ export class AuthService {
     localStorage.removeItem(this.roleKey);
     this.userLogged = null;
     this.isValidToken = false;
-    this.router.navigate(['student/login']);
+    this.router.navigate(['/login']);
   }
 
   nagivateToPrePage(): void {
-    this.router.navigate(['student/home'])
+    this.router.navigate([''])
   }
 
   isValidToken: any;
@@ -63,7 +63,7 @@ export class AuthService {
       let role = localStorage.getItem(this.roleKey);
       const jwtToken = JSON.parse(atob(token!.split('.')[1]));
       const tokenExpired = Date.now() > (jwtToken.exp * 1000);
-      return token != null && token.length > 0 && !tokenExpired && ['ADMIN', 'STUDENT'].includes(role!);
+      return token != null && token.length > 0 && !tokenExpired && ['STUDENT'].includes(role!);
     }
     return false;
   }

@@ -11,7 +11,7 @@ import java.util.Map;
 @RequestMapping("/api/question-record")
 @RequiredArgsConstructor
 @CrossOrigin(origins = "http://localhost:4200")
-@PreAuthorize("permitAll()")
+@PreAuthorize("hasRole('STUDENT')")
 public class QuestionRecordController {
     private final QuestionRecordService questionRecordService;
 

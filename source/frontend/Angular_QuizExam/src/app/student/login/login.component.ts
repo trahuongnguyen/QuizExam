@@ -27,7 +27,7 @@ export class LoginComponent {
           const headers = new HttpHeaders().set('Email', this.loginForm.get('email')?.value);
           this.http.get<any>(`${this.authService.apiUrl}/auth/role`, { headers: headers, responseType: 'json' }).subscribe((data: any) => {
             let role = data.name;
-            if (['ADMIN', 'STUDENT'].includes(role)) {
+            if (['STUDENT'].includes(role)) {
               this.toastr.success('Login Successful!', 'Success', {
                 timeOut: 2000,
               });
@@ -36,7 +36,7 @@ export class LoginComponent {
               console.log('User logged in successfully', response);
               window.localStorage.setItem('userLogged', response);
               this.authService.userLogged = response;
-              this.router.navigate(['/student/home']);
+              this.router.navigate(['']);
             } else {
               this.toastr.error('Full authentication is required to access this resource', 'Failed', {
                 timeOut: 2000,
