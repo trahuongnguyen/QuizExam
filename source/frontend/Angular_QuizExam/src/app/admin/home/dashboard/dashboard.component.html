@@ -39,7 +39,7 @@
         </div>
 
         <!-- order-card end -->
-        <div class="col-xl-6 col-md-12 chart-container row2">
+        <div class="col-xl-6 col-md-12 chart-container row2 chart1" [ngClass]="{'collapsed': home.isSidebarCollapsed}">
             <div cardTitle="Unique Visitor">
                 <apx-chart [chart]="chartOptions.chart" [dataLabels]="chartOptions.dataLabels"
                     [stroke]="chartOptions.stroke" [series]="chartOptions.series" [xaxis]="chartOptions.xaxis"
@@ -48,10 +48,10 @@
             </div>
         </div>
         <div class="col-xl-6 col-md-12 row2">
-            <div class="row">
-                <div class="col-md-6 chart-container">
+            <div class="row" style="margin-left: 14px;">
+                <div class="col-md-6 chart-container chart2" [ngClass]="{'collapsed': home.isSidebarCollapsed}">
                     <div class="col-auto">
-                        <span>Customers 1</span>
+                        <span>Overview all subject</span>
                     </div>
                     <div class="col text-end">
                         <h2 class="mb-0">826</h2>
@@ -82,10 +82,10 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-md-6 chart-container">
+                <div class="col-md-6 chart-container chart3" [ngClass]="{'collapsed': home.isSidebarCollapsed}">
                     <div cardClass="bg-primary">
                         <div class="col-auto">
-                            <span>Customers 2</span>
+                            <span>Each subject</span>
                         </div>
                         <div class="col text-end">
                             <h2 class="mb-0">826</h2>
@@ -118,43 +118,60 @@
                     </div>
                 </div>
             </div>
-
         </div>
 
-        <!-- account-section start -->
+        <div class="col-md-12 chart-container table1">
+            <h5 class="title-table">Điểm thi từng bài thi</h5>
+            <div class="d-flex">
+                <div class="form-group-row form-selectlevel">
+                    <label for="level">Level:</label>
+                    <select class="form-select short-select" style="cursor: pointer;">
+                        <option selected>1</option>
+                        <option>2</option>
+                        <option>3</option>
+                    </select>
+                </div>
+                <div class="form-group-row form-selectsubject" style="margin-left: 10px;">
+                    <label for="subject">Subject:</label>
+                    <select class="form-select short-select" style="cursor: pointer;">
+                        <option selected>Math</option>
+                        <option>Science</option>
+                        <option>History</option>
+                    </select>
+                </div>
+                <!-- Search Input -->
+                <div class="search-container">
+                    <input type="text" class="form-control pl-4" placeholder="Search by name">
+                    <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                </div>
+            </div>
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Tên</th>
+                        <th>Re-Exam</th>
+                        <th>Pass</th>
+                        <th>Credit</th>
+                        <th>Distinction</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>08-11-2016</td>
+                        <td>Max</td>
+                        <td>1</td>
+                        <td>1</td>
+                        <td>1</td>
+                    </tr>
+                    <tr>
+                        <td>15-10-2016</td>
+                        <td>Value</td>
+                        <td>2</td>
+                        <td>2</td>
+                        <td>2</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
-    <ng-scrollbar style="height: 362px" visibility="hover" track="all">
-        <table class="table table-hover m-b-0 mt-3">
-            <thead>
-                <tr>
-                    <th>
-                        <span>
-                            Title
-                            <a class="help"><i class="feather f-16"></i></a>
-                        </span>
-                    </th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>08-11-2016</td>
-                    <td>
-                        Title
-                        <div class="mt-1">
-                            abc
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td>15-10-2016</td>
-                    <td>
-                        Value
-                        <div class="mt-1">
-                            xyz
-                        </div>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-    </ng-scrollbar>
 </div>

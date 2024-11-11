@@ -41,8 +41,9 @@ export  class DashboardComponent {
   constructor(public home : HomeComponent, private router: Router,  public authService: AuthService, private http: HttpClient) {
     this.chartOptions = {
       chart: {
-        height: 205,
-        type: 'line',
+        height: 300,
+        width: 650,
+        type: 'bar',
         toolbar: {
           show: false
         }
@@ -81,16 +82,7 @@ export  class DashboardComponent {
       },
       colors: ['#73b4ff', '#59e0c5'],
       fill: {
-        type: 'gradient',
-        gradient: {
-          shade: 'light',
-          gradientToColors: ['#4099ff', '#2ed8b6'],
-          shadeIntensity: 0.5,
-          type: 'horizontal',
-          opacityFrom: 1,
-          opacityTo: 1,
-          stops: [0, 100]
-        }
+        type: 'solid' // Tùy chọn phù hợp với kiểu 'bar'
       },
       grid: {
         borderColor: '#cccccc3b'
@@ -174,108 +166,7 @@ export  class DashboardComponent {
         width: 0
       }
     };
-    this.chartOptions_3 = {
-      chart: {
-        type: 'area',
-        height: 145,
-        sparkline: {
-          enabled: true
-        }
-      },
-      dataLabels: {
-        enabled: false
-      },
-      colors: ['#ff5370'],
-      fill: {
-        type: 'gradient',
-        gradient: {
-          shade: 'dark',
-          gradientToColors: ['#ff869a'],
-          shadeIntensity: 1,
-          type: 'horizontal',
-          opacityFrom: 1,
-          opacityTo: 0.8,
-          stops: [0, 100, 100, 100]
-        }
-      },
-      stroke: {
-        curve: 'smooth',
-        width: 2
-      },
-      series: [
-        {
-          data: [45, 35, 60, 50, 85, 70]
-        }
-      ],
-      yaxis: {
-        min: 5,
-        max: 90
-      },
-      tooltip: {
-        fixed: {
-          enabled: false
-        },
-        x: {
-          show: false
-        },
-        marker: {
-          show: false
-        }
-      }
-    };
   }
-  cards = [
-    {
-      background: 'bg-c-blue',
-      title: 'Orders Received',
-      icon: 'icon-shopping-cart',
-      text: 'Completed Orders',
-      number: '486',
-      no: '351'
-    },
-    {
-      background: 'bg-c-green',
-      title: 'Total Sales',
-      icon: 'icon-tag',
-      text: 'This Month',
-      number: '1641',
-      no: '213'
-    },
-    {
-      background: 'bg-c-yellow',
-      title: 'Revenue',
-      icon: 'icon-repeat',
-      text: 'This Month',
-      number: '$42,56',
-      no: '$5,032'
-    },
-    {
-      background: 'bg-c-red',
-      title: 'Total Profit',
-      icon: 'icon-shopping-cart',
-      text: 'This Month',
-      number: '$9,562',
-      no: '$542'
-    }
-  ];
-
-  images = [
-    {
-      src: 'assets/images/gallery-grid/img-grd-gal-1.jpg',
-      title: 'Old Scooter',
-      size: 'PNG-100KB'
-    },
-    {
-      src: 'assets/images/gallery-grid/img-grd-gal-2.jpg',
-      title: 'Wall Art',
-      size: 'PNG-150KB'
-    },
-    {
-      src: 'assets/images/gallery-grid/img-grd-gal-3.jpg',
-      title: 'Microphone',
-      size: 'PNG-150KB'
-    }
-  ];
 }
 
 export type ChartOptions = {

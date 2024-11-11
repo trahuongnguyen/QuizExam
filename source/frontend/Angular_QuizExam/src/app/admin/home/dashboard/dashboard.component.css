@@ -38,16 +38,6 @@
     color: #ffffff;
 }
 
-.table-hover thead th {
-    background-color: #536dfe;
-    color: #ffffff;
-    border: none;
-}
-
-.table-hover tbody tr:hover {
-    background-color: #e3f2fd;
-}
-
 .text-c-green {
     color: #4caf50; /* Màu xanh lá */
 }
@@ -60,10 +50,6 @@
     font-size: 16px;
 }
 
-.ng-scrollbar {
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
-}
 .row2 {
     margin-top: 50px;
 }
@@ -73,4 +59,103 @@
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     height: 100%;
+    transition: width 0.3s ease;
+}
+
+.chart1 {
+    margin-left: 14px;
+    width: 650px;
+}
+.chart1.collapsed {
+    width: 710px; /* Kích thước khi sidebar collapsed */
+}
+
+.chart2 {
+    width: 314px;
+}
+.chart3 {
+    margin-left: 22px;
+    width: 314px;
+}
+.chart2.collapsed,
+.chart3.collapsed {
+    width: 344px; /* Kích thước khi sidebar collapsed */
+}
+
+.table1{
+    margin-top: 50px;
+    margin-left: 14px;
+    width: 98%;
+}
+
+.title-table {
+    margin-top: 15px;
+    margin-bottom: 15px;
+}
+
+/* filter-table */
+.d-flex {
+    display: flex;
+    justify-content: flex-start; /* Căn tất cả các phần tử sang bên trái */
+    align-items: center;
+    width: 100%; /* Đảm bảo hàng chiếm toàn bộ chiều rộng */
+    margin: 10px auto;
+}
+
+.form-group-row {
+    display: flex;
+    align-items: center;
+    margin-right: 5px; /* Khoảng cách nhỏ giữa các form */
+}
+
+.short-select {
+    width: 280px; /* Điều chỉnh chiều rộng ngắn hơn */
+    height: calc(1.5em + 0.75rem + 2px);
+}
+
+/* search */
+.search-container {
+    margin-left: auto; /* Đẩy thanh search sang bên phải */
+    max-width: 300px; /* Giới hạn độ rộng tối đa */
+    position: relative;
+}
+
+.search-container .form-control {
+    height: calc(1.5em + 0.75rem + 2px);
+}
+
+.search-icon {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    color: #888;
+}
+
+/* table */
+.table, .table th, .table td {
+    border: none; /* Loại bỏ toàn bộ border */
+    border-right: none; /* Bỏ border dọc */
+    border-left: none; /* Bỏ border dọc */
+}
+
+.table th, .table td {
+    border-top: 1px solid #dee2e6; /* Giữ lại border ngang nếu cần */
+}
+
+.table-hover thead th {
+    font-size: 16px;
+    color: var(--color-text);
+    border: none;
+}
+
+.table-hover td {
+    font-size: 14px;
+    color: var(--color-text);
+    border: none;
+
+}
+
+.table-hover tbody tr:hover {
+    background-color: #e3f2fd;
 }
