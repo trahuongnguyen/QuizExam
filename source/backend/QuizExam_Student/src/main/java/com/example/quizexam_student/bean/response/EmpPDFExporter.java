@@ -24,7 +24,7 @@ public class EmpPDFExporter {
         Font font = FontFactory.getFont(FontFactory.HELVETICA);
         font.setColor(Color.WHITE);
 
-        cell.setPhrase(new Phrase("User ID", font));
+        cell.setPhrase(new Phrase("No.", font));
         table.addCell(cell);
 
         cell.setPhrase(new Phrase("Full Name", font));
@@ -51,8 +51,9 @@ public class EmpPDFExporter {
 
     }
     private void writeTableData(PdfPTable table){
+        int count = 1;
         for (UserResponse user : users) {
-            table.addCell(String.valueOf(user.getId()));
+            table.addCell(String.valueOf(count));
             table.addCell(String.valueOf(user.getFullName()));
             table.addCell(String.valueOf(user.getEmail()));
             table.addCell(String.valueOf(user.getPhoneNumber()));
@@ -60,6 +61,7 @@ public class EmpPDFExporter {
             table.addCell(String.valueOf(user.getGender() == 1 ? "Male" : "Female"));
             table.addCell(String.valueOf(user.getDob().format(DateTimeFormatter.ISO_LOCAL_DATE)));
             table.addCell(String.valueOf(user.getAddress()));
+            count++;
         }
     }
     public void export(HttpServletResponse response) throws IOException {

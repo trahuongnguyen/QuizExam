@@ -36,7 +36,7 @@ public class EmpExcelExporter {
         style.setFont(font);
 
         Cell cell = row.createCell(0);
-        cell.setCellValue("User ID");
+        cell.setCellValue("No.");
         cell.setCellStyle(style);
 
         cell = row.createCell(1);
@@ -70,10 +70,10 @@ public class EmpExcelExporter {
     private void writeDataRow(){
         int rowCount = 1;
         for (UserResponse user : users) {
-            Row row = sheet.createRow(rowCount++);
+            Row row = sheet.createRow(rowCount);
 
             Cell cell = row.createCell(0);
-            cell.setCellValue(user.getId());
+            cell.setCellValue(rowCount);
             sheet.autoSizeColumn(0);
 
             cell = row.createCell(1);
@@ -104,6 +104,7 @@ public class EmpExcelExporter {
             cell.setCellValue(user.getAddress());
             sheet.autoSizeColumn(7);
 
+            rowCount++;
         }
     }
     public void export(HttpServletResponse response) throws IOException {

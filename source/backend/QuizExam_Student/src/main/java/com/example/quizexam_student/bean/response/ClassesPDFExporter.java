@@ -28,7 +28,7 @@ public class ClassesPDFExporter {
         com.lowagie.text.Font font = FontFactory.getFont(FontFactory.HELVETICA);
         font.setColor(Color.WHITE);
 
-        cell.setPhrase(new Phrase("Class ID", font));
+        cell.setPhrase(new Phrase("No.", font));
         table.addCell(cell);
 
         cell.setPhrase(new Phrase("Name", font));
@@ -45,12 +45,14 @@ public class ClassesPDFExporter {
 
     }
     private void writeTableData(PdfPTable table){
+        int count = 1;
         for (Classes cls : classes) {
-            table.addCell(String.valueOf(cls.getId()));
+            table.addCell(String.valueOf(count));
             table.addCell(String.valueOf(cls.getName()));
             table.addCell(String.valueOf(cls.getClassDay()));
             table.addCell(String.valueOf(cls.getClassTime()));
             table.addCell(String.valueOf(cls.getAdmissionDate().format(DateTimeFormatter.ISO_LOCAL_DATE)));
+            count++;
         }
     }
     public void export(HttpServletResponse response) throws IOException {
@@ -59,7 +61,7 @@ public class ClassesPDFExporter {
         document.open();
         Font font = FontFactory.getFont(FontFactory.HELVETICA_BOLD);
         font.setColor(Color.BLUE);
-        Paragraph title = new Paragraph("List of all users", font);
+        Paragraph title = new Paragraph("List of all classes", font);
         title.setAlignment(Paragraph.ALIGN_CENTER);
         document.add(title);
         PdfPTable table = new PdfPTable(5);
