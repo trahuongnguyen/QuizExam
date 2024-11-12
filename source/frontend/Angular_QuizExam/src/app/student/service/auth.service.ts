@@ -59,11 +59,26 @@ export class AuthService {
 
   isLoggedIn(): boolean {
     if (this.isLocalStorageAvailable()) {
-      let token = localStorage.getItem(this.tokenKey);
-      let role = localStorage.getItem(this.roleKey);
-      const jwtToken = JSON.parse(atob(token!.split('.')[1]));
-      const tokenExpired = Date.now() > (jwtToken.exp * 1000);
-      return token != null && token.length > 0 && !tokenExpired && ['STUDENT'].includes(role!);
+      const token = localStorage.getItem(this.tokenKey);
+      const role = localStorage.getItem(this.roleKey);
+
+      // Ensure both token and role exist
+      if (!token || !role) {
+        return false;
+      }
+
+      try {
+        // Decode the token and extract the expiration time
+        const jwtToken = JSON.parse(atob(token.split('.')[1]));
+        const tokenExpired = Date.now() > (jwtToken.exp * 1000);
+
+        // Check if token is valid and not expired, and if the role is correct
+        return !tokenExpired && ['STUDENT'].includes(role);
+      } catch (error) {
+        // If there's an issue with decoding the token, treat the token as invalid
+        console.error('Error decoding token:', error);
+        return false;
+      }
     }
     return false;
   }

@@ -16,11 +16,11 @@ export class AuthGuard implements CanActivate {
       if (roles.includes(role!)) {
         return true;
       }
-      this.router.navigate(['student/home']);
+      this.router.navigate(['']);
       return false;
     }
     // not logged in so redirect to login page with the return url
-    this.router.navigate(['student/login']);
+    this.router.navigate(['login']);
     return false;
   }
 }
