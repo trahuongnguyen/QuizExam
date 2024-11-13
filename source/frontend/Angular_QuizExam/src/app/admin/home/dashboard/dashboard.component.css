@@ -15,6 +15,10 @@
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
+.card-body {
+    align-content: center;
+}
+
 .chart-container {
     margin-bottom: 30px;
     min-height: 350px;
@@ -50,4 +54,28 @@
     top: 50%;
     transform: translateY(-50%);
     color: #888;
+}
+
+/* pagination */
+.pagination-container {
+    display: flex;
+    justify-content: center;
+}
+
+pagination-controls {
+    display: inline-block;
+}
+
+.pagination-controls .ngx-pagination {
+    margin: 0;
+}
+
+.pagination-controls .ngx-pagination .current {
+    font-weight: bold;
+    color: #aa1210; /* Màu cho trang hiện tại */
+}
+
+.pagination-controls .ngx-pagination .disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
 }
