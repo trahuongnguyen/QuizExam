@@ -34,11 +34,6 @@ public class GlobalExceptionHandle {
         return errors;
     }
 
-    @ExceptionHandler(DuplicatedEmailException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handDuplicatedEmailException(DuplicatedEmailException e) {
-        return new ErrorResponse(HttpStatus.BAD_REQUEST, e.getKey(), e.getMessage());
-    }
 
     @ExceptionHandler(EmptyException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -46,11 +41,6 @@ public class GlobalExceptionHandle {
         return new ErrorResponse(HttpStatus.BAD_REQUEST, e.getKey(), e.getMessage());
     }
 
-    @ExceptionHandler(DuplicatedPhoneException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handDuplicatedPhoneException(DuplicatedPhoneException e) {
-        return new ErrorResponse(HttpStatus.BAD_REQUEST, e.getKey(), e.getMessage());
-    }
 
     @ExceptionHandler(AlreadyExistException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -67,6 +57,12 @@ public class GlobalExceptionHandle {
     @ExceptionHandler(InvalidQuantityException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleInvalidQuantityException(InvalidQuantityException e) {
+        return new ErrorResponse(HttpStatus.BAD_REQUEST, e.getKey(), e.getMessage());
+    }
+
+    @ExceptionHandler(InvalidTimeException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleInvalidTimeException(InvalidTimeException e) {
         return new ErrorResponse(HttpStatus.BAD_REQUEST, e.getKey(), e.getMessage());
     }
 }

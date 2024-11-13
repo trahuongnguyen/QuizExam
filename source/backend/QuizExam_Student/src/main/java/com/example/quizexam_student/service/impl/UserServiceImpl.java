@@ -47,10 +47,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public User saveUser(UserRequest userRequest) {
         if(existUserByEmail(userRequest.getEmail())){
-            throw new DuplicatedEmailException("email", "Email existed already");
+            throw new AlreadyExistException("email", "Email existed already");
         }
         if (existUserByPhone(userRequest.getPhoneNumber())) {
-            throw new DuplicatedPhoneException("phoneNumber", "Phone number existed already");
+            throw new AlreadyExistException("phoneNumber", "Phone number existed already");
         }
         User user = UserMapper.convertFromRequest(userRequest);
         user.setPassword(passwordEncoder.encode("@1234567"));
@@ -99,7 +99,7 @@ public class UserServiceImpl implements UserService {
     public User updateUser(int id, UserRequest userRequest) {
         User user = findById(id);
         if (existUserByPhone(userRequest.getPhoneNumber()) && !userRequest.getPhoneNumber().equals(user.getPhoneNumber())) {
-            throw new DuplicatedPhoneException("phoneNumber", "Phone number existed already");
+            throw new AlreadyExistException("phoneNumber", "Phone number existed already");
         }
         user = UserMapper.convertFromRequest(userRequest);
         user.setId(id);
