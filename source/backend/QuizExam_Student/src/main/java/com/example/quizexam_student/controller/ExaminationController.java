@@ -42,13 +42,13 @@ public class ExaminationController {
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'SRO')")
-    @GetMapping("/exam")
+    @GetMapping("/all")
     public List<ExaminationResponse> getAllExamination(){
         return examinationService.getAllExaminations();
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'SRO')")
-    @GetMapping("/exam/subject/{subjectId}")
+    @GetMapping("/subject/{subjectId}")
     public List<ExaminationResponse> getAllExaminationBySubject(@PathVariable int subjectId){
         return examinationService.getAllExaminationBySubjectId(subjectId);
     }
