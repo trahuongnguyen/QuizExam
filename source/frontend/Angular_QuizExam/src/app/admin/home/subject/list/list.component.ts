@@ -72,12 +72,16 @@ export class ListComponent implements OnInit, OnDestroy {
     this.loadData();
   }
 
-  getSemsApi(): Observable<Sem[]> {
+  getSemListApi(): Observable<Sem[]> {
     return this.http.get<Sem[]>(`${this.authService.apiUrl}/sem`, this.home.httpOptions);
   }
 
-  getSubjectsApi(semId: number): Observable<Subject[]> {
+  getSubjectListBySemApi(semId: number): Observable<Subject[]> {
     return this.http.get<Subject[]>(`${this.authService.apiUrl}/subject/sem/${semId}`, this.home.httpOptions);
+  }
+
+  getSubjectByIdApi(id: number): Observable<Subject> {
+    return this.http.get<Subject>(`${this.authService.apiUrl}/subject/${id}`, this.home.httpOptions);
   }
 
   createSubjectApi(formData: FormData): Observable<FormData> {
@@ -101,13 +105,13 @@ export class ListComponent implements OnInit, OnDestroy {
   }
 
   loadData(): void {
-    this.getSemsApi().subscribe((semResponse: any) => {
+    this.getSemListApi().subscribe((semResponse: any) => {
       this.semList = semResponse;
 
       if (this.semList.length > 0) {
         this.selectedSem = this.semList[0].id;
         this.subjectForm.sem.id = this.selectedSem;
-        this.getSubjectsApi(this.selectedSem).subscribe(
+        this.getSubjectListBySemApi(this.selectedSem).subscribe(
           (subjectResponse: Subject[]) => {
             this.subjectList = subjectResponse;
             this.authService.listExporter = subjectResponse;
@@ -165,7 +169,7 @@ export class ListComponent implements OnInit, OnDestroy {
     }
 
     // Thêm placeholder vào input của DataTables
-    $('.dataTables_filter input[type="search"]').attr('placeholder', 'Search');
+    $('.dataTables_filter input[type="search"]').attr('placeholder', 'Searc');
 
     $('.info-icon').on('click', (e: any) => this.navigateToChapters($(e.currentTarget).data('id')));
     $('.edit-icon').on('click', (e: any) => this.showPopupEdit($(e.currentTarget).data('id')));
@@ -182,9 +186,10 @@ export class ListComponent implements OnInit, OnDestroy {
   }
 
   reloadTable(semId: number): void {
-    this.getSubjectsApi(semId).subscribe(
+    this.getSubjectListBySemApi(semId).subscribe(
       (subjectResponse: Subject[]) => {
         this.subjectList = subjectResponse;
+        this.authService.listExporter = subjectResponse;
         this.updateDataTable(this.subjectList);
       },
       (error) => {
@@ -205,32 +210,32 @@ export class ListComponent implements OnInit, OnDestroy {
   }
 
   showPopupEdit(id: number): void {
-    const subjectDetail = this.subjectList.find((item: any) => item.id === id);
-
-    if (subjectDetail) {
-      this.subjectForm = JSON.parse(JSON.stringify(subjectDetail));
-      this.isPopupUpdate = true;
-    }
-    else {
-      this.toastr.error('Subject not found. Please reload the page to refresh data', 'Error', { timeOut: 4000 });
-      setTimeout(() => { window.location.reload(); }, 4000);
-    }
+    this.getSubjectByIdApi(id).subscribe(
+      (subjectResponse: Subject) => {
+        this.subjectForm = subjectResponse;
+        this.isPopupUpdate = true;
+      },
+      (error) => {
+        this.toastr.error(error.error.message, 'Error', { timeOut: 4000 });
+        setTimeout(() => { window.location.reload(); }, 4000);
+      }
+    );
   }
 
   showPopupDelete(id: number): void {
-    const subjectDetail = this.subjectList.find((item: any) => item.id === id);
-
-    if (subjectDetail) {
-      this.subjectForm = JSON.parse(JSON.stringify(subjectDetail));
-      this.dialogTitle = 'Are you sure?';
-      this.dialogMessage = 'Do you really want to delete this Subject? This action cannot be undone.';
-      this.isConfirmationPopup = true;
-      this.isPopupDelete = true;
-    }
-    else {
-      this.toastr.error('Subject not found. Please reload the page to refresh data', 'Error', { timeOut: 4000 });
-      setTimeout(() => { window.location.reload(); }, 4000);
-    }
+    this.getSubjectByIdApi(id).subscribe(
+      (subjectResponse: Subject) => {
+        this.subjectForm = subjectResponse;
+        this.dialogTitle = 'Are you sure?';
+        this.dialogMessage = 'Do you really want to delete this Subject? This action cannot be undone.';
+        this.isConfirmationPopup = true;
+        this.isPopupDelete = true;
+      },
+      (error) => {
+        this.toastr.error(error.error.message, 'Error', { timeOut: 4000 });
+        setTimeout(() => { window.location.reload(); }, 4000);
+      }
+    );
   }
 
   closePopup(): void {

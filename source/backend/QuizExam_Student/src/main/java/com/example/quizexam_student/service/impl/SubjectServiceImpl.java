@@ -28,14 +28,20 @@ public class SubjectServiceImpl implements SubjectService {
     }
 
     @Override
+    public List<Subject> getAllSubjectBySem(int id) {
+        Sem sem = semRepository.findById(id).orElse(null);
+        return subjectRepository.findAllBySemAndStatusOrderByIdDesc(sem, 1);
+    }
+
+    @Override
     public Subject findById(int id) {
-        return subjectRepository.findById(id).orElseThrow(() -> new NotFoundException("NotFoundSubject","Subject not found"));
+        return subjectRepository.findSubjectByIdAndStatus(id, 1).orElseThrow(() -> new NotFoundException("subject", "Subject not found"));
     }
 
     @Override
     public Subject save(SubjectRequest subjectRequest){
-        if (existSubjectByName(subjectRequest.getName())) {
-            throw new AlreadyExistException("AlreadyExistSubject","Subject already exist");
+        if (subjectRepository.existsByNameAndStatus(subjectRequest.getName(),1)) {
+            throw new AlreadyExistException("subjectName", "Class Name already exists.");
         }
         Subject subject = new Subject();
         subject.setName(subjectRequest.getName());
@@ -45,20 +51,11 @@ public class SubjectServiceImpl implements SubjectService {
         return subjectRepository.save(subject);
     }
 
-
-
-    @Override
-    public void deleteById(int id) {
-        Subject subject = subjectRepository.findById(id).orElseThrow(() -> new NotFoundException("NotFoundSubject","Subject not found"));
-        subject.setStatus(0);
-        subjectRepository.save(subject);
-    }
-
     @Override
     public Subject update(int id, SubjectRequest subjectRequest){
-        Subject subject = subjectRepository.findById(id).orElseThrow(() -> new NotFoundException("NotFoundSubject","Subject not found"));
-        if (existSubjectByName(subject.getName()) && !subject.getName().equals(subjectRequest.getName())) {
-            throw new AlreadyExistException("AlreadyExistSubject","Subject already exist");
+        Subject subject = subjectRepository.findSubjectByIdAndStatus(id, 1).orElseThrow(() -> new NotFoundException("subject", "Subject not found"));
+        if (subjectRepository.existsByNameAndStatusAndIdNot(subjectRequest.getName(),1, id)) {
+            throw new AlreadyExistException("subjectName", "Class Name already exists.");
         }
         if (subjectRequest.getImage() != null) {
             subject.setImage(subjectRequest.getImage().isEmpty() ? null : subjectRequest.getImage());
@@ -68,8 +65,9 @@ public class SubjectServiceImpl implements SubjectService {
     }
 
     @Override
-    public List<Subject> getAllSubjectBySem(int id) {
-        Sem sem = semRepository.findById(id).orElse(null);
-        return subjectRepository.findBySemAndStatus(sem, 1);
+    public void deleteById(int id) {
+        Subject subject = subjectRepository.findSubjectByIdAndStatus(id, 1).orElseThrow(() -> new NotFoundException("subject", "Subject not found"));
+        subject.setStatus(0);
+        subjectRepository.save(subject);
     }
 }

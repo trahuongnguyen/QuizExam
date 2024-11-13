@@ -247,7 +247,6 @@
 /* Table (admin) */
 .dataTables_wrapper table.dataTable.no-footer {
     border-bottom: none;
-    border-radius: 6px;
     overflow: hidden;
 }
 
@@ -255,7 +254,7 @@
     font-size: 14px;
     color: var(--color-text);
     padding: 14px;
-    border-bottom: 2px solid #f3f3f3;
+    border-bottom: 1px solid var(--color-background);
     background-color: var(--color-sidebar);
     transition: all 0.5s ease;
 }
@@ -266,7 +265,8 @@
     font-size: 14px;
     color: var(--color-text);
     background-color: white;
-    border-bottom: 1px solid #f3f3f3;
+    border-bottom: none;
+    border-top: 1px solid var(--color-background);
     background-color: var(--color-sidebar);
     transition: all 0.5s ease;
 }
@@ -282,7 +282,7 @@
 }
 
 .dataTables_wrapper .table .delete-icon {
-    color: #aa1210;
+    color: #b61d1b;
 }
 
 .dataTables_wrapper .table .info-icon {

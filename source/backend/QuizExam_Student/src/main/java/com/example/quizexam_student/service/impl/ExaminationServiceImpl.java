@@ -157,12 +157,15 @@ public class ExaminationServiceImpl implements ExaminationService {
 
     @Override
     public List<ExaminationResponse> getAllExamBySemId(int semId) {
-        List<ExaminationResponse> exam = examinationRepository.findAllByStatus(1).stream()
+        List<ExaminationResponse> exam = examinationRepository.findAllByStatus(2).stream()
                 .map(ExaminationMapper::convertToResponse).collect(Collectors.toList());
-        List<ExaminationResponse> examBySemId = exam.stream().filter(
-                ex -> ex.getSubject().getSem().getId() == semId
-                        && ex.getSubject().getStatus() == 1)
+        List<ExaminationResponse> examBySemId = exam.stream()
+                .filter(ex -> ex.getSubject().getSem().getId() == semId && ex.getSubject().getStatus() == 1)
                 .collect(Collectors.toList());
+        examBySemId.forEach(ex -> {
+            ex.setMarkResponses(markRepository.findAllByExaminationId(ex.getId())
+                    .stream().map(MarkMapper::convertToResponse).collect(Collectors.toList()));
+        });
         return examBySemId;
     }
 
