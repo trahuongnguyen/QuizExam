@@ -3,13 +3,18 @@ package com.example.quizexam_student.mapper;
 import com.example.quizexam_student.bean.request.ExaminationRequest;
 import com.example.quizexam_student.bean.response.ExaminationResponse;
 import com.example.quizexam_student.entity.Examination;
+import com.example.quizexam_student.exception.InvalidTimeException;
 
 public class ExaminationMapper {
     public static Examination convertFromRequest(ExaminationRequest examinationRequest){
         Examination examination = new Examination();
         examination.setName(examinationRequest.getName());
-        examination.setStartTime(examinationRequest.getStartTime());
-        examination.setEndTime(examinationRequest.getEndTime());
+        if (examination.getEndTime().isAfter(examinationRequest.getStartTime())){
+            examination.setStartTime(examinationRequest.getStartTime());
+            examination.setEndTime(examinationRequest.getEndTime());
+        }else{
+            throw new InvalidTimeException("DateTime", "End time must be after start time");
+        }
         examination.setDuration(examinationRequest.getDuration());
         return examination;
     }

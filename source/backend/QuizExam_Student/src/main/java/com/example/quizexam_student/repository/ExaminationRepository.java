@@ -16,4 +16,7 @@ public interface ExaminationRepository extends JpaRepository<Examination, Intege
     boolean existsByCode(String code);
     List<Examination> findTop3BySubjectOrderByIdDesc(Subject subject);
     Examination findByMarksContainingAndStatus(Mark marks, int status);
+    Examination findByIdAndStatus(int id, int status);
+    Examination findByIdAndStatusNot(int id, int status);
+    List<Examination> findAllBySubjectContainingAndStatus(Subject subject, int status);
 }

@@ -33,13 +33,24 @@ public class ExaminationController {
     private final ExportService exportService;
     private final MarkRepository markRepository;
     private final UserRepository userRepository;
-    private final SubjectService subjectService;
     @Value("${uploads.question}")
     private String uploadDir;
 
     @GetMapping("/{examinationId}")
     public ExaminationResponse getDetailExamination(@PathVariable int examinationId) {
         return examinationService.getDetailExamination(examinationId);
+    }
+
+    @PreAuthorize("hasAnyRole('ADMIN', 'SRO')")
+    @GetMapping("/exam")
+    public List<ExaminationResponse> getAllExamination(){
+        return examinationService.getAllExaminations();
+    }
+
+    @PreAuthorize("hasAnyRole('ADMIN', 'SRO')")
+    @GetMapping("/exam/subject/{subjectId}")
+    public List<ExaminationResponse> getAllExaminationBySubject(@PathVariable int subjectId){
+        return examinationService.getAllExaminationBySubjectId(subjectId);
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'SRO')")
@@ -64,13 +75,13 @@ public class ExaminationController {
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'SRO')")
-    @GetMapping("{examinationId}/students")
+    @GetMapping("/{examinationId}/students")
     public List<StudentResponse> getStudentsByExamination(@PathVariable int examinationId) {
         return examinationService.getStudentsForExamination(examinationId);
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'SRO')")
-    @GetMapping("{examinationId}/studentsToAdd")
+    @GetMapping("/{examinationId}/studentsToAdd")
     public List<StudentDetail> getStudentsToAddByExamination(@PathVariable int examinationId) {
         return examinationService.getListStudentsToAddForExamination(examinationId);
     }

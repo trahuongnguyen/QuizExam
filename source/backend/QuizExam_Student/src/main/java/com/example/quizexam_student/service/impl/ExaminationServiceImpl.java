@@ -27,7 +27,6 @@ public class ExaminationServiceImpl implements ExaminationService {
     private final MarkRepository markRepository;
     private final Random random = new Random();
     private final UserRepository userRepository;
-    private final LevelRepository levelRepository;
 
     @Override
     public Examination saveExamination(ExaminationRequest examinationRequest) {
@@ -109,7 +108,7 @@ public class ExaminationServiceImpl implements ExaminationService {
 
     @Override
     public ExaminationResponse getDetailExamination(int examinationId) {
-        Examination examination = examinationRepository.findById(examinationId).orElse(null);
+        Examination examination = examinationRepository.findByIdAndStatus(examinationId,1);
         assert examination != null;
         ExaminationResponse examinationResponse = ExaminationMapper.convertToResponse(examination);
         return setQuestionRecord(examinationResponse);
@@ -126,7 +125,7 @@ public class ExaminationServiceImpl implements ExaminationService {
 
     @Override
     public Examination updateExamination(int examinationId, ExaminationRequest examinationRequest) {
-        Examination examination = examinationRepository.findById(examinationId).orElse(null);
+        Examination examination = examinationRepository.findByIdAndStatusNot(examinationId,2);
         assert examination != null;
         examination.setName(examinationRequest.getName());
         examination.setStartTime(examinationRequest.getStartTime());
@@ -161,8 +160,23 @@ public class ExaminationServiceImpl implements ExaminationService {
         List<ExaminationResponse> exam = examinationRepository.findAllByStatus(1).stream()
                 .map(ExaminationMapper::convertToResponse).collect(Collectors.toList());
         List<ExaminationResponse> examBySemId = exam.stream().filter(
-                ex -> ex.getSubject().getSem().getId() == semId).collect(Collectors.toList());
+                ex -> ex.getSubject().getSem().getId() == semId
+                        && ex.getSubject().getStatus() == 1)
+                .collect(Collectors.toList());
         return examBySemId;
+    }
+
+    @Override
+    public List<ExaminationResponse> getAllExaminations() {
+        return examinationRepository.findAll().stream()
+                .map(ExaminationMapper::convertToResponse).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ExaminationResponse> getAllExaminationBySubjectId(int subjectId) {
+        Subject subject = subjectRepository.findById(subjectId).orElse(null);
+        return examinationRepository.findAllBySubjectContainingAndStatus(subject,2)
+                        .stream().map(ExaminationMapper::convertToResponse).collect(Collectors.toList());
     }
 
     @Override
@@ -176,6 +190,7 @@ public class ExaminationServiceImpl implements ExaminationService {
         List<Mark> marks = markRepository.findAllByExaminationId(examinationId);
         List<Integer> studentDetailIds = marks.stream().map(mark -> StudentMapper.convertToResponse(UserMapper.convertToResponse(Objects.requireNonNull(userRepository.findById(mark.getStudentDetail().getUserId()).orElse(null))), mark.getStudentDetail())).map(StudentResponse::getUserResponse).map(UserResponse::getId).toList();
         List<StudentDetail> studentDetailList = studentRepository.findAll();
+        studentDetailList.removeIf(std -> std.getUser().getStatus() != 1);
         studentDetailList.removeAll(studentRepository.findAllByUserIdIn(studentDetailIds));
         return studentDetailList;
     }

@@ -7,7 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @AllArgsConstructor
-public class DuplicatedPhoneException extends RuntimeException {
+public class InvalidTimeException extends RuntimeException {
     private final String key;
     private final String message;
 }
