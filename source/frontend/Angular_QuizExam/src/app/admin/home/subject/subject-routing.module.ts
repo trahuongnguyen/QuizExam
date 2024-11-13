@@ -28,15 +28,15 @@ const routes: Routes = [
         component: ChapterComponent
       },
       {
-        path: ':subjectId/questionList',
+        path: ':subjectId/question-list',
         component: QuestionListComponent,
       },
       {
-        path: ':subjectId/questionForm',
+        path: ':subjectId/add-new-question',
         component: QuestionFormComponent
       },
       {
-        path: ':subjectId/questionUpdate/:id',
+        path: ':subjectId/edit-question/:id',
         component: QuestionUpdateComponent
       },
     ],

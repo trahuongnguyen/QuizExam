@@ -59,7 +59,7 @@
                     <div class="row">
                       <div class="col-auto">
                         <span>Subject by Sem</span>
-                        <select class="form-select select-field" (change)="selectSemChart($event)" style="width: 150px;">
+                        <select class="form-select select-field" (change)="setSelectedSemChart($event)" style="width: 150px;">
                           <option *ngFor="let sem of semester" [value]="sem.id">{{ sem.name }}</option>
                         </select>
                       </div>
@@ -92,8 +92,8 @@
                     <div class="row">
                       <div class="col-auto">
                         <span>Each subject</span>
-                        <select class="form-select select-field" style="width: 180px;" (change)="selectSubjectChart($event)">
-                          <option *ngFor="let subject of apiData" [value]="subject.id">{{ subject.name }}</option>
+                        <select class="form-select select-field" style="width: 180px;" (change)="setSelectedSubjectChart($event)">
+                          <option *ngFor="let subject of subjectListChart" [value]="subject.id">{{ subject.name }}</option>
                         </select>
                       </div>
                       <div class="col text-end">
@@ -132,19 +132,19 @@
                     <div class="d-flex">
                         <div class="form-group-row me-4">
                           <label for="level" class="me-2">Sem:</label>
-                          <select class="form-select select-field" (change)="selectSemTable($event)">
+                          <select class="form-select select-field" (change)="setSelectedSemTable($event)">
                             <option *ngFor="let sem of semester" [value]="sem.id">{{ sem.name }}</option>
                           </select>
                         </div>
                         <div class="form-group-row">
                           <label for="subject" class="me-2">Subject:</label>
-                          <select class="form-select select-field" (change)="selectSubjectTable($event)">
-                            <option *ngFor="let subject of apiData" [value]="subject.id">{{ subject.name }}</option>
+                          <select class="form-select select-field" (change)="setSelectedSubjectTable($event)">
+                            <option *ngFor="let subject of subjectListTable" [value]="subject.id">{{ subject.name }}</option>
                           </select>
                         </div>
                         <!-- Search Input -->
                         <div class="search-container">
-                          <input type="text" class="form-control" placeholder="Search by name" [(ngModel)]="searchTerm" (input)="filterTests()">
+                          <input type="text" class="form-control" placeholder="Search by name" [(ngModel)]="searchTerm" (input)="filterExam()">
                           <i class="fa-solid fa-magnifying-glass search-icon"></i>
                         </div>
                       </div>
@@ -165,13 +165,13 @@
                             </thead>
                             <tbody>
                                 <tr
-                                    *ngFor="let test of filteredTests | paginate: { itemsPerPage: 5, currentPage: currentPage }">
-                                    <td>{{ test.name }}</td>
-                                    <td>{{ test.code }}</td>
-                                    <td>{{ test.startTime }}</td>
-                                    <td>{{ test.duration }}</td>
-                                    <td>{{ test.subject.name }}</td>
-                                    <td>{{ test.code }}</td>
+                                    *ngFor="let exam of examFilter | paginate: { itemsPerPage: 5, currentPage: currentPage }">
+                                    <td>{{ exam.name }}</td>
+                                    <td>{{ exam.code }}</td>
+                                    <td>{{ exam.startTime }}</td>
+                                    <td>{{ exam.duration }}</td>
+                                    <td>{{ exam.subject.name }}</td>
+                                    <td>{{ exam.code }}</td>
                                 </tr>
                             </tbody>
                         </table>

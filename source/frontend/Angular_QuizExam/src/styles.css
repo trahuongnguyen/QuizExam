@@ -85,9 +85,7 @@
     --color-switch: #d9d9d9;
     --color-switch-button: #ffffff;
     --color-switch-shadow: inset 0 0 15px rgba(0, 0, 0, 0.2);
-
-    --color-button-create: #ffdcdc;
-    --color-text-button-create: rgb(200, 80, 80);
+    
     --color-input: #ffffff;
 }
 
@@ -118,7 +116,7 @@
     --color-switch-button: #35393f;
     --color-switch-shadow: 0 0 1px #25292d;
     --transform-switch-button: translateX(2.3em);
-    
+
     --color-input: #262626;
 }
 
@@ -190,7 +188,8 @@
 [QuizTech-theme=dark-admin] .slider:after,
 [QuizTech-theme=dark] .slider:after {
     left: 0.5em;
-    right: unset; /* Loại bỏ giá trị right khi left được sử dụng */
+    right: unset;
+    /* Loại bỏ giá trị right khi left được sử dụng */
 }
 
 
@@ -286,15 +285,15 @@
     color: #aa1210;
 }
 
-.dataTables_wrapper .table .info-icon{
+.dataTables_wrapper .table .info-icon {
     color: #1aaa51;
 }
 
-.dataTables_wrapper .table .edit-icon{
+.dataTables_wrapper .table .edit-icon {
     color: #1572e8;
 }
 
-.dataTables_wrapper .table .question-icon{
+.dataTables_wrapper .table .question-icon {
     color: #d7da2e;
 }
 

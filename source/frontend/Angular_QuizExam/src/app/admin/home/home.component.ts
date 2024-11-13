@@ -18,8 +18,13 @@ export class HomeComponent implements OnInit {
   userName: string = '';
   userRole: string = '';
 
-  httpOptions: any;
   role: any;
+
+  httpOptions: { headers: HttpHeaders; responseType: 'json'; withCredentials: true } = {
+    headers: new HttpHeaders({'Accept': 'application/json'}),
+    responseType: 'json',
+    withCredentials: true
+  };
 
   constructor(public authService: AuthService, public admin : AdminComponent, private http: HttpClient, private router: Router) {
     this.loadToken();
@@ -43,7 +48,7 @@ export class HomeComponent implements OnInit {
           'Authorization': `Bearer ${token}`,
           'Accept': 'application/json'
         }),
-        responeType: 'json',
+        responseType: 'json',
         withCredentials: true
       };
     }

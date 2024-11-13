@@ -21,7 +21,7 @@
 
                 <div class="form-group-row">
                     <label for="question" class="label-fix">Question:</label>
-                    <textarea class="form-control" [(ngModel)]="questionForm.content" name="questionForm.content" rows="3" style="flex-grow: 1"></textarea>
+                    <textarea class="form-control" [(ngModel)]="questionForm.content" name="questionForm.content" rows="3" style="flex-grow: 1" placeholder="Enter Question"></textarea>
                 </div>
                 <div class="text-danger content-error" *ngIf="contentError">{{ contentError }}</div>
 
@@ -29,7 +29,7 @@
                     <div class="img-preview mt-3 mb-3" [ngClass]="{'hidden-border': questionForm.imageFile}">
                         <input type="file" name="file" class="form-control-file" accept="image/*" (change)="chooseImage($event)" />
                         <button *ngIf="!questionForm.imageFile" class="choose-file-btn" type="button">Choose file</button>
-                        <img id="imageQuestion" [src]="questionForm.imageFile ? ('http://localhost:8080/uploads/img-question/'+ questionForm.imageFile) : null"
+                        <img id="image-question" [src]="questionForm.imageFile ? ('http://localhost:8080/uploads/img-question/'+ questionForm.imageFile) : null"
                             alt="Image Question" [style.display]="questionForm.imageFile ? 'block' : 'none'" />
                         <!-- Dấu X để xóa ảnh -->
                         <span *ngIf="questionForm.imageFile" class="remove-image" (click)="removeImage()"><b>&times;</b></span>
@@ -43,7 +43,7 @@
                                 <div class="input-group-text">
                                     <input type="checkbox" [(ngModel)]="answer.isCorrect" (change)="toggleIsCorrect(answer)" [checked]="answer.isCorrect == 1" />
                                 </div>
-                                <input type="text" [(ngModel)]="answer.content" name="answer.content{{i}}" class="form-control" />
+                                <input type="text" [(ngModel)]="answer.content" name="answer.content{{i}}" class="form-control" placeholder="Enter Answer {{i + 1}}"/>
                                 <span class="remove-answer" (click)="showPopupDeleteAnswer(i)">&times;</span>
                             </div>
                             <div class="text-danger answer-error" *ngIf="answersError[i]">{{ answersError[i] }}</div>
@@ -64,12 +64,12 @@
                             <span class="close-icon" (click)="closePopupChapter()">&times;</span>
                         </div>
                         <div class="search-container">
-                            <input type="text" class="search-input" [(ngModel)]="searchChapter" (ngModelChange)="onSearchChange()"
+                            <input type="text" class="form-control search-input" [(ngModel)]="searchChapter" (ngModelChange)="onSearchChange()"
                                 name="searchChapter" placeholder="Search Chapters"/>
                             <i class="fa-solid fa-magnifying-glass search-icon"></i>
                         </div>
                         <div class="popup-body">
-                            <div class="form-chapter">
+                            <div class="form-popup">
                                 <div class="checkbox-group">
                                     <div class="checkbox-input" *ngFor="let chapter of filterChapters">
                                         <input type="checkbox" (change)="toggleChapterSelection(chapter.id, $event)"

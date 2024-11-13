@@ -1,10 +1,9 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { AuthService } from '../../../service/auth.service';
 import { ToastrService } from 'ngx-toastr';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HomeComponent } from '../../home.component';
-import { SubjectComponent } from '../subject.component';
 import { Title } from '@angular/platform-browser';
 import { AdminComponent } from '../../../admin.component';
 declare var $: any;
@@ -12,7 +11,10 @@ declare var $: any;
 @Component({
   selector: 'app-question-list',
   templateUrl: './question-list.component.html',
-  styleUrl: './question-list.component.css'
+  styleUrls: [
+    './../../../../shared/styles/admin/style.css',
+    './../../../../shared/styles/admin/question-form.css'
+  ]
 })
 export class QuestionListComponent {
   constructor(

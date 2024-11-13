@@ -23,6 +23,7 @@ import {
 import { Title } from '@angular/platform-browser';
 import { AdminComponent } from '../../admin.component';
 import { ToastrService } from 'ngx-toastr';
+import { forkJoin, Observable } from 'rxjs';
 
 
 @Component({
@@ -204,56 +205,48 @@ export class DashboardComponent implements OnInit {
   studentCount: number = 0;
   employeeCount: number = 0;
 
-  apiData: any; // Dữ liệu môn học
   semester: any; // Danh sách học kỳ
 
   // Các thuộc tính cho bảng
+  subjectListTable: any;
   semIdTable: number = 1;
   selectedSemTable: number = 1;
   selectedSubjectTable: string | number = '';
+  examList: any;
+  examFilter: any;
 
   // Các thuộc tính cho biểu đồ
+  subjectListChart: any;
   semIdChart: number = 1;
   selectedSemChart: number = 1;
   selectedSubjectChart: string | number = '';
 
-  apiTest: any[] = [];
-  tests: any[] = [];
-  filteredTests: any[] = [];
   searchTerm: string = '';
   currentPage: number = 1;
 
   ngOnInit(): void {
-    // API Exam Count
-    this.http.get<any>(`${this.authService.apiUrl}/exam/all`, this.home.httpOptions).subscribe((data: any) => {
-      this.examCount = data.length;
-    });
-    // API Class Count
-    this.http.get<any>(`${this.authService.apiUrl}/class`, this.home.httpOptions).subscribe((data: any) => {
-      this.classCount = data.length;
-    });
-    // API Student Count
-    this.http.get<any>(`${this.authService.apiUrl}/studentManagement/all-student`, this.home.httpOptions).subscribe((data: any) => {
-      this.studentCount = data.length;
-    });
-    // API Employee Count
-    this.http.get<any>(`${this.authService.apiUrl}/user`, this.home.httpOptions).subscribe((data: any) => {
-      this.employeeCount = data.length;
-    });
+    const examRequest = this.http.get<any>(`${this.authService.apiUrl}/exam/all`, this.home.httpOptions);
+    const classRequest = this.http.get<any>(`${this.authService.apiUrl}/class`, this.home.httpOptions);
+    const studentRequest = this.http.get<any>(`${this.authService.apiUrl}/studentManagement/all-student`, this.home.httpOptions);
+    const employeeRequest = this.http.get<any>(`${this.authService.apiUrl}/user`, this.home.httpOptions);
+    const subjectRequest = this.http.get<any>(`${this.authService.apiUrl}/subject`, this.home.httpOptions);
+    const semRequest = this.http.get<any>(`${this.authService.apiUrl}/sem`, this.home.httpOptions);
+    
+    forkJoin([examRequest, classRequest, studentRequest, employeeRequest, subjectRequest, semRequest])
+    .subscribe(([examResponse, classResponse, studentResponse, employeeResponse, subjectResponse, semResponse]) => {
+      this.examCount = examResponse.length;
+      this.classCount = classResponse.length;
+      this.studentCount = studentResponse.length;
+      this.employeeCount = employeeResponse.length;
 
-    // Get all subjects
-    this.http.get<any>(`${this.authService.apiUrl}/subject`, this.home.httpOptions).subscribe((data: any) => {
       if (this.chartOptions && this.chartOptions.xaxis) {
-        this.chartOptions.xaxis.categories = data.map((dt: any) => dt.name); // Gán dữ liệu từ API vào categories
+        this.chartOptions.xaxis.categories = subjectResponse.map((dt: any) => dt.name); // Gán dữ liệu từ API vào categories
       } else {
         console.error('chartOptions or xaxis is undefined');
       }
-    });
 
-    // Get all semesters
-    this.http.get<any>(`${this.authService.apiUrl}/sem`, this.home.httpOptions).subscribe(response => {
-      this.semester = response;
-  
+      this.semester = semResponse;
+
       // Lấy semId từ localStorage nếu có cho bảng
       const savedSemIdTable = localStorage.getItem('selectedSemIdTable');
       if (savedSemIdTable) {
@@ -261,7 +254,8 @@ export class DashboardComponent implements OnInit {
       } else {
         this.selectedSemTable = 1;
       }
-  
+      this.reloadTable(this.selectedSemTable);
+
       // Lấy semId từ localStorage nếu có cho biểu đồ
       const savedSemIdChart = localStorage.getItem('selectedSemIdChart');
       if (savedSemIdChart) {
@@ -269,97 +263,116 @@ export class DashboardComponent implements OnInit {
       } else {
         this.selectedSemChart = 1;
       }
-  
-      // Tải lại dữ liệu bảng và biểu đồ
-      this.reloadTable(this.selectedSemTable);
+      this.reloadChart(this.selectedSemChart);
+
+      // Lấy subjectId từ localStorage nếu có cho bảng
+      const savedSubjectIdTable = localStorage.getItem('selectedSubjectIdTable');
+      if (savedSubjectIdTable) {
+        this.selectSubjectById(savedSubjectIdTable, 'table');
+      }
+
+      // Lấy subjectId từ localStorage nếu có cho biểu đồ
+      const savedSubjectIdChart = localStorage.getItem('selectedSubjectIdChart');
+      if (savedSubjectIdChart) {
+        this.selectSubjectById(savedSubjectIdChart, 'chart');
+      }
     });
-  
-    // Lấy subjectId từ localStorage nếu có cho bảng
-    const savedSubjectIdTable = localStorage.getItem('selectedSubjectIdTable');
-    if (savedSubjectIdTable) {
-      this.selectSubjectById(savedSubjectIdTable, 'table');
-    }
-  
-    // Lấy subjectId từ localStorage nếu có cho biểu đồ
-    const savedSubjectIdChart = localStorage.getItem('selectedSubjectIdChart');
-    if (savedSubjectIdChart) {
-      this.selectSubjectById(savedSubjectIdChart, 'chart');
-    }
   }
-  
+
+  getSubjectsApi(semId: number): Observable<any> {
+    return this.http.get<any>(`${this.authService.apiUrl}/subject/sem/${semId}`, this.home.httpOptions);
+  }
+
   // Hàm tải lại bảng theo semId đã chọn
   reloadTable(semId: number): void {
-    this.http.get<any[]>(`${this.authService.apiUrl}/subject/sem/${semId}`, this.home.httpOptions)
-      .subscribe(data => {
-        this.apiData = data;
-        console.log('Subjects data for table:', data);
-  
+    this.getSubjectsApi(semId).subscribe(
+      (subjectResponse) => {
+        this.subjectListTable = subjectResponse;
         if (this.selectedSubjectTable) {
-          this.loadDataForSubject(this.selectedSubjectTable, 'table');
+          this.loadDataForSubjectTable(this.selectedSubjectTable, 'table');
         }
-      }, error => {
+      },
+      (error) => {
         console.error('Error fetching subjects for table:', error);
-      });
+      }
+    );
   }
-  
+
   // Hàm xử lý khi chọn học kỳ cho bảng
-  selectSemTable(event: Event): void {
+  setSelectedSemTable(event: Event): void {
     const sem = (event.target as HTMLSelectElement).value;
     this.selectedSemTable = +sem;
     localStorage.setItem('selectedSemIdTable', this.selectedSemTable.toString());
     this.reloadTable(this.selectedSemTable);
   }
-  
-  // Hàm xử lý khi chọn học kỳ cho biểu đồ
-  selectSemChart(event: Event): void {
-    const sem = (event.target as HTMLSelectElement).value;
-    this.selectedSemChart = +sem;
-    localStorage.setItem('selectedSemIdChart', this.selectedSemChart.toString());
-  }
-  
+
   // Hàm xử lý khi chọn môn học cho bảng
-  selectSubjectTable(event: Event): void {
+  setSelectedSubjectTable(event: Event): void {
     const subjectId = (event.target as HTMLSelectElement).value;
     this.selectedSubjectTable = subjectId;
     localStorage.setItem('selectedSubjectIdTable', subjectId);
-    this.loadDataForSubject(subjectId, 'table');
+    this.loadDataForSubjectTable(subjectId, 'table');
   }
-  
+
+  // Hàm tải lại bảng theo semId đã chọn
+  reloadChart(semId: number): void {
+    this.getSubjectsApi(semId).subscribe(
+      (subjectResponse) => {
+        this.subjectListChart = subjectResponse;
+        if (this.selectedSubjectChart) {
+          this.loadDataForSubject(this.selectedSubjectChart, 'chart');
+        }
+      },
+      (error) => {
+        console.error('Error fetching subjects for table:', error);
+      }
+    );
+  }
+
+  // Hàm xử lý khi chọn học kỳ cho biểu đồ
+  setSelectedSemChart(event: Event): void {
+    const sem = (event.target as HTMLSelectElement).value;
+    this.selectedSemChart = +sem;
+    localStorage.setItem('selectedSemIdChart', this.selectedSemChart.toString());
+    this.reloadChart(this.selectedSemChart);
+  }
+
   // Hàm xử lý khi chọn môn học cho biểu đồ
-  selectSubjectChart(event: Event): void {
+  setSelectedSubjectChart(event: Event): void {
     const subjectId = (event.target as HTMLSelectElement).value;
     this.selectedSubjectChart = subjectId;
     localStorage.setItem('selectedSubjectIdChart', subjectId);
     this.loadDataForSubject(subjectId, 'chart');
   }
-  
+
+  loadDataForSubjectTable(subjectId: string | number, type: string): void {
+    this.http.get<any>(`${this.authService.apiUrl}/exam/subject/${subjectId}`, this.home.httpOptions).subscribe(
+      (data) => {
+        if (type === 'table') {
+          this.examList = data;
+          this.filterExam(); // Nếu cần lọc kết quả
+        }
+      },
+      (error) => {
+        console.error('Error fetching data:', error);
+      }
+    );
+  }
+
+  filterExam(): void {
+    this.examFilter = this.examList.filter((exam: any) =>
+      exam.name.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
+      exam.code.toLowerCase().includes(this.searchTerm.toLowerCase())
+    );
+  }
+
   // Hàm tải dữ liệu cho môn học
   loadDataForSubject(subjectId: string | number, type: string): void {
-    this.http.get<any[]>(`${this.authService.apiUrl}/exam/subject/${subjectId}`, { headers: this.home.httpOptions.headers })
-      .subscribe(
-        data => {
-          console.log(`Data from API for ${type}:`, data);
-          if (type === 'table') {
-            this.tests = data;
-            this.filterTests(); // Nếu cần lọc kết quả
-          }
-        },
-        error => {
-          console.error('Error fetching data:', error);
-        }
-      );
   }
-  
+
   // Hàm xử lý khi chọn môn học từ ID
   selectSubjectById(subjectId: string | number, type: string): void {
     this.loadDataForSubject(subjectId, type);
-  }
-
-  filterTests(): void {
-    this.filteredTests = this.tests.filter(test =>
-      test.name.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-      test.code.toLowerCase().includes(this.searchTerm.toLowerCase())
-    );
   }
 }
 

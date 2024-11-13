@@ -1,11 +1,11 @@
-import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../../../service/auth.service';
-import { ToastrService } from 'ngx-toastr';
-import { ActivatedRoute, Router } from '@angular/router';
-import { HomeComponent } from '../../home.component';
 import { Title } from '@angular/platform-browser';
 import { AdminComponent } from '../../../admin.component';
+import { HomeComponent } from '../../home.component';
+import { HttpClient } from '@angular/common/http';
+import { ToastrService } from 'ngx-toastr';
+import { Router, ActivatedRoute } from '@angular/router';
 import { forkJoin } from 'rxjs';
 
 interface Answer {
@@ -24,7 +24,10 @@ interface QuestionForm {
 @Component({
   selector: 'app-question-update',
   templateUrl: './question-update.component.html',
-  styleUrls: ['./../../../../shared/styles/admin/question-common.css']
+  styleUrls: [
+    './../../../../shared/styles/admin/style.css',
+    './../../../../shared/styles/admin/question-form.css'
+  ]
 })
 
 export class QuestionUpdateComponent implements OnInit {
@@ -198,7 +201,7 @@ export class QuestionUpdateComponent implements OnInit {
 
   chooseImage(event: Event) {
     const file = (event.target as HTMLInputElement).files?.[0];
-    const imgQuestion = document.getElementById(`imageQuestion`) as HTMLImageElement;
+    const imgQuestion = document.getElementById(`image-question`) as HTMLImageElement;
     if (file) {
       const reader = new FileReader();
       reader.onload = (e) => {
@@ -212,7 +215,7 @@ export class QuestionUpdateComponent implements OnInit {
   }
 
   removeImage() {
-    const imgQuestion = document.getElementById(`imageQuestion`) as HTMLImageElement;
+    const imgQuestion = document.getElementById(`image-question`) as HTMLImageElement;
     const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement;
 
     // Xóa ảnh
@@ -255,9 +258,11 @@ export class QuestionUpdateComponent implements OnInit {
       }
     });
 
-    // Kiểm tra nếu số lượng câu trả lời < 4
-    if (this.questionForm.answers.length < 4) {
-      errorMessage = `Must have at least 4 answers.`;
+    // Kiểm tra câu trả lời giống nhau trong từng câu hỏi
+    const answerContents = this.questionForm.answers.map(a => a.content.trim());
+    const uniqueAnswers = new Set(answerContents);
+    if (answerContents.length !== uniqueAnswers.size) {
+      errorMessage = `Answers must be unique.`;
       errors = true;
     }
 
@@ -267,11 +272,9 @@ export class QuestionUpdateComponent implements OnInit {
       errors = true;
     }
 
-    // Kiểm tra câu trả lời giống nhau trong từng câu hỏi
-    const answerContents = this.questionForm.answers.map(a => a.content.trim());
-    const uniqueAnswers = new Set(answerContents);
-    if (answerContents.length !== uniqueAnswers.size) {
-      errorMessage = `Answers must be unique.`;
+    // Kiểm tra nếu số lượng câu trả lời < 4
+    if (this.questionForm.answers.length < 4) {
+      errorMessage = `Must have at least 4 answers.`;
       errors = true;
     }
   

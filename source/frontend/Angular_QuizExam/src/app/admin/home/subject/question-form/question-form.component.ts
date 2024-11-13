@@ -1,12 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 import { AuthService } from '../../../service/auth.service';
-import { ToastrService } from 'ngx-toastr';
-import { ActivatedRoute, Router } from '@angular/router';
-import { HomeComponent } from '../../home.component';
-import { forkJoin } from 'rxjs';
 import { Title } from '@angular/platform-browser';
 import { AdminComponent } from '../../../admin.component';
+import { HomeComponent } from '../../home.component';
+import { HttpClient } from '@angular/common/http';
+import { ToastrService } from 'ngx-toastr';
+import { Router, ActivatedRoute } from '@angular/router';
+import { forkJoin } from 'rxjs';
 
 interface Answer {
   content: string;
@@ -24,7 +24,10 @@ interface QuestionForm {
 @Component({
   selector: 'app-question-form',
   templateUrl: './question-form.component.html',
-  styleUrls: ['./../../../../shared/styles/admin/question-common.css']
+  styleUrls: [
+    './../../../../shared/styles/admin/style.css',
+    './../../../../shared/styles/admin/question-form.css'
+  ]
 })
 export class QuestionFormComponent implements OnInit {
   questionForms: QuestionForm[] = [];
@@ -217,7 +220,7 @@ export class QuestionFormComponent implements OnInit {
 
   chooseImage(event: Event, questionIndex: number) {
     const file = (event.target as HTMLInputElement).files?.[0];
-    const imgQuestion = document.getElementById(`imageQuestion${questionIndex}`) as HTMLImageElement;
+    const imgQuestion = document.getElementById(`image-question${questionIndex}`) as HTMLImageElement;
     if (file) {
       const reader = new FileReader();
       reader.onload = (e) => {
@@ -230,7 +233,7 @@ export class QuestionFormComponent implements OnInit {
   }
 
   removeImage(questionIndex: number) {
-    const imgQuestion = document.getElementById(`imageQuestion${questionIndex}`) as HTMLImageElement;
+    const imgQuestion = document.getElementById(`image-question${questionIndex}`) as HTMLImageElement;
     const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement;
 
     // Xóa ảnh
