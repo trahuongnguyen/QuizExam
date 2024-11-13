@@ -42,8 +42,8 @@ public class ClassesController {
     }
 
     @PutMapping("/remove/{id}")
-    public void deleteClass(@PathVariable Integer id) {
-        classesService.deleteClass(id);
+    public Classes deleteClass(@PathVariable Integer id) {
+        return classesService.deleteClass(id);
     }
 
     @PostMapping("/export/excel")

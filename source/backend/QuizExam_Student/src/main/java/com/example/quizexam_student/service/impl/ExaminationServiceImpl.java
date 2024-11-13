@@ -175,8 +175,15 @@ public class ExaminationServiceImpl implements ExaminationService {
     @Override
     public List<ExaminationResponse> getAllExaminationBySubjectId(int subjectId) {
         Subject subject = subjectRepository.findById(subjectId).orElse(null);
-        return examinationRepository.findAllBySubjectAndStatus(subject,2)
+        List<ExaminationResponse> examinationResponses =
+                examinationRepository.findAllBySubjectAndStatus(subject,2)
                         .stream().map(ExaminationMapper::convertToResponse).collect(Collectors.toList());
+        examinationResponses.forEach(ex -> {
+            ex.setMarkResponses(
+                    markRepository.findAllByExaminationId(ex.getId())
+                            .stream().map(MarkMapper::convertToResponse).collect(Collectors.toList()));
+        });
+        return examinationResponses;
     }
 
     @Override

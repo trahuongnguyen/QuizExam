@@ -23,7 +23,7 @@ public class ClassesServiceImpl implements ClassesService {
 
     @Override
     public Classes addClass(Classes _class) {
-        if (classesRepository.existsByName(_class.getName())) {
+        if (classesRepository.existsByNameAndStatus(_class.getName(),1)) {
             throw new AlreadyExistException("className", "Class Name already exists.");
         }
         _class.setStatus(0);
@@ -36,7 +36,7 @@ public class ClassesServiceImpl implements ClassesService {
         if (Objects.isNull(classUpdate) || classUpdate.getStatus() == 0) {
             throw new NotFoundException("class", "Class not found.");
         }
-        if (classesRepository.existsByNameAndIdNot(classInput.getName(), id)) {
+        if (classesRepository.existsByNameAndStatusAndIdNot(classInput.getName(),1, id)) {
             throw new AlreadyExistException("className", "Class Name already exists.");
         }
         setClass(classUpdate, classInput);
@@ -44,13 +44,13 @@ public class ClassesServiceImpl implements ClassesService {
     }
 
     @Override
-    public void deleteClass(int id) {
+    public Classes deleteClass(int id) {
         Classes classDelete = classesRepository.findById(id).orElse(null);
         if (Objects.isNull(classDelete) || classDelete.getStatus() == 0) {
             throw new NotFoundException("class", "Class not found.");
         }
         classDelete.setStatus(0);
-        classesRepository.save(classDelete);
+        return classesRepository.save(classDelete);
     }
 
     private void setClass(Classes classUpdate, Classes classInput) {

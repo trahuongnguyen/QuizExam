@@ -84,7 +84,7 @@ public class ChapterServiceTest {
     public void testExistChapterName_WhenChapterExists_ReturnsTrue() {
         // GIVEN
         String chapterName = "Existing Chapter";
-        Mockito.when(chapterRepository.findByName(chapterName)).thenReturn(chapter);
+        Mockito.when(chapterRepository.findByNameAndStatus(chapterName,1)).thenReturn(chapter);
 
         // WHEN
         Boolean exists = chapterService.ExistChapterName(chapterName);
@@ -98,7 +98,7 @@ public class ChapterServiceTest {
     public void testExistChapterName_WhenChapterDoesNotExist_ReturnsFalse() {
         // GIVEN
         String chapterName = "Non-Existing Chapter";
-        Mockito.when(chapterRepository.findByName(chapterName)).thenReturn(null);
+        Mockito.when(chapterRepository.findByNameAndStatus(chapterName,1)).thenReturn(null);
 
         // WHEN
         Boolean exists = chapterService.ExistChapterName(chapterName);
@@ -140,7 +140,7 @@ public class ChapterServiceTest {
     @WithMockUser(username = "admin@example.com", roles = {"ADMIN"})
     void createChapter_validRequest_success(){
         // GIVEN
-        Mockito.when(chapterRepository.findByName(chapterRequest.getName())).thenReturn(null);
+        Mockito.when(chapterRepository.findByNameAndStatus(chapterRequest.getName(),1)).thenReturn(null);
         Mockito.when(subjectRepository.findById(chapterRequest.getSubjectId())).thenReturn(Optional.ofNullable(subject));
         Mockito.when(chapterRepository.save(ArgumentMatchers.any())).thenReturn(chapter);
 
@@ -159,7 +159,7 @@ public class ChapterServiceTest {
     @WithMockUser(username = "admin@example.com", roles = {"ADMIN"})
     void createChapter_alreadyExistName_fail(){
         // GIVEN
-        Mockito.when(chapterRepository.findByName(chapterRequest.getName())).thenReturn(chapter);
+        Mockito.when(chapterRepository.findByNameAndStatus(chapterRequest.getName(),1)).thenReturn(chapter);
 
         // WHEN
         var exception = assertThrows(
@@ -244,7 +244,7 @@ public class ChapterServiceTest {
     void updateChapter_success(){
         // GIVEN
         Mockito.when(chapterRepository.findById(1)).thenReturn(Optional.ofNullable(chapter));
-        Mockito.when(chapterRepository.findByName(chapterRequest.getName())).thenReturn(null);
+        Mockito.when(chapterRepository.findByNameAndStatus(chapterRequest.getName(),1)).thenReturn(null);
         Mockito.when(subjectRepository.findById(chapterRequest.getSubjectId())).thenReturn(Optional.ofNullable(subject));
         Mockito.when(chapterRepository.save(ArgumentMatchers.any())).thenReturn(chapter);
         // WHEN
@@ -277,7 +277,7 @@ public class ChapterServiceTest {
         Chapter existingChapter = new Chapter();
         Mockito.when(subjectRepository.findById(chapterRequest.getSubjectId())).thenReturn(Optional.ofNullable(subject));
         Mockito.when(chapterRepository.findById(1)).thenReturn(Optional.of(existingChapter));
-        Mockito.when(chapterRepository.findByName(chapterRequest.getName()))
+        Mockito.when(chapterRepository.findByNameAndStatus(chapterRequest.getName(),1))
                 .thenThrow(new AlreadyExistException("ExistChapter", "Chapter name already exists"));
 
         // WHEN
@@ -297,7 +297,7 @@ public class ChapterServiceTest {
         int chapterId = 1;
         Chapter existingChapter = new Chapter();
         Mockito.when(chapterRepository.findById(chapterId)).thenReturn(Optional.of(existingChapter));
-        Mockito.when(chapterRepository.findByName("New Chapter")).thenReturn(null);
+        Mockito.when(chapterRepository.findByNameAndStatus("New Chapter",1)).thenReturn(null);
         Mockito.when(subjectRepository.findById(chapterRequest.getSubjectId())).thenReturn(Optional.empty());
 
         // WHEN & THEN

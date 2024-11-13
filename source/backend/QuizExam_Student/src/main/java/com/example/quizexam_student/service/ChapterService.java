@@ -11,7 +11,7 @@ public interface ChapterService {
     List<Chapter> getAllChaptersBySubjectId(int subjectId);
     Chapter addChapter(ChapterRequest chapterRequest);
     Chapter updateChapter(int id, ChapterRequest chapterRequest);
-    void deleteChapter(int id);
+    Chapter deleteChapter(int id);
     Boolean ExistChapterName(String name);
     Boolean ExistSubjectId(int subjectId);
 }

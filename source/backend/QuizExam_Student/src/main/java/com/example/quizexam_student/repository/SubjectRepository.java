@@ -13,4 +13,5 @@ public interface SubjectRepository extends JpaRepository<Subject, Integer> {
     List<Subject> findByStatus(int status);
 
     List<Subject> findBySemAndStatus(Sem sem, int status);
+    Subject findByIdAndStatus(int id, int status);
 }

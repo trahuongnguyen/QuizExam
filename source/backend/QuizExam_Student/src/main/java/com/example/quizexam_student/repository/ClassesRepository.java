@@ -12,7 +12,7 @@ public interface ClassesRepository extends JpaRepository<Classes, Integer> {
 
     List<Classes> findByStatusNotOrderByIdDesc(int status);
 
-    boolean existsByName(String name);
+    boolean existsByNameAndStatus(String name, int status);
 
-    boolean existsByNameAndIdNot(String name, int id);
+    boolean existsByNameAndStatusAndIdNot(String name,int status, int id);
 }

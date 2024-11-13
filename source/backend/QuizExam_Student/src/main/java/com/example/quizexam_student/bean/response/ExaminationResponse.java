@@ -1,5 +1,6 @@
 package com.example.quizexam_student.bean.response;
 
+import com.example.quizexam_student.entity.Mark;
 import com.example.quizexam_student.entity.Subject;
 import lombok.Data;
 
@@ -16,4 +17,5 @@ public class ExaminationResponse {
     private Subject subject;
     private List<QuestionRecordResponse> questionRecordResponses;
     private List<StudentResponse> studentResponses;
+    private List<MarkResponse> markResponses;
 }

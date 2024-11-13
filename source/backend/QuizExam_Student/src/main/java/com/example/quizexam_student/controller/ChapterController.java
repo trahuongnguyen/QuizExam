@@ -35,8 +35,7 @@ public class ChapterController {
     }
 
     @PutMapping("/remove/{id}")
-    public ResponseEntity<String> removeChapter(@PathVariable int id) {
-        chapterService.deleteChapter(id);
-        return ResponseEntity.ok("Removed chapter successfully.");
+    public ResponseEntity<Chapter> removeChapter(@PathVariable int id) {
+        return ResponseEntity.ok(chapterService.deleteChapter(id));
     }
 }

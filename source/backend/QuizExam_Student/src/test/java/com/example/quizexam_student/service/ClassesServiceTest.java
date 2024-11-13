@@ -89,7 +89,7 @@ public class ClassesServiceTest {
     @WithMockUser(username = "admin@example.com", roles = {"ADMIN"})
     void createClass_success(){
         // GIVEN
-        Mockito.when(classesRepository.existsByName("C2209i")).thenReturn(false);
+        Mockito.when(classesRepository.existsByNameAndStatus("C2209i",1)).thenReturn(false);
         Mockito.when(classesRepository.save(classes)).thenReturn(classes);
         // WHEN
         var response = classesService.addClass(classes);
@@ -107,7 +107,7 @@ public class ClassesServiceTest {
     @WithMockUser(username = "admin@example.com", roles = {"ADMIN"})
     void createClass_alreadyExistName_fail(){
         // GIVEN
-        Mockito.when(classesRepository.existsByName("C2209i")).thenReturn(true);
+        Mockito.when(classesRepository.existsByNameAndStatus("C2209i",1)).thenReturn(true);
         // WHEN
         var exception = org.junit.jupiter.api.Assertions
                 .assertThrows(AlreadyExistException.class
@@ -157,7 +157,7 @@ public class ClassesServiceTest {
     void updateClass_alreadyExistName_fail(){
         // GIVEN
         Mockito.when(classesRepository.findById(1)).thenReturn(Optional.of(classes));
-        Mockito.when(classesRepository.existsByNameAndIdNot("C2209i", 1)).thenReturn(true);
+        Mockito.when(classesRepository.existsByNameAndStatusAndIdNot("C2209i",1,1)).thenReturn(true);
         // WHEN
         var response = org.junit.jupiter.api.Assertions
                 .assertThrows(AlreadyExistException.class

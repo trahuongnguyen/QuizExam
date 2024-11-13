@@ -13,5 +13,5 @@ public interface ClassesService {
 
     Classes updateClass(int id, Classes _class);
 
-    void deleteClass(int id);
+    Classes deleteClass(int id);
 }

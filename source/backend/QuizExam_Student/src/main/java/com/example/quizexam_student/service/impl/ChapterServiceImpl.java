@@ -21,14 +21,15 @@ public class ChapterServiceImpl implements ChapterService {
 
     @Override
     public Boolean ExistChapterName(String chapterName) {
-        return chapterRepository.findByName(chapterName) != null;
+        return chapterRepository.findByNameAndStatus(chapterName,1) != null;
     }
 
     @Override
     public Boolean ExistSubjectId(int id){
-        Subject subject = subjectRepository.findById(id).orElse(null);
+        Subject subject = subjectRepository.findByIdAndStatus(id,1);
         return subject != null;
     }
+
     @Override
     public List<Chapter> getAllChaptersBySubjectId(int subjectId) {
         return chapterRepository.findAllByStatusAndSubjectId(1, subjectId);
@@ -44,7 +45,7 @@ public class ChapterServiceImpl implements ChapterService {
         }
         Chapter chapter = new Chapter();
         chapter.setName(chapterRequest.getName());
-        Subject subject = subjectRepository.findById(chapterRequest.getSubjectId()).orElse(null);
+        Subject subject = subjectRepository.findByIdAndStatus(chapterRequest.getSubjectId(),1);
         chapter.setSubject(subject);
         chapter.setStatus(1);
         return chapterRepository.save(chapter);
@@ -61,15 +62,15 @@ public class ChapterServiceImpl implements ChapterService {
             throw new NotFoundException("NotFoundSubject", "Subject id not found");
         }
         oldChapter.setName(chapterRequest.getName());
-        Subject subject = subjectRepository.findById(chapterRequest.getSubjectId()).orElse(null);
+        Subject subject = subjectRepository.findByIdAndStatus(chapterRequest.getSubjectId(),1);
         oldChapter.setSubject(subject);
         return chapterRepository.save(oldChapter);
     }
 
     @Override
-    public void deleteChapter(int id) {
-        Chapter oldChapter = chapterRepository.findById(id).orElseThrow(() -> new NotFoundException("NotFoundChapter", "Chapter not found"));
+    public Chapter deleteChapter(int id) {
+        Chapter oldChapter = chapterRepository.findByIdAndStatus(id,1);
         oldChapter.setStatus(0);
-        chapterRepository.save(oldChapter);
+        return chapterRepository.save(oldChapter);
     }
 }
