@@ -26,6 +26,10 @@ export class UrlService {
     return `/admin/subject/${subjectId}/question-list`;
   }
 
+  editQuestionUrl(subjectId: number, id: number): string {
+    return `/admin/subject/${subjectId}/edit-question/${id}`;
+  }
+
   examListUrl(): string {
     return `/admin/exam`;
   }

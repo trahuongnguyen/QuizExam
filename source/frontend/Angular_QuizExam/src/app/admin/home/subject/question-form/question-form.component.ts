@@ -340,7 +340,7 @@ export class QuestionFormComponent implements OnInit {
     this.http.post(`${this.authService.apiUrl}/question`, formData, this.home.httpOptions).subscribe(
       () => {
         this.toastr.success('Questions saved successfully!');
-        this.router.navigate([`/admin/home/subject/${this.subjectId}/question-list`]);
+        this.router.navigate([`/admin/subject/${this.subjectId}/question-list`]);
       },
       err => {
         this.toastr.error(err.error.message, 'Error');
@@ -359,7 +359,7 @@ export class QuestionFormComponent implements OnInit {
 
   confirmCancel() {
     this.closePopupDialog();
-    this.router.navigate([`/admin/home/subject/${this.subjectId}/question-list`]);
+    this.router.navigate([`/admin/subject/${this.subjectId}/question-list`]);
   }
 
   closePopupDialog() {

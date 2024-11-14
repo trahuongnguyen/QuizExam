@@ -270,7 +270,7 @@ export class StudentComponent implements OnInit, OnDestroy {
           timeOut: 2000,
         });
         console.log('Move successfully', response);
-        this.router.navigate(['/admin/home/class/' + this.classId]);
+        this.router.navigate(['/admin/class/' + this.classId]);
       },
       error => {
         this.toastr.error('Error ', 'Error', {

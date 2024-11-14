@@ -50,8 +50,109 @@ export class DashboardComponent implements OnInit {
     private toastr: ToastrService,
     private router: Router,
     private activatedRoute: ActivatedRoute
-  ) {
+  ) { }
+
+  examCount: number = 0;
+  classCount: number = 0;
+  studentCount: number = 0;
+  employeeCount: number = 0;
+
+  semester: any; // Danh sách học kỳ
+
+  // Các thuộc tính cho bảng
+  subjectListTable: any;
+  semIdTable: number = 1;
+  selectedSemTable: number = 1;
+  selectedSubjectTable: string | number = '';
+  examList: any;
+  examFilter: any;
+
+  // Các thuộc tính cho biểu đồ
+  subjectListChart: any;
+  semIdChart: number = 1;
+  selectedSemChart: number = 1;
+  selectedSubjectChart: string | number = '';
+
+  searchTerm: string = '';
+  currentPage: number = 1;
+
+  reExamCountSem: number = 0;
+  passCountSem: number = 0;
+  creditCountSem: number = 0;
+  distinctionCountSem: number = 0;
+  passPercentageSem: number = 0;
+
+  reExamCountSubject: number = 0;
+  passCountSubject: number = 0;
+  creditCountSubject: number = 0;
+  distinctionCountSubject: number = 0;
+  passPercentageSubject: number = 0;
+
+  ngOnInit(): void {
     this.titleService.setTitle('Dashboard');
+    const examRequest = this.http.get<any>(`${this.authService.apiUrl}/exam/all`, this.home.httpOptions);
+    const classRequest = this.http.get<any>(`${this.authService.apiUrl}/class`, this.home.httpOptions);
+    const studentRequest = this.http.get<any>(`${this.authService.apiUrl}/studentManagement/all-student`, this.home.httpOptions);
+    const employeeRequest = this.http.get<any>(`${this.authService.apiUrl}/user`, this.home.httpOptions);
+    const subjectRequest = this.http.get<any>(`${this.authService.apiUrl}/subject`, this.home.httpOptions);
+    const semRequest = this.http.get<any>(`${this.authService.apiUrl}/sem`, this.home.httpOptions);
+
+    forkJoin([examRequest, classRequest, studentRequest, employeeRequest, subjectRequest, semRequest])
+      .subscribe(([examResponse, classResponse, studentResponse, employeeResponse, subjectResponse, semResponse]) => {
+        this.examCount = examResponse.length;
+        this.classCount = classResponse.length;
+        this.studentCount = studentResponse.length;
+        this.employeeCount = employeeResponse.length;
+
+        this.semester = semResponse;
+
+        // Lấy semId từ localStorage nếu có cho bảng
+        const savedSemIdTable = localStorage.getItem('selectedSemIdTable');
+        if (savedSemIdTable) {
+          this.selectedSemTable = +savedSemIdTable;
+        } else {
+          this.selectedSemTable = 1;
+        }
+        this.reloadTable(this.selectedSemTable);
+
+        // Lấy semId từ localStorage nếu có cho biểu đồ
+        const savedSemIdChart = localStorage.getItem('selectedSemIdChart');
+        if (savedSemIdChart) {
+          this.selectedSemChart = +savedSemIdChart;
+        } else {
+          this.selectedSemChart = 1;
+        }
+        this.reloadChart(this.selectedSemChart);
+
+        // Lấy subjectId từ localStorage nếu có cho bảng
+        const savedSubjectIdTable = localStorage.getItem('selectedSubjectIdTable');
+        if (savedSubjectIdTable) {
+          this.selectSubjectById(savedSubjectIdTable, 'table');
+        }
+
+        // Lấy subjectId từ localStorage nếu có cho biểu đồ
+        const savedSubjectIdChart = localStorage.getItem('selectedSubjectIdChart');
+        if (savedSubjectIdChart) {
+          this.selectSubjectById(savedSubjectIdChart, 'chart');
+        }
+
+        // Sem
+        const semId = localStorage.getItem('selectedSemIdChart') || '1';  // Mặc định lấy subjectId là 1 nếu không có trong localStorage
+        // Gọi hàm để tải dữ liệu cho sem đã chọn
+        this.loadDataForChart1(semId);
+
+
+        // Subject
+        const subjectId = localStorage.getItem('selectedSubjectIdChart') || '1';  // Mặc định lấy subjectId là 1 nếu không có trong localStorage
+        // Gọi hàm để tải dữ liệu cho subject đã chọn
+        this.loadDataForChart2(subjectId);
+
+        this.charts(subjectResponse);
+      }
+    );
+  }
+
+  charts(subjectResponse: any): void {
     this.chartOptions = {
       chart: {
         height: 300,
@@ -174,8 +275,8 @@ export class DashboardComponent implements OnInit {
           }
         }
       },
-      labels: ['New', 'Return'],
-      series: [20, 15],
+      labels: ['Re-exam', 'Pass', 'Credit', 'Distinction'],  // Đặt tên cho các mục trong donut
+      series: [0, 0, 0, 0],  // Mặc định, cần cập nhật sau khi có dữ liệu
       legend: {
         show: false
       },
@@ -190,93 +291,25 @@ export class DashboardComponent implements OnInit {
           left: 0
         }
       },
-      colors: ['#d9d9d9', '#2ed8b6'],
+      colors: ['#ff3b30', '#ffcc00', '#4cd964', '#007bff'], // Màu sắc cho các phần của donut
       fill: {
-        opacity: [1, 1]
+        opacity: [1, 1, 1, 1]  // Đảm bảo độ trong suốt cho các phần của donut
       },
       stroke: {
         width: 0
       }
     };
+
+    this.updateBarChart(subjectResponse);
   }
 
-  examCount: number = 0;
-  classCount: number = 0;
-  studentCount: number = 0;
-  employeeCount: number = 0;
-
-  semester: any; // Danh sách học kỳ
-
-  // Các thuộc tính cho bảng
-  subjectListTable: any;
-  semIdTable: number = 1;
-  selectedSemTable: number = 1;
-  selectedSubjectTable: string | number = '';
-  examList: any;
-  examFilter: any;
-
-  // Các thuộc tính cho biểu đồ
-  subjectListChart: any;
-  semIdChart: number = 1;
-  selectedSemChart: number = 1;
-  selectedSubjectChart: string | number = '';
-
-  searchTerm: string = '';
-  currentPage: number = 1;
-
-  ngOnInit(): void {
-    const examRequest = this.http.get<any>(`${this.authService.apiUrl}/exam/all`, this.home.httpOptions);
-    const classRequest = this.http.get<any>(`${this.authService.apiUrl}/class`, this.home.httpOptions);
-    const studentRequest = this.http.get<any>(`${this.authService.apiUrl}/studentManagement/all-student`, this.home.httpOptions);
-    const employeeRequest = this.http.get<any>(`${this.authService.apiUrl}/user`, this.home.httpOptions);
-    const subjectRequest = this.http.get<any>(`${this.authService.apiUrl}/subject`, this.home.httpOptions);
-    const semRequest = this.http.get<any>(`${this.authService.apiUrl}/sem`, this.home.httpOptions);
-    
-    forkJoin([examRequest, classRequest, studentRequest, employeeRequest, subjectRequest, semRequest])
-    .subscribe(([examResponse, classResponse, studentResponse, employeeResponse, subjectResponse, semResponse]) => {
-      this.examCount = examResponse.length;
-      this.classCount = classResponse.length;
-      this.studentCount = studentResponse.length;
-      this.employeeCount = employeeResponse.length;
-
-      if (this.chartOptions && this.chartOptions.xaxis) {
-        this.chartOptions.xaxis.categories = subjectResponse.map((dt: any) => dt.name); // Gán dữ liệu từ API vào categories
-      } else {
-        console.error('chartOptions or xaxis is undefined');
-      }
-
-      this.semester = semResponse;
-
-      // Lấy semId từ localStorage nếu có cho bảng
-      const savedSemIdTable = localStorage.getItem('selectedSemIdTable');
-      if (savedSemIdTable) {
-        this.selectedSemTable = +savedSemIdTable;
-      } else {
-        this.selectedSemTable = 1;
-      }
-      this.reloadTable(this.selectedSemTable);
-
-      // Lấy semId từ localStorage nếu có cho biểu đồ
-      const savedSemIdChart = localStorage.getItem('selectedSemIdChart');
-      if (savedSemIdChart) {
-        this.selectedSemChart = +savedSemIdChart;
-      } else {
-        this.selectedSemChart = 1;
-      }
-      this.reloadChart(this.selectedSemChart);
-
-      // Lấy subjectId từ localStorage nếu có cho bảng
-      const savedSubjectIdTable = localStorage.getItem('selectedSubjectIdTable');
-      if (savedSubjectIdTable) {
-        this.selectSubjectById(savedSubjectIdTable, 'table');
-      }
-
-      // Lấy subjectId từ localStorage nếu có cho biểu đồ
-      const savedSubjectIdChart = localStorage.getItem('selectedSubjectIdChart');
-      if (savedSubjectIdChart) {
-        this.selectSubjectById(savedSubjectIdChart, 'chart');
-      }
-    });
+  updateBarChart(subjectResponse: any): void {
+    if (this.chartOptions && this.chartOptions.xaxis) {
+      this.chartOptions.xaxis.categories = subjectResponse.map((dt: any) => dt.name); // Gán dữ liệu từ API vào categories
+      console.log('Updated categories:', this.chartOptions.xaxis.categories);
+    } else {
+      console.error('chartOptions or xaxis is undefined');
+    }
   }
 
   getSubjectsApi(semId: number): Observable<any> {
@@ -289,6 +322,7 @@ export class DashboardComponent implements OnInit {
       (subjectResponse) => {
         this.subjectListTable = subjectResponse;
         if (this.selectedSubjectTable) {
+          this.selectedSubjectTable = this.subjectListTable[0].id;
           this.loadDataForSubjectTable(this.selectedSubjectTable, 'table');
         }
       },
@@ -300,8 +334,8 @@ export class DashboardComponent implements OnInit {
 
   // Hàm xử lý khi chọn học kỳ cho bảng
   setSelectedSemTable(event: Event): void {
-    const sem = (event.target as HTMLSelectElement).value;
-    this.selectedSemTable = +sem;
+    const sem = (event.target as HTMLSelectElement).value as unknown as number;
+    this.selectedSemTable = sem;
     localStorage.setItem('selectedSemIdTable', this.selectedSemTable.toString());
     this.reloadTable(this.selectedSemTable);
   }
@@ -320,8 +354,10 @@ export class DashboardComponent implements OnInit {
       (subjectResponse) => {
         this.subjectListChart = subjectResponse;
         if (this.selectedSubjectChart) {
+          this.selectedSubjectChart = this.subjectListChart[0].id;
           this.loadDataForSubject(this.selectedSubjectChart, 'chart');
         }
+        this.loadDataForChart1(semId);
       },
       (error) => {
         console.error('Error fetching subjects for table:', error);
@@ -331,8 +367,8 @@ export class DashboardComponent implements OnInit {
 
   // Hàm xử lý khi chọn học kỳ cho biểu đồ
   setSelectedSemChart(event: Event): void {
-    const sem = (event.target as HTMLSelectElement).value;
-    this.selectedSemChart = +sem;
+    const sem = (event.target as HTMLSelectElement).value as unknown as number;
+    this.selectedSemChart = sem;
     localStorage.setItem('selectedSemIdChart', this.selectedSemChart.toString());
     this.reloadChart(this.selectedSemChart);
   }
@@ -345,18 +381,161 @@ export class DashboardComponent implements OnInit {
     this.loadDataForSubject(subjectId, 'chart');
   }
 
+  // Dữ liệu bảng
   loadDataForSubjectTable(subjectId: string | number, type: string): void {
-    this.http.get<any>(`${this.authService.apiUrl}/exam/subject/${subjectId}`, this.home.httpOptions).subscribe(
-      (data) => {
-        if (type === 'table') {
-          this.examList = data;
-          this.filterExam(); // Nếu cần lọc kết quả
-        }
-      },
+    this.http.get<any>(`${this.authService.apiUrl}/exam/subject/${subjectId}`, this.home.httpOptions).subscribe((data) => {
+      this.examList = data;
+      this.examFilter = [...this.examList]; // Khởi tạo examFilter với dữ liệu từ examList
+      if (type === 'table') {
+        this.calculateScoresTable(); // Gọi hàm tính toán
+      }
+      if (type === 'chart') {
+        this.calculateScoresChartSubject();
+      }
+    },
       (error) => {
         console.error('Error fetching data:', error);
-      }
-    );
+      });
+  }
+
+  // Dữ liệu chart 1
+  loadDataForChart1(semId: string | number): void {
+    this.http.get<any>(`${this.authService.apiUrl}/exam/finish/sem/${semId}`, this.home.httpOptions).subscribe((data) => {
+      this.examList = data;
+      this.calculateScoresChartSem(); // Gọi hàm tính toán số lượng loại điểm
+      this.updateChart1(); // Cập nhật biểu đồ với dữ liệu mới
+    },
+      (error) => {
+        console.error('Error fetching data:', error);
+      });
+  }
+
+  // Dữ liệu chart 2
+  loadDataForChart2(subjectId: string | number): void {
+    this.http.get<any>(`${this.authService.apiUrl}/exam/subject/${subjectId}`, this.home.httpOptions).subscribe((data) => {
+      this.examList = data;
+      this.calculateScoresChartSubject(); // Gọi hàm tính toán số lượng loại điểm
+      this.updateChart2(); // Cập nhật biểu đồ với dữ liệu mới
+    },
+      (error) => {
+        console.error('Error fetching data:', error);
+      });
+  }
+
+  // Hàm tính toán số lượng các loại điểm
+  calculateScoresTable(): void {
+    this.examList.forEach((exam: any) => {
+      let reExamCount = 0;
+      let passCount = 0;
+      let creditCount = 0;
+      let distinctionCount = 0;
+
+      exam.markResponses.forEach((mark: any) => {
+        const percentage = (mark.score / mark.maxScore) * 100;
+
+        if (percentage < 40) {
+          reExamCount++;
+        } else if (percentage >= 40 && percentage < 60) {
+          passCount++;
+        } else if (percentage >= 60 && percentage < 70) {
+          creditCount++;
+        } else {
+          distinctionCount++;
+        }
+      });
+
+      // Gán số lượng các loại điểm cho từng bài kiểm tra
+      exam.reExamCount = reExamCount;
+      exam.passCount = passCount;
+      exam.creditCount = creditCount;
+      exam.distinctionCount = distinctionCount;
+
+
+    });
+  }
+
+  // Tinh % chart Sem
+  calculateScoresChartSem(): void {
+    this.reExamCountSem = 0;
+    this.passCountSem = 0;
+    this.creditCountSem = 0;
+    this.distinctionCountSem = 0;
+
+    this.examList.forEach((exam: any) => {
+      exam.markResponses.forEach((mark: any) => {
+        const percentage = (mark.score / mark.maxScore) * 100;
+
+        if (percentage < 40) {
+          this.reExamCountSem++;
+        } else if (percentage >= 40 && percentage < 60) {
+          this.passCountSem++;
+        } else if (percentage >= 60 && percentage < 70) {
+          this.creditCountSem++;
+        } else {
+          this.distinctionCountSem++;
+        }
+      });
+    });
+
+    // Tính tỷ lệ Pass
+    const total = this.reExamCountSem + this.passCountSem + this.creditCountSem + this.distinctionCountSem;
+    this.passPercentageSem = ((this.passCountSem + this.creditCountSem + this.distinctionCountSem) / total) * 100;
+  }
+
+  // Tinh % chart subject
+  calculateScoresChartSubject(): void {
+    this.reExamCountSubject = 0;
+    this.passCountSubject = 0;
+    this.creditCountSubject = 0;
+    this.distinctionCountSubject = 0;
+
+    this.examList.forEach((exam: any) => {
+      exam.markResponses.forEach((mark: any) => {
+        const percentage = (mark.score / mark.maxScore) * 100;
+
+        if (percentage < 40) {
+          this.reExamCountSubject++;
+        } else if (percentage >= 40 && percentage < 60) {
+          this.passCountSubject++;
+        } else if (percentage >= 60 && percentage < 70) {
+          this.creditCountSubject++;
+        } else {
+          this.distinctionCountSubject++;
+        }
+      });
+    });
+
+    // Tính tỷ lệ Pass
+    const total = this.reExamCountSubject + this.passCountSubject + this.creditCountSubject + this.distinctionCountSubject;
+    this.passPercentageSubject = ((this.passCountSubject + this.creditCountSubject + this.distinctionCountSubject) / total) * 100;
+  }
+
+  // Cập nhật dữ liệu biểu đồ 1
+  updateChart1(): void {
+    this.chartOptions_1.series = [
+      this.reExamCountSem,
+      this.passCountSem,
+      this.creditCountSem,
+      this.distinctionCountSem
+    ];
+    this.chartOptions_1.labels = ['Re-exam', 'Pass', 'Credit', 'Distinction'];
+    this.chartOptions_1.colors = ['#ff3b30', '#ffcc00', '#4cd964', '#007bff'];
+  }
+
+  // Cập nhật dữ liệu biểu đồ 2
+  updateChart2(): void {
+    // Cập nhật biểu đồ với dữ liệu có
+    this.chartOptions_2.series = [
+      this.reExamCountSubject,
+      this.passCountSubject,
+      this.creditCountSubject,
+      this.distinctionCountSubject
+    ];
+
+    this.chartOptions_2.labels = ['Re-exam', 'Pass', 'Credit', 'Distinction'];
+
+    // Cập nhật màu sắc cho từng phần của biểu đồ donut
+    this.chartOptions_2.colors = ['#ff3b30', '#ffcc00', '#4cd964', '#007bff'];
   }
 
   filterExam(): void {
@@ -368,6 +547,7 @@ export class DashboardComponent implements OnInit {
 
   // Hàm tải dữ liệu cho môn học
   loadDataForSubject(subjectId: string | number, type: string): void {
+    this.loadDataForSubjectTable(subjectId, type);
   }
 
   // Hàm xử lý khi chọn môn học từ ID

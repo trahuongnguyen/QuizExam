@@ -39,7 +39,7 @@ export class DetailComponent implements OnInit{
   ngOnInit(): void {
     this.titleService.setTitle('Authorize Details');
     this.roleId = Number(this.activatedRoute.snapshot.params['roleId']) ?? 0;
-    this.http.get<any>(`${this.authService.apiUrl}/role/permission/${this.roleId}`, this.home.httpOptions).subscribe((data: any) => {
+    this.http.get<any>(`${this.authService.apiUrl}/permission/${this.roleId}`, this.home.httpOptions).subscribe((data: any) => {
       this.apiData = data;
       this.initializeDataTable();
     });
