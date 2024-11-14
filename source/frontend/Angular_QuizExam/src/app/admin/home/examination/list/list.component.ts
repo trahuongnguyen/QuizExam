@@ -66,7 +66,7 @@ export class ListComponent implements OnInit {
 
   getExamDetail(id: any) {
     this.examComponent.step = false;
-    this.router.navigate([this.urlService.examDetailUrl(id)])
+    this.router.navigate([this.urlService.examDetailUrl(id)]);
   }
 
   onSearch(): void {

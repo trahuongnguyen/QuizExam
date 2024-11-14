@@ -1,10 +1,13 @@
-import { Component, OnInit } from '@angular/core';
-import { Chart } from 'chart.js/auto';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { AuthService } from '../../../service/auth.service';
-import { HttpClient } from '@angular/common/http';
+import { Title } from '@angular/platform-browser';
 import { HomeComponent } from '../../home.component';
 import { ExamComponent } from '../exam.component';
-import { ActivatedRoute, Router } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
+import { ToastrService } from 'ngx-toastr';
+import { UrlService } from '../../../../shared/service/url.service';
+import { Router, ActivatedRoute } from '@angular/router';
+import { Chart } from 'chart.js/auto';
 import { forkJoin } from 'rxjs';
 
 @Component({
@@ -29,14 +32,19 @@ export class ResultComponent implements OnInit {
 
   constructor(
     private authService: AuthService,
-    private http: HttpClient,
+    private titleService: Title,
     private home: HomeComponent,
-    private examComponent: ExamComponent,
+    public examComponent: ExamComponent,
+    private http: HttpClient,
+    private toastr: ToastrService,
+    public urlService: UrlService,
     private router: Router,
     private activatedRoute: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
+    this.titleService.setTitle('Result');
+
     // Lấy examId từ route
     this.examId = Number(this.activatedRoute.snapshot.paramMap.get('examId'));
 
@@ -49,7 +57,7 @@ export class ResultComponent implements OnInit {
       // Lưu dữ liệu bài kiểm tra
       this.examComponent.mark = markData;
       if (this.examComponent.mark.score == null) {
-        this.router.navigateByUrl('/student/home/exam');
+        this.router.navigate([this.urlService.examPageUrl()]);
         return;
       }
 

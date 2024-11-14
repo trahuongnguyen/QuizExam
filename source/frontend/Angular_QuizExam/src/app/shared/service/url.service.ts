@@ -37,4 +37,16 @@ export class UrlService {
   examDetailUrl(examId: number): string {
     return `/admin/exam/detail/${examId}`;
   }
+
+  examPageUrl(): string {
+    return `/exam`;
+  }
+
+  examDetailPageUrl(examId: number): string {
+    return `/exam/detail/${examId}`;
+  }
+
+  resultExamPageUrl(examId: number): string {
+    return `/exam/result/${examId}`;
+  }
 }

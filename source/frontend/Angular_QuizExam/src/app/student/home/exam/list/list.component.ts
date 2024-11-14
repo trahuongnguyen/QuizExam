@@ -1,11 +1,13 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { AuthService } from '../../../service/auth.service';
-import { ToastrService } from 'ngx-toastr';
-import { Router } from '@angular/router';
+import { Title } from '@angular/platform-browser';
 import { HomeComponent } from '../../home.component';
-import { response } from 'express';
 import { ExamComponent } from '../exam.component';
+import { HttpClient } from '@angular/common/http';
+import { ToastrService } from 'ngx-toastr';
+import { UrlService } from '../../../../shared/service/url.service';
+import { Router, ActivatedRoute } from '@angular/router';
+
 declare var $: any;
 
 @Component({
@@ -14,7 +16,17 @@ declare var $: any;
   styleUrl: './list.component.css'
 })
 export class ListComponent implements OnInit {
-  constructor(private authService: AuthService, public home: HomeComponent, private http: HttpClient, public toastr: ToastrService, private router: Router, public examComponent: ExamComponent) { }
+  constructor(
+    private authService: AuthService,
+    private titleService: Title,
+    private home: HomeComponent,
+    public examComponent: ExamComponent,
+    private http: HttpClient,
+    private toastr: ToastrService,
+    public urlService: UrlService,
+    private router: Router,
+    private activatedRoute: ActivatedRoute
+  ) { }
 
   semesters: any;
   examList: any = [];
@@ -23,6 +35,8 @@ export class ListComponent implements OnInit {
   selectedExam: any;
 
   ngOnInit(): void {
+    this.titleService.setTitle('List of Exams');
+
     this.http.get<any>(`${this.authService.apiUrl}/sem`, this.home.httpOptions).subscribe(response => {
       this.semesters = response;
     })
@@ -59,7 +73,7 @@ export class ListComponent implements OnInit {
       this.toastr.warning('The exam has not started yet. Please come back later.');
     }
     else {
-      this.router.navigateByUrl('/student/home/exam/detail/' + examId);
+      this.router.navigate([this.urlService.examDetailPageUrl(examId)]);
     }
   };
 }

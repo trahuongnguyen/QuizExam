@@ -1,10 +1,12 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { AuthService } from '../../../service/auth.service';
-import { HttpClient } from '@angular/common/http';
-import { ActivatedRoute, Router } from '@angular/router';
-import { ToastrService } from 'ngx-toastr';
+import { Title } from '@angular/platform-browser';
 import { HomeComponent } from '../../home.component';
 import { ExamComponent } from '../exam.component';
+import { HttpClient } from '@angular/common/http';
+import { ToastrService } from 'ngx-toastr';
+import { UrlService } from '../../../../shared/service/url.service';
+import { Router, ActivatedRoute } from '@angular/router';
 import { forkJoin } from 'rxjs';
 
 @Component({
@@ -32,15 +34,18 @@ export class DetailComponent implements OnInit, OnDestroy {
 
   constructor(
     private authService: AuthService,
-    private http: HttpClient,
+    private titleService: Title,
     private home: HomeComponent,
-    private examComponent: ExamComponent,
-    private router: Router,
+    public examComponent: ExamComponent,
+    private http: HttpClient,
     private toastr: ToastrService,
+    public urlService: UrlService,
+    private router: Router,
     private activatedRoute: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
+    this.titleService.setTitle('Exam');
     this.examId = Number(this.activatedRoute.snapshot.paramMap.get('examId'));
     this.loadData();
     this.setupScrollListener();
@@ -60,18 +65,18 @@ export class DetailComponent implements OnInit, OnDestroy {
       const currentTime = new Date(); // Lấy thời gian hiện tại
 
       if (startTime > currentTime) {
-        this.router.navigateByUrl('/student/home/exam');
+        this.router.navigate([this.urlService.examPageUrl()]);
         return;
       }
 
       if (this.examComponent.mark.score != null) {
-        this.router.navigateByUrl('/student/home/exam/result/' + this.examId);
+        this.router.navigate([this.urlService.resultExamPageUrl(this.examId)]);
         return;
       }
       
       if (this.examComponent.mark.beginTime == null) {
         if (currentTime > endTime) {
-          this.router.navigateByUrl('/student/home/exam');
+          this.router.navigate([this.urlService.examPageUrl()]);
           return;
         }
         this.http.put(`${this.authService.apiUrl}/mark/begin-time/${this.examComponent.mark.id}`, this.home.httpOptions).subscribe(
@@ -340,7 +345,7 @@ export class DetailComponent implements OnInit, OnDestroy {
     this.http.post(`${this.authService.apiUrl}/student-answers`, body, this.home.httpOptions).subscribe(
       () => {
         localStorage.removeItem('studentAnswers');
-        this.router.navigateByUrl('/student/home/exam/result/' + this.examId);
+        this.router.navigate([this.urlService.resultExamPageUrl(this.examId)]);
       },
       () => this.toastr.error('Submission failed')
     );
