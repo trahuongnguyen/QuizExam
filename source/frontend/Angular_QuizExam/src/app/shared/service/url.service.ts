@@ -1,21 +1,20 @@
 import { Injectable } from '@angular/core';
-import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UrlService {
-  constructor(private router: Router) { }
+  constructor() { }
 
   subjectImageUrl: string = 'http://localhost:8080/uploads/img-subject/';
 
   questionImageUrl: string = 'http://localhost:8080/uploads/img-question/';
 
-  chapterListUrl(id: number): string {
-    return `/admin/subject/${id}`;
+  chapterListUrl(subjectId: number): string {
+    return `/admin/subject/${subjectId}`;
   }
 
-  questionListUrl(id: number): string {
-    return `/admin/subject/${id}/question-list`;
+  questionListUrl(subjectId: number): string {
+    return `/admin/subject/${subjectId}/question-list`;
   }
 }

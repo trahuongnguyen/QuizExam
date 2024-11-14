@@ -9,12 +9,8 @@ public class ExaminationMapper {
     public static Examination convertFromRequest(ExaminationRequest examinationRequest){
         Examination examination = new Examination();
         examination.setName(examinationRequest.getName());
-        if (examination.getEndTime().isAfter(examinationRequest.getStartTime())){
-            examination.setStartTime(examinationRequest.getStartTime());
-            examination.setEndTime(examinationRequest.getEndTime());
-        }else{
-            throw new InvalidTimeException("DateTime", "End time must be after start time");
-        }
+        examination.setStartTime(examinationRequest.getStartTime());
+        examination.setEndTime(examinationRequest.getEndTime());
         examination.setDuration(examinationRequest.getDuration());
         return examination;
     }

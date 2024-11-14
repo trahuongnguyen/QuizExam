@@ -6,7 +6,8 @@ import { HomeComponent } from '../../home.component';
 import { HttpClient } from '@angular/common/http';
 import { ToastrService } from 'ngx-toastr';
 import { Router, ActivatedRoute } from '@angular/router';
-import { forkJoin } from 'rxjs';
+import { forkJoin, Observable } from 'rxjs';
+import { Chapter, Level, Question, Subject } from '../../../../shared/models/models';
 
 interface Answer {
   content: string;
@@ -75,6 +76,22 @@ export class QuestionUpdateComponent implements OnInit {
     this.questionId = Number(this.activatedRoute.snapshot.params['id']) ?? 0;
     this.initializeQuestion();
     this.loadData();
+  }
+
+  getSubjectByIdApi(id: number): Observable<Subject> {
+    return this.http.get<Subject>(`${this.authService.apiUrl}/subject/${id}`, this.home.httpOptions);
+  }
+
+  getChapterListBySubjectIdApi(id: number): Observable<Chapter> {
+    return this.http.get<Chapter>(`${this.authService.apiUrl}/chapter/${id}`, this.home.httpOptions);
+  }
+
+  getLevelListApi(id: number): Observable<Level> {
+    return this.http.get<Level>(`${this.authService.apiUrl}/level`, this.home.httpOptions);
+  }
+
+  getQuestionApi(id: number): Observable<Question> {
+    return this.http.get<Question>(`${this.authService.apiUrl}/question/detail/${id}`, this.home.httpOptions);
   }
 
   loadData() {

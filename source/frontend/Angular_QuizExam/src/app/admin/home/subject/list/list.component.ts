@@ -8,20 +8,8 @@ import { ToastrService } from 'ngx-toastr';
 import { UrlService } from '../../../../shared/service/url.service';
 import { Router, ActivatedRoute } from '@angular/router';
 import { forkJoin, Observable } from 'rxjs';
+import { Sem, Subject } from '../../../../shared/models/models';
 declare var $: any;
-
-interface Sem {
-  id: number;
-  name: string;
-}
-
-interface Subject {
-  id: number;
-  sem: Sem;
-  name: string;
-  image?: File | null;
-  status: number;
-}
 
 @Component({
   selector: 'app-list',

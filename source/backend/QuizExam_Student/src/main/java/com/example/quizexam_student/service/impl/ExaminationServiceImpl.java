@@ -4,6 +4,7 @@ import com.example.quizexam_student.bean.request.ExaminationRequest;
 import com.example.quizexam_student.bean.response.*;
 import com.example.quizexam_student.entity.*;
 import com.example.quizexam_student.exception.InvalidQuantityException;
+import com.example.quizexam_student.exception.InvalidTimeException;
 import com.example.quizexam_student.mapper.*;
 import com.example.quizexam_student.repository.*;
 import com.example.quizexam_student.service.ExaminationService;
@@ -30,6 +31,9 @@ public class ExaminationServiceImpl implements ExaminationService {
 
     @Override
     public Examination saveExamination(ExaminationRequest examinationRequest) {
+        if (examinationRequest.getEndTime().isBefore(examinationRequest.getStartTime())) {
+            throw new InvalidTimeException("DateTime", "End time must be after start time");
+        }
         Subject subject = subjectRepository.findById(examinationRequest.getSubjectId()).orElse(null);
         Map<Integer, Integer> levelsRequest = examinationRequest.getLevels();
         int totalQuestions = 0;
@@ -118,7 +122,10 @@ public class ExaminationServiceImpl implements ExaminationService {
     public List<ExaminationResponse> getAllExaminationsForStudent(List<Mark> marks) {
         List<Examination> examinations = new ArrayList<>();
         marks.forEach(mark -> {
-            examinations.add(examinationRepository.findByMarksContainingAndStatus(mark, 1));
+            Examination examination = examinationRepository.findByMarksContainingAndStatus(mark,1);
+            if (examination != null) {
+                examinations.add(examination);
+            }
         });
         return examinations.stream().map(ExaminationMapper::convertToResponse).collect(Collectors.toList());
     }
@@ -141,7 +148,7 @@ public class ExaminationServiceImpl implements ExaminationService {
         Examination examination = examinationRepository.findById(examinationId).orElse(null);
         markRepository.deleteAll(markList);
         studentIds.removeIf(studentId ->
-                markRepository.findAllByStudentDetailAndScoreIsNullAndBeginTimeIsNotNull(studentRepository.findById(studentId).orElse(null)).size()==0
+                markRepository.findAllByStudentDetailAndScoreIsNullAndBeginTimeIsNotNull(studentRepository.findById(studentId).orElse(null)).size()>0
                 );
         return studentRepository.findAllByUserIdIn(
                 studentIds.stream().peek(studentId->{
@@ -157,15 +164,11 @@ public class ExaminationServiceImpl implements ExaminationService {
 
     @Override
     public List<ExaminationResponse> getAllExamBySemId(int semId) {
-        List<ExaminationResponse> exam = examinationRepository.findAllByStatus(2).stream()
+        List<ExaminationResponse> exam = examinationRepository.findAllByStatus(1).stream()
                 .map(ExaminationMapper::convertToResponse).collect(Collectors.toList());
         List<ExaminationResponse> examBySemId = exam.stream()
                 .filter(ex -> ex.getSubject().getSem().getId() == semId && ex.getSubject().getStatus() == 1)
                 .collect(Collectors.toList());
-        examBySemId.forEach(ex -> {
-            ex.setMarkResponses(markRepository.findAllByExaminationId(ex.getId())
-                    .stream().map(MarkMapper::convertToResponse).collect(Collectors.toList()));
-        });
         return examBySemId;
     }
 

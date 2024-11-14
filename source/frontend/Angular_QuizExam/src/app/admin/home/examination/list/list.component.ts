@@ -8,6 +8,7 @@ import { response } from 'express';
 import { ExaminationComponent } from '../examination.component';
 import { AdminComponent } from '../../../admin.component';
 import { Title } from '@angular/platform-browser';
+import { UrlService } from '../../../../shared/service/url.service';
 declare var $: any;
 
 @Component({
@@ -23,6 +24,7 @@ export class ListComponent implements OnInit {
     private home: HomeComponent,
     public examComponent: ExaminationComponent,
     private http: HttpClient,
+    public urlService: UrlService,
     private toastr: ToastrService,
     private router: Router,
     private activatedRoute: ActivatedRoute
