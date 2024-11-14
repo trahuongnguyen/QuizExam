@@ -178,18 +178,35 @@ public class ExaminationServiceImpl implements ExaminationService {
                 .map(ExaminationMapper::convertToResponse).collect(Collectors.toList());
     }
 
+    private List<ExaminationResponse> convertToExamResponseBymarks(List<Mark> marks) {
+        List<Examination> examinations = new ArrayList<>();
+        marks.forEach(mark -> {
+            if (examinations.isEmpty() || !examinations.contains(mark.getExamination())) {
+                examinations.add(mark.getExamination());
+            }
+        });
+        return examinations.stream()
+                .map(examination -> {
+                    List<Mark> markList = marks.stream().filter(mark -> mark.getExamination()==examination).collect(Collectors.toList());
+                    ExaminationResponse examinationResponse = ExaminationMapper.convertToResponse(examination);
+                    examinationResponse.setMarkResponses( markList.stream().map(MarkMapper::convertToResponse).collect(Collectors.toList()));
+                    return examinationResponse;
+                })
+                .collect(Collectors.toList());
+    }
+
     @Override
     public List<ExaminationResponse> getAllExaminationBySubjectId(int subjectId) {
-        Subject subject = subjectRepository.findById(subjectId).orElse(null);
-        List<ExaminationResponse> examinationResponses =
-                examinationRepository.findAllBySubjectAndStatus(subject,2)
-                        .stream().map(ExaminationMapper::convertToResponse).collect(Collectors.toList());
-        examinationResponses.forEach(ex -> {
-            ex.setMarkResponses(
-                    markRepository.findAllByExaminationId(ex.getId())
-                            .stream().map(MarkMapper::convertToResponse).collect(Collectors.toList()));
-        });
-        return examinationResponses;
+        List<Mark> marks = markRepository.findAllByScoreIsNotNull();
+        marks = marks.stream().filter(mark -> mark.getExamination().getSubject().getId() == subjectId).collect(Collectors.toList());
+        return convertToExamResponseBymarks(marks);
+    }
+
+    @Override
+    public List<ExaminationResponse> getAllExaminationFinishedBySemId(int semId) {
+        List<Mark> marks = markRepository.findAllByScoreIsNotNull();
+        marks = marks.stream().filter(mark -> mark.getExamination().getSubject().getSem().getId() == semId).collect(Collectors.toList());
+        return convertToExamResponseBymarks(marks);
     }
 
     @Override
