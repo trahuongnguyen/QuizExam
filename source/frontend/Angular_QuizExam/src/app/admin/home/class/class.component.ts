@@ -1,11 +1,12 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { AuthService } from '../../service/auth.service';
-import { ToastrService } from 'ngx-toastr';
-import { ActivatedRoute, Router } from '@angular/router';
-import { HomeComponent } from '../home.component';
 import { Title } from '@angular/platform-browser';
 import { AdminComponent } from '../../admin.component';
+import { HomeComponent } from '../home.component';
+import { HttpClient } from '@angular/common/http';
+import { ToastrService } from 'ngx-toastr';
+import { UrlService } from '../../../shared/service/url.service';
+import { Router, ActivatedRoute } from '@angular/router';
 declare var $: any;
 
 @Component({
@@ -21,6 +22,7 @@ export class ClassComponent implements OnInit, OnDestroy {
     private home: HomeComponent,
     private http: HttpClient,
     private toastr: ToastrService,
+    public urlService: UrlService,
     private router: Router,
     private activatedRoute: ActivatedRoute
   ) { }
@@ -89,7 +91,7 @@ export class ClassComponent implements OnInit, OnDestroy {
         $('.info-icon').on('click', (event: any) => {
           const id = $(event.currentTarget).data('id');
           this.classId = id;
-          this.router.navigate([`/admin/home/class/${id}`])
+          this.router.navigate([this.urlService.classDetailUrl(id)])
         });
 
         $('.edit-icon').on('click', (event: any) => {

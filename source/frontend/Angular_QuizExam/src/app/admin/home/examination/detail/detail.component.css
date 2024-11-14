@@ -157,11 +157,6 @@
     flex-grow: 1;
 }
 
-/* Optional hover effect */
-.answer-option:hover label {
-    color: #000;
-}
-
 /* Responsive adjustments */
 @media (max-width: 768px) {
     .question-section-container {

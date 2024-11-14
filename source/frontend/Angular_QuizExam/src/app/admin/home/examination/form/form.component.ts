@@ -1,14 +1,13 @@
-
-import { ExaminationComponent } from '../examination.component';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { AuthService } from '../../../service/auth.service';
-import { ToastrService } from 'ngx-toastr';
-import { ActivatedRoute, Router } from '@angular/router';
-import { HomeComponent } from '../../home.component';
 import { Title } from '@angular/platform-browser';
 import { AdminComponent } from '../../../admin.component';
-declare var $: any;
+import { HomeComponent } from '../../home.component';
+import { ExaminationComponent } from '../examination.component';
+import { HttpClient } from '@angular/common/http';
+import { ToastrService } from 'ngx-toastr';
+import { UrlService } from '../../../../shared/service/url.service';
+import { Router, ActivatedRoute } from '@angular/router';
 
 interface ExamForm {
   name: string;
@@ -36,6 +35,7 @@ export class FormComponent implements OnInit {
     public examComponent: ExaminationComponent,
     private http: HttpClient,
     private toastr: ToastrService,
+    public urlService: UrlService,
     private router: Router,
     private activatedRoute: ActivatedRoute
   ) { }
@@ -92,7 +92,7 @@ export class FormComponent implements OnInit {
           });
           this.createdExam = response;
           this.examComponent.step = true;
-          this.router.navigate(['/admin/home/exam/add-student/' + this.createdExam.id]);
+          this.router.navigate([this.urlService.addStudentForExamlUrl(this.createdExam.id)]);
         },
         error => {
           if (error.status === 401) {

@@ -90,6 +90,9 @@ select {
 .form-select {
     width: 95%;
     background-color: #EDF5F4;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 /* Popup */

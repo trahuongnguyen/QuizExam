@@ -1,15 +1,13 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { AuthService } from '../../../service/auth.service';
-import { ToastrService } from 'ngx-toastr';
-import { ActivatedRoute, Router } from '@angular/router';
-import { HomeComponent } from '../../home.component';
-import { response } from 'express';
-import { ExaminationComponent } from '../examination.component';
-import { AdminComponent } from '../../../admin.component';
 import { Title } from '@angular/platform-browser';
+import { AdminComponent } from '../../../admin.component';
+import { HomeComponent } from '../../home.component';
+import { ExaminationComponent } from '../examination.component';
+import { HttpClient } from '@angular/common/http';
+import { ToastrService } from 'ngx-toastr';
 import { UrlService } from '../../../../shared/service/url.service';
-declare var $: any;
+import { Router, ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-list',
@@ -24,8 +22,8 @@ export class ListComponent implements OnInit {
     private home: HomeComponent,
     public examComponent: ExaminationComponent,
     private http: HttpClient,
-    public urlService: UrlService,
     private toastr: ToastrService,
+    public urlService: UrlService,
     private router: Router,
     private activatedRoute: ActivatedRoute
   ) { }
@@ -68,7 +66,7 @@ export class ListComponent implements OnInit {
 
   getExamDetail(id: any) {
     this.examComponent.step = false;
-    this.router.navigate([`/admin/home/exam/detail/${id}`])
+    this.router.navigate([this.urlService.examDetailUrl(id)])
   }
 
   onSearch(): void {

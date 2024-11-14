@@ -1,12 +1,13 @@
-import { HttpClient } from '@angular/common/http';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { AuthService } from '../../../service/auth.service';
-import { ToastrService } from 'ngx-toastr';
-import { ActivatedRoute, Router } from '@angular/router';
-import { HomeComponent } from '../../home.component';
-import { ExaminationComponent } from '../examination.component';
 import { Title } from '@angular/platform-browser';
 import { AdminComponent } from '../../../admin.component';
+import { HomeComponent } from '../../home.component';
+import { ExaminationComponent } from '../examination.component';
+import { HttpClient } from '@angular/common/http';
+import { ToastrService } from 'ngx-toastr';
+import { UrlService } from '../../../../shared/service/url.service';
+import { Router, ActivatedRoute } from '@angular/router';
 declare var $: any;
 
 @Component({
@@ -23,6 +24,7 @@ export class AddStudentComponent implements OnInit, OnDestroy {
     public examComponent: ExaminationComponent,
     private http: HttpClient,
     private toastr: ToastrService,
+    public urlService: UrlService,
     private router: Router,
     private activatedRoute: ActivatedRoute
   ) { }
@@ -55,11 +57,11 @@ export class AddStudentComponent implements OnInit, OnDestroy {
       response => {
         this.dataExam = response;
         if (new Date() > new Date(this.dataExam.endTime)) {
-          this.router.navigate(['/admin/home/exam/']);
+          this.router.navigate([this.urlService.examListUrl()]);
         }
       },
       error => {
-        this.router.navigate(['/admin/home/exam/']);
+        this.router.navigate([this.urlService.examListUrl()]);
       }
     );
   }
@@ -230,7 +232,7 @@ export class AddStudentComponent implements OnInit, OnDestroy {
             timeOut: 2000,
           });
           this.examComponent.step = true;
-          this.router.navigate(['/admin/home/exam/detail/' + this.examId]);
+          this.router.navigate([this.urlService.examDetailUrl(this.examId)]);
         },
         error => {
           this.toastr.error('Error', 'Error', {

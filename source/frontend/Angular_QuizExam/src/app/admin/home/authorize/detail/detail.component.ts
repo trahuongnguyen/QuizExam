@@ -1,12 +1,13 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { ToastrService } from 'ngx-toastr';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { AuthService } from '../../../service/auth.service';
-import { AuthorizeComponent } from '../authorize.component';
-import { HomeComponent } from '../../home.component';
 import { Title } from '@angular/platform-browser';
 import { AdminComponent } from '../../../admin.component';
+import { HomeComponent } from '../../home.component';
+import { AuthorizeComponent } from './../authorize.component';
+import { HttpClient } from '@angular/common/http';
+import { ToastrService } from 'ngx-toastr';
+import { UrlService } from '../../../../shared/service/url.service';
+import { Router, ActivatedRoute } from '@angular/router';
 declare var $: any;
 
 @Component({
@@ -20,11 +21,12 @@ export class DetailComponent implements OnInit{
     private titleService: Title,
     public admin : AdminComponent,
     private home: HomeComponent,
+    private authorizeComponent: AuthorizeComponent,
     private http: HttpClient,
     private toastr: ToastrService,
+    public urlService: UrlService,
     private router: Router,
-    private activatedRoute: ActivatedRoute,
-    public authorizeComponent: AuthorizeComponent
+    private activatedRoute: ActivatedRoute
   ) { }
 
   dataTable: any;
@@ -81,5 +83,4 @@ export class DetailComponent implements OnInit{
       }
     });
   }
-
 }

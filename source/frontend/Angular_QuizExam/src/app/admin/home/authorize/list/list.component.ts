@@ -1,12 +1,14 @@
-import { AuthorizeComponent } from './../authorize.component';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { AuthService } from '../../../service/auth.service';
-import { ToastrService } from 'ngx-toastr';
-import { HomeComponent } from '../../home.component';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { ActivatedRoute, Router } from '@angular/router';
 import { Title } from '@angular/platform-browser';
 import { AdminComponent } from '../../../admin.component';
+import { HomeComponent } from '../../home.component';
+import { AuthorizeComponent } from './../authorize.component';
+import { HttpClient } from '@angular/common/http';
+import { ToastrService } from 'ngx-toastr';
+import { UrlService } from '../../../../shared/service/url.service';
+import { Router, ActivatedRoute } from '@angular/router';
+
 @Component({
   selector: 'app-list',
   templateUrl: './list.component.html',
@@ -18,11 +20,12 @@ export class ListComponent implements OnInit{
     private titleService: Title,
     public admin : AdminComponent,
     private home: HomeComponent,
+    private authorizeComponent: AuthorizeComponent,
     private http: HttpClient,
     private toastr: ToastrService,
+    public urlService: UrlService,
     private router: Router,
     private activatedRoute: ActivatedRoute,
-    public authorizeComponent: AuthorizeComponent
   ) { }
 
   roleList: any;
@@ -40,7 +43,7 @@ export class ListComponent implements OnInit{
 
   getExamDetail(id: any) {
     this.authorizeComponent.step = false;
-    this.router.navigate([`/admin/home/authorize/detail/${id}`])
+    this.router.navigate([this.urlService.authorizeDetailUrl(id)])
   }
 
 }
