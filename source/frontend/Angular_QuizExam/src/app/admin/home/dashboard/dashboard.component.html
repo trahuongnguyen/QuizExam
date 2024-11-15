@@ -63,7 +63,7 @@
                   </select>
                 </div>
                 <div class="col text-end">
-                  <h3 class="mb-0">{{ passPercentageSem | number: '1.0-2' }}%</h3>
+                  <h3 class="mb-0">{{ passPercentageSem || 0 | number: '1.0-1' }}%</h3>
                 </div>
               </div>
               <apx-chart *ngIf="chartOptions_1" [series]="chartOptions_1.series!" [chart]="chartOptions_1.chart!"
@@ -96,7 +96,7 @@
                   </select>
                 </div>
                 <div class="col text-end">
-                  <h3 class="mb-0">{{ passPercentageSubject | number: '1.0-2' }}%</h3> <!-- Tỷ lệ Pass exam -->
+                  <h3 class="mb-0">{{ passPercentageSubject || 0 | number: '1.0-1' }}%</h3> <!-- Tỷ lệ Pass exam -->
                 </div>
               </div>
 

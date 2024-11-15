@@ -42,7 +42,7 @@ public class SecurityConfig {
                 .requestMatchers("/api/question/**").hasAnyRole("ADMIN", "TEACHER")
                 .requestMatchers("/api/exam/**").hasAnyRole("ADMIN", "SRO", "STUDENT")
                 .requestMatchers("/api/student-answers/**").hasRole("STUDENT")
-                .requestMatchers("/api/mark/**").hasRole("STUDENT")
+                .requestMatchers("/api/mark/**").hasAnyRole("ADMIN", "STUDENT")
                 .requestMatchers("/api/level/**").hasAnyRole("ADMIN", "DIRECTOR", "SRO")
                 .requestMatchers("/api/role/**").hasAnyRole("ADMIN", "DIRECTOR", "TEACHER", "SRO")
                 .requestMatchers("/api/question-record/**").hasRole("STUDENT")

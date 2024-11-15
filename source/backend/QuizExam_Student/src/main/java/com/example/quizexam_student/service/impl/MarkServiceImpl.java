@@ -15,6 +15,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -27,6 +29,58 @@ public class MarkServiceImpl implements MarkService {
     private final SubjectRepository subjectRepository;
 
     private final UserRepository userRepository;
+
+    @Override
+    public List<Map<String, Object>> getPassPercentageBySubject() {
+        // Lấy tất cả các điểm (mark) có score khác null
+        List<Mark> marks = markRepository.findAllByScoreIsNotNull();
+
+        // Nhóm các điểm theo subjectName, tính tổng điểm, tổng maxScore, và số lượng bài pass
+        Map<String, Integer> subjectTotalScore = new HashMap<>();
+        Map<String, Integer> subjectTotalMaxScore = new HashMap<>();
+        Map<String, Integer> subjectPassCount = new HashMap<>();
+        Map<String, Integer> subjectTotalExams = new HashMap<>();
+
+        // Lặp qua tất cả các mark để tính tổng score, tổng maxScore và số lượng bài pass
+        for (Mark mark : marks) {
+            String subjectName = mark.getSubject().getName();
+
+            // Cộng dồn tổng score theo môn học
+            subjectTotalScore.put(subjectName, subjectTotalScore.getOrDefault(subjectName, 0) + mark.getScore());
+
+            // Cộng dồn tổng maxScore theo môn học từ kỳ thi
+            subjectTotalMaxScore.put(subjectName, subjectTotalMaxScore.getOrDefault(subjectName, 0) + mark.getExamination().getMaxScore());
+
+            // Cộng dồn số bài thi đã pass theo môn học
+            double passPercentage = (double) mark.getScore() / mark.getExamination().getMaxScore() * 100;
+            if (passPercentage >= 40) {
+                subjectPassCount.put(subjectName, subjectPassCount.getOrDefault(subjectName, 0) + 1);
+            }
+
+            // Cộng dồn tổng số bài thi của môn học
+            subjectTotalExams.put(subjectName, subjectTotalExams.getOrDefault(subjectName, 0) + 1);
+        }
+
+        // Tạo danh sách kết quả cuối cùng
+        List<Map<String, Object>> result = new ArrayList<>();
+
+        // Duyệt qua các môn học và tạo đối tượng chứa thông tin cần trả về
+        for (String subjectName : subjectTotalScore.keySet()) {
+            Map<String, Object> subjectStats = new HashMap<>();
+
+            // Tính tỷ lệ pass
+            int totalExams = subjectTotalExams.get(subjectName);
+            int passCount = subjectPassCount.getOrDefault(subjectName, 0);
+            double passRate = totalExams > 0 ? (double) passCount / totalExams * 100 : 0;
+            BigDecimal passRateRounded = new BigDecimal(passRate).setScale(2, RoundingMode.HALF_UP);
+            subjectStats.put("subjectName", subjectName);
+            subjectStats.put("passRate", passRateRounded); // Tỷ lệ pass của môn học
+
+            result.add(subjectStats);
+        }
+
+        return result;
+    }
 
     @Override
     public List<MarkResponse> getListScoredPerSubject(StudentDetail studentDetail, int semId) {

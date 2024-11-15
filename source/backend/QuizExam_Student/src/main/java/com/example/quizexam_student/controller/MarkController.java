@@ -13,6 +13,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/mark")
@@ -20,7 +21,13 @@ import java.util.List;
 @CrossOrigin(origins = "http://localhost:4200")
 public class MarkController {
     private final MarkService markService;
+
     private final UserService userService;
+
+    @GetMapping("/pass-percentage")
+    public List<Map<String, Object>> getPassPercentageBySubject() {
+        return markService.getPassPercentageBySubject();
+    }
 
     @GetMapping("/sem/{semId}")
     public List<MarkResponse> getAllMarksByStudentDetailAndScoreNotNull(@PathVariable int semId){

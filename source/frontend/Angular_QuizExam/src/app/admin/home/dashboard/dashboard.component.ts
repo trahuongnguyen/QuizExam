@@ -60,14 +60,17 @@ export class DashboardComponent implements OnInit {
   semester: any; // Danh sách học kỳ
 
   // Các thuộc tính cho bảng
+  examListTable: any;
+
   subjectListTable: any;
   semIdTable: number = 1;
   selectedSemTable: number = 1;
   selectedSubjectTable: string | number = '';
-  examList: any;
   examFilter: any;
 
   // Các thuộc tính cho biểu đồ
+  examListChart: any;
+
   subjectListChart: any;
   semIdChart: number = 1;
   selectedSemChart: number = 1;
@@ -96,9 +99,10 @@ export class DashboardComponent implements OnInit {
     const employeeRequest = this.http.get<any>(`${this.authService.apiUrl}/user`, this.home.httpOptions);
     const subjectRequest = this.http.get<any>(`${this.authService.apiUrl}/subject`, this.home.httpOptions);
     const semRequest = this.http.get<any>(`${this.authService.apiUrl}/sem`, this.home.httpOptions);
+    const passPercentageRequest = this.http.get<any>(`${this.authService.apiUrl}/mark/pass-percentage`, this.home.httpOptions);
 
-    forkJoin([examRequest, classRequest, studentRequest, employeeRequest, subjectRequest, semRequest])
-      .subscribe(([examResponse, classResponse, studentResponse, employeeResponse, subjectResponse, semResponse]) => {
+    forkJoin([examRequest, classRequest, studentRequest, employeeRequest, subjectRequest, semRequest, passPercentageRequest])
+      .subscribe(([examResponse, classResponse, studentResponse, employeeResponse, subjectResponse, semResponse, passPercentageResponse]) => {
         this.examCount = examResponse.length;
         this.classCount = classResponse.length;
         this.studentCount = studentResponse.length;
@@ -106,53 +110,17 @@ export class DashboardComponent implements OnInit {
 
         this.semester = semResponse;
 
-        // Lấy semId từ localStorage nếu có cho bảng
-        const savedSemIdTable = localStorage.getItem('selectedSemIdTable');
-        if (savedSemIdTable) {
-          this.selectedSemTable = +savedSemIdTable;
-        } else {
-          this.selectedSemTable = 1;
-        }
+        this.selectedSemTable = 1;
         this.reloadTable(this.selectedSemTable);
 
-        // Lấy semId từ localStorage nếu có cho biểu đồ
-        const savedSemIdChart = localStorage.getItem('selectedSemIdChart');
-        if (savedSemIdChart) {
-          this.selectedSemChart = +savedSemIdChart;
-        } else {
-          this.selectedSemChart = 1;
-        }
+        this.selectedSemChart = 1;
         this.reloadChart(this.selectedSemChart);
 
-        // Lấy subjectId từ localStorage nếu có cho bảng
-        const savedSubjectIdTable = localStorage.getItem('selectedSubjectIdTable');
-        if (savedSubjectIdTable) {
-          this.selectSubjectById(savedSubjectIdTable, 'table');
-        }
-
-        // Lấy subjectId từ localStorage nếu có cho biểu đồ
-        const savedSubjectIdChart = localStorage.getItem('selectedSubjectIdChart');
-        if (savedSubjectIdChart) {
-          this.selectSubjectById(savedSubjectIdChart, 'chart');
-        }
-
-        // Sem
-        const semId = localStorage.getItem('selectedSemIdChart') || '1';  // Mặc định lấy subjectId là 1 nếu không có trong localStorage
-        // Gọi hàm để tải dữ liệu cho sem đã chọn
-        this.loadDataForChart1(semId);
-
-
-        // Subject
-        const subjectId = localStorage.getItem('selectedSubjectIdChart') || '1';  // Mặc định lấy subjectId là 1 nếu không có trong localStorage
-        // Gọi hàm để tải dữ liệu cho subject đã chọn
-        this.loadDataForChart2(subjectId);
-
-        this.charts(subjectResponse);
-      }
-    );
+        this.charts(subjectResponse, passPercentageResponse);
+      });
   }
 
-  charts(subjectResponse: any): void {
+  charts(subjectResponse: any, passPercentageResponse: any): void {
     this.chartOptions = {
       chart: {
         height: 300,
@@ -181,7 +149,7 @@ export class DashboardComponent implements OnInit {
       series: [
         {
           name: 'Scores',
-          data: [60, 75, 29, 55, 30, 45, 90, 85, 60, 45, 90, 55, 60, 80, 55, 75, 64, 95, 70] // Điểm ngẫu nhiên cho từng môn
+          data: []
         }
       ],
       legend: {
@@ -300,14 +268,29 @@ export class DashboardComponent implements OnInit {
       }
     };
 
-    this.updateBarChart(subjectResponse);
+    this.updateBarChart(subjectResponse, passPercentageResponse);
   }
 
-  updateBarChart(subjectResponse: any): void {
-    if (this.chartOptions && this.chartOptions.xaxis) {
+  updateBarChart(subjectResponse: any, passPercentageResponse: any): void {
+    var dataPassPercentage: any = [];
+    if (this.chartOptions && this.chartOptions.xaxis && this.chartOptions.series) {
       this.chartOptions.xaxis.categories = subjectResponse.map((dt: any) => dt.name); // Gán dữ liệu từ API vào categories
+      this.chartOptions.xaxis.categories.forEach((subjectName: any) => {
+        const subjectData = passPercentageResponse.find((item: any) => item.subjectName === subjectName);
+        if (subjectData) {
+            dataPassPercentage.push(subjectData.passRate);
+        }
+        else {
+          dataPassPercentage.push(0);
+        }
+      });
+      this.chartOptions.series[0] = {
+        name: 'Scores',
+        data: dataPassPercentage
+      };
       console.log('Updated categories:', this.chartOptions.xaxis.categories);
-    } else {
+    }
+    else {
       console.error('chartOptions or xaxis is undefined');
     }
   }
@@ -321,10 +304,8 @@ export class DashboardComponent implements OnInit {
     this.getSubjectsApi(semId).subscribe(
       (subjectResponse) => {
         this.subjectListTable = subjectResponse;
-        if (this.selectedSubjectTable) {
-          this.selectedSubjectTable = this.subjectListTable[0].id;
-          this.loadDataForSubjectTable(this.selectedSubjectTable, 'table');
-        }
+        this.selectedSubjectTable = this.subjectListTable[0].id;
+        this.loadDataForSubject(this.selectedSubjectTable, 'table');
       },
       (error) => {
         console.error('Error fetching subjects for table:', error);
@@ -336,7 +317,6 @@ export class DashboardComponent implements OnInit {
   setSelectedSemTable(event: Event): void {
     const sem = (event.target as HTMLSelectElement).value as unknown as number;
     this.selectedSemTable = sem;
-    localStorage.setItem('selectedSemIdTable', this.selectedSemTable.toString());
     this.reloadTable(this.selectedSemTable);
   }
 
@@ -344,8 +324,7 @@ export class DashboardComponent implements OnInit {
   setSelectedSubjectTable(event: Event): void {
     const subjectId = (event.target as HTMLSelectElement).value;
     this.selectedSubjectTable = subjectId;
-    localStorage.setItem('selectedSubjectIdTable', subjectId);
-    this.loadDataForSubjectTable(subjectId, 'table');
+    this.loadDataForSubject(subjectId, 'table');
   }
 
   // Hàm tải lại bảng theo semId đã chọn
@@ -353,11 +332,10 @@ export class DashboardComponent implements OnInit {
     this.getSubjectsApi(semId).subscribe(
       (subjectResponse) => {
         this.subjectListChart = subjectResponse;
-        if (this.selectedSubjectChart) {
-          this.selectedSubjectChart = this.subjectListChart[0].id;
-          this.loadDataForSubject(this.selectedSubjectChart, 'chart');
-        }
+        this.selectedSubjectChart = this.subjectListChart[0].id;
+        this.loadDataForSubject(this.subjectListChart[0].id, 'chart');
         this.loadDataForChart1(semId);
+        this.loadDataForChart2(this.subjectListChart[0].id);
       },
       (error) => {
         console.error('Error fetching subjects for table:', error);
@@ -369,7 +347,6 @@ export class DashboardComponent implements OnInit {
   setSelectedSemChart(event: Event): void {
     const sem = (event.target as HTMLSelectElement).value as unknown as number;
     this.selectedSemChart = sem;
-    localStorage.setItem('selectedSemIdChart', this.selectedSemChart.toString());
     this.reloadChart(this.selectedSemChart);
   }
 
@@ -377,54 +354,37 @@ export class DashboardComponent implements OnInit {
   setSelectedSubjectChart(event: Event): void {
     const subjectId = (event.target as HTMLSelectElement).value;
     this.selectedSubjectChart = subjectId;
-    localStorage.setItem('selectedSubjectIdChart', subjectId);
-    this.loadDataForSubject(subjectId, 'chart');
-  }
-
-  // Dữ liệu bảng
-  loadDataForSubjectTable(subjectId: string | number, type: string): void {
-    this.http.get<any>(`${this.authService.apiUrl}/exam/subject/${subjectId}`, this.home.httpOptions).subscribe((data) => {
-      this.examList = data;
-      this.examFilter = [...this.examList]; // Khởi tạo examFilter với dữ liệu từ examList
-      if (type === 'table') {
-        this.calculateScoresTable(); // Gọi hàm tính toán
-      }
-      if (type === 'chart') {
-        this.calculateScoresChartSubject();
-      }
-    },
-      (error) => {
-        console.error('Error fetching data:', error);
-      });
+    this.loadDataForSubject(this.selectedSubjectChart, 'chart');
+    this.loadDataForChart2(this.selectedSubjectChart);
   }
 
   // Dữ liệu chart 1
   loadDataForChart1(semId: string | number): void {
     this.http.get<any>(`${this.authService.apiUrl}/exam/finish/sem/${semId}`, this.home.httpOptions).subscribe((data) => {
-      this.examList = data;
+      this.examListChart = data;
       this.calculateScoresChartSem(); // Gọi hàm tính toán số lượng loại điểm
       this.updateChart1(); // Cập nhật biểu đồ với dữ liệu mới
     },
-      (error) => {
-        console.error('Error fetching data:', error);
-      });
+    (error) => {
+      console.error('Error fetching data:', error);
+    });
   }
 
   // Dữ liệu chart 2
   loadDataForChart2(subjectId: string | number): void {
     this.http.get<any>(`${this.authService.apiUrl}/exam/subject/${subjectId}`, this.home.httpOptions).subscribe((data) => {
-      this.examList = data;
+      this.examListChart = data;
       this.calculateScoresChartSubject(); // Gọi hàm tính toán số lượng loại điểm
       this.updateChart2(); // Cập nhật biểu đồ với dữ liệu mới
     },
-      (error) => {
-        console.error('Error fetching data:', error);
-      });
+    (error) => {
+      console.error('Error fetching data:', error);
+    });
   }
 
   // Hàm tính toán số lượng các loại điểm
   calculateScoresTable(): void {
-    this.examList.forEach((exam: any) => {
+    this.examFilter.forEach((exam: any) => {
       let reExamCount = 0;
       let passCount = 0;
       let creditCount = 0;
@@ -449,8 +409,6 @@ export class DashboardComponent implements OnInit {
       exam.passCount = passCount;
       exam.creditCount = creditCount;
       exam.distinctionCount = distinctionCount;
-
-
     });
   }
 
@@ -461,7 +419,7 @@ export class DashboardComponent implements OnInit {
     this.creditCountSem = 0;
     this.distinctionCountSem = 0;
 
-    this.examList.forEach((exam: any) => {
+    this.examListChart.forEach((exam: any) => {
       exam.markResponses.forEach((mark: any) => {
         const percentage = (mark.score / mark.maxScore) * 100;
 
@@ -489,7 +447,7 @@ export class DashboardComponent implements OnInit {
     this.creditCountSubject = 0;
     this.distinctionCountSubject = 0;
 
-    this.examList.forEach((exam: any) => {
+    this.examListChart.forEach((exam: any) => {
       exam.markResponses.forEach((mark: any) => {
         const percentage = (mark.score / mark.maxScore) * 100;
 
@@ -539,7 +497,7 @@ export class DashboardComponent implements OnInit {
   }
 
   filterExam(): void {
-    this.examFilter = this.examList.filter((exam: any) =>
+    this.examFilter = this.examListTable.filter((exam: any) =>
       exam.name.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
       exam.code.toLowerCase().includes(this.searchTerm.toLowerCase())
     );
@@ -547,7 +505,20 @@ export class DashboardComponent implements OnInit {
 
   // Hàm tải dữ liệu cho môn học
   loadDataForSubject(subjectId: string | number, type: string): void {
-    this.loadDataForSubjectTable(subjectId, type);
+    this.http.get<any>(`${this.authService.apiUrl}/exam/subject/${subjectId}`, this.home.httpOptions).subscribe((data) => {
+      if (type === 'chart') {
+        this.examListChart = data;
+        this.calculateScoresChartSubject();
+      }
+      if (type === 'table') {
+        this.examListTable = data;
+        this.examFilter = this.examListTable; // Khởi tạo examFilter với dữ liệu từ examList
+        this.calculateScoresTable(); // Gọi hàm tính toán
+      }
+    },
+    (error) => {
+      console.error('Error fetching data:', error);
+    });
   }
 
   // Hàm xử lý khi chọn môn học từ ID

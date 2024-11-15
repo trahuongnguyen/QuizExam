@@ -6,11 +6,15 @@ import com.example.quizexam_student.entity.StudentDetail;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 @Service
 public interface MarkService {
     List<MarkResponse> getListScoredPerSubject(StudentDetail studentDetail, int semId);
+
     MarkResponse getOneScoredByExam(StudentDetail studentDetail, int examId);
+
+    List<Map<String, Object>> getPassPercentageBySubject();
 
     Mark updateBeginTime(int id);
 
