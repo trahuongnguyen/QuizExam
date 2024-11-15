@@ -1,6 +1,11 @@
+.main-body {
+    background-color: var(--color-background);
+    color: var(--color-text);
+    transition: all 0.5s ease;
+}
+
 .container {
-    margin-top: 20px;
-    margin-bottom: 30px;
+    padding: 30px;
 }
 
 .question-container {

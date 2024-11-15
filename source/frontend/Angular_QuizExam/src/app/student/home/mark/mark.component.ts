@@ -18,7 +18,7 @@ export class MarkComponent implements OnInit {
   constructor(private authService: AuthService, private home: HomeComponent, private http: HttpClient) { }
 
   ngOnInit(): void {
-    this.http.get<any>(`${this.authService.apiUrl}/mark`, this.home.httpOptions).subscribe((data: any) => {
+    this.http.get<any>(`${this.authService.apiUrl}/mark/sem/${this.selectedSem}`, this.home.httpOptions).subscribe((data: any) => {
       this.subjects = data;
       console.log(this.subjects);
     }, error => {

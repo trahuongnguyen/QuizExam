@@ -49,7 +49,7 @@ export class DetailComponent implements OnInit, OnDestroy {
     this.examId = Number(this.activatedRoute.snapshot.paramMap.get('examId'));
     this.loadData();
     this.setupScrollListener();
-    this.setupAntiCheatMonitoring();
+    //this.setupAntiCheatMonitoring();
   }
 
   loadData(): void {
@@ -79,14 +79,10 @@ export class DetailComponent implements OnInit, OnDestroy {
           this.router.navigate([this.urlService.examPageUrl()]);
           return;
         }
-        this.http.put(`${this.authService.apiUrl}/mark/begin-time/${this.examComponent.mark.id}`, this.home.httpOptions).subscribe(
-          response => {
-            console.log('Update Begin Time successful: ', response);
-          },
-          err => {
-            console.log('Update Begin Time fail: ', err);
-          }
-        );
+        this.http.put(`${this.authService.apiUrl}/mark/begin-time/${this.examComponent.mark.id}`, {}, this.home.httpOptions).subscribe({
+          next: (response) => { console.log('Update Begin Time successful: ', response); },
+          error: (err) => { console.log('Update Begin Time fail: ', err); }
+        });
       }
 
       if (this.examComponent.mark.warning != null) {
@@ -196,14 +192,14 @@ export class DetailComponent implements OnInit, OnDestroy {
     this.calculateNewDuration();
   };
 
-  setupAntiCheatMonitoring() {
-    document.addEventListener('keydown', this.preventDeveloperTools); // Ngăn chặn mở Developer Tools
-    document.addEventListener('copy', this.preventCopy); // Ngăn chặn sao chép nội dung
-    document.addEventListener('contextmenu', this.preventRightClick); // Ngăn chặn menu chuột phải
-    window.addEventListener('beforeunload', this.handleBeforeUnload); // Xử lý sự kiện load lại trang
-    window.addEventListener('blur', this.handleBlur); // Xử lý sự kiện blur (Check cửa sổ đó bị mất tiêu điểm)
-    window.addEventListener('focus', this.handleFocus); // Xử lý sự kiện focus
-  }
+  // setupAntiCheatMonitoring() {
+  //   document.addEventListener('keydown', this.preventDeveloperTools); // Ngăn chặn mở Developer Tools
+  //   document.addEventListener('copy', this.preventCopy); // Ngăn chặn sao chép nội dung
+  //   document.addEventListener('contextmenu', this.preventRightClick); // Ngăn chặn menu chuột phải
+  //   window.addEventListener('beforeunload', this.handleBeforeUnload); // Xử lý sự kiện load lại trang
+  //   window.addEventListener('blur', this.handleBlur); // Xử lý sự kiện blur (Check cửa sổ đó bị mất tiêu điểm)
+  //   window.addEventListener('focus', this.handleFocus); // Xử lý sự kiện focus
+  // }
 
   setupScrollListener(): void {
     window.addEventListener('scroll', this.handleScroll);
@@ -342,13 +338,13 @@ export class DetailComponent implements OnInit, OnDestroy {
 
   submitExam(): void {
     const body = { markId: this.examComponent.mark.id, studentQuestionAnswers: this.studentAnswers };
-    this.http.post(`${this.authService.apiUrl}/student-answers`, body, this.home.httpOptions).subscribe(
-      () => {
+    this.http.post(`${this.authService.apiUrl}/student-answers`, body, this.home.httpOptions).subscribe({
+      next: () => {
         localStorage.removeItem('studentAnswers');
         this.router.navigate([this.urlService.resultExamPageUrl(this.examId)]);
       },
-      () => this.toastr.error('Submission failed')
-    );
+      error: () => { this.toastr.error('Submission failed'); }
+    });
   }
 
   ngOnDestroy(): void {
