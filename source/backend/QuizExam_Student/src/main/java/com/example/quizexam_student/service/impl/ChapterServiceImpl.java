@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -37,15 +38,16 @@ public class ChapterServiceImpl implements ChapterService {
 
     @Override
     public Chapter addChapter(ChapterRequest chapterRequest) {
-        if (ExistChapterName(chapterRequest.getName())) {
-            throw new AlreadyExistException("ExistChapter", "Chapter name already exists");
-        }
-        if (!ExistSubjectId(chapterRequest.getSubjectId())) {
+        Subject subject = subjectRepository.findByIdAndStatus(chapterRequest.getSubjectId(),1);
+        if (Objects.isNull(subject)) {
             throw new NotFoundException("NotFoundSubject", "Subject id not found");
+        }
+        Chapter checkChapter = chapterRepository.findByNameAndSubjectAndStatus(chapterRequest.getName(), subject, 1);
+        if (!Objects.isNull(checkChapter)) {
+            throw new AlreadyExistException("ExistChapter", "Chapter name already exists");
         }
         Chapter chapter = new Chapter();
         chapter.setName(chapterRequest.getName());
-        Subject subject = subjectRepository.findByIdAndStatus(chapterRequest.getSubjectId(),1);
         chapter.setSubject(subject);
         chapter.setStatus(1);
         return chapterRepository.save(chapter);
@@ -54,15 +56,16 @@ public class ChapterServiceImpl implements ChapterService {
 
     @Override
     public Chapter updateChapter(int id, ChapterRequest chapterRequest) {
-        Chapter oldChapter = chapterRepository.findById(id).orElseThrow(() -> new NotFoundException("NotFoundChapter", "Chapter not found"));
-        if (ExistChapterName(chapterRequest.getName()) && !oldChapter.getName().equals(chapterRequest.getName())) {
-            throw new AlreadyExistException("ExistChapter", "Chapter name already exists");
-        }
-        if (!ExistSubjectId(chapterRequest.getSubjectId())) {
+        Subject subject = subjectRepository.findByIdAndStatus(chapterRequest.getSubjectId(),1);
+        if (Objects.isNull(subject)) {
             throw new NotFoundException("NotFoundSubject", "Subject id not found");
         }
+        Chapter oldChapter = chapterRepository.findById(id).orElseThrow(() -> new NotFoundException("NotFoundChapter", "Chapter not found"));
+        Chapter chapter = chapterRepository.findByNameAndSubjectAndStatusAndIdNot(chapterRequest.getName(), subject, 1, id);
+        if (!Objects.isNull(chapter)) {
+            throw new AlreadyExistException("ExistChapter", "Chapter name already exists");
+        }
         oldChapter.setName(chapterRequest.getName());
-        Subject subject = subjectRepository.findByIdAndStatus(chapterRequest.getSubjectId(),1);
         oldChapter.setSubject(subject);
         return chapterRepository.save(oldChapter);
     }

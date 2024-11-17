@@ -37,8 +37,8 @@ public class UserController {
     private final RoleService roleService;
     private final ExportService exportService;
 
-    @GetMapping("")
-    public List<UserResponse> getAll(){
+    @GetMapping("/{status}")
+    public List<UserResponse> getAll(@PathVariable Integer status){
         String email = ((org.springframework.security.core.userdetails.User) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
         Role role = userService.findUserByEmail(email).getRole();
         System.out.println(role);
@@ -46,8 +46,7 @@ public class UserController {
         if(roles!=null){
             List<UserResponse> users = new ArrayList<>();
             roles.forEach(role1 -> {
-                System.out.println(role1);
-                users.addAll(userService.getUserByRolePermission(role1));
+                users.addAll(userService.getUserByRolePermission(role1, status));
             });
             if (users.isEmpty()){
                 throw new EmptyException("employee", "Employee List is empty");
@@ -84,6 +83,12 @@ public class UserController {
     @PutMapping("/resetPassword/{id}")
     public ResponseEntity<User> resetPassword(@PathVariable int id) {
         return ResponseEntity.ok(userService.resetPassword(id));
+    }
+
+    @PutMapping("/restore/{id}")
+    public ResponseEntity<String> restoreUser(@PathVariable int id){
+        userService.restoreUser(id);
+        return ResponseEntity.ok("User restored successfully");
     }
 
     @PostMapping("/export/excel")

@@ -32,7 +32,14 @@ public class StudentServiceImpl implements StudentService {
     @Override
     public List<StudentResponse> getAllStudents() {
         Role role = roleRepository.findByName("STUDENT");
-        List<UserResponse> userResponses = userRepository.findByRole(role).stream().map(UserMapper::convertToResponse).toList();
+        List<UserResponse> userResponses = userRepository.findByRoleAndStatus(role,1).stream().map(UserMapper::convertToResponse).toList();
+        return userResponses.stream().map(userResponse -> StudentMapper.convertToResponse(userResponse, studentRepository.findByUser(userRepository.findById(userResponse.getId()).orElse(null)))).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<StudentResponse> getAllStudentsAndStatusInactive() {
+        Role role = roleRepository.findByName("STUDENT");
+        List<UserResponse> userResponses = userRepository.findByRoleAndStatus(role,0).stream().map(UserMapper::convertToResponse).toList();
         return userResponses.stream().map(userResponse -> StudentMapper.convertToResponse(userResponse, studentRepository.findByUser(userRepository.findById(userResponse.getId()).orElse(null)))).collect(Collectors.toList());
     }
 
@@ -44,7 +51,16 @@ public class StudentServiceImpl implements StudentService {
     @Override
     public List<StudentResponse> getAllStudentsNoneClass() {
         Role role = roleRepository.findByName("STUDENT");
-        List<UserResponse> userResponses = userRepository.findByRole(role).stream().map(UserMapper::convertToResponse).toList();
+        List<UserResponse> userResponses = userRepository.findByRoleAndStatus(role,1).stream().map(UserMapper::convertToResponse).toList();
+        List<StudentResponse> studentResponses = userResponses.stream().map(userResponse -> StudentMapper.convertToResponse(userResponse, studentRepository.findByUser(userRepository.findById(userResponse.getId()).orElse(null)))).collect(Collectors.toList());
+        studentResponses.removeIf(std->std.get_class()!=null);
+        return studentResponses;
+    }
+
+    @Override
+    public List<StudentResponse> getAllStudentsNoneClassAndStatusInactive() {
+        Role role = roleRepository.findByName("STUDENT");
+        List<UserResponse> userResponses = userRepository.findByRoleAndStatus(role,0).stream().map(UserMapper::convertToResponse).toList();
         List<StudentResponse> studentResponses = userResponses.stream().map(userResponse -> StudentMapper.convertToResponse(userResponse, studentRepository.findByUser(userRepository.findById(userResponse.getId()).orElse(null)))).collect(Collectors.toList());
         studentResponses.removeIf(std->std.get_class()!=null);
         return studentResponses;
@@ -53,7 +69,16 @@ public class StudentServiceImpl implements StudentService {
     @Override
     public List<StudentResponse> getAllStudentsByClass(int classId) {
         Role role = roleRepository.findByName("STUDENT");
-        List<UserResponse> userResponses = userRepository.findByRole(role).stream().map(UserMapper::convertToResponse).toList();
+        List<UserResponse> userResponses = userRepository.findByRoleAndStatus(role,1).stream().map(UserMapper::convertToResponse).toList();
+        List<StudentResponse> studentResponses = userResponses.stream().map(userResponse -> StudentMapper.convertToResponse(userResponse, studentRepository.findByUser(userRepository.findById(userResponse.getId()).orElse(null)))).collect(Collectors.toList());
+        studentResponses.removeIf(std->std.get_class()==null||std.get_class().getId()!=classId);
+        return studentResponses;
+    }
+
+    @Override
+    public List<StudentResponse> getAllStudentsByClassAndStatusInactive(int classId) {
+        Role role = roleRepository.findByName("STUDENT");
+        List<UserResponse> userResponses = userRepository.findByRoleAndStatus(role,0).stream().map(UserMapper::convertToResponse).toList();
         List<StudentResponse> studentResponses = userResponses.stream().map(userResponse -> StudentMapper.convertToResponse(userResponse, studentRepository.findByUser(userRepository.findById(userResponse.getId()).orElse(null)))).collect(Collectors.toList());
         studentResponses.removeIf(std->std.get_class()==null||std.get_class().getId()!=classId);
         return studentResponses;
@@ -62,9 +87,17 @@ public class StudentServiceImpl implements StudentService {
     @Override
     public StudentDetail addStudent(StudentRequest studentRequest) {
         if (studentRepository.existsByRollPortal(studentRequest.getRollPortal())) {
+            StudentDetail studentDetail = studentRepository.findByRollPortal(studentRequest.getRollPortal());
+            if (studentDetail.getUser().getStatus() == 0){
+                throw new AlreadyExistException("studentRestore","Student already hide. Do you want restore student?");
+            }
             throw new AlreadyExistException("rollPortal", "Roll Portal already exists.");
         }
         if (studentRepository.existsByRollNumber(studentRequest.getRollNumber())) {
+            StudentDetail studentDetail = studentRepository.findByRollNumber(studentRequest.getRollNumber());
+            if (studentDetail.getUser().getStatus() == 0){
+                throw new AlreadyExistException("studentRestore","Student already hide. Do you want restore student?");
+            }
             throw new AlreadyExistException("rollNumber", "Roll Number already exists.");
         }
         User user = userService.saveUser(studentRequest.getUserRequest());
@@ -115,7 +148,7 @@ public class StudentServiceImpl implements StudentService {
     @Override
     public void updateClassForStudents(List<Integer> userIds, int classId) {
         Classes newClass = classesRepository.findById(classId).orElse(null);
-        if (Objects.isNull(newClass)) {
+        if (Objects.isNull(newClass) && newClass.getStatus() == 0) {
             throw new NotFoundException("class", "Class not found.");
         }
         List<StudentDetail> students = studentRepository.findAllByUserIdIn(userIds);
@@ -123,6 +156,28 @@ public class StudentServiceImpl implements StudentService {
             student.set_class(newClass);
         }
         studentRepository.saveAll(students);
+    }
+
+    @Override
+    public void deleteStudent(int id) {
+        Role role = roleRepository.findByName("STUDENT");
+        User user = userRepository.findByIdAndStatusAndRole(id,1,role);
+        if (Objects.isNull(user)){
+            throw new NotFoundException("student", "Student not found.");
+        }
+        user.setStatus(0);
+        userRepository.save(user);
+    }
+
+    @Override
+    public void restoreStudent(int id) {
+        Role role = roleRepository.findByName("STUDENT");
+        User user = userRepository.findByIdAndStatusAndRole(id,0,role);
+        if (Objects.isNull(user)){
+            throw new NotFoundException("student", "Student not found.");
+        }
+        user.setStatus(1);
+        userRepository.save(user);
     }
 
 }

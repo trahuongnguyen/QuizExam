@@ -16,9 +16,10 @@ public interface UserService {
     Boolean existUserByEmail(String email);
     Boolean existUserByPhone(String phone);
     User saveUser(UserRequest userRequest);
-    List<UserResponse> getUserByRolePermission(Role role);
+    List<UserResponse> getUserByRolePermission(Role role, Integer status);
     User changePassword(PasswordRequest passwordRequest);
     void deleteUserById(int id);
     User updateUser(int id, UserRequest userRequest);
     User resetPassword(int id);
+    void restoreUser(int id);
 }

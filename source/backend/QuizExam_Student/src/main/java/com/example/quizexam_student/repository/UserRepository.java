@@ -12,13 +12,12 @@ import java.util.Optional;
 public interface UserRepository extends JpaRepository<User, Integer> {
     Optional<User> findByEmail(String email);
     Optional<User> findByPhoneNumber(String phoneNumber);
-    List<User> findByRole(Role role);
-
-    boolean existsByEmail(String email); // Kiểm tra email có tồn tại hay không
-
-    boolean existsByPhoneNumber(String phoneNumber); // Kiểm tra phone number có tồn tại hay không
+    List<User> findByRoleAndStatus(Role role, Integer status);
 
     boolean existsByEmailAndIdNot(String email, Integer id); // Kiểm tra email đã tồn tại hay chưa, ngoại trừ chính nó (update)
 
     boolean existsByPhoneNumberAndIdNot(String phoneNumber, Integer id); // Kiểm tra phone number đã tồn tại hay chưa, ngoại trừ chính nó (update)
+    User findByIdAndStatus(Integer id, Integer status);
+
+    User findByIdAndStatusAndRole(Integer id, Integer status, Role role);
 }

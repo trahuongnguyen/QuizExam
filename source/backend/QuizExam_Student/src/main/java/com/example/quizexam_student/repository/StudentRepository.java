@@ -23,4 +23,8 @@ public interface StudentRepository extends JpaRepository<StudentDetail, Integer>
 
     List<StudentDetail> findAllByUserIdIn(List<Integer> users);
 
+    StudentDetail findByRollNumber(String rollNumber);
+
+    StudentDetail findByRollPortal(String rollPortal);
+
 }

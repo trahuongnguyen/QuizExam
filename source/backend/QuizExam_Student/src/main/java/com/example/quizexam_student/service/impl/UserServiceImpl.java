@@ -29,7 +29,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User findById(int id) {
-        return userRepository.findById(id).orElseThrow(() -> new EmptyException("user", "User Not Found"));
+        return userRepository.findByIdAndStatus(id,1);
     }
 
     @Override
@@ -47,9 +47,17 @@ public class UserServiceImpl implements UserService {
     @Override
     public User saveUser(UserRequest userRequest) {
         if(existUserByEmail(userRequest.getEmail())){
+            User user = findUserByEmail(userRequest.getEmail());
+            if (user.getStatus() == 0){
+                throw new AlreadyExistException("userRestore","User already hide. Do you want restore user?");
+            }
             throw new AlreadyExistException("email", "Email existed already");
         }
         if (existUserByPhone(userRequest.getPhoneNumber())) {
+            User user = userRepository.findByPhoneNumber(userRequest.getPhoneNumber()).orElseThrow(() -> new NotFoundException("user", "User Not Found"));
+            if (user.getStatus() == 0){
+                throw new AlreadyExistException("userRestore","User already hide. Do you want restore user?");
+            }
             throw new AlreadyExistException("phoneNumber", "Phone number existed already");
         }
         User user = UserMapper.convertFromRequest(userRequest);
@@ -61,8 +69,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserResponse> getUserByRolePermission(Role role) {
-        return userRepository.findByRole(role).stream().map(UserMapper::convertToResponse).collect(Collectors.toList());
+    public List<UserResponse> getUserByRolePermission(Role role, Integer status) {
+        return userRepository.findByRoleAndStatus(role, status).stream().map(UserMapper::convertToResponse).collect(Collectors.toList());
     }
 
     @Override
@@ -86,7 +94,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void deleteUserById(int id) {
-        User user = userRepository.findById(id).orElse(null);
+        User user = userRepository.findByIdAndStatus(id,1);
         if (user != null) {
             user.setStatus(0);
         }else{
@@ -111,5 +119,15 @@ public class UserServiceImpl implements UserService {
         User user = findById(id);
         user.setPassword(passwordEncoder.encode("@1234567"));
         return userRepository.save(user);
+    }
+
+    @Override
+    public void restoreUser(int id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("user", "User Not Found"));
+        if (user != null){
+            user.setStatus(1);
+        }
+        userRepository.save(user);
     }
 }

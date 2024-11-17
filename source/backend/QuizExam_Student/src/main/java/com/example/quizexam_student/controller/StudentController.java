@@ -2,6 +2,7 @@ package com.example.quizexam_student.controller;
 
 import com.example.quizexam_student.bean.request.*;
 import com.example.quizexam_student.bean.response.*;
+import com.example.quizexam_student.entity.User;
 import com.example.quizexam_student.service.*;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -26,9 +27,14 @@ public class StudentController {
     private final StudentService studentService;
     private final ExportService exportService;
 
-    @GetMapping("all-student")
+    @GetMapping("/all-student")
     public List<StudentResponse> getAllStudents(){
         return studentService.getAllStudents();
+    }
+
+    @GetMapping("/all-student-inactive")
+    public List<StudentResponse> getAllStudentsInactive(){
+        return studentService.getAllStudentsAndStatusInactive();
     }
 
     @GetMapping("")
@@ -36,9 +42,19 @@ public class StudentController {
         return studentService.getAllStudentsNoneClass();
     }
 
-    @GetMapping("{classId}")
+    @GetMapping("/inactive")
+    public List<StudentResponse> getAllStudentsNoneClassInactive(){
+        return studentService.getAllStudentsNoneClassAndStatusInactive();
+    }
+
+    @GetMapping("/{classId}")
     public List<StudentResponse> getAllStudentsByClass(@PathVariable int classId){
         return studentService.getAllStudentsByClass(classId);
+    }
+
+    @GetMapping("/inactive/{classId}")
+    public List<StudentResponse> getAllStudentsByClassInactive(@PathVariable int classId){
+        return studentService.getAllStudentsByClassAndStatusInactive(classId);
     }
 
     @PostMapping("")
@@ -54,8 +70,21 @@ public class StudentController {
     }
 
     @PutMapping("/update-class")
-    public void updateClassForStudents(@RequestBody UpdateClassRequest request) {
+    public ResponseEntity<String> updateClassForStudents(@RequestBody UpdateClassRequest request) {
         studentService.updateClassForStudents(request.getUserIds(), request.getClassId());
+        return ResponseEntity.ok("Update class successfully");
+    }
+
+    @PutMapping("/remove/{id}")
+    public ResponseEntity<String> deleteStudent(@PathVariable int id) {
+        studentService.deleteStudent(id);
+        return ResponseEntity.ok("Student deleted successfully");
+    }
+
+    @PutMapping("/restore/{id}")
+    public ResponseEntity<String> restoreStudent(@PathVariable int id) {
+        studentService.restoreStudent(id);
+        return ResponseEntity.ok("Student restored successfully");
     }
 
     @PostMapping("/export/excel")
