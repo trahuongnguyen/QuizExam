@@ -1,13 +1,15 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { AuthService } from '../../../service/auth.service';
 import { Title } from '@angular/platform-browser';
 import { AdminComponent } from '../../../admin.component';
 import { HomeComponent } from '../../home.component';
 import { HttpClient } from '@angular/common/http';
 import { ToastrService } from 'ngx-toastr';
+import { UrlService } from '../../../../shared/service/url.service';
 import { Router, ActivatedRoute } from '@angular/router';
 import { forkJoin, Observable } from 'rxjs';
 import { Chapter, Level, Question, Subject } from '../../../../shared/models/models';
+declare var $: any;
 
 interface Answer {
   content: string;
@@ -27,7 +29,8 @@ interface QuestionForm {
   templateUrl: './question-update.component.html',
   styleUrls: [
     './../../../../shared/styles/admin/style.css',
-    './../../../../shared/styles/admin/question-form.css'
+    './../../../../shared/styles/admin/question-form.css',
+    './question-update.component.css'
   ]
 })
 
@@ -62,10 +65,11 @@ export class QuestionUpdateComponent implements OnInit {
   constructor(
     private authService: AuthService,
     private titleService: Title,
-    public admin : AdminComponent,
+    public admin: AdminComponent,
     private home: HomeComponent,
     private http: HttpClient,
     private toastr: ToastrService,
+    public urlService: UrlService,
     private router: Router,
     private activatedRoute: ActivatedRoute
   ) { }
@@ -319,7 +323,7 @@ export class QuestionUpdateComponent implements OnInit {
     this.http.put(`${this.authService.apiUrl}/question/${this.questionId}`, formData, this.home.httpOptions).subscribe(
       () => {
         this.toastr.success('Questions saved successfully!');
-        this.router.navigate([`/admin/home/subject/${this.subjectId}/question-list`]);
+        this.router.navigate([this.urlService.questionListUrl(this.subjectId)]);
       },
       err => {
         this.toastr.error(err.error.message, 'Error');
@@ -338,7 +342,7 @@ export class QuestionUpdateComponent implements OnInit {
 
   confirmCancel() {
     this.closePopupDialog();
-    this.router.navigate([`/admin/home/subject/${this.subjectId}/question-list`]);
+    this.router.navigate([this.urlService.questionListUrl(this.subjectId)]);
   }
 
   closePopupDialog() {

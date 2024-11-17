@@ -12,7 +12,10 @@ declare var $: any;
 @Component({
   selector: 'app-employee',
   templateUrl: './employee.component.html',
-  styleUrl: './employee.component.css'
+  styleUrls: [
+    './../../../shared/styles/admin/style.css',
+    './employee.component.css'
+  ]
 })
 
 export class EmployeeComponent implements OnInit, OnDestroy {
@@ -38,7 +41,7 @@ export class EmployeeComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.titleService.setTitle('List of Employees');
     this.authService.entityExporter = 'user';
-    this.http.get<any>(`${this.authService.apiUrl}/user`, this.home.httpOptions).subscribe((data: any) => {
+    this.http.get<any>(`${this.authService.apiUrl}/user/1`, this.home.httpOptions).subscribe((data: any) => {
       this.apiData = data;
       this.authService.listExporter = data;
       this.initializeDataTable();
@@ -125,7 +128,7 @@ export class EmployeeComponent implements OnInit, OnDestroy {
   }
 
   reloadTable(): void {
-    this.http.get<any>(`${this.authService.apiUrl}/user`, this.home.httpOptions).subscribe((data: any) => {
+    this.http.get<any>(`${this.authService.apiUrl}/user/1`, this.home.httpOptions).subscribe((data: any) => {
       this.apiData = data;
       this.updateDataTable(this.apiData); // Cập nhật bảng với dữ liệu mới
     });

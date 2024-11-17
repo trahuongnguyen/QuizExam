@@ -17,6 +17,7 @@ import { LevelComponent } from './level/level.component';
 import { NgApexchartsModule } from "ng-apexcharts";
 import { NgScrollbarModule } from 'ngx-scrollbar';
 import { NgxPaginationModule } from 'ngx-pagination';
+import { SharedModule } from '../../shared/shared.module';
 
 @NgModule({
   declarations: [
@@ -26,18 +27,18 @@ import { NgxPaginationModule } from 'ngx-pagination';
     ClassComponent,
     EmployeeComponent,
     ProfileComponent,
-    LevelComponent,
-
+    LevelComponent
   ],
   imports: [
     CommonModule,
     HomeRoutingModule,
-    FormsModule,
     SubjectModule,
     ExaminationModule,
+    SharedModule,
+    FormsModule,
     NgApexchartsModule,
     NgScrollbarModule,
-    NgxPaginationModule,
+    NgxPaginationModule
   ]
 })
 export class HomeModule { }

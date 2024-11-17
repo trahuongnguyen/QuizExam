@@ -18,12 +18,20 @@ export class UrlService {
     return `/admin/class/${classId}`;
   }
 
+  subjectListUrl(): string {
+    return `/admin/subject`;
+  }
+
   chapterListUrl(subjectId: number): string {
     return `/admin/subject/${subjectId}`;
   }
 
   questionListUrl(subjectId: number): string {
     return `/admin/subject/${subjectId}/question-list`;
+  }
+
+  addQuestionUrl(subjectId: number): string {
+    return `/admin/subject/${subjectId}/add-new-question`;
   }
 
   editQuestionUrl(subjectId: number, id: number): string {

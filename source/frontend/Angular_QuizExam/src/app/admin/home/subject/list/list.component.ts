@@ -157,7 +157,7 @@ export class ListComponent implements OnInit, OnDestroy {
     }
 
     // Thêm placeholder vào input của DataTables
-    $('.dataTables_filter input[type="search"]').attr('placeholder', 'Searc');
+    $('.dataTables_filter input[type="search"]').attr('placeholder', 'Search');
 
     $('.info-icon').on('click', (e: any) => this.navigateToChapters($(e.currentTarget).data('id')));
     $('.edit-icon').on('click', (e: any) => this.showPopupEdit($(e.currentTarget).data('id')));
@@ -310,7 +310,6 @@ export class ListComponent implements OnInit, OnDestroy {
   }
 
   deleteSubject(): void {
-    console.log(this.subjectForm.id);
     this.deleteSubjectApi(this.subjectForm.id).subscribe({
       next: () => {
         this.toastr.success('Delete Successful!', 'Success', { timeOut: 2000 });

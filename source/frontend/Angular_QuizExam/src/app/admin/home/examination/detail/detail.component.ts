@@ -1,31 +1,36 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { AuthService } from '../../../service/auth.service';
-import { ToastrService } from 'ngx-toastr';
-import { ActivatedRoute, Router } from '@angular/router';
-import { HomeComponent } from '../../home.component';
-import { ExaminationComponent } from '../examination.component';
-import { response } from 'express';
-import { Observable } from 'rxjs/internal/Observable';
-import { Timestamp } from 'rxjs';
 import { Title } from '@angular/platform-browser';
 import { AdminComponent } from '../../../admin.component';
+import { HomeComponent } from '../../home.component';
+import { ExaminationComponent } from '../examination.component';
+import { HttpClient } from '@angular/common/http';
+import { ToastrService } from 'ngx-toastr';
+import { UrlService } from '../../../../shared/service/url.service';
+import { Router, ActivatedRoute } from '@angular/router';
+import { forkJoin, Observable } from 'rxjs';
+import { Timestamp } from 'rxjs';
 declare var $: any;
 
 @Component({
   selector: 'app-detail',
   templateUrl: './detail.component.html',
-  styleUrl: './detail.component.css'
+  styleUrls: [
+    './../../../../shared/styles/admin/style.css',
+    './../../../../shared/styles/admin/steps.css',
+    './detail.component.css'
+  ]
 })
 export class DetailComponent implements OnInit {
   constructor(
     private authService: AuthService,
     private titleService: Title,
-    public admin : AdminComponent,
+    public admin: AdminComponent,
     private home: HomeComponent,
     public examComponent: ExaminationComponent,
     private http: HttpClient,
     private toastr: ToastrService,
+    public urlService: UrlService,
     private router: Router,
     private activatedRoute: ActivatedRoute
   ) { }
@@ -45,6 +50,10 @@ export class DetailComponent implements OnInit {
       this.apiData = data;
       this.selectedExam = data;
     });
+  }
+
+  navigateToAddStudentForExaml(): void {
+    this.router.navigate([this.urlService.addStudentForExamlUrl(this.examId)]);
   }
   
   exportPDF() {

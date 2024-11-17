@@ -86,8 +86,9 @@ public class SubjectController {
 
     @PreAuthorize("hasAnyRole('ADMIN', 'DIRECTOR')")
     @PutMapping("/remove/{id}")
-    public void deleteSubject(@PathVariable int id){
+    public ResponseEntity<String> deleteSubject(@PathVariable int id){
         subjectService.deleteById(id);
+        return new ResponseEntity<>("Delete Subject Successfully", HttpStatus.OK);
     }
 
     @PostMapping("/export/excel")

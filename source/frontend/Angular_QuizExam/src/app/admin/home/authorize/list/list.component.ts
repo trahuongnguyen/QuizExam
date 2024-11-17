@@ -12,7 +12,10 @@ import { Router, ActivatedRoute } from '@angular/router';
 @Component({
   selector: 'app-list',
   templateUrl: './list.component.html',
-  styleUrl: './list.component.css'
+  styleUrls: [
+    './../../../../shared/styles/admin/style.css',
+    './list.component.css'
+  ]
 })
 export class ListComponent implements OnInit{
   constructor(

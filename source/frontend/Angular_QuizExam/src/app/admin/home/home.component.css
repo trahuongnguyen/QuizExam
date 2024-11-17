@@ -12,7 +12,7 @@
     border-bottom: 1px solid var(--color-switch);
     z-index: 1000;
     height: 60px;
-    transition: all 0.5s ease;
+    transition: all 0.9s ease;
 }
 
 .header-collapsed {
@@ -24,7 +24,7 @@
     margin: 0 0 60px 120px;
     min-height: 80vh;
     overflow-x: hidden;
-    transition: all 0.5s ease;
+    transition: all 0.9s ease;
 }
 
 .content-wrapper-collapsed{
@@ -81,20 +81,23 @@
     left: 0;
     display: block;
     flex-direction: column;
-    transition: all 0.5s ease;
+    transition: all 0.9s ease;
 }
-
 
 .sidebar .block-wrapper {
     height: 60px;
     text-align: center;
     align-content: center;
     border-bottom: 1px solid var(--color-switch);
-    transition: all 0.5s ease;
+    transition: all 0.9s ease;
 }
 
 .sidebar .block-image {
     width: 110px;
+}
+
+.sidebar .sidebar-link span {
+    margin-left: 8px;
 }
 
 .sidebar .sidebar-link {
@@ -103,6 +106,7 @@
     font-size: 14px;
     padding: 15px 15px;
     color: var(--color-text);
+    transition: all 0.9s ease;
 }
 
 .sidebar .sidebar-link:hover {
@@ -111,7 +115,7 @@
 
 .sidebar .active {
     background-color: var(--color-sidebar-active);
-    transition: background-color 0.5s ease;
+    transition: background-color 0.9s ease, color 0.9s ease;
 }
 
 .sidebar .sidebar-link .icon {
@@ -126,21 +130,18 @@
 /* sidebar thu nhỏ */
 .sidebar-collapsed {
     width: 30px;
-    transition: all 0.5s ease;
     overflow: hidden;
-}
-
-.sidebar .sidebar-link span {
-    margin-left: 8px;
-    transition: all 0.5s ease;
+    transition: all 0.9s ease;
 }
 
 .sidebar-collapsed .sidebar-link {
-    text-align: center;
+    top: 59px;
     padding: 15px 7px;
     position: relative;
+    text-align: center;
+    color: var(--color-text);
     border-top: 1px solid var(--color-switch);
-    top: 59px;
+    transition: all 0.9s ease;
 }
 
 .sidebar-collapsed .sidebar-link .icon {
@@ -163,7 +164,6 @@
     justify-content: center;
     align-items: center;
     cursor: pointer;
-    transition: all 0.5s ease;
     z-index: 1000;
 }
 
@@ -171,6 +171,7 @@
 .sidebar-toggle span {
     font-size: 20px;
     color: var(--color-text);
+    transition: all 0.9s ease;
 }
 
 /* Khi sidebar thu nhỏ */
@@ -191,7 +192,7 @@
     align-items: center;
     font-size: 16px;
     color: #c9c9c9;
-    transition: all 0.5s ease;
+    transition: all 0.9s ease;
 }
 
 .footer-collapsed {
@@ -207,7 +208,7 @@
     width: 200px;
     box-sizing: 0 5px 25px rgba(0, 0, 0, 0.1);
     border-radius: 15px;
-    transition: all 0.5s ease;
+    transition: all 0.9s ease;
     visibility: hidden;
     opacity: 0;
 }
@@ -226,7 +227,7 @@
     width: 20px;
     height: 20px;
     background: var(--color-menu);
-    transition: all 0.5s ease;
+    transition: all 0.9s ease;
     transform: rotate(45deg);
 }
 
@@ -242,7 +243,7 @@
     max-width: 20px;
     margin-right: 10px;
     opacity: 0.5;
-    transition: all 0.5s ease;
+    transition: all 0.9s ease;
 }
 
 .d-flex .menu ul li:hover img {
@@ -254,7 +255,7 @@
     text-decoration: none;
     color: var(--color-text);
     font-weight: 500;
-    transition: all 0.5s ease;
+    transition: all 0.9s ease;
 }
 
 .d-flex .menu ul li i {
@@ -262,7 +263,7 @@
     font-size: 25px;
     margin-right: 10px;
     color: var(--color-text);
-    transition: all 0.5s ease;
+    transition: all 0.9s ease;
 }
 
 .d-flex .menu ul li:hover a {

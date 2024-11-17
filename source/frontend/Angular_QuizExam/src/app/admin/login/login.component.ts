@@ -1,9 +1,11 @@
-import { AfterContentInit, Component } from '@angular/core';
+import { Component, OnInit, OnDestroy, AfterContentInit } from '@angular/core';
 import { AuthService } from '../service/auth.service';
-import { Router } from '@angular/router';
-import { ToastrService } from 'ngx-toastr';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Title } from '@angular/platform-browser';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ToastrService } from 'ngx-toastr';
+import { UrlService } from '../../shared/service/url.service';
+import { Router, ActivatedRoute } from '@angular/router';
 declare var $: any;
 
 @Component({
@@ -15,7 +17,17 @@ declare var $: any;
 export class LoginComponent implements AfterContentInit {
   loginForm: FormGroup;
 
-  constructor(private authService: AuthService, private router: Router, public toastr: ToastrService, private formBuilder: FormBuilder, private http: HttpClient) {
+  constructor(
+    private authService: AuthService,
+    private titleService: Title,
+    private http: HttpClient,
+    private formBuilder: FormBuilder,
+    private toastr: ToastrService,
+    public urlService: UrlService,
+    private router: Router,
+    private activatedRoute: ActivatedRoute
+  ) {
+    this.titleService.setTitle('Login');
     this.loginForm = this.formBuilder.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(8)]]

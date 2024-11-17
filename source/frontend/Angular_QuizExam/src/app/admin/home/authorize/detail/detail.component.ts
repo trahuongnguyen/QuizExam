@@ -13,7 +13,10 @@ declare var $: any;
 @Component({
   selector: 'app-detail',
   templateUrl: './detail.component.html',
-  styleUrl: './detail.component.css'
+  styleUrls: [
+    './../../../../shared/styles/admin/style.css',
+    './detail.component.css'
+  ]
 })
 export class DetailComponent implements OnInit{
   constructor(

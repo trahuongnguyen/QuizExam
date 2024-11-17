@@ -82,7 +82,7 @@ export class AdminComponent implements OnInit {
     else {
       setTimeout(() => {
         this.contentSidebar = true;
-      }, 300);
+      }, 500);
     }
     if (this.isLocalStorageAvailable()) {
       localStorage.setItem('sidebar-collapsed', JSON.stringify(this.isSidebarCollapsed));

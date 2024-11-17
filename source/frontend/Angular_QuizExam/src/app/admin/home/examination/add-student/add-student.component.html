@@ -1,5 +1,5 @@
 <div class="content-wrapper" [ngClass]="{'content-wrapper-collapsed': admin.isSidebarCollapsed}">
-    <h4>Students can participate in the exam</h4>
+    <h4>Register Students for Exam</h4>
     <hr class="line">
 
     <div class="row bs-wizard" [ngClass]="{'d-none': !examComponent.step}">
@@ -10,28 +10,27 @@
           <div class="bs-wizard-info text-center">Create Exam</div>
         </div>
         
-        <div class="col-xs-3 bs-wizard-step active"><!-- complete -->
+        <div class="col-xs-3 bs-wizard-step active">
           <div class="text-center bs-wizard-stepnum">Step 2</div>
           <div class="progress"><div class="progress-bar"></div></div>
           <a href="#" class="bs-wizard-dot"></a>
           <div class="bs-wizard-info text-center">Add Student</div>
         </div>
         
-        <div class="col-xs-3 bs-wizard-step disabled"><!-- complete -->
+        <div class="col-xs-3 bs-wizard-step disabled">
           <div class="text-center bs-wizard-stepnum">Step 3</div>
           <div class="progress"><div class="progress-bar"></div></div>
           <a href="#" class="bs-wizard-dot"></a>
-          <div class="bs-wizard-info text-center">Detail</div>
+          <div class="bs-wizard-info text-center">Complete</div>
         </div>
     </div>
 
-    <!-- Bottom Actions (Create and Export) -->
     <div class="bottom-actions">
         <div>
-            <a class="btn btn-primary button" (click)="showStudentPopup()">Add Student</a>
+            <a class="button button-create" (click)="showStudentPopup()"><span class="mdi mdi-plus icon"></span>Add Student</a>
         </div>
         <div>
-            <button class="btn btn-primary button" style="margin-right: 5px;" [disabled]="listStudentSelected.length == 0" (click)="addStudentInExam();">Next</button>
+            <a class="button button-pdf" (click)="addStudentInExam();">Next<span class="mdi mdi-forward icon"></span></a>
         </div>
     </div>
 
@@ -52,36 +51,54 @@
     </table>
 </div>
 
-<div *ngIf="isStudentPopup" class="modal-backdrop" (click)="closePopup($event)">
-    <div class="modal-content" (click)="$event.stopPropagation()">
-        <div class="modal-header">
-            <span>Move Student to Class</span>
-            <span class="close-icon" (click)="closePopup($event)">&times;</span>
+<div *ngIf="isPopupAddStudent" class="popup-container">
+    <div class="popup-content" (click)="$event.stopPropagation()">
+        <div class="popup-header">
+            <span>Add Student</span>
+            <span class="close-icon" (click)="closePopup()">&times;</span>
         </div>
-        <div class="modal-body">
-            <form method="post" class="form-add">
-                <div class="form-group">
-                    <label for="roleId" class="text-popup">Class:</label>
-                    <!-- [(ngModel)]="roleId" name="roleId" -->
+        <div class="search-container">
+            <div class="row">
+                <div class="col-6">
                     <select class="form-select" [(ngModel)]="classId" name="classId" (change)="filterStudentsByClass()">
                         <option value=0>Student (No Class)</option>
                         <option *ngFor="let data of listClass" [value]="data.id">{{data.name}}</option>
                     </select>
                 </div>
-                <div class="form-student">
-                    <div class="checkbox-group">
-                        <div class="checkbox-input" *ngIf="classId != 0">
-                            <input type="checkbox" id="student" [checked]="selectAllStatus[classId]" (change)="toggleSelectAll($event)"/>
-                            <label for="student">Select All</label>
-                        </div>
-                        <div class="checkbox-input" *ngFor="let student of listStudentByClass">
-                            <input type="checkbox" id="student{{student.userResponse.id}}" [checked]="isChecked(student.userResponse.id)" (change)="handleCheckboxChange(student.userResponse.id, $event)" />
-                            <label for="student{{student.userResponse.id}}">{{ student.userResponse.fullName }} - {{ student.userResponse.email }}</label>
-                        </div>
+                <div class="col-6">
+                    <input type="text" class="form-control search-input" [(ngModel)]="searchStudent" (ngModelChange)="onSearchChange()"
+                        name="searchStudent" placeholder="Search Students"/>
+                    <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                </div>
+            </div>
+        </div>
+        <div class="popup-body">
+            <div class="form-popup">
+                <div class="checkbox-group">
+                    <div class="checkbox-input" *ngIf="classId != 0">
+                        <input type="checkbox" id="student" [checked]="selectAllStatus[classId]" (change)="toggleSelectAll($event)"/>
+                        <label for="student">Select All</label>
+                    </div>
+                    <div class="checkbox-input" *ngFor="let student of filterStudents">
+                        <input type="checkbox" (change)="handleCheckboxChange(student.userResponse.id, $event)"
+                            [checked]="isChecked(student.userResponse.id)"
+                            id="student{{student.userResponse.id}}"/>
+                        <label for="student{{student.userResponse.id}}">{{ student.userResponse.fullName }} - {{ student.userResponse.email }}</label>
                     </div>
                 </div>
-                <button type="submit" class="btn btn-primary button" (click)="closePopup($event)">Add</button>
-            </form>
+            </div>
+        </div>
+        <div class="popup-footer">
+            <button type="button" class="btn btn-primary button" (click)="saveSelectedStudents()">OK</button>
         </div>
     </div>
 </div>
+
+<app-dialog-popup
+  [isVisible]="isPopupDelete"
+  [title]="dialogTitle"
+  [message]="dialogMessage"
+  [isConfirmationPopup]="isConfirmationPopup"
+  (confirm)="deleteStudent()"
+  (close)="closePopup()">
+</app-dialog-popup>

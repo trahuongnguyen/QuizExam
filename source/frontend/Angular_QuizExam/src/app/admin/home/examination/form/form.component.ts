@@ -23,7 +23,11 @@ interface ExamForm {
 @Component({
   selector: 'app-form',
   templateUrl: './form.component.html',
-  styleUrl: './form.component.css'
+  styleUrls: [
+    './../../../../shared/styles/admin/style.css',
+    './../../../../shared/styles/admin/steps.css',
+    './form.component.css'
+  ]
 })
 
 export class FormComponent implements OnInit {
@@ -193,11 +197,7 @@ export class FormComponent implements OnInit {
 
   selectedLevelsText: string = '';
 
-  closePopupLevel(event?: MouseEvent): void {
-    if (event) {
-      event.stopPropagation();
-    }
-
+  closePopup(): void {
     this.isPopupLevel = false;
     this.listLevel.forEach((element: any) => {
       this.levelId[element.id as string] = this.levelIdModel[element.id as string];

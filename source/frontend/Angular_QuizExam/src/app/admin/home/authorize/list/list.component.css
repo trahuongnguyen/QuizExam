@@ -1,31 +1,8 @@
-/* Body */
-.content-wrapper {
-    padding: 80px 20px 60px 170px;
-    min-height: 100vh;
-    overflow-x: hidden;
-    background-color: var(--color-background);
-    color: var(--color-text);
-    transition: all 0.5s ease;
-}
-
-.content-wrapper-collapsed {
-    padding-left: 50px;
-}
-
-.line {
-    margin-top: 0;
-}
-
-.container {
-    margin-top: 30px;
-    padding-right: 50px;
-}
-
 .card {
     margin: auto;
     cursor: pointer;
-    width: 220px;
     border: 1px solid var(--color-text);
+    transition: all 0.9s ease;
 }
 
 .card-image {
@@ -38,6 +15,7 @@
     object-fit: cover;
     border-radius: 5px 5px 0 0;
     background-color: var(--color-card);
+    transition: all 0.9s ease;
 }
 
 .card-content {
@@ -47,14 +25,13 @@
     border-radius: 0 0 5px 5px;
     color: var(--color-text);
     background-color: var(--color-card);
+    transition: all 0.9s ease;
 }
 
 .card-title {
     font-size: medium;
     font-weight: bold;
 }
-
-
 
 @media (min-width: 1400px) {
     .col-lg-3 {

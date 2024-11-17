@@ -1,10 +1,9 @@
-
 <div class="content-wrapper" [ngClass]="{'content-wrapper-collapsed': admin.isSidebarCollapsed}">
     <h4>Authorize</h4>
     <hr class="line">
 
     <div class="container">
-        <div class="row justify-content-between gap-3">
+        <div class="row justify-content-between">
             <!-- Card 1 -->
             <div class="col-lg-2 col-md-4 col-sm-6 col-xs-12 mb-5" *ngFor="let role of roleList">
                 <div class="card" (click)="getExamDetail(role.id)">

@@ -11,7 +11,7 @@
     --color-text: #000000;
     --color-card: #ffffff;
     --color-title: #ffc107;
-    --color-nav: #FFEDED;
+    --color-nav: #ffeded;
     /* menu user */
     --color-menu: #e9e9e9;
 
@@ -66,7 +66,7 @@
     --color-text: #000000;
     --color-card: #ffffff;
     --color-title: #ffc107;
-    --color-nav: #FFEDED;
+    --color-nav: #ffeded;
     /* menu user */
     --color-menu: #e9e9e9;
 
@@ -87,6 +87,10 @@
     --color-switch-shadow: inset 0 0 15px rgba(0, 0, 0, 0.2);
     
     --color-input: #ffffff;
+    --color-input-exam: #edf5f4;
+
+    --color-step: #e2e5e9;
+    --color-progress-bar: skyblue;
 }
 
 [QuizTech-theme=dark-admin] {
@@ -118,6 +122,10 @@
     --transform-switch-button: translateX(2.3em);
 
     --color-input: #262626;
+    --color-input-exam: #2f2f33;
+
+    --color-step: #abacad;
+    --color-progress-bar: steelblue;
 }
 
 /* endregion switch light-dark */
@@ -170,7 +178,7 @@
     border-radius: 20px;
     left: 0.2em;
     bottom: 0.22em;
-    transition: all 0.5s ease;
+    transition: all 0.9s ease;
     transform: var(--transform-switch-button);
     background-color: var(--color-switch-button);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
@@ -200,8 +208,9 @@
 
 .dataTables_wrapper .dataTables_length,
 .dataTables_wrapper .dataTables_length select {
-    color: var(--color-text);
     font-size: 14px;
+    color: var(--color-text);
+    transition: all 0.9s ease;
 }
 
 .dataTables_wrapper .dataTables_length select option {
@@ -221,6 +230,7 @@
     border: 1px solid #d9d9d9;
     border-radius: 8px;
     padding: 12px 20px 12px 16px;
+    transition: all 0.9s ease;
 }
 
 .dataTables_filter input[type="search"]:focus-visible {
@@ -256,7 +266,7 @@
     padding: 14px;
     border-bottom: 1px solid var(--color-background);
     background-color: var(--color-sidebar);
-    transition: all 0.5s ease;
+    transition: all 0.9s ease;
 }
 
 .dataTables_wrapper .table td {
@@ -268,7 +278,7 @@
     border-bottom: none;
     border-top: 1px solid var(--color-background);
     background-color: var(--color-sidebar);
-    transition: all 0.5s ease;
+    transition: all 0.9s ease;
 }
 
 .dataTables_wrapper .table .icon-action {
@@ -315,7 +325,7 @@
 .dataTables_wrapper .dataTables_paginate .paginate_button.disabled:hover {
     cursor: default;
     color: var(--color-disable) !important;
-    transition: all 0.5s ease;
+    transition: all 0.9s ease;
 }
 
 .dataTables_wrapper .dataTables_paginate .paginate_button.current,
@@ -326,12 +336,14 @@
     background: none;
     background-color: #aa1210;
     padding: 2px 12px;
+    transition: all 0.9s ease;
 }
 
 .dataTables_wrapper .dataTables_paginate .paginate_button {
     color: var(--color-text) !important;
     border-radius: 8px;
     padding: 2px 12px;
+    transition: all 0.9s ease;
 }
 
 .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
@@ -339,101 +351,4 @@
     color: var(--color-text) !important;
     border: 1px solid var(--color-page-hover);
     background-color: var(--color-page-hover);
-}
-
-/* Step */
-.bs-wizard {
-    margin: 30px 50px;
-}
-
-.bs-wizard>.bs-wizard-step {
-    padding: 0;
-    position: relative;
-    width: 33%;
-}
-
-.bs-wizard>.bs-wizard-step .bs-wizard-stepnum {
-    color: var(--color-text);
-    font-size: 16px;
-    margin-bottom: 5px;
-}
-
-.bs-wizard>.bs-wizard-step .bs-wizard-info {
-    color: #999;
-    font-size: 14px;
-}
-
-.bs-wizard>.bs-wizard-step>.bs-wizard-dot {
-    position: absolute;
-    width: 30px;
-    height: 30px;
-    display: block;
-    background: #fbe8aa;
-    top: 45px;
-    left: 50%;
-    margin-top: -15px;
-    margin-left: -15px;
-    border-radius: 50%;
-}
-
-.bs-wizard>.bs-wizard-step>.bs-wizard-dot:after {
-    content: ' ';
-    width: 14px;
-    height: 14px;
-    background: #fbbd19;
-    border-radius: 50px;
-    position: absolute;
-    top: 8px;
-    left: 8px;
-}
-
-.bs-wizard>.bs-wizard-step>.progress {
-    position: relative;
-    border-radius: 0px;
-    height: 8px;
-    box-shadow: none;
-    margin: 17px 0;
-}
-
-.bs-wizard>.bs-wizard-step>.progress>.progress-bar {
-    width: 0px;
-    box-shadow: none;
-    background: #fbe8aa;
-}
-
-.bs-wizard>.bs-wizard-step.complete>.progress>.progress-bar {
-    width: 100%;
-}
-
-.bs-wizard>.bs-wizard-step.active>.progress>.progress-bar {
-    width: 50%;
-}
-
-.bs-wizard>.bs-wizard-step:first-child.active>.progress>.progress-bar {
-    width: 0%;
-}
-
-.bs-wizard>.bs-wizard-step:last-child.active>.progress>.progress-bar {
-    width: 100%;
-}
-
-.bs-wizard>.bs-wizard-step.disabled>.bs-wizard-dot {
-    background-color: var(--bs-secondary-bg);
-}
-
-.bs-wizard>.bs-wizard-step.disabled>.bs-wizard-dot:after {
-    opacity: 0;
-}
-
-.bs-wizard>.bs-wizard-step:first-child>.progress {
-    left: 50%;
-    width: 50%;
-}
-
-.bs-wizard>.bs-wizard-step:last-child>.progress {
-    width: 50%;
-}
-
-.bs-wizard>.bs-wizard-step.disabled a.bs-wizard-dot {
-    pointer-events: none;
 }

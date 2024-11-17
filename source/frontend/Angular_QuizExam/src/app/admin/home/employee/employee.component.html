@@ -31,13 +31,13 @@
     </table>
 </div>
 
-<div *ngIf="isPopupDetail" class="modal-backdrop" (click)="closePopup($event)">
-    <div class="modal-content" (click)="$event.stopPropagation()">
-        <div class="modal-header">
+<div *ngIf="isPopupDetail" class="popup-container">
+    <div class="popup-content" (click)="$event.stopPropagation()">
+        <div class="popup-header">
             <span>Employee Detail</span>
             <span class="close-icon" (click)="closePopup()">&times;</span>
         </div>
-        <div class="modal-body">
+        <div class="popup-body">
             <table class="popup-table">
                 <tr>
                     <td><strong>ID</strong></td>
@@ -73,163 +73,66 @@
                 </tr>
             </table>
         </div>
+        <div class="popup-footer">
+        </div>
     </div>
 </div>
 
-<div *ngIf="isPopupCreate" class="modal-backdrop" (click)="closePopup($event)">
-    <div class="modal-content" (click)="$event.stopPropagation()">
-        <div class="modal-header">
-            <span>Create Employee</span>
-            <span class="close-icon" (click)="closePopup()">&times;</span>
-        </div>
-        <div class="modal-body">
-            <form method="post" (ngSubmit)="createEmployee()" class="form-create">
-                <div class="form-group">
-                    <label for="fullName" class="text-popup">Full Name:</label>
-                    <input type="text" class="form-control" [(ngModel)]="fullName" name="fullName"
-                        placeholder="Enter Full Name">
+<div *ngIf="isPopupCreate" class="popup-container">
+    <div class="popup-content popup-create" (click)="$event.stopPropagation()">
+        <form class="form-popup" (ngSubmit)="createEmployee()">
+            <div class="popup-header">
+                <span>Create Employee</span>
+                <span class="close-icon" (click)="closePopup()">&times;</span>
+            </div>
+            <div class="popup-body">
+                <div class="row">
+                    <div class="col-6">
+                        <div class="form-group">
+                            <label for="fullName" class="text-popup">Full Name:</label>
+                            <input type="text" class="form-control" [(ngModel)]="fullName" name="fullName"
+                                placeholder="Enter Full Name">
+                        </div>
+                        <div class="form-group">
+                            <label for="dob" class="text-popup">Date of Birth:</label>
+                            <input type="date" class="form-control" [(ngModel)]="dob" name="dob">
+                        </div>
+                        <div class="form-group">
+                            <label for="gender" class="text-popup">Gender:</label>
+                            <select class="form-select" [(ngModel)]="gender" name="gender">
+                                <option value=1>Male</option>
+                                <option value=2>Female</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="address" class="text-popup">Address:</label>
+                            <input type="text" class="form-control" [(ngModel)]="address" name="address"
+                                placeholder="Enter Address">
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="form-group">
+                            <label for="phoneNumber" class="text-popup">Phone Number:</label>
+                            <input type="text" class="form-control" [(ngModel)]="phoneNumber" name="phoneNumber"
+                                placeholder="Enter Phone Number">
+                        </div>
+                        <div class="form-group">
+                            <label for="email" class="text-popup">Email:</label>
+                            <input type="text" class="form-control" [(ngModel)]="email" name="email"
+                                placeholder="Enter Email">
+                        </div>
+                        <div class="form-group">
+                            <label for="roleId" class="text-popup">Role:</label>
+                            <select class="form-select" [(ngModel)]="roleId" name="roleId">
+                                <option [value]="data.id" *ngFor="let data of role">{{data.name}}</option>
+                            </select>
+                        </div>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label for="dob" class="text-popup">Date of Birth:</label>
-                    <input type="date" class="form-control" [(ngModel)]="dob" name="dob">
-                </div>
-                <div class="form-group">
-                    <label for="gender" class="text-popup">Gender:</label>
-                    <select class="form-control" [(ngModel)]="gender" name="gender">
-                        <option value=1>Male</option>
-                        <option value=2>Female</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="email" class="text-popup">Email:</label>
-                    <input type="text" class="form-control" [(ngModel)]="email" name="email" placeholder="Enter Email">
-                </div>
-                <div class="form-group">
-                    <label for="phoneNumber" class="text-popup">Phone Number:</label>
-                    <input type="text" class="form-control" [(ngModel)]="phoneNumber" name="phoneNumber"
-                        placeholder="Enter Phone Number">
-                </div>
-                <div class="form-group">
-                    <label for="address" class="text-popup">Address:</label>
-                    <input type="text" class="form-control" [(ngModel)]="address" name="address"
-                        placeholder="Enter Address">
-                </div>
-                <div class="form-group">
-                    <label for="roleId" class="text-popup">Role:</label>
-                    <select class="form-control" [(ngModel)]="roleId" name="roleId">
-                        <!-- <option value=2>Director</option>
-                        <option value=3>Teacher</option>
-                        <option value=4 selected>SRO</option> -->
-                        <option [value]="data.id" *ngFor="let data of role">{{data.name}}</option>
-                    </select>
-                </div>
+            </div>
+            <div class="popup-footer">
                 <button type="submit" class="btn btn-primary button">Save</button>
-            </form>
-        </div>
+            </div>
+        </form>
     </div>
 </div>
-
-
-
-<!-- <div class="modal" id="profile">
-      <div class="modal-dialog">
-          <div class="modal-content">
-              <div class="modal-header">
-                  <div class="employee-popup" id="employee-popup">
-                      <p class="user-name text-center">Nguyen Quang Huy</p>
-                      <table class="table-content">
-                          <tr>
-                              <td>Email</td>
-                              <td>nqhuy2092004&#64;gmail.com</td>
-                          </tr>
-                          <tr>
-                              <td>DOB</td>
-                              <td>20/09/2004</td>
-                          </tr>
-                          <tr>
-                              <td>Phone Number</td>
-                              <td>0377427523</td>
-                          </tr>
-                          <tr>
-                              <td>Address</td>
-                              <td>87 Linh Nam, Hoang Mai, Ha Noi</td>
-                          </tr>
-                          <tr>
-                              <td>Gender</td>
-                              <td>Nam</td>
-                          </tr>
-                          <tr>
-                              <td>Role</td>
-                              <td>Director</td>
-                          </tr>
-                          <tr>
-                              <td>Status</td>
-                              <td>Active</td>
-                          </tr>
-                      </table>
-                  </div>
-                  <button type="button" class="btn-close" data-bs-dismiss="modal"><span class="mdi mdi-close icon-close"></span></button>
-              </div>
-          </div>
-      </div>
-  </div>
-  <div class="modal" id="form">
-      <div class="modal-dialog">
-          <div class="modal-content">
-              <div class="modal-header">
-                  <div class="employee-popup" id="employee-popup">
-                      <p class="user-name text-center">Create Employee</p>
-                      <form method="post" (ngSubmit)="createEmployee()">
-                          <table class="table-content">
-                              <tr>
-                                  <td>Name</td>
-                                  <td><input type="text" [(ngModel)]="fullName" name="fullName"></td>
-                              </tr>
-                              <tr>
-                                  <td>Email</td>
-                                  <td><input type="text" [(ngModel)]="email" name="email"></td>
-                              </tr>
-                              <tr>
-                                  <td>DOB</td>
-                                  <td><input type="date" id="birth" [(ngModel)]="dob" name="dob"></td>
-                              </tr>
-                              <tr>
-                                  <td>Phone Number</td>
-                                  <td><input type="text" [(ngModel)]="phoneNumber" name="phoneNumber"></td>
-                              </tr>
-                              <tr>
-                                  <td>Address</td>
-                                  <td><input type="text" [(ngModel)]="address" name="address"></td>
-                              </tr>
-                              <tr>
-                                  <td>Gender</td>
-                                  <td>
-                                      <input type="radio" value=1 [(ngModel)]="gender" name="gender" checked> Male
-                                      <input type="radio" value=0 [(ngModel)]="gender" name="gender"> Female
-                                  </td>
-                              </tr>
-                              <tr>
-                                  <td>Role</td>
-                                  <td>
-                                      <select id="" [(ngModel)]="roleId" name="roleId">
-                                          <option value=2>Director</option>
-                                          <option value=3>Teacher</option>
-                                          <option value=4 selected>SRO</option>
-                                      </select>
-                                  </td>
-                              </tr>
-                              <tr>
-                                  <td></td>
-                                  <td>
-                                      <button type="submit" class="btn btn-primary button">Save</button>
-                                      <button class="btn btn-secondary" style="margin-left: 5px;" data-bs-dismiss="modal">Cancel</button>
-                                  </td>
-                              </tr>
-                          </table>
-                      </form>
-                  </div>
-                  <button type="button" class="btn-close" data-bs-dismiss="modal"><span class="mdi mdi-close icon-close"></span></button>
-              </div>
-          </div>
-      </div>
-  </div> -->

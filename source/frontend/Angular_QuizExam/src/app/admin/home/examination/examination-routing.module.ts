@@ -19,7 +19,7 @@ const routes: Routes = [
         component: ListComponent,
       },
       {
-        path: 'examform',
+        path: 'create-exam',
         component: FormComponent
       },
       {

@@ -1,26 +1,32 @@
-import { HttpClient } from '@angular/common/http';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { AuthService } from '../../service/auth.service';
-import { ToastrService } from 'ngx-toastr';
-import { ActivatedRoute, Router } from '@angular/router';
-import { HomeComponent } from '../home.component';
 import { Title } from '@angular/platform-browser';
 import { AdminComponent } from '../../admin.component';
+import { HomeComponent } from '../home.component';
+import { HttpClient } from '@angular/common/http';
+import { ToastrService } from 'ngx-toastr';
+import { UrlService } from '../../../shared/service/url.service';
+import { Router, ActivatedRoute } from '@angular/router';
+import { forkJoin, Observable } from 'rxjs';
 declare var $: any;
 
 @Component({
   selector: 'app-class',
   templateUrl: './student.component.html',
-  styleUrl: './student.component.css'
+  styleUrls: [
+    './../../../shared/styles/admin/style.css',
+    './student.component.css'
+  ]
 })
 export class StudentComponent implements OnInit, OnDestroy {
   constructor(
     private authService: AuthService,
     private titleService: Title,
-    public admin : AdminComponent,
+    public admin: AdminComponent,
     private home: HomeComponent,
     private http: HttpClient,
     private toastr: ToastrService,
+    public urlService: UrlService,
     private router: Router,
     private activatedRoute: ActivatedRoute
   ) { }
@@ -61,7 +67,7 @@ export class StudentComponent implements OnInit, OnDestroy {
     this.authService.entityExporter = 'studentManagement';
     this._classId = Number(this.activatedRoute.snapshot.params['classId']) ?? 0;
     if (this._classId != 0 && !Number.isNaN(this._classId)) {
-      this.http.get<any>(`${this.authService.apiUrl}/studentManagement/${this._classId}`, this.home.httpOptions).subscribe((data: any) => {
+      this.http.get<any>(`${this.authService.apiUrl}/student-management/${this._classId}`, this.home.httpOptions).subscribe((data: any) => {
         this.apiData = data;
         this.authService.listExporter = data;
         this.initializeDataTable();
@@ -69,7 +75,7 @@ export class StudentComponent implements OnInit, OnDestroy {
     }
     else {
       this._classId = 0;
-      this.http.get<any>(`${this.authService.apiUrl}/studentManagement`, this.home.httpOptions).subscribe((data: any) => {
+      this.http.get<any>(`${this.authService.apiUrl}/student-management`, this.home.httpOptions).subscribe((data: any) => {
         this.apiData = data;
         this.initializeDataTable();
       });
@@ -112,12 +118,12 @@ export class StudentComponent implements OnInit, OnDestroy {
           render: function (data: any, type: any, row: any) {
             if(data==null){
               return `<input type="checkbox" class="icon-action chk_box" data-id="${row.userResponse.id}">
-              <span class="mdi mdi-information-outline icon-action info-icon" title="Info" data-id="${row.userResponse.id}"></span>
+              <span class="mdi mdi-pencil icon-action edit-icon" title="Edit" data-id="${row.userResponse.id}"></span>
               <span class="mdi mdi-delete-forever icon-action delete-icon" title="Delete"></span>`;
             }
             else {
-              return `<span class="mdi mdi-information-outline icon-action info-icon" data-id="${row.userResponse.id}"></span>
-              <span class="mdi mdi-delete-forever icon-action delete-icon"></span>`;
+              return `<span class="mdi mdi-pencil icon-action edit-icon" title="Edit" data-id="${row.userResponse.id}"></span>
+              <span class="mdi mdi-delete-forever icon-action delete-icon" title="Delete"></span>`;
             }
           },
         },
@@ -133,7 +139,7 @@ export class StudentComponent implements OnInit, OnDestroy {
         $('.dataTables_filter input[type="search"]').attr('placeholder', 'Search');
 
         // Click vào info icon sẽ hiện ra popup
-        $('.info-icon').on('click', (event: any) => {
+        $('.edit-icon').on('click', (event: any) => {
           const id = $(event.currentTarget).data('id');
           this.studentId = id;
           this.showPopupEdit(id);
@@ -164,17 +170,12 @@ export class StudentComponent implements OnInit, OnDestroy {
     this.isPopupUpdate = true;
   }
 
-  closePopup(event?: MouseEvent): void {
-    if (event) {
-      event.stopPropagation(); // Ngăn việc sự kiện click ra ngoài ảnh hưởng đến việc đóng modal
-    }
+  closePopup(): void {
     this.isPopupUpdate = false;
     this.isPopupCreate = false;
-  }
-
-  closeMove(): void {
     this.isPopupMove = false;
   }
+  
   stdRequest: any = {
     userRequest: {
       fullName: "",
@@ -198,7 +199,7 @@ export class StudentComponent implements OnInit, OnDestroy {
   }
 
   reloadTable(id: number): void {
-    this.http.get<any>(id != 0 ? `${this.authService.apiUrl}/studentManagement/${id}` : `${this.authService.apiUrl}/studentManagement`, this.home.httpOptions).subscribe((data: any) => {
+    this.http.get<any>(id != 0 ? `${this.authService.apiUrl}/student-management/${id}` : `${this.authService.apiUrl}/student-management`, this.home.httpOptions).subscribe((data: any) => {
       this.apiData = data;
       this.updateDataTable(this.apiData); // Cập nhật bảng với dữ liệu mới
     });
@@ -209,7 +210,7 @@ export class StudentComponent implements OnInit, OnDestroy {
     if (this._classId != 0) {
       this.stdRequest.classId = this._classId;
     }
-    this.http.post(`${this.authService.apiUrl}/studentManagement`, this.stdRequest, this.home.httpOptions).subscribe(
+    this.http.post(`${this.authService.apiUrl}/student-management`, this.stdRequest, this.home.httpOptions).subscribe(
       response => {
         this.toastr.success('Create Successful!', 'Success', {
           timeOut: 2000,
@@ -241,7 +242,7 @@ export class StudentComponent implements OnInit, OnDestroy {
       rollNumber: this.stdResponse.rollNumber,
       rollPortal: this.stdResponse.rollPortal
     }
-    this.http.put(`${this.authService.apiUrl}/studentManagement/${this.studentId}`, _studentRequest, this.home.httpOptions).subscribe(
+    this.http.put(`${this.authService.apiUrl}/student-management/${this.studentId}`, _studentRequest, this.home.httpOptions).subscribe(
       response => {
         this.toastr.success('Update Successful!', 'Success', {
           timeOut: 2000,
@@ -264,21 +265,15 @@ export class StudentComponent implements OnInit, OnDestroy {
       userIds: this.userIds
     }
 
-    this.http.put(`${this.authService.apiUrl}/studentManagement/update-class`, _class, this.home.httpOptions).subscribe(
-      response => {
-        this.toastr.success('Move Successful!', 'Success', {
-          timeOut: 2000,
-        });
-        console.log('Move successfully', response);
-        this.router.navigate(['/admin/class/' + this.classId]);
+    this.http.put(`${this.authService.apiUrl}/student-management/update-class`, _class, this.home.httpOptions).subscribe({
+      next: () => {
+        this.toastr.success('Move Successful!', 'Success', { timeOut: 2000 });
+        this.router.navigate([this.urlService.classDetailUrl(this.classId)]);
       },
-      error => {
-        this.toastr.error('Error ', 'Error', {
-          timeOut: 2000,
-        });
-        console.log('Error', error);
+      error: (err) => {
+        this.toastr.error(err, 'Error', { timeOut: 2000 });
       }
-    )
+    });
   }
 
   ngOnDestroy(): void {

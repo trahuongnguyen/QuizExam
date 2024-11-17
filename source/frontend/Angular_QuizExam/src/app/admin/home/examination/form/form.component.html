@@ -1,6 +1,7 @@
 <div class="content-wrapper" [ngClass]="{'content-wrapper-collapsed': admin.isSidebarCollapsed}">
     <h4>Examination</h4>
     <hr class="line">
+
     <div class="row bs-wizard">
         <div class="col-xs-3 bs-wizard-step active">
           <div class="text-center bs-wizard-stepnum">Step 1</div>
@@ -9,38 +10,40 @@
           <div class="bs-wizard-info text-center">Create Exam</div>
         </div>
         
-        <div class="col-xs-3 bs-wizard-step disabled"><!-- complete -->
+        <div class="col-xs-3 bs-wizard-step disabled">
           <div class="text-center bs-wizard-stepnum">Step 2</div>
           <div class="progress"><div class="progress-bar"></div></div>
           <a href="#" class="bs-wizard-dot"></a>
           <div class="bs-wizard-info text-center">Add Student</div>
         </div>
         
-        <div class="col-xs-3 bs-wizard-step disabled"><!-- complete -->
+        <div class="col-xs-3 bs-wizard-step disabled">
           <div class="text-center bs-wizard-stepnum">Step 3</div>
           <div class="progress"><div class="progress-bar"></div></div>
           <a href="#" class="bs-wizard-dot"></a>
-          <div class="bs-wizard-info text-center">Detail</div>
+          <div class="bs-wizard-info text-center">Complete</div>
         </div>
     </div>
+    
     <div class="container">
         <div class="title">
             <h3 class="text-center mt-4">Create Examination</h3>
         </div>
         <div class="content">
             <form (ngSubmit)="createExam()">
-                <div class="row ">
+                <div class="row">
                     <div class="col-md-6">
-                        <div class="group-input">
-                            <label class="group-input-label" for="name">Name</label><br>
-                            <input type="text" name="name" [(ngModel)]="examsForm.name" id="name">
+                        <div class="form-group">
+                            <label for="name">Name</label><br>
+                            <input type="text" class="form-control" name="name" [(ngModel)]="examsForm.name" id="name">
                         </div>
                     </div>
                     <div class="col-md-6">
-                        <div class="group-input">
-                            <label class="group-input-label" for="duration">Duration(minutes)</label> <br>
-                            <select name="duration" id="duration" [(ngModel)]="examsForm.duration">
+                        <div class="form-group">
+                            <label for="duration">Duration(minutes)</label><br>
+                            <select name="duration" class="form-select" id="duration" [(ngModel)]="examsForm.duration">
                                 <option value="30">30</option>
+                                <option value="30">60</option>
                                 <option value="90">90</option>
                                 <option value="120">120</option>
                             </select>
@@ -49,37 +52,31 @@
                 </div>
                 <div class="row">
                     <div class="col-md-6">
-                        <div class="group-input">
-                            <label class="group-input-label" for="startTime">Start
-                                Time</label><br>
-                            <input type="datetime-local" name="startTime" [(ngModel)]="examsForm.startTime"
-                                id="startTime">
+                        <div class="form-group">
+                            <label for="startTime">Start Time</label><br>
+                            <input type="datetime-local" class="form-control" name="startTime" [(ngModel)]="examsForm.startTime" id="startTime">
                         </div>
                     </div>
                     <div class="col-md-6">
-                        <div class="group-input">
-                            <label class="group-input-label" for="endTime">End
-                                Time</label><br>
-                            <input type="datetime-local" name="endTime" [(ngModel)]="examsForm.endTime" id="endTime">
+                        <div class="form-group">
+                            <label for="endTime">End Time</label><br>
+                            <input type="datetime-local" class="form-control" name="endTime" [(ngModel)]="examsForm.endTime" id="endTime">
                         </div>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-md-6">
-                        <div class="group-input">
-                            <label class="group-input-label" for="">Subject</label><br>
-                            <select [(ngModel)]="examsForm.subjectId" name="subjectId" id="subject"
-                                (change)="selectSubject($event)">
+                        <div class="form-group">
+                            <label for="">Subject</label><br>
+                            <select [(ngModel)]="examsForm.subjectId" class="form-select" name="subjectId" id="subject" (change)="selectSubject($event)">
                                 <option *ngFor="let sub of subjects" [value]="sub.id" value="">{{sub.name}}</option>
-                                <!-- <option value="">WS</option>
-                                <option value="">CSS</option> -->
                             </select>
                         </div>
                     </div>
                     <div class="col-md-6">
-                        <div class="group-input">
-                            <label class="group-input-label" for="level">Level</label> <br>
-                            <button type="button" class="form-select button-level" style="text-align: left;" (click)="openPopupLevel()">
+                        <div class="form-group">
+                            <label for="level">Level</label> <br>
+                            <button type="button" class="form-select" (click)="openPopupLevel()">
                                 <!-- Nếu đã có thông tin level, hiển thị text số câu hỏi, nếu chưa có thì hiển thị 'Choose Level' -->
                                 <span *ngIf="selectedLevelsText; else chooseText">{{ selectedLevelsText }}</span>
                                 <ng-template #chooseText>Choose Level</ng-template>
@@ -98,23 +95,23 @@
     </div>
 </div>
 
-<div *ngIf="isPopupLevel" class="modal-backdrop">
-    <div class="modal-content" (click)="$event.stopPropagation()">
-        <div class="modal-header">
-            <span>Enter the number of questions by level</span>
-            <span class="close-icon" (click)="closePopupLevel($event)">&times;</span>
-        </div>
-        <div class="modal-body">
-            <div class="form-level">
+<div *ngIf="isPopupLevel" class="popup-container">
+    <div class="popup-content" (click)="$event.stopPropagation()">
+        <form class="form-popup">
+            <div class="popup-header">
+                <span>Enter the number of questions by level</span>
+                <span class="close-icon" (click)="closePopup()">&times;</span>
+            </div>
+            <div class="popup-body">
                 <div class="form-group" *ngFor="let level of listLevel">
-                    <div class="input-level">
-                        <label for="level{{level.id}}" class="text-popup">{{ level.name }}:</label>
-                        <input type="number" class="form-control" [(ngModel)]="levelId[level.id]" name="{{level.id}}" placeholder="Enter number">
-                    </div>
+                    <label for="level{{level.id}}" class="text-popup">{{ level.name }}:</label>
+                    <input type="number" class="form-control" [(ngModel)]="levelId[level.id]" name="{{level.id}}" placeholder="Enter number">
                     <span class="text-danger error">{{errorMessageLevel[level.id]}}</span>
                 </div>
-                <button type="submit" class="btn btn-primary button" (click)="confirmLevel()">OK</button>
             </div>
-        </div>
+            <div class="popup-footer">
+                <button type="button" class="btn btn-primary button" (click)="confirmLevel()">Save</button>
+            </div>
+        </form>
     </div>
 </div>

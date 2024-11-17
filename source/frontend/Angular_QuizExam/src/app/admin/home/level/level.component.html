@@ -1,11 +1,10 @@
 <div class="content-wrapper" [ngClass]="{'content-wrapper-collapsed': admin.isSidebarCollapsed}">
     <h4>Level</h4>
     <hr class="line">
+
     <div class="d-flex">
         <div class="level">
-            <!-- Bottom Actions  -->
-            <div class="bottom-actions m-2"></div>
-            <div class="m-2 mt-4">
+            <div class="m-2 mt-2">
                 <table class="table" id="example">
                     <thead>
                         <tr>
@@ -66,18 +65,12 @@
         </div>
     </div>
 </div>
-<div *ngIf="isPopupConfirm" class="modal-backdrop-confirm" (click)="closePopup($event)">
-    <div class="modal-content-confirm" (click)="$event.stopPropagation()">
-        <div class="modal-header-confirm">
-            <span>Are you sure?</span>
-            <span class="close-icon" (click)="closePopup($event)">&times;</span>
-        </div>
-        <div class="modal-body-confirm">
-            <p>Are you sure to delete this level?</p>
-        </div>
-        <div class="modal-footer-confirm">
-            <button type="button" class="btn btn-primary button button-yes" (click)="deleteLevel(levelId)">Yes</button>
-            <button type="button" class="btn btn-secondary button button-no" (click)="closePopup($event)">No</button>
-        </div>
-    </div>
-</div>
+
+<app-dialog-popup
+  [isVisible]="isPopupDelete"
+  [title]="dialogTitle"
+  [message]="dialogMessage"
+  [isConfirmationPopup]="isConfirmationPopup"
+  (confirm)="deleteLevel(levelId)"
+  (close)="closePopup()">
+</app-dialog-popup>

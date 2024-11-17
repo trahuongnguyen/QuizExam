@@ -11,7 +11,10 @@ declare var $: any;
 @Component({
   selector: 'app-level',
   templateUrl: './level.component.html',
-  styleUrl: './level.component.css'
+  styleUrls: [
+    './../../../shared/styles/admin/style.css',
+    './level.component.css'
+  ]
 })
 export class LevelComponent implements OnInit, OnDestroy {
   constructor(
@@ -34,7 +37,10 @@ export class LevelComponent implements OnInit, OnDestroy {
   levelId: any;
   name: String = '';
 
-  isPopupConfirm: boolean = false;
+  isPopupDelete: boolean = false;
+  dialogTitle: string = '';
+  dialogMessage: string = '';
+  isConfirmationPopup: boolean = false;
 
   ngOnInit(): void {
     this.titleService.setTitle('List of Levels');
@@ -108,17 +114,17 @@ export class LevelComponent implements OnInit, OnDestroy {
         $('.delete-icon').on('click', (event: any) => {
           const id = $(event.currentTarget).data('id');
           this.levelId = id;
-          this.isPopupConfirm = true;
+          this.dialogTitle = 'Are you sure?';
+          this.dialogMessage = 'Do you really want to delete this Level? This action cannot be undone.';
+          this.isConfirmationPopup = true;
+          this.isPopupDelete = true;
         });
       }
     });
   }
 
-  closePopup(event?: MouseEvent): void {
-    if (event) {
-      event.stopPropagation(); // Ngăn việc sự kiện click ra ngoài ảnh hưởng đến việc đóng modal
-    }
-    this.isPopupConfirm = false;
+  closePopup(): void {
+    this.isPopupDelete = false;
   }
 
   updateDataTable(newData: any[]): void {
@@ -215,8 +221,8 @@ export class LevelComponent implements OnInit, OnDestroy {
   deletingLevel: any;
 
   deleteLevel(id: number): void {
-    this.isPopupConfirm = false;
-    this.http.put(`${this.authService.apiUrl}/level/delete/${id}`, this.home.httpOptions).subscribe(
+    this.isPopupDelete = false;
+    this.http.put(`${this.authService.apiUrl}/level/delete/${id}`, {}, this.home.httpOptions).subscribe(
       response => {
         this.deletingLevel = response;
         this.toastr.success(`Level with name ${this.deletingLevel.name} deleted successfully`, 'Success', {

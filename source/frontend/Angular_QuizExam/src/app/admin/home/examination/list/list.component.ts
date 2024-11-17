@@ -12,7 +12,10 @@ import { Router, ActivatedRoute } from '@angular/router';
 @Component({
   selector: 'app-list',
   templateUrl: './list.component.html',
-  styleUrl: './list.component.css'
+  styleUrls: [
+    './../../../../shared/styles/admin/style.css',
+    './list.component.css'
+  ]
 })
 export class ListComponent implements OnInit {
   constructor(
@@ -72,12 +75,12 @@ export class ListComponent implements OnInit {
   onSearch(): void {
     const term = this.searchTerm.toLowerCase();
     this.filteredExamList = this.examList.filter((exam: any) =>
-      exam.name.toLowerCase().includes(term) || exam.code.toLowerCase().includes(term)
+      exam.subject.name.toLowerCase().includes(term) || exam.code.toLowerCase().includes(term)
     );
     this.calculatePagination();
     this.updatePagedList();
   }
-//  paginstion
+  
   calculatePagination(): void {
     this.totalPages = Math.ceil(this.filteredExamList.length / this.itemsPerPage);
     this.pages = Array.from({ length: this.totalPages }, (_, i) => i + 1);

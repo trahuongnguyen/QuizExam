@@ -44,6 +44,7 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    text-align: left;
 }
 
 .content-error {
@@ -119,6 +120,11 @@
     padding: 12px;
 }
 
+input[type="checkbox"] {
+    cursor: pointer;
+    transform: scale(1.5);
+}
+
 .answers-container .input-group input[type="text"] {
     padding-right: 30px;
 }
@@ -135,11 +141,6 @@
     margin-left: 10px;
 }
 
-input[type="checkbox"] {
-    cursor: pointer;
-    transform: scale(1.5);
-}
-
 .add-answer,
 .remove-question {
     color: var(--color-text);
@@ -147,7 +148,7 @@ input[type="checkbox"] {
     border: none;
     background-color: unset;
     text-align: center;
-    transition: all 0.5s ease;
+    transition: all 0.9s ease;
 }
 
 .add-answer:hover {
@@ -176,5 +177,5 @@ input[type="checkbox"] {
     background-color: unset;
     border: none;
     cursor: pointer;
-    transition: all 0.5s ease;
+    transition: all 0.9s ease;
 }

@@ -1,25 +1,6 @@
-/* Body */
-.content-wrapper {
-    padding: 80px 20px 60px 170px;
-    min-height: 100vh;
-    overflow-x: hidden;
-    background-color: var(--color-background);
-    color: var(--color-text);
-    transition: all 0.5s ease;
-}
-
-.content-wrapper-collapsed {
-    padding-left: 50px;
-}
-
-.line {
-    margin-top: 0;
-}
-
 .sem-container {
     display: flex;
     gap: 10px;
-    margin-bottom: 10px;
 }
 
 .sem-container .btn {
@@ -27,7 +8,7 @@
     border: none;
     color: var(--color-text);
     font-size: 12px;
-    padding: 5px 10px;
+    padding: 6px 12px;
 }
 
 .sem-container .btn:hover {
@@ -41,30 +22,27 @@
     font-weight: bold;
 }
 
-.bottom-actions {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 10px;
+.search-container {
+    width: 300px;
+    position: relative;
 }
 
-.button {
+.search-container .form-control {
+    padding: 5px 11px;
     font-size: 12px;
-    background-color: #aa1210;
-    border: none;
-    border-radius: 6px;
 }
 
-.button:active {
-    background-color: #8f0a0a;
+.search-container .form-control:focus {
+    border-color: #dee2e6;
+    box-shadow: none;
 }
 
-.bottom-actions .icon {
-    line-height: normal;
-    margin-right: 8px;
-}
-
-.container {
-    margin-top: 30px;
+.search-icon {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    color: #888;
 }
 
 .container p {
@@ -109,77 +87,48 @@
     cursor: pointer;
     width: 300px;
     height: 320px;
+    color: var(--color-text);
+    background-color: var(--color-card);
+    transition: all 0.9s ease;
 }
 
-.font-text {
-    font-size: small;
-}
-
-/* search */
-.d-flex {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.search-container {
-    width: 300px; /* Điều chỉnh độ rộng nếu cần */
-    position: relative;/* Moves search input to the right */
-}
-
-.search-container .form-control {
-    width: 100%;
-    padding-right: 30px; /* Tạo khoảng trống cho biểu tượng */
-    font-size: 14px;
-}
-.search-container .form-control:focus {
-    border-color: #dee2e6;
-    box-shadow: none;
-}
-.search-container .form-control::placeholder {
-    color: rgba(0, 0, 0, 0.4); /* Điều chỉnh độ mờ (0.5 = 50%) */
-}
-.search-icon {
-    position: absolute;
-    top: 50%;
-    right: 10px; /* Đặt biểu tượng ở bên phải */
-    transform: translateY(-50%);
-    color: #888; /* Điều chỉnh màu sắc nếu cần */
-}
-
-/* CSS for Pagination */
 .pagination {
     display: flex;
     justify-content: center;
     align-items: center;
-    font-family: Arial, sans-serif;
-    margin-top: 20px;
 }
 
-.pagination a, .pagination span {
-    padding: 8px 12px;
-    margin: 0 5px;
-    text-decoration: none;
-    color: #333;
-    cursor: pointer;
-}
-
-.pagination .current {
-    color: #fff !important;
-    border: none;
-    border-radius: 6px;
+.pagination .paginate_button.disabled,
+.pagination .paginate_button.disabled:hover {
+    cursor: default;
     background: none;
-    background-color: rgba(170, 18, 16, 0.93);
-    padding: 2px 10px;
+    color: var(--color-disable);
+    transition: all 0.9s ease;
 }
 
-.pagination .disabled {
-    color: lightgray;
-    pointer-events: none;
+.pagination .paginate_button.current,
+.pagination .paginate_button.current:hover{
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    background: none;
+    background-color: #aa1210;
+    padding: 2px 12px;
 }
 
+.pagination .paginate_button {
+    margin: 1px;
+    padding: 2px 12px;
+    border-radius: 8px;
+    color: var(--color-text);
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.9s ease;
+}
 
-
+.pagination .paginate_button:hover {
+    background-color: var(--color-page-hover);
+}
 
 @media (min-width: 1400px) {
     .col-lg-3 {

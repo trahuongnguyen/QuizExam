@@ -7,6 +7,7 @@ import { DetailComponent } from './detail/detail.component';
 import { FormsModule } from '@angular/forms';
 import { ExaminationRoutingModule } from './examination-routing.module';
 import { AddStudentComponent } from './add-student/add-student.component';
+import { SharedModule } from '../../../shared/shared.module';
 
 
 @NgModule({
@@ -20,6 +21,7 @@ import { AddStudentComponent } from './add-student/add-student.component';
   imports: [
     CommonModule,
     FormsModule,
+    SharedModule,
     ExaminationRoutingModule,
   ]
 })

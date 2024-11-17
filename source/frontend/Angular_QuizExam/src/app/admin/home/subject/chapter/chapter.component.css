@@ -1,44 +1,3 @@
-/* Body */
-.content-wrapper {
-    padding: 80px 20px 60px 170px;
-    min-height: 100vh;
-    overflow-x: hidden;
-    background-color: var(--color-background);
-    color: var(--color-text);
-    transition: all 0.5s ease;
-}
-
-.content-wrapper-collapsed {
-    padding-left: 50px;
-}
-
-.line {
-    margin-top: 0;
-}
-
-.bottom-actions {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 15px;
-}
-
-.search-container input {
-    padding-right: 40px;
-    border-radius: 5px 0 0 5px;
-}
-
-.search-container span {
-    border-radius: 0 5px 5px 0;
-    cursor: pointer;
-}
-
-.search-container .form-control:focus-visible,
-.search-container .form-control:focus {
-    outline-offset: 0;
-    box-shadow: none;
-    border-color: #dee2e6;
-}
-
 /* table */
 .chapter {
     width: 100%;
@@ -47,7 +6,6 @@
 }
 
 /* button add*/
-
 .btn-chapter {
     height: 72px;
     border: 1px solid #ddd;
@@ -60,13 +18,11 @@
     font-size: x-large;
     margin: 6px;
     color: grey;
-    
-
 }
+
 .btn-chapter .btn-list:hover, .btn-chapter .btn-add:hover {
     cursor: pointer;
     box-shadow: #e9ecef 0px 0px 3px 3px inset;
-    
 }
 
 .add-chapter {

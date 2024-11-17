@@ -85,9 +85,10 @@
                 <div class="form-group">
                     <label for="img" *ngIf="!subjectForm.image" class="label-popup">Image:</label>
                     <input type="file" *ngIf="!subjectForm.image" class="form-control" (change)="chooseImage($event)">  
-                    <div class="image-preview" *ngIf="subjectForm.image">
-                        <img id="image-subject" [src]="subjectForm.image ? (urlService.subjectImageUrl + subjectForm.image) : null" alt="Subject Image">
-                        <span class="remove-image" (click)="removeImage()"><b>&times;</b></span>
+                    <div class="image-preview">
+                        <img id="image-subject" [src]="subjectForm.image ? (urlService.subjectImageUrl + subjectForm.image) : null"
+                            alt="Subject Image" [style.display]="subjectForm.image ? 'block' : 'none'">
+                        <span class="remove-image" *ngIf="subjectForm.image" (click)="removeImage()"><b>&times;</b></span>
                     </div>
                 </div>
             </div>

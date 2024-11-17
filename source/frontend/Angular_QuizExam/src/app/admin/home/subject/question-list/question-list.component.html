@@ -5,10 +5,10 @@
     <!-- Bottom Actions (Create and Export) -->
     <div class="bottom-actions">
         <div>
-            <a class="button button-create" [routerLink]="'../add-new-question'"><span class="mdi mdi-plus icon"></span>Create</a>
+            <a class="button button-create" (click)="navigateToAddQuestion()"><span class="mdi mdi-plus icon"></span>Create</a>
         </div>
         <div>
-            <a (click)="exportPDF()" class="button button-pdf"><span class="mdi mdi-file-pdf icon"></span>Export PDF</a>
+            <a class="button button-pdf" (click)="exportPDF()"><span class="mdi mdi-file-pdf icon"></span>Export PDF</a>
         </div>
     </div>
 

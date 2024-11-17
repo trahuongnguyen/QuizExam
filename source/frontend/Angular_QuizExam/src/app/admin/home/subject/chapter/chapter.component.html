@@ -3,13 +3,6 @@
     <hr class="line">
     <div class="d-flex">
         <div class="chapter">
-            <!-- Bottom Actions  -->
-            <div class="bottom-actions m-2">
-                <!-- <div class="search-container d-flex">
-                    <input type="text" class="form-control" placeholder="Search">
-                    <span class="input-group-text"><i class="fa-solid fa-magnifying-glass"></i></span>
-                </div> -->
-            </div>
             <div class="m-2 mt-4">
                 <table class="table" id="example">
                     <thead>
@@ -29,12 +22,7 @@
                                 <label for="subject" class="col-sm-2 col-form-label">Subject:</label>
                                 <div class="col-sm-10">
                                     <select id="subjectId" name="subjectId" [(ngModel)]="subjectId" class="form-select">
-                                        <!-- <option selected>A</option>
-                                    <option selected>B</option>
-                                    <option selected>C</option> -->
-                                        <!-- Add more options as needed -->
-                                        <option [value]="sub.id" *ngFor="let sub of subjects">{{sub.name}}
-                                        </option>
+                                        <option [value]="sub.id" *ngFor="let sub of subjects">{{sub.name}}</option>
                                     </select>
                                 </div>
                             </div>

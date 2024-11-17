@@ -10,39 +10,38 @@
           <div class="bs-wizard-info text-center">Create Exam</div>
         </div>
         
-        <div class="col-xs-3 bs-wizard-step complete"><!-- complete -->
+        <div class="col-xs-3 bs-wizard-step complete">
           <div class="text-center bs-wizard-stepnum">Step 2</div>
           <div class="progress"><div class="progress-bar"></div></div>
           <a href="#" class="bs-wizard-dot"></a>
           <div class="bs-wizard-info text-center">Add Student</div>
         </div>
         
-        <div class="col-xs-3 bs-wizard-step active"><!-- complete -->
+        <div class="col-xs-3 bs-wizard-step active">
           <div class="text-center bs-wizard-stepnum">Step 3</div>
           <div class="progress"><div class="progress-bar"></div></div>
           <a href="#" class="bs-wizard-dot"></a>
-          <div class="bs-wizard-info text-center">Detail</div>
+          <div class="bs-wizard-info text-center">Complete</div>
         </div>
     </div>
 
-    <!-- Bottom Actions (Back and Export) -->
-    <div class="bottom-actions" [ngClass]="{'d-none': examComponent.step}">
+    <div class="bottom-actions">
         <div>
-            <a href="./admin/home/exam"><span class="mdi mdi-keyboard-backspace" style="font-size: 18px; color: black;"
-                    title="Back to List"></span></a>
+            <span class="mdi mdi-keyboard-backspace" title="Back to List"></span>
         </div>
         <div>
-            <a (click)="exportPDF()" class="btn btn-primary button"><span class="mdi mdi-file-export icon"></span>Export PDF</a>
+            <a class="button button-pdf" (click)="exportPDF()"><span class="mdi mdi-file-pdf icon"></span>Export PDF</a>
         </div>
     </div>
-    <div class="container my-4">
+    
+    <div class="container">
         <!-- Exam details section -->
         <div class="exam-details">
             <!-- Centered title with edit icon -->
             <div class="exam-header">
-                <h4 class="text-center flex-grow-1">Examination Detail</h4>
-                <a href="./admin/home/exam/examform"><i class="fa-solid fa-pen-to-square" style="color: black;"
-                        title="Edit"></i></a>
+                <h4 class="text-center flex-grow-1">Examination Info</h4>
+                <span class="mdi mdi-pencil-box-outline" title="Edit Examination Info" (click)="navigateToAddStudentForExaml()"></span>
+                <span class="mdi mdi-account-edit" title="Register Students for Examination" (click)="navigateToAddStudentForExaml()"></span>
             </div>
 
             <!-- Exam information with two columns -->
@@ -79,11 +78,11 @@
         </div>
 
         <div class="question-section-container">
-            <div *ngFor="let question of selectedExam.questionRecordResponses; let i = index" class="question-section">
-                <h6>Question {{ i + 1 }} : {{ question.content }}</h6>
+            <div class="question-section" *ngFor="let question of selectedExam.questionRecordResponses; let i = index">
+                <h6><b>Question {{ i + 1 }}:</b> {{ question.content }}</h6>
 
                 <div *ngIf="question.image">
-                    <img [src]="'../../../../../../img-question/' + question.image" alt="Question Image">
+                    <img [src]="urlService.questionImageUrl + question.image" alt="Question Image">
                 </div>
 
                 <ng-container *ngIf="question.type === 1; else multipleAnswers">

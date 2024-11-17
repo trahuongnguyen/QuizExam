@@ -6,10 +6,14 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { HomeComponent } from '../home.component';
 import { Title } from '@angular/platform-browser';
 import { AdminComponent } from '../../admin.component';
+
 @Component({
   selector: 'app-profile',
   templateUrl: './profile.component.html',
-  styleUrl: './profile.component.css'
+  styleUrls: [
+    './../../../shared/styles/admin/style.css',
+    './profile.component.css'
+  ]
 })
 export class ProfileComponent implements OnInit {
   user: any;

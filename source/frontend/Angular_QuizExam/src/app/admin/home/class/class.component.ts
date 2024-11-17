@@ -12,7 +12,10 @@ declare var $: any;
 @Component({
   selector: 'app-class',
   templateUrl: './class.component.html',
-  styleUrl: './class.component.css'
+  styleUrls: [
+    './../../../shared/styles/admin/style.css',
+    './class.component.css'
+  ]
 })
 export class ClassComponent implements OnInit, OnDestroy {
   constructor(
@@ -30,8 +33,14 @@ export class ClassComponent implements OnInit, OnDestroy {
   dataTable: any;
   apiData: any;
   infoEdit: any = null;
-  isPopupEdit = false;
-  isPopupCreate = false;
+
+  isPopupCreate: boolean = false;
+  isPopupUpdate: boolean = false;
+  isPopupDelete: boolean = false;
+
+  dialogTitle: string = '';
+  dialogMessage: string = '';
+  isConfirmationPopup: boolean = false;
 
   classId: any;
   ngOnInit(): void {
@@ -107,7 +116,10 @@ export class ClassComponent implements OnInit, OnDestroy {
         $('.delete-icon').on('click', (event: any) => {
           const id = $(event.currentTarget).data('id');
           this.classId = id;
-          this.isPopupConfirm = true;
+          this.dialogTitle = 'Are you sure?';
+          this.dialogMessage = 'Do you really want to delete this Class? This action cannot be undone.';
+          this.isConfirmationPopup = true;
+          this.isPopupDelete = true;
         });
       }
     });
@@ -115,16 +127,13 @@ export class ClassComponent implements OnInit, OnDestroy {
 
   showPopupEdit(id: number): void {
     this.infoEdit = this.apiData.find((item: any) => item.id === id);
-    this.isPopupEdit = true;
+    this.isPopupUpdate = true;
   }
 
-  closePopup(event?: MouseEvent): void {
-    if (event) {
-      event.stopPropagation(); // Ngăn việc sự kiện click ra ngoài ảnh hưởng đến việc đóng modal
-    }
-    this.isPopupEdit = false;
+  closePopup(): void {
+    this.isPopupUpdate = false;
     this.isPopupCreate = false;
-    this.isPopupConfirm = false;
+    this.isPopupDelete = false;
   }
 
 
@@ -234,19 +243,17 @@ export class ClassComponent implements OnInit, OnDestroy {
     )
   }
 
-  isPopupConfirm: boolean = false;
-
   deleteClass(id: number): void {
-    this.isPopupConfirm = false;
-    this.http.delete(`${this.authService.apiUrl}/class/${id}`, this.home.httpOptions).subscribe(
-      () => {
-        console.log(`Class with ID ${id} deleted successfully`);
+    this.isPopupDelete = false;
+    this.http.put(`${this.authService.apiUrl}/class/remove/${id}`, {}, this.home.httpOptions).subscribe({
+      next: () => {
+        this.toastr.success('Delete Successful!', 'Success', { timeOut: 2000 });
         this.reloadTable();
       },
-      error => {
-        console.error('Error deleting item:', error);
+      error: () => {
+        this.toastr.error('Delete Fail!', 'Error', { timeOut: 2000 });
       }
-    );
+    });
   }
 
   exportExcel() {

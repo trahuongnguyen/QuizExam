@@ -7,7 +7,7 @@
             <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12 mb-5" *ngFor="let exam of examList">
                 <div class="card" (click)="openPopupExam(exam.id)">
                     <div class="card-image">
-                        <img [src]="urlService.subjectImageUrl ? (urlService.subjectImageUrl + exam.subject.image) : 'https://hermes.dio.me/articles/cover/8baa0855-4bd5-4abf-a007-48527a7c5859.png'"
+                        <img [src]="exam.subject.image ? (urlService.subjectImageUrl + exam.subject.image) : 'https://hermes.dio.me/articles/cover/8baa0855-4bd5-4abf-a007-48527a7c5859.png'"
                         alt="Quiz Thumbnail">
                     </div>
                     <div class="card-content">

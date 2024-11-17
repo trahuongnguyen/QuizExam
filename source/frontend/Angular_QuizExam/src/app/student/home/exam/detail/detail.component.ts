@@ -49,7 +49,7 @@ export class DetailComponent implements OnInit, OnDestroy {
     this.examId = Number(this.activatedRoute.snapshot.paramMap.get('examId'));
     this.loadData();
     this.setupScrollListener();
-    //this.setupAntiCheatMonitoring();
+    this.setupAntiCheatMonitoring();
   }
 
   loadData(): void {
@@ -182,9 +182,11 @@ export class DetailComponent implements OnInit, OnDestroy {
   };
 
   handleBlur = () => {
-    this.examComponent.mark.warning++;
-    this.setupWarnings();
-    this.updateWarning();
+    if (this.examComponent.mark.warning == null || this.examComponent.mark.warning < 3) {
+      this.examComponent.mark.warning++;
+      this.setupWarnings();
+      this.updateWarning();
+    }
   };
 
   handleFocus = () => {
@@ -192,14 +194,14 @@ export class DetailComponent implements OnInit, OnDestroy {
     this.calculateNewDuration();
   };
 
-  // setupAntiCheatMonitoring() {
-  //   document.addEventListener('keydown', this.preventDeveloperTools); // Ngăn chặn mở Developer Tools
-  //   document.addEventListener('copy', this.preventCopy); // Ngăn chặn sao chép nội dung
-  //   document.addEventListener('contextmenu', this.preventRightClick); // Ngăn chặn menu chuột phải
-  //   window.addEventListener('beforeunload', this.handleBeforeUnload); // Xử lý sự kiện load lại trang
-  //   window.addEventListener('blur', this.handleBlur); // Xử lý sự kiện blur (Check cửa sổ đó bị mất tiêu điểm)
-  //   window.addEventListener('focus', this.handleFocus); // Xử lý sự kiện focus
-  // }
+  setupAntiCheatMonitoring() {
+    document.addEventListener('keydown', this.preventDeveloperTools); // Ngăn chặn mở Developer Tools
+    document.addEventListener('copy', this.preventCopy); // Ngăn chặn sao chép nội dung
+    document.addEventListener('contextmenu', this.preventRightClick); // Ngăn chặn menu chuột phải
+    window.addEventListener('beforeunload', this.handleBeforeUnload); // Xử lý sự kiện load lại trang
+    window.addEventListener('blur', this.handleBlur); // Xử lý sự kiện blur (Check cửa sổ đó bị mất tiêu điểm)
+    window.addEventListener('focus', this.handleFocus); // Xử lý sự kiện focus
+  }
 
   setupScrollListener(): void {
     window.addEventListener('scroll', this.handleScroll);

@@ -2,24 +2,22 @@
     <h4>Examination</h4>
     <hr class="line">
 
-    <div class="d-flex">
-        <!-- Bottom Actions (Create and Export) -->
-        <div class="bottom-actions">
-            <div class="sem-container">
-                <a class="btn btn-outline-light" *ngFor="let sem of semester" [ngClass]="{'active': selectedSem === sem.id}" (click)="selectSem(sem.id)">{{ sem.name }}</a>
-            </div>
+    <div class="bottom-actions">
+        <div class="sem-container">
+            <a class="btn btn-outline-light" *ngFor="let sem of semester" [ngClass]="{'active': selectedSem === sem.id}" (click)="selectSem(sem.id)">{{ sem.name }}</a>
         </div>
-        <!-- Search Input -->
-        <div class="search-container mb-3 position-relative">
-            <input type="text" class="form-control pl-4" placeholder="Search by subject or code"
-                [(ngModel)]="searchTerm" (input)="onSearch()">
+        <div class="search-container">
+            <input type="text" class="form-control" [(ngModel)]="searchTerm" (input)="onSearch()"
+                placeholder="Search by subject or code" >
             <i class="fa-solid fa-magnifying-glass search-icon"></i>
         </div>
-
     </div>
-    <div>
-        <a [routerLink]="'../exam/examform'" class="btn btn-primary button create">Create</a>
+    <div class="bottom-actions">
+        <div>
+            <a [routerLink]="'../exam/create-exam'" class="button button-create"><span class="mdi mdi-plus icon"></span>Create</a>
+        </div>
     </div>
+    
     <div class="container">
         <div class="row">
             <!-- Card 1 -->
@@ -28,8 +26,6 @@
                     <div class="card-image">
                         <img [src]="exam.subject.image ? (urlService.subjectImageUrl + exam.subject.image) : 'https://i.pinimg.com/564x/33/34/66/333466cd07d18eae8c6546e298f2b9c7.jpg'"
                             alt="Quiz Thumbnail">
-                        <!-- <img src="https://i.pinimg.com/564x/33/34/66/333466cd07d18eae8c6546e298f2b9c7.jpg"
-                            alt="Quiz Thumbnail"> -->
                     </div>
                     <div class="card-content">
                         <span class="card-title">{{exam.subject.name}}</span>
@@ -44,9 +40,9 @@
 
         <!-- Nút phân trang -->
         <div class="pagination">
-            <a (click)="previousPage()" [class.disabled]="currentPage === 1">Previous</a>
-            <span *ngFor="let page of pages" (click)="goToPage(page)" [class.current]="page === currentPage">{{ page }}</span>
-            <a (click)="nextPage()" [class.disabled]="currentPage === totalPages">Next</a>
+            <a class="paginate_button" [class.disabled]="currentPage === 1" (click)="previousPage()">Previous</a>
+            <span class="paginate_button" [class.current]="page === currentPage" *ngFor="let page of pages" (click)="goToPage(page)">{{ page }}</span>
+            <a class="paginate_button" [class.disabled]="currentPage === totalPages" (click)="nextPage()">Next</a>
         </div>
         
     </div>
