@@ -2,6 +2,7 @@ package com.example.quizexam_student.controller;
 
 import com.example.quizexam_student.bean.request.*;
 import com.example.quizexam_student.bean.response.*;
+import com.example.quizexam_student.entity.StudentDetail;
 import com.example.quizexam_student.entity.User;
 import com.example.quizexam_student.service.*;
 import jakarta.servlet.http.HttpServletResponse;
@@ -32,30 +33,30 @@ public class StudentController {
         return studentService.getAllStudents();
     }
 
-    @GetMapping("/all-student-inactive")
-    public List<StudentResponse> getAllStudentsInactive(){
-        return studentService.getAllStudentsAndStatusInactive();
+//    @GetMapping("/all-student-inactive")
+//    public List<StudentResponse> getAllStudentsInactive(){
+//        return studentService.getAllStudentsAndStatusInactive();
+//    }
+
+    @GetMapping("/{status}")
+    public List<StudentResponse> getAllStudentsNoneClass(@PathVariable Integer status){
+        return studentService.getAllStudentsNoneClass(status);
     }
 
-    @GetMapping("")
-    public List<StudentResponse> getAllStudentsNoneClass(){
-        return studentService.getAllStudentsNoneClass();
+//    @GetMapping("/inactive")
+//    public List<StudentResponse> getAllStudentsNoneClassInactive(){
+//        return studentService.getAllStudentsNoneClassAndStatusInactive();
+//    }
+
+    @GetMapping("/{classId}/{status}")
+    public List<StudentResponse> getAllStudentsByClass(@PathVariable int classId, @PathVariable Integer status){
+        return studentService.getAllStudentsByClass(classId, status);
     }
 
-    @GetMapping("/inactive")
-    public List<StudentResponse> getAllStudentsNoneClassInactive(){
-        return studentService.getAllStudentsNoneClassAndStatusInactive();
-    }
-
-    @GetMapping("/{classId}")
-    public List<StudentResponse> getAllStudentsByClass(@PathVariable int classId){
-        return studentService.getAllStudentsByClass(classId);
-    }
-
-    @GetMapping("/inactive/{classId}")
-    public List<StudentResponse> getAllStudentsByClassInactive(@PathVariable int classId){
-        return studentService.getAllStudentsByClassAndStatusInactive(classId);
-    }
+//    @GetMapping("/inactive/{classId}")
+//    public List<StudentResponse> getAllStudentsByClassInactive(@PathVariable int classId){
+//        return studentService.getAllStudentsByClassAndStatusInactive(classId);
+//    }
 
     @PostMapping("")
     public ResponseEntity<RegisterResponse> addStudent(@RequestBody @Valid StudentRequest studentRequest) {
@@ -76,15 +77,13 @@ public class StudentController {
     }
 
     @PutMapping("/remove/{id}")
-    public ResponseEntity<String> deleteStudent(@PathVariable int id) {
-        studentService.deleteStudent(id);
-        return ResponseEntity.ok("Student deleted successfully");
+    public ResponseEntity<UserResponse> deleteStudent(@PathVariable int id) {
+        return ResponseEntity.ok(studentService.deleteStudent(id));
     }
 
     @PutMapping("/restore/{id}")
-    public ResponseEntity<String> restoreStudent(@PathVariable int id) {
-        studentService.restoreStudent(id);
-        return ResponseEntity.ok("Student restored successfully");
+    public ResponseEntity<UserResponse> restoreStudent(@PathVariable int id) {
+        return ResponseEntity.ok(studentService.restoreStudent(id));
     }
 
     @PostMapping("/export/excel")

@@ -50,6 +50,10 @@ export class ChapterComponent implements OnInit, OnDestroy {
   semId: number = 1;
   subjectId: number = 1;
   name: String = '';
+  dialogTitle: string = '';
+  dialogMessage: string = '';
+  isConfirmationPopup: boolean = false;
+  isPopupDelete: boolean = false;
 
   ngOnInit(): void {
     this.titleService.setTitle('Chapters');
@@ -137,6 +141,14 @@ export class ChapterComponent implements OnInit, OnDestroy {
             }
           }, 0);
 
+        });
+        $('.delete-icon').on('click', (event: any) => {
+          const id = $(event.currentTarget).data('id');
+          this.chapterId = id;
+          this.dialogTitle = 'Are you sure?';
+          this.dialogMessage = 'Do you really want to delete this Level? This action cannot be undone.';
+          this.isConfirmationPopup = true;
+          this.isPopupDelete = true;
         });
         $('.btn-add').on('click', (event: any) => {
           this.subjectId = this._subjectId;
@@ -244,9 +256,33 @@ export class ChapterComponent implements OnInit, OnDestroy {
     )
   }
 
+  deletingChapter: any;
+
+  deleteChapter(id: number): void {
+    this.isPopupDelete = false;
+    this.http.put(`${this.authService.apiUrl}/chapter/remove/${id}`, {}, this.home.httpOptions).subscribe(
+      response => {
+        this.deletingChapter = response;
+        this.toastr.success(`Chapter with name ${this.deletingChapter.name} deleted successfully`, 'Success', {
+          timeOut: 2000,
+        });
+        this.reloadTable(this.subjectId);
+      },
+      error => {
+        this.toastr.error('Error deleting item!', 'Error', {
+          timeOut: 2000,
+        });
+      }
+    );
+  }
+
   closeform() {
     document.getElementById('addChapter')?.classList.remove('show');
     document.getElementById('updateChapter')?.classList.remove('show');
+  }
+
+  closePopup(): void {
+    this.isPopupDelete = false;
   }
 
   ngOnDestroy(): void {

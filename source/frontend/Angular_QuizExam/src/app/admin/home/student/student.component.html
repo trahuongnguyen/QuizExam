@@ -182,3 +182,30 @@
         </form>
     </div>
 </div>
+
+<app-dialog-popup
+  [isVisible]="isPopupDelete"
+  [title]="dialogTitle"
+  [message]="dialogMessage"
+  [isConfirmationPopup]="isConfirmationPopup"
+  (confirm)="deleteStudent(studentId)"
+  (close)="closePopup()">
+</app-dialog-popup>
+
+<app-dialog-popup
+  [isVisible]="isPopupResetPassword"
+  [title]="dialogTitle"
+  [message]="dialogMessage"
+  [isConfirmationPopup]="isConfirmationPopup"
+  (confirm)="resetPasswordStudent()"
+  (close)="closePopup()">
+</app-dialog-popup>
+
+<app-dialog-popup
+  [isVisible]="isPopupBackupRestore"
+  [title]="dialogTitle"
+  [message]="dialogMessage"
+  [isConfirmationPopup]="isConfirmationPopup"
+  (confirm)="backupRestoreStudent()"
+  (close)="closePopup()">
+</app-dialog-popup>

@@ -50,6 +50,13 @@ export class StudentComponent implements OnInit, OnDestroy {
 
   studentId: any;
 
+  dialogTitle: string = '';
+  dialogMessage: string = '';
+  isConfirmationPopup: boolean = false;
+  isPopupDelete: boolean = false;
+  isPopupResetPassword: boolean = false;
+  isPopupBackupRestore: boolean = false;
+
   get formattedDob(): string {
     const dob = this.stdResponse.userResponse.dob;
     // Chuyển đổi chuỗi "dd-MM-yyyy" sang định dạng "yyyy-MM-dd"
@@ -70,7 +77,7 @@ export class StudentComponent implements OnInit, OnDestroy {
     this.authService.entityExporter = 'studentManagement';
     this._classId = Number(this.activatedRoute.snapshot.params['classId']) ?? 0;
     if (this._classId != 0 && !Number.isNaN(this._classId)) {
-      this.http.get<any>(`${this.authService.apiUrl}/student-management/${this._classId}`, this.home.httpOptions).subscribe((data: any) => {
+      this.http.get<any>(`${this.authService.apiUrl}/student-management/${this._classId}/${this.statusId}`, this.home.httpOptions).subscribe((data: any) => {
         this.apiData = data;
         this.authService.listExporter = data;
         this.initializeDataTable();
@@ -78,7 +85,7 @@ export class StudentComponent implements OnInit, OnDestroy {
     }
     else {
       this._classId = 0;
-      this.http.get<any>(`${this.authService.apiUrl}/student-management`, this.home.httpOptions).subscribe((data: any) => {
+      this.http.get<any>(`${this.authService.apiUrl}/student-management/${this.statusId}`, this.home.httpOptions).subscribe((data: any) => {
         this.apiData = data;
         this.initializeDataTable();
       });
@@ -123,16 +130,16 @@ export class StudentComponent implements OnInit, OnDestroy {
               if (data == null) {
                 return `<input type="checkbox" class="icon-action chk_box" data-id="${row.userResponse.id}">
                 <span class="mdi mdi-pencil icon-action edit-icon" title="Edit" data-id="${row.userResponse.id}"></span>
-                <span class="mdi mdi-lock-reset icon-action reset-password-icon" title="Reset Password" data-id="${row.id}"></span>
-                <span class="mdi mdi-delete-forever icon-action delete-icon" title="Delete"></span>`;
+                <span class="mdi mdi-lock-reset icon-action reset-password-icon" title="Reset Password" data-id="${row.userResponse.id}"></span>
+                <span class="mdi mdi-delete-forever icon-action delete-icon" title="Delete" data-id="${row.userResponse.id}"></span>`;
               }
               else {
                 return `<span class="mdi mdi-pencil icon-action edit-icon" title="Edit" data-id="${row.userResponse.id}"></span>
-                <span class="mdi mdi-lock-reset icon-action reset-password-icon" title="Reset Password" data-id="${row.id}"></span>
-                <span class="mdi mdi-delete-forever icon-action delete-icon" title="Delete"></span>`;
+                <span class="mdi mdi-lock-reset icon-action reset-password-icon" title="Reset Password" data-id="${row.userResponse.id}"></span>
+                <span class="mdi mdi-delete-forever icon-action delete-icon" title="Delete" data-id="${row.userResponse.id}"></span>`;
               }
             }
-            return `<span class="mdi mdi-backup-restore icon-action backup-restore-icon" title="Backup Restore" data-id="${row.id}"></span>`;
+            return `<span class="mdi mdi-backup-restore icon-action backup-restore-icon" title="Backup Restore" data-id="${row.userResponse.id}"></span>`;
           },
         },
       ],
@@ -157,7 +164,32 @@ export class StudentComponent implements OnInit, OnDestroy {
     $('.edit-icon').on('click', (event: any) => {
       const id = $(event.currentTarget).data('id');
       this.studentId = id;
+      console.log(this.studentId);
       this.showPopupEdit(id);
+    });
+
+    $('.reset-password-icon').on('click', (event: any) => {
+      this.studentId = $(event.currentTarget).data('id');
+      this.dialogTitle = 'Are you sure?';
+      this.dialogMessage = 'Do you want to reset the password for this Student?';
+      this.isConfirmationPopup = true;
+      this.isPopupResetPassword = true;
+    });
+
+    $('.delete-icon').on('click', (event: any) => {
+      this.studentId = $(event.currentTarget).data('id');
+      this.dialogTitle = 'Are you sure?';
+      this.dialogMessage = 'Do you really want to delete this Student?';
+      this.isConfirmationPopup = true;
+      this.isPopupDelete = true;
+    });
+
+    $('.backup-restore-icon').on('click', (event: any) => {
+      this.studentId = $(event.currentTarget).data('id');
+      this.dialogTitle = 'Are you sure?';
+      this.dialogMessage = "Do you really want to recover this Student's account?";
+      this.isConfirmationPopup = true;
+      this.isPopupBackupRestore = true;
     });
 
     // $('.create').on('click', () => {
@@ -219,6 +251,9 @@ export class StudentComponent implements OnInit, OnDestroy {
     this.isPopupUpdate = false;
     this.isPopupCreate = false;
     this.isPopupMove = false;
+    this.isPopupDelete = false;
+    this.isPopupBackupRestore = false;
+    this.isPopupResetPassword = false;
   }
   
   stdRequest: any = {
@@ -244,7 +279,7 @@ export class StudentComponent implements OnInit, OnDestroy {
   }
 
   reloadTable(id: number): void {
-    this.http.get<any>(id != 0 ? `${this.authService.apiUrl}/student-management/${id}` : `${this.authService.apiUrl}/student-management`, this.home.httpOptions).subscribe((data: any) => {
+    this.http.get<any>(id != 0 ? `${this.authService.apiUrl}/student-management/${id}/${this.statusId}` : `${this.authService.apiUrl}/student-management/${this.statusId}`, this.home.httpOptions).subscribe((data: any) => {
       this.apiData = data;
       this.updateDataTable(this.apiData); // Cập nhật bảng với dữ liệu mới
     });
@@ -301,6 +336,50 @@ export class StudentComponent implements OnInit, OnDestroy {
         console.log(error);
       }
     )
+  }
+
+  deletingStudent: any;
+
+  deleteStudent(id: number): void {
+    this.isPopupDelete = false;
+    this.http.put(`${this.authService.apiUrl}/student-management/remove/${id}`, {}, this.home.httpOptions).subscribe(
+      response => {
+        this.deletingStudent = response;
+        this.toastr.success(`Student with name ${this.deletingStudent.fullName} deleted successfully`, 'Success', {
+          timeOut: 2000,
+        });
+        this.reloadTable(this._classId);
+      },
+      error => {
+        this.toastr.error('Error deleting item!', 'Error', {
+          timeOut: 2000,
+        });
+      }
+    );
+  }
+
+  resetPasswordStudent(): void {
+    this.http.put(`${this.authService.apiUrl}/user/reset-password/${this.studentId}`, {}, this.home.httpOptions).subscribe(
+      response => {
+        this.toastr.success('Reset Successful!', 'Success', { timeOut: 2000 });
+        this.reloadTable(this._classId);
+      },
+      error => {
+        this.toastr.error('Reset Fail!', 'Error', { timeOut: 2000 });
+      }
+    );
+  }
+
+  backupRestoreStudent(): void {
+    this.http.put(`${this.authService.apiUrl}/student-management/restore/${this.studentId}`, {}, this.home.httpOptions).subscribe(
+      response => {
+        this.toastr.success('Backup Successful!', 'Success', { timeOut: 2000 });
+        this.reloadTable(this._classId);
+      },
+      error => {
+        this.toastr.error('Backup Fail!', 'Error', { timeOut: 2000 });
+      }
+    );
   }
 
   moveStudent(): void {

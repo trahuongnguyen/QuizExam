@@ -12,7 +12,7 @@ public interface SubjectService {
     List<Subject> findAll();
     Subject findById(int id);
     Subject save(SubjectRequest subjectRequest);
-    void deleteById(int id);
+    Subject deleteById(int id);
     Subject update(int id, SubjectRequest subjectRequest);
 
     List<Subject> getAllSubjectBySem(int id);

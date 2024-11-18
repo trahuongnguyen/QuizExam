@@ -49,9 +49,9 @@ public class UserController {
             roles.forEach(role1 -> {
                 users.addAll(userService.getUserByRolePermission(role1, status));
             });
-            if (users.isEmpty()){
-                throw new EmptyException("employee", "Employee List is empty");
-            }
+//            if (users.isEmpty()){
+//                throw new EmptyException("employee", "Employee List is empty");
+//            }
             return users;
         }
         return null;
@@ -91,9 +91,8 @@ public class UserController {
     }
 
     @PutMapping("/restore/{id}")
-    public ResponseEntity<String> restoreUser(@PathVariable int id){
-        userService.restoreUser(id);
-        return ResponseEntity.ok("User restored successfully");
+    public ResponseEntity<User> restoreUser(@PathVariable int id){
+        return ResponseEntity.ok(userService.restoreUser(id));
     }
 
     @PostMapping("/export/excel")

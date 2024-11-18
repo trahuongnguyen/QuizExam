@@ -50,6 +50,9 @@ public class ClassesServiceImpl implements ClassesService {
             throw new NotFoundException("class", "Class not found.");
         }
         classDelete.setStatus(0);
+        classDelete.getStudentDetails().forEach(studentDetail -> {
+            studentDetail.getUser().setStatus(0);
+        });
         return classesRepository.save(classDelete);
     }
 

@@ -67,7 +67,7 @@ export class AddStudentComponent implements OnInit, OnDestroy {
     const examRequest = this.http.get<any>(`${this.authService.apiUrl}/exam/${this.examId}`, this.home.httpOptions);
     const classRequest = this.http.get<any>(`${this.authService.apiUrl}/class`, this.home.httpOptions);
     const studentForExamRequest = this.http.get<any>(`${this.authService.apiUrl}/exam/${this.examId}/students`, this.home.httpOptions);
-    const studentNoClassRequest = this.http.get<any>(`${this.authService.apiUrl}/student-management`, this.home.httpOptions);
+    const studentNoClassRequest = this.http.get<any>(`${this.authService.apiUrl}/student-management/1`, this.home.httpOptions);
 
     forkJoin([examRequest, classRequest, studentForExamRequest, studentNoClassRequest])
       .subscribe(([examResponse, classResponse, studentForExamResponse, studentNoClassResponse]) => {
@@ -128,8 +128,8 @@ export class AddStudentComponent implements OnInit, OnDestroy {
 
   filterStudentsByClass(): void {
     const url = this.classId == 0 
-      ? `${this.authService.apiUrl}/student-management` 
-      : `${this.authService.apiUrl}/student-management/${this.classId}`;
+      ? `${this.authService.apiUrl}/student-management/1` 
+      : `${this.authService.apiUrl}/student-management/${this.classId}/1`;
     
     this.http.get<any>(url, this.home.httpOptions).subscribe(response => {
       this.listStudentByClass = response;

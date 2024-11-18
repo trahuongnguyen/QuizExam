@@ -25,6 +25,7 @@ public class ExaminationMapper {
         examinationResponse.setDuration(examination.getDuration());
         examinationResponse.setCode(examination.getCode());
         examinationResponse.setSubject(examination.getSubject());
+        examinationResponse.setMaxScore(examination.getMaxScore());
         return examinationResponse;
     }
 }

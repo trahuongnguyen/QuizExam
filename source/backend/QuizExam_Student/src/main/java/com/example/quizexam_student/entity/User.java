@@ -1,5 +1,6 @@
 package com.example.quizexam_student.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -42,10 +43,12 @@ public class User {
     @Column(name = "gender", nullable = false)
     private int gender;
 
+    @JsonIgnore
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "role_id")
     private Role role;
 
+    @JsonIgnore
     @OneToOne(mappedBy = "user")
     private StudentDetail studentDetail;
 }

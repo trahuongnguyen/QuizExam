@@ -18,15 +18,20 @@ export class MarkComponent implements OnInit {
   constructor(private authService: AuthService, private home: HomeComponent, private http: HttpClient) { }
 
   ngOnInit(): void {
-    this.http.get<any>(`${this.authService.apiUrl}/mark/sem/${this.selectedSem}`, this.home.httpOptions).subscribe((data: any) => {
-      this.subjects = data;
-      console.log(this.subjects);
-    }, error => {
-      console.error('Error fetching semesters:', error);
-    });
+    this.selectSem(this.selectedSem);
 
     this.http.get<any>(`${this.authService.apiUrl}/sem`, this.home.httpOptions).subscribe(response => {
       this.semesters = response;
+    }, error => {
+      console.error('Error fetching semesters:', error);
+    });
+  }
+
+  selectSem(sem: number): void {
+    this.selectedSem = sem;
+    this.http.get<any>(`${this.authService.apiUrl}/mark/sem/${this.selectedSem}`, this.home.httpOptions).subscribe((data: any) => {
+      this.subjects = data;
+      console.log(this.subjects);
     }, error => {
       console.error('Error fetching semesters:', error);
     });

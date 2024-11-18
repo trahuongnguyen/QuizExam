@@ -2,6 +2,7 @@ package com.example.quizexam_student.service;
 
 import com.example.quizexam_student.bean.request.StudentRequest;
 import com.example.quizexam_student.bean.response.StudentResponse;
+import com.example.quizexam_student.bean.response.UserResponse;
 import com.example.quizexam_student.entity.StudentDetail;
 import com.example.quizexam_student.entity.User;
 import org.springframework.stereotype.Service;
@@ -11,15 +12,14 @@ import java.util.List;
 @Service
 public interface StudentService {
     List<StudentResponse> getAllStudents();
-    List<StudentResponse> getAllStudentsAndStatusInactive();
+
 
     StudentDetail getStudentDetailByUser(User user);
 
-    List<StudentResponse> getAllStudentsNoneClass();
-    List<StudentResponse> getAllStudentsNoneClassAndStatusInactive();
+    List<StudentResponse> getAllStudentsNoneClass(Integer status);
 
-    List<StudentResponse> getAllStudentsByClass(int classId);
-    List<StudentResponse> getAllStudentsByClassAndStatusInactive(int classId);
+
+    List<StudentResponse> getAllStudentsByClass(int classId, Integer status);
 
     StudentDetail addStudent(StudentRequest studentRequest);
 
@@ -27,7 +27,7 @@ public interface StudentService {
 
     void updateClassForStudents(List<Integer> userIds, int classId);
 
-    void deleteStudent(int id);
+    UserResponse deleteStudent(int id);
 
-    void restoreStudent(int id);
+    UserResponse restoreStudent(int id);
 }

@@ -65,9 +65,9 @@ public class SubjectServiceImpl implements SubjectService {
     }
 
     @Override
-    public void deleteById(int id) {
+    public Subject deleteById(int id) {
         Subject subject = subjectRepository.findSubjectByIdAndStatus(id, 1).orElseThrow(() -> new NotFoundException("subject", "Subject not found"));
         subject.setStatus(0);
-        subjectRepository.save(subject);
+        return subjectRepository.save(subject);
     }
 }

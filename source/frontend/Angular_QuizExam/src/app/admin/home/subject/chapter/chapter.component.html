@@ -88,3 +88,12 @@
     </div>
 
 </div>
+
+<app-dialog-popup
+  [isVisible]="isPopupDelete"
+  [title]="dialogTitle"
+  [message]="dialogMessage"
+  [isConfirmationPopup]="isConfirmationPopup"
+  (confirm)="deleteChapter(chapterId)"
+  (close)="closePopup()">
+</app-dialog-popup>
