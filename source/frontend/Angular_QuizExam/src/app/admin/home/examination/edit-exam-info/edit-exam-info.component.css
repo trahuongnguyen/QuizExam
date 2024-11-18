@@ -1,0 +1,54 @@
+.container {
+    margin-top: 50px;
+    padding: 10px;
+    max-width: 800px;
+    box-shadow: 0 2px 4px rgba(0.1, 0.1, 0.1, 0.2);
+    border-radius: 6px;
+    background-color: var(--color-card);
+    color: var(--color-text);
+    transition: all 0.9s ease;
+}
+
+.container .title h3 {
+    font-weight: bold;
+}
+
+.container .content {
+    padding: 0 20px 20px 20px;
+}
+
+.container .content label {
+    font-weight: bold;
+    padding-bottom: 3px;
+    padding-top: 30px;
+}
+
+.container .content .form-control, 
+.container .content .form-select {
+    width: 100%;
+    min-height: 35px;
+    background-color: var(--color-input-exam);
+    color: var(--color-text);
+    border: none;
+    border-radius: 5px;
+}
+
+.form-select {
+    text-align: left;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: inline-block;
+}
+
+.w-30 {
+    width: 30%;
+    margin: auto;
+}
+
+.w-30 .button {
+    color: white;
+    background-color: #AA1210;
+    margin-right: 20px;
+    width: 100%;
+}

@@ -3,13 +3,10 @@
     cursor: pointer;
 }
 
-/* Exam details section with box shadow */
-.exam-details {
-    position: relative;
+.exam-detail {
     margin: 0 auto 20px auto;
-    padding: 10px;
+    padding: 20px 10px 10px 10px;
     width: 80%;
-    min-height: 200px;
     background-color: var(--color-card);
     color: var(--color-text);
     border-radius: 8px;
@@ -28,11 +25,7 @@
     cursor: pointer;
 }
 
-.exam-details .row {
-    padding-left: 150px;
-}
-
-.exam-details p {
+.exam-detail p {
     margin-bottom: 0.5rem;
 }
 
@@ -52,7 +45,6 @@
 
 /* Question section with box shadow (same as exam-details) */
 .question-section-container {
-    position: relative;
     margin: 0 auto 0 auto;
     padding: 20px;
     width: 80%;

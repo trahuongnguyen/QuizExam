@@ -18,8 +18,8 @@ public interface UserService {
     User saveUser(UserRequest userRequest);
     List<UserResponse> getUserByRolePermission(Role role, Integer status);
     User changePassword(PasswordRequest passwordRequest);
-    void deleteUserById(int id);
+    User deleteUserById(int id);
     User updateUser(int id, UserRequest userRequest);
     User resetPassword(int id);
-    void restoreUser(int id);
+    User restoreUser(int id);
 }

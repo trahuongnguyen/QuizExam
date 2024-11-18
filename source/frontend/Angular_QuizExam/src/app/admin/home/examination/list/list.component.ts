@@ -55,6 +55,10 @@ export class ListComponent implements OnInit {
     })
   }
 
+  navigateToCreateExam(): void {
+    this.router.navigate([this.urlService.createExamUrl()]);
+  }
+
   selectSem(sem: number): void {
     this.selectedSem = sem;
     this.http.get<any>(`${this.authService.apiUrl}/exam/sem/${this.selectedSem}`, this.home.httpOptions).subscribe((data: any) => {

@@ -206,9 +206,8 @@
     right: 24px;
     background: var(--color-menu);
     width: 200px;
-    box-sizing: 0 5px 25px rgba(0, 0, 0, 0.1);
     border-radius: 15px;
-    transition: all 0.9s ease;
+    transition: opacity 0.5s ease, background-color 0.9s ease;
     visibility: hidden;
     opacity: 0;
 }
@@ -227,7 +226,7 @@
     width: 20px;
     height: 20px;
     background: var(--color-menu);
-    transition: all 0.9s ease;
+    transition: opacity 0.5s ease, background-color 0.9s ease;
     transform: rotate(45deg);
 }
 

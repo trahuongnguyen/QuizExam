@@ -8,6 +8,7 @@ import com.example.quizexam_student.bean.response.UserResponse;
 import com.example.quizexam_student.entity.Role;
 import com.example.quizexam_student.entity.User;
 import com.example.quizexam_student.exception.EmptyException;
+import com.example.quizexam_student.mapper.UserMapper;
 import com.example.quizexam_student.service.ExportService;
 import com.example.quizexam_student.service.RoleService;
 import com.example.quizexam_student.service.UserService;
@@ -56,6 +57,11 @@ public class UserController {
         return null;
     }
 
+    @GetMapping("/find/{id}")
+    public UserResponse getEmployeeById(@PathVariable Integer id) {
+        return UserMapper.convertToResponse(userService.findById(id));
+    }
+
     @GetMapping("/employee")
     public List<Role> getRolePermissionToEmployees() {
         String email = ((org.springframework.security.core.userdetails.User) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
@@ -70,9 +76,8 @@ public class UserController {
     }
 
     @PutMapping("/remove/{id}")
-    public ResponseEntity<String> remove(@PathVariable int id){
-        userService.deleteUserById(id);
-        return new ResponseEntity<>("User deleted successfully", HttpStatus.OK);
+    public UserResponse remove(@PathVariable int id) {
+        return UserMapper.convertToResponse(userService.deleteUserById(id));
     }
 
     @PutMapping("/{id}")
@@ -80,7 +85,7 @@ public class UserController {
         return ResponseEntity.ok(userService.updateUser(id, userRequest));
     }
 
-    @PutMapping("/resetPassword/{id}")
+    @PutMapping("/reset-password/{id}")
     public ResponseEntity<User> resetPassword(@PathVariable int id) {
         return ResponseEntity.ok(userService.resetPassword(id));
     }
@@ -112,5 +117,4 @@ public class UserController {
         userPDFExporter.export(response);
         return new ResponseEntity<>("Export To PDF Successfully", HttpStatus.OK);
     }
-
 }

@@ -147,9 +147,12 @@ public class ExaminationServiceImpl implements ExaminationService {
         markList.stream().peek(mark -> {mark.setStudentDetail(null); mark.setExamination(null);}).toList();
         Examination examination = examinationRepository.findById(examinationId).orElse(null);
         markRepository.deleteAll(markList);
-        studentIds.removeIf(studentId ->
-                markRepository.findAllByStudentDetailAndScoreIsNullAndBeginTimeIsNotNull(studentRepository.findById(studentId).orElse(null)).size()>0
-                );
+        // Loại bỏ sinh viên đã có điểm trong kỳ thi
+        studentIds.removeIf(studentId -> {
+            StudentDetail student = studentRepository.findById(studentId).orElse(null);
+            if (student == null) return false;  // Nếu không tìm thấy sinh viên, không xóa khỏi danh sách
+            return !markRepository.findAllByStudentDetailAndScoreIsNullAndBeginTimeIsNotNull(student).isEmpty();
+        });
         return studentRepository.findAllByUserIdIn(
                 studentIds.stream().peek(studentId->{
                     Mark mark = new Mark();

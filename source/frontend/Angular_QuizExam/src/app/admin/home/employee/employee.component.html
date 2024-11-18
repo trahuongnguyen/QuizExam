@@ -2,15 +2,13 @@
     <h4>Employee</h4>
     <hr class="line">
 
-    <!-- Bottom Actions (Create and Export) -->
     <div class="bottom-actions">
         <div>
-            <a class="button button-create create"><span class="mdi mdi-plus icon"></span>Create</a>
+            <a class="button button-create" (click)="openPopupCreate()"><span class="mdi mdi-plus icon"></span>Create</a>
         </div>
         <div>
-            <a (click)="exportExcel()" class="button button-excel"><span
-                    class="mdi mdi-file-excel icon"></span>Export Excel</a>
-            <a (click)="exportPDF()" class="button button-pdf"><span class="mdi mdi-file-pdf icon"></span>Export PDF</a>
+            <a class="button button-excel" (click)="exportExcel()"><span class="mdi mdi-file-excel icon"></span>Export Excel</a>
+            <a class="button button-pdf" (click)="exportPDF()"><span class="mdi mdi-file-pdf icon"></span>Export PDF</a>
         </div>
     </div>
 
@@ -41,35 +39,35 @@
             <table class="popup-table">
                 <tr>
                     <td><strong>ID</strong></td>
-                    <td>{{ infoDetail?.id }}</td>
+                    <td>{{ employeeForm.id }}</td>
                 </tr>
                 <tr>
                     <td><strong>Full Name</strong></td>
-                    <td>{{ infoDetail?.fullName }}</td>
+                    <td>{{ employeeForm.fullName }}</td>
                 </tr>
                 <tr>
                     <td><strong>Date of Birth</strong></td>
-                    <td>{{ infoDetail?.dob }}</td>
+                    <td>{{ employeeForm.dob }}</td>
                 </tr>
                 <tr>
                     <td><strong>Gender</strong></td>
-                    <td>{{ infoDetail?.gender == 1 ? "Male" : "Female" }}</td>
+                    <td>{{ employeeForm.gender == 1 ? "Male" : "Female" }}</td>
                 </tr>
                 <tr>
                     <td><strong>Email</strong></td>
-                    <td>{{ infoDetail?.email }}</td>
+                    <td>{{ employeeForm.email }}</td>
                 </tr>
                 <tr>
                     <td><strong>Phone Number</strong></td>
-                    <td>{{ infoDetail?.phoneNumber }}</td>
+                    <td>{{ employeeForm.phoneNumber }}</td>
                 </tr>
                 <tr>
                     <td><strong>Address</strong></td>
-                    <td>{{ infoDetail?.address }}</td>
+                    <td>{{ employeeForm.address }}</td>
                 </tr>
                 <tr>
                     <td><strong>Role</strong></td>
-                    <td>{{ infoDetail?.role.name }}</td>
+                    <td>{{ employeeForm.role.name }}</td>
                 </tr>
             </table>
         </div>
@@ -90,41 +88,41 @@
                     <div class="col-6">
                         <div class="form-group">
                             <label for="fullName" class="text-popup">Full Name:</label>
-                            <input type="text" class="form-control" [(ngModel)]="fullName" name="fullName"
+                            <input type="text" class="form-control" [(ngModel)]="employeeForm.fullName" name="fullName"
                                 placeholder="Enter Full Name">
                         </div>
                         <div class="form-group">
                             <label for="dob" class="text-popup">Date of Birth:</label>
-                            <input type="date" class="form-control" [(ngModel)]="dob" name="dob">
+                            <input type="date" class="form-control" [(ngModel)]="employeeForm.dob" name="dob">
                         </div>
                         <div class="form-group">
                             <label for="gender" class="text-popup">Gender:</label>
-                            <select class="form-select" [(ngModel)]="gender" name="gender">
+                            <select class="form-select" [(ngModel)]="employeeForm.gender" name="gender">
                                 <option value=1>Male</option>
                                 <option value=2>Female</option>
                             </select>
                         </div>
                         <div class="form-group">
                             <label for="address" class="text-popup">Address:</label>
-                            <input type="text" class="form-control" [(ngModel)]="address" name="address"
+                            <input type="text" class="form-control" [(ngModel)]="employeeForm.address" name="address"
                                 placeholder="Enter Address">
                         </div>
                     </div>
                     <div class="col-6">
                         <div class="form-group">
                             <label for="phoneNumber" class="text-popup">Phone Number:</label>
-                            <input type="text" class="form-control" [(ngModel)]="phoneNumber" name="phoneNumber"
+                            <input type="text" class="form-control" [(ngModel)]="employeeForm.phoneNumber" name="phoneNumber"
                                 placeholder="Enter Phone Number">
                         </div>
                         <div class="form-group">
                             <label for="email" class="text-popup">Email:</label>
-                            <input type="text" class="form-control" [(ngModel)]="email" name="email"
+                            <input type="text" class="form-control" [(ngModel)]="employeeForm.email" name="email"
                                 placeholder="Enter Email">
                         </div>
                         <div class="form-group">
                             <label for="roleId" class="text-popup">Role:</label>
-                            <select class="form-select" [(ngModel)]="roleId" name="roleId">
-                                <option [value]="data.id" *ngFor="let data of role">{{data.name}}</option>
+                            <select class="form-select" [(ngModel)]="employeeForm.role.id" name="roleId">
+                                <option [value]="data.id" *ngFor="let data of roleList">{{data.name}}</option>
                             </select>
                         </div>
                     </div>
@@ -136,3 +134,30 @@
         </form>
     </div>
 </div>
+
+<app-dialog-popup
+  [isVisible]="isPopupResetPassword"
+  [title]="dialogTitle"
+  [message]="dialogMessage"
+  [isConfirmationPopup]="isConfirmationPopup"
+  (confirm)="resetPasswordEmployee()"
+  (close)="closePopup()">
+</app-dialog-popup>
+
+<app-dialog-popup
+  [isVisible]="isPopupDelete"
+  [title]="dialogTitle"
+  [message]="dialogMessage"
+  [isConfirmationPopup]="isConfirmationPopup"
+  (confirm)="removeEmployee()"
+  (close)="closePopup()">
+</app-dialog-popup>
+
+<app-dialog-popup
+  [isVisible]="isPopupBackupRestore"
+  [title]="dialogTitle"
+  [message]="dialogMessage"
+  [isConfirmationPopup]="isConfirmationPopup"
+  (confirm)="backupRestoreEmployee()"
+  (close)="closePopup()">
+</app-dialog-popup>

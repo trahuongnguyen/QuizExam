@@ -3,6 +3,7 @@ package com.example.quizexam_student.controller;
 import com.example.quizexam_student.bean.request.ExaminationRequest;
 import com.example.quizexam_student.bean.response.*;
 import com.example.quizexam_student.entity.*;
+import com.example.quizexam_student.mapper.ExaminationMapper;
 import com.example.quizexam_student.repository.MarkRepository;
 import com.example.quizexam_student.repository.UserRepository;
 import com.example.quizexam_student.service.ExaminationService;
@@ -78,8 +79,8 @@ public class ExaminationController {
 
     @PreAuthorize("hasAnyRole('ADMIN', 'SRO')")
     @PostMapping("")
-    public Examination save(@RequestBody @Valid ExaminationRequest examinationRequest) {
-        return examinationService.saveExamination(examinationRequest);
+    public ExaminationResponse save(@RequestBody @Valid ExaminationRequest examinationRequest) {
+        return ExaminationMapper.convertToResponse(examinationService.saveExamination(examinationRequest));
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'SRO')")
@@ -96,8 +97,8 @@ public class ExaminationController {
 
     @PreAuthorize("hasAnyRole('ADMIN', 'SRO')")
     @PutMapping("/{examinationId}")
-    public Examination update(@PathVariable int examinationId, @RequestBody ExaminationRequest examinationRequest) {
-        return examinationService.updateExamination(examinationId, examinationRequest);
+    public ExaminationResponse update(@PathVariable int examinationId, @RequestBody ExaminationRequest examinationRequest) {
+        return ExaminationMapper.convertToResponse(examinationService.updateExamination(examinationId, examinationRequest));
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'SRO')")

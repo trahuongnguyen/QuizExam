@@ -8,6 +8,7 @@ import { ListComponent } from './list/list.component';
 import { FormComponent } from './form/form.component';
 import { DetailComponent } from './detail/detail.component';
 import { AddStudentComponent } from './add-student/add-student.component';
+import { EditExamInfoComponent } from './edit-exam-info/edit-exam-info.component';
 
 const routes: Routes = [
   {
@@ -29,6 +30,10 @@ const routes: Routes = [
       {
         path: 'detail/:examId',
         component: DetailComponent,
+      },
+      {
+        path: 'edit-exam/:examId',
+        component: EditExamInfoComponent
       },
     ],
     canActivate: [AuthGuard],

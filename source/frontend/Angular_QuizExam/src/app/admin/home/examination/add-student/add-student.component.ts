@@ -58,7 +58,7 @@ export class AddStudentComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
-    this.titleService.setTitle('Add Students to Exam');
+    this.titleService.setTitle('Register Students for Exam');
     this.examId = Number(this.activatedRoute.snapshot.params['examId']);
     this.loadData();
   }
@@ -105,7 +105,7 @@ export class AddStudentComponent implements OnInit, OnDestroy {
         $('.delete-icon').on('click', (event: any) => {
           this.studentId = $(event.currentTarget).data('id');
           this.dialogTitle = 'Are you sure?';
-          this.dialogMessage = 'Do you really want to delete this Subject? This action cannot be undone.';
+          this.dialogMessage = 'Do you really want to delete this Student?';
           this.isConfirmationPopup = true;
           this.isPopupDelete = true;
         });
@@ -128,8 +128,8 @@ export class AddStudentComponent implements OnInit, OnDestroy {
 
   filterStudentsByClass(): void {
     const url = this.classId == 0 
-      ? `${this.authService.apiUrl}/studentManagement` 
-      : `${this.authService.apiUrl}/studentManagement/${this.classId}`;
+      ? `${this.authService.apiUrl}/student-management` 
+      : `${this.authService.apiUrl}/student-management/${this.classId}`;
     
     this.http.get<any>(url, this.home.httpOptions).subscribe(response => {
       this.listStudentByClass = response;
@@ -214,8 +214,10 @@ export class AddStudentComponent implements OnInit, OnDestroy {
     if (this.selectedStudents.length > 0) {
       this.http.put(`${this.authService.apiUrl}/exam/student/${this.examId}`, this.studentIds, this.home.httpOptions).subscribe({
         next: () => {
-          this.toastr.success('Add Student in Exam Successful!', 'Success', { timeOut: 2000 });
-          this.examComponent.step = true;
+          this.toastr.success('Register Students for Exam Successful!', 'Success', { timeOut: 2000 });
+          if (this.examComponent.step) {
+            this.examComponent.step = true;
+          }
           this.router.navigate([this.urlService.examDetailUrl(this.examId)]);
         },
         error: (err) => {

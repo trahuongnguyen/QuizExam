@@ -205,7 +205,7 @@ export class ListComponent implements OnInit, OnDestroy {
       },
       (error) => {
         this.toastr.error(error.error.message, 'Error', { timeOut: 4000 });
-        setTimeout(() => { window.location.reload(); }, 4000);
+        setTimeout(() => { this.reloadTable(this.selectedSem); }, 4000);
       }
     );
   }

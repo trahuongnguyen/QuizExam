@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ElementRef, Renderer2 } from '@angular/core';
 import { AuthService } from '../../service/auth.service';
 import { Title } from '@angular/platform-browser';
 import { AdminComponent } from '../../admin.component';
@@ -24,6 +24,8 @@ export class StudentComponent implements OnInit, OnDestroy {
     private titleService: Title,
     public admin: AdminComponent,
     private home: HomeComponent,
+    private el: ElementRef,
+    private renderer: Renderer2,
     private http: HttpClient,
     private toastr: ToastrService,
     public urlService: UrlService,
@@ -42,6 +44,7 @@ export class StudentComponent implements OnInit, OnDestroy {
   classId: any = 1;
   class: String = '';
   userIds: Number[] = [];
+  statusId: number = 1;
 
   dateOfBirth: string = '';
 
@@ -115,46 +118,88 @@ export class StudentComponent implements OnInit, OnDestroy {
         {
           title: 'Action',
           data: '_class',
-          render: function (data: any, type: any, row: any) {
-            if(data==null){
-              return `<input type="checkbox" class="icon-action chk_box" data-id="${row.userResponse.id}">
-              <span class="mdi mdi-pencil icon-action edit-icon" title="Edit" data-id="${row.userResponse.id}"></span>
-              <span class="mdi mdi-delete-forever icon-action delete-icon" title="Delete"></span>`;
+          render: (data: any, type: any, row: any) => {
+            if (this.statusId == 1) {
+              if (data == null) {
+                return `<input type="checkbox" class="icon-action chk_box" data-id="${row.userResponse.id}">
+                <span class="mdi mdi-pencil icon-action edit-icon" title="Edit" data-id="${row.userResponse.id}"></span>
+                <span class="mdi mdi-lock-reset icon-action reset-password-icon" title="Reset Password" data-id="${row.id}"></span>
+                <span class="mdi mdi-delete-forever icon-action delete-icon" title="Delete"></span>`;
+              }
+              else {
+                return `<span class="mdi mdi-pencil icon-action edit-icon" title="Edit" data-id="${row.userResponse.id}"></span>
+                <span class="mdi mdi-lock-reset icon-action reset-password-icon" title="Reset Password" data-id="${row.id}"></span>
+                <span class="mdi mdi-delete-forever icon-action delete-icon" title="Delete"></span>`;
+              }
             }
-            else {
-              return `<span class="mdi mdi-pencil icon-action edit-icon" title="Edit" data-id="${row.userResponse.id}"></span>
-              <span class="mdi mdi-delete-forever icon-action delete-icon" title="Delete"></span>`;
-            }
+            return `<span class="mdi mdi-backup-restore icon-action backup-restore-icon" title="Backup Restore" data-id="${row.id}"></span>`;
           },
         },
       ],
 
       drawCallback: () => {
-        // Sửa input search thêm button vào
-        if (!$('.dataTables_filter button').length) {
-          $('.dataTables_filter').append(`<button type="button"><i class="fa-solid fa-magnifying-glass search-icon"></i></button>`);
-        }
-
-        // Thêm placeholder vào input của DataTables
-        $('.dataTables_filter input[type="search"]').attr('placeholder', 'Search');
-
-        // Click vào info icon sẽ hiện ra popup
-        $('.edit-icon').on('click', (event: any) => {
-          const id = $(event.currentTarget).data('id');
-          this.studentId = id;
-          this.showPopupEdit(id);
-        });
-
-        // $('.create').on('click', () => {
-        //   this.isPopupCreate = true;
-        // });
-
-        $('.chk_box').on('click', (event: any) => {
-          const id = $(event.currentTarget).data('id');
-          this.userIds.includes(id) ? this.userIds.splice(this.userIds.indexOf(id), 1) : this.userIds.push(id);
-        });
+        this.addEventListeners();
+        this.cssDataTable();
       }
     });
+  }
+
+  addEventListeners(): void {
+    // Sửa input search thêm button vào
+    if (!$('.dataTables_filter button').length) {
+      $('.dataTables_filter').append(`<button type="button"><i class="fa-solid fa-magnifying-glass search-icon"></i></button>`);
+    }
+
+    // Thêm placeholder vào input của DataTables
+    $('.dataTables_filter input[type="search"]').attr('placeholder', 'Search');
+
+    // Click vào info icon sẽ hiện ra popup
+    $('.edit-icon').on('click', (event: any) => {
+      const id = $(event.currentTarget).data('id');
+      this.studentId = id;
+      this.showPopupEdit(id);
+    });
+
+    // $('.create').on('click', () => {
+    //   this.isPopupCreate = true;
+    // });
+
+    $('.chk_box').on('click', (event: any) => {
+      const id = $(event.currentTarget).data('id');
+      this.userIds.includes(id) ? this.userIds.splice(this.userIds.indexOf(id), 1) : this.userIds.push(id);
+    });
+  }
+
+  cssDataTable(): void {
+    if (!$('#custom-select-status').length) {
+      $('.dataTables_length').append(`
+        <label for="" class="label-status">Status:</label>
+        <select id="custom-select-status" class="select-status">
+          <option value=1>Active</option>
+          <option value=0>Inactive</option>
+        </select>
+      `);
+
+      // Theo dõi sự thay đổi của dropdown
+      $('#custom-select-status').on('change', () => {
+        this.statusId = $('#custom-select-status').val();
+        this.reloadTable(this._classId);
+      });
+    }
+
+    const dataTablesLength = this.el.nativeElement.querySelector('.dataTables_length');
+    this.renderer.setStyle(dataTablesLength, 'display', 'inline-flex');
+    
+    const lengthElement = this.el.nativeElement.querySelector('.dataTables_length label');
+    this.renderer.setStyle(lengthElement, 'width', '160px');
+
+    const labelStatus = this.el.nativeElement.querySelector('.label-status');
+    this.renderer.setStyle(labelStatus, 'margin', '0 5px 0 30px');
+    this.renderer.setStyle(labelStatus, 'align-content', 'center');
+
+    const selectStatus = this.el.nativeElement.querySelector('.select-status');
+    this.renderer.setStyle(selectStatus, 'width', '120px');
+    this.renderer.setStyle(selectStatus, 'cursor', 'pointer');
   }
 
   showMovePopup(): void {

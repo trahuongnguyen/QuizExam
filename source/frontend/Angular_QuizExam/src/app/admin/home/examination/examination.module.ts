@@ -8,6 +8,7 @@ import { FormsModule } from '@angular/forms';
 import { ExaminationRoutingModule } from './examination-routing.module';
 import { AddStudentComponent } from './add-student/add-student.component';
 import { SharedModule } from '../../../shared/shared.module';
+import { EditExamInfoComponent } from './edit-exam-info/edit-exam-info.component';
 
 
 @NgModule({
@@ -17,6 +18,7 @@ import { SharedModule } from '../../../shared/shared.module';
     FormComponent,
     DetailComponent,
     AddStudentComponent,
+    EditExamInfoComponent,
   ],
   imports: [
     CommonModule,

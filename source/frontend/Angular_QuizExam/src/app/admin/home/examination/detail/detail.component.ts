@@ -38,7 +38,6 @@ export class DetailComponent implements OnInit {
   apiData: any;
   examId: number = 0;
 
-  exams: Exam[] = [];  // Danh sách bài thi
   selectedExam: any;  // Bài thi được chọn
 
   ngOnInit(): void {
@@ -52,7 +51,15 @@ export class DetailComponent implements OnInit {
     });
   }
 
-  navigateToAddStudentForExaml(): void {
+  navigateToExamList(): void {
+    this.router.navigate([this.urlService.examListUrl()]);
+  }
+
+  navigateToEditExam(): void {
+    this.router.navigate([this.urlService.editExamUrl(this.examId)]);
+  }
+
+  navigateToAddStudentForExam(): void {
     this.router.navigate([this.urlService.addStudentForExamlUrl(this.examId)]);
   }
   

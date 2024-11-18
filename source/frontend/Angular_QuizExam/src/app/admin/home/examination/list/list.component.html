@@ -14,7 +14,7 @@
     </div>
     <div class="bottom-actions">
         <div>
-            <a [routerLink]="'../exam/create-exam'" class="button button-create"><span class="mdi mdi-plus icon"></span>Create</a>
+            <a class="button button-create" (click)="navigateToCreateExam()"><span class="mdi mdi-plus icon"></span>Create</a>
         </div>
     </div>
     
@@ -39,7 +39,7 @@
         </div>
 
         <!-- Nút phân trang -->
-        <div class="pagination">
+        <div class="pagination" *ngIf="totalPages > 0">
             <a class="paginate_button" [class.disabled]="currentPage === 1" (click)="previousPage()">Previous</a>
             <span class="paginate_button" [class.current]="page === currentPage" *ngFor="let page of pages" (click)="goToPage(page)">{{ page }}</span>
             <a class="paginate_button" [class.disabled]="currentPage === totalPages" (click)="nextPage()">Next</a>

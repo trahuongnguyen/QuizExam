@@ -1,3 +1,26 @@
+export interface Role {
+    id?: number;
+    name?: string;
+    description?: string;
+}
+
+export interface Permission {
+    id?: number;
+    name?: string;
+    description?: string;
+}
+
+export interface User {
+    id?: number;
+    fullName?: string;
+    dob?: Date;
+    gender?: number;
+    address?: string;
+    phoneNumber?: string;
+    email?: string;
+    role: Role;
+}
+
 export interface Sem {
     id: number;
     name: string;
@@ -38,4 +61,17 @@ export interface Question {
 export interface Answer {
     content: string;
     isCorrect: number;
+}
+
+export interface Examination {
+    id: number;
+    name: string;
+    code: string;
+    duration: number;
+    startTime: Date;
+    endTime: Date;
+    subject: Subject;
+    markResponses: [];
+    studentResponses: [];
+    questionRecordResponses: [];
 }

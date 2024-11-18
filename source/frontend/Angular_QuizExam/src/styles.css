@@ -292,19 +292,24 @@
 }
 
 .dataTables_wrapper .table .delete-icon {
-    color: #b61d1b;
+    color: #c21a21;
 }
 
 .dataTables_wrapper .table .info-icon {
     color: #1aaa51;
 }
 
-.dataTables_wrapper .table .edit-icon {
-    color: #1572e8;
+.dataTables_wrapper .table .edit-icon,
+.dataTables_wrapper .table .backup-restore-icon {
+    color: royalblue;
+}
+
+.dataTables_wrapper .table .reset-password-icon {
+    color: #9b59b6;
 }
 
 .dataTables_wrapper .table .question-icon {
-    color: #d7da2e;
+    color: #bfc21e;
 }
 
 .dataTables_wrapper .table td .chapter-names {

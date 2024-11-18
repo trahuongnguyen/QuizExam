@@ -91,7 +91,7 @@ export class FormComponent implements OnInit {
     if (!this.validateLevel()) {
       this.http.post(`${this.authService.apiUrl}/exam`, exam, this.home.httpOptions).subscribe(
         response => {
-          this.toastr.success('Create exam Successful!', 'Success', {
+          this.toastr.success('Edit Exam Successful!', 'Success', {
             timeOut: 2000,
           });
           this.createdExam = response;

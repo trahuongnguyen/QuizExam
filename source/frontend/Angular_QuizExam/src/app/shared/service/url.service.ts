@@ -42,12 +42,20 @@ export class UrlService {
     return `/admin/exam`;
   }
 
+  createExamUrl(): string {
+    return `/admin/exam/create-exam`;
+  }
+
   addStudentForExamlUrl(examId: number): string {
     return `/admin/exam/add-student/${examId}`;
   }
 
   examDetailUrl(examId: number): string {
     return `/admin/exam/detail/${examId}`;
+  }
+
+  editExamUrl(examId: number): string {
+    return `/admin/exam/edit-exam/${examId}`;
   }
 
   examPageUrl(): string {

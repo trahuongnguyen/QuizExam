@@ -1,0 +1,53 @@
+<div class="content-wrapper" [ngClass]="{'content-wrapper-collapsed': admin.isSidebarCollapsed}">
+    <h4>Examination</h4>
+    <hr class="line">
+    
+    <div class="container">
+        <div class="title">
+            <h3 class="text-center mt-4">Edit Examination</h3>
+        </div>
+        <div class="content">
+            <form (ngSubmit)="saveExam()">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="name">Name</label><br>
+                            <input type="text" class="form-control" [(ngModel)]="exam.name" name="name">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="duration">Duration(minutes)</label><br>
+                            <select class="form-select" [(ngModel)]="exam.duration" name="duration">
+                                <option value=30>30</option>
+                                <option value=60>60</option>
+                                <option value=90>90</option>
+                                <option value=120>120</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="startTime">Start Time</label><br>
+                            <input type="datetime-local" class="form-control" [(ngModel)]="exam.startTime" name="startTime">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="endTime">End Time</label><br>
+                            <input type="datetime-local" class="form-control" [(ngModel)]="exam.endTime" name="endTime">
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="" class="label-title"></label>
+                    <div class="w-30">
+                        <button type="submit" class="btn button me-2">Save</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

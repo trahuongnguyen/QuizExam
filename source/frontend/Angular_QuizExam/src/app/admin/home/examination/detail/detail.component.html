@@ -27,7 +27,7 @@
 
     <div class="bottom-actions">
         <div>
-            <span class="mdi mdi-keyboard-backspace" title="Back to List"></span>
+            <span class="mdi mdi-keyboard-backspace" title="Back to List" (click)="navigateToExamList()"></span>
         </div>
         <div>
             <a class="button button-pdf" (click)="exportPDF()"><span class="mdi mdi-file-pdf icon"></span>Export PDF</a>
@@ -36,12 +36,12 @@
     
     <div class="container">
         <!-- Exam details section -->
-        <div class="exam-details">
+        <div class="row exam-detail">
             <!-- Centered title with edit icon -->
             <div class="exam-header">
                 <h4 class="text-center flex-grow-1">Examination Info</h4>
-                <span class="mdi mdi-pencil-box-outline" title="Edit Examination Info" (click)="navigateToAddStudentForExaml()"></span>
-                <span class="mdi mdi-account-edit" title="Register Students for Examination" (click)="navigateToAddStudentForExaml()"></span>
+                <span class="mdi mdi-pencil-box-outline" title="Edit Examination Info" (click)="navigateToEditExam()"></span>
+                <span class="mdi mdi-account-edit" title="Register Students for Examination" (click)="navigateToAddStudentForExam()"></span>
             </div>
 
             <!-- Exam information with two columns -->

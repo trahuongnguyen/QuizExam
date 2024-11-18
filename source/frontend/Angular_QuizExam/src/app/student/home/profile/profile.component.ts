@@ -31,7 +31,7 @@ export class ProfileComponent implements OnInit {
       confirmPassword: this.confirmPassword,
     }
 
-    this.http.put(`${this.authService.apiUrl}/auth/changePassword`, passwordRequest, this.home.httpOptions).subscribe(
+    this.http.put(`${this.authService.apiUrl}/auth/change-password`, passwordRequest, this.home.httpOptions).subscribe(
       response => {
         this.toastr.success('Change password Successful!', 'Success', { timeOut: 2000, });
         this.currentPassword = '';

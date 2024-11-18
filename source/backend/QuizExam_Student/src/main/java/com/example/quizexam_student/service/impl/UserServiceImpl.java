@@ -13,6 +13,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -29,7 +30,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User findById(int id) {
-        return userRepository.findByIdAndStatus(id,1);
+        User user = userRepository.findByIdAndStatus(id,1);
+        if (Objects.isNull(user)) {
+            throw new NotFoundException("user", "User Not Found");
+        }
+        return user;
     }
 
     @Override
@@ -93,14 +98,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void deleteUserById(int id) {
+    public User deleteUserById(int id) {
         User user = userRepository.findByIdAndStatus(id,1);
         if (user != null) {
             user.setStatus(0);
-        }else{
+        }
+        else {
             throw new EmptyException("employee", "Employee Detail is null");
         }
-        userRepository.save(user);
+        return userRepository.save(user);
     }
 
     @Override
@@ -122,12 +128,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void restoreUser(int id) {
+    public User restoreUser(int id) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("user", "User Not Found"));
-        if (user != null){
+        if (user != null) {
             user.setStatus(1);
         }
-        userRepository.save(user);
+        return userRepository.save(user);
     }
 }
