@@ -16,29 +16,31 @@ import java.util.List;
 public class LevelController {
     private final LevelService levelService;
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'SRO', 'TEACHER')")
     @GetMapping
     public List<Level> getAllLevels() {
         return levelService.getAllLevels();
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'TEACHER')")
     @GetMapping("/{id}")
     public Level getLevelById(@PathVariable int id) {
         return levelService.getLevelById(id);
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'DIRECTOR')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'TEACHER')")
     @PostMapping
     public Level addLevel(@Valid @RequestBody Level level) {
         return levelService.addLevel(level);
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'DIRECTOR')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'TEACHER')")
     @PutMapping("/{id}")
     public Level updateLevel(@PathVariable int id, @Valid @RequestBody Level level) {
         return levelService.editLevel(id, level);
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'DIRECTOR')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'TEACHER')")
     @PutMapping("/delete/{id}")
     public Level deleteLevel(@PathVariable int id) {
         return levelService.deleteLevelById(id);

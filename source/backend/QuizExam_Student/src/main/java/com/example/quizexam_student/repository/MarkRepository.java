@@ -1,5 +1,6 @@
 package com.example.quizexam_student.repository;
 
+import com.example.quizexam_student.entity.Examination;
 import com.example.quizexam_student.entity.Mark;
 import com.example.quizexam_student.entity.StudentDetail;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -17,4 +18,5 @@ public interface MarkRepository extends JpaRepository<Mark, Integer> {
     List<Mark> findAllByStudentDetailAndScoreIsNull(StudentDetail studentDetail);
     List<Mark> findAllByStudentDetailAndScoreIsNullAndBeginTimeIsNotNull(StudentDetail studentDetail);
     List<Mark> findAllByScoreIsNotNull();
+    List<Mark> findAllByExamination(Examination examination);
 }

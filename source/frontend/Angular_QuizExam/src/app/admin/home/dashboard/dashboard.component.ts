@@ -96,7 +96,7 @@ export class DashboardComponent implements OnInit {
     const examRequest = this.http.get<any>(`${this.authService.apiUrl}/exam/all`, this.home.httpOptions);
     const classRequest = this.http.get<any>(`${this.authService.apiUrl}/class`, this.home.httpOptions);
     const studentRequest = this.http.get<any>(`${this.authService.apiUrl}/student-management/all-student`, this.home.httpOptions);
-    const employeeRequest = this.http.get<any>(`${this.authService.apiUrl}/user/1`, this.home.httpOptions);
+    const employeeRequest = this.http.get<any>(`${this.authService.apiUrl}/user/dashboard/1`, this.home.httpOptions);
     const subjectRequest = this.http.get<any>(`${this.authService.apiUrl}/subject`, this.home.httpOptions);
     const semRequest = this.http.get<any>(`${this.authService.apiUrl}/sem`, this.home.httpOptions);
     const passPercentageRequest = this.http.get<any>(`${this.authService.apiUrl}/mark/pass-percentage`, this.home.httpOptions);

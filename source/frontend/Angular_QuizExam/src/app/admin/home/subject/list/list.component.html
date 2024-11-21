@@ -6,7 +6,7 @@
             <a class="btn btn-outline-light" *ngFor="let sem of semList" [ngClass]="{'active': selectedSem === sem.id}" (click)="setSelectedSem(sem.id)">{{ sem.name }}</a>
         </div>
     </div>
-    <div class="bottom-actions">
+    <div class="bottom-actions" *ngIf="home.isActive(['ADMIN', 'DIRECTOR'])">
         <div>
             <a class="button button-create" (click)="showPopupCreate()"><span class="mdi mdi-plus icon"></span>Create</a>
         </div>

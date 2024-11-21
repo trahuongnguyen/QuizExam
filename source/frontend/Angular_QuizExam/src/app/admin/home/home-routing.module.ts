@@ -73,7 +73,7 @@ const routes: Routes = [
         loadChildren: () => import('./practice/practice.module')
           .then(m => m.PracticeModule),
         canActivate: [AuthGuard],
-        data: { roles: ['ADMIN', 'TEACHER'] },
+        data: { roles: ['EXAMPLE'] }, //data: { roles: ['ADMIN', 'TEACHER'] },
       },
       {
         path: 'authorize',

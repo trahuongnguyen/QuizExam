@@ -37,26 +37,27 @@ public class ExaminationController {
     @Value("${uploads.question}")
     private String uploadDir;
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'SRO', 'STUDENT')")
     @GetMapping("/{examinationId}")
     public ExaminationResponse getDetailExamination(@PathVariable int examinationId) {
         return examinationService.getDetailExamination(examinationId);
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'SRO')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'SRO', 'TEACHER', 'DIRECTOR')")
     @GetMapping("/all")
     public List<ExaminationResponse> getAllExamination(){
         return examinationService.getAllExaminations();
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'SRO')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'SRO', 'DIRECTOR', 'TEACHER')")
     @GetMapping("/subject/{subjectId}")
     public List<ExaminationResponse> getAllExaminationBySubject(@PathVariable int subjectId){
         return examinationService.getAllExaminationBySubjectId(subjectId);
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'SRO')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'SRO', 'DIRECTOR', 'TEACHER')")
     @GetMapping("/finish/sem/{semId}")
-    public List<ExaminationResponse> getAllExamimationFinishedBySemId(@PathVariable int semId){
+    public List<ExaminationResponse> getAllExaminationFinishedBySemId(@PathVariable int semId){
         return examinationService.getAllExaminationFinishedBySemId(semId);
     }
 
@@ -72,6 +73,7 @@ public class ExaminationController {
         String email = ((org.springframework.security.core.userdetails.User)
                 SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
         User user = userRepository.findByEmail(email).orElse(null);
+        assert user != null;
         StudentDetail studentDetail = user.getStudentDetail();
         List<Mark> marks = markRepository.findAllByStudentDetailAndScoreIsNull(studentDetail);
         return examinationService.getAllExaminationsForStudent(marks);
@@ -89,11 +91,11 @@ public class ExaminationController {
         return examinationService.getStudentsForExamination(examinationId);
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'SRO')")
-    @GetMapping("/{examinationId}/studentsToAdd")
-    public List<StudentDetail> getStudentsToAddByExamination(@PathVariable int examinationId) {
-        return examinationService.getListStudentsToAddForExamination(examinationId);
-    }
+//    @PreAuthorize("hasAnyRole('ADMIN', 'SRO')") //chua dung
+//    @GetMapping("/{examinationId}/studentsToAdd")
+//    public List<StudentDetail> getStudentsToAddByExamination(@PathVariable int examinationId) {
+//        return examinationService.getListStudentsToAddForExamination(examinationId);
+//    }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'SRO')")
     @PutMapping("/{examinationId}")
@@ -103,7 +105,7 @@ public class ExaminationController {
 
     @PreAuthorize("hasAnyRole('ADMIN', 'SRO')")
     @PutMapping("/student/{examinationId}")
-    public ResponseEntity updateStudentForExam(
+    public ResponseEntity<RegisterResponse> updateStudentForExam(
             @PathVariable int examinationId,
             @RequestBody List<Integer> studentIds){
         examinationService.updateStudentForExam(examinationId, studentIds);

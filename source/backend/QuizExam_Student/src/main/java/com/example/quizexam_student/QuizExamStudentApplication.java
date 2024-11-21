@@ -4,6 +4,7 @@ import com.example.quizexam_student.entity.Classes;
 import com.example.quizexam_student.entity.Examination;
 import com.example.quizexam_student.repository.ClassesRepository;
 import com.example.quizexam_student.repository.ExaminationRepository;
+import com.example.quizexam_student.repository.MarkRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -24,6 +25,7 @@ public class QuizExamStudentApplication {
 
     private final ClassesRepository classesRepository;
     private final ExaminationRepository examinationRepository;
+    private final MarkRepository markRepository;
 
     public static void main(String[] args) {
         SpringApplication.run(QuizExamStudentApplication.class, args);
@@ -59,11 +61,12 @@ public class QuizExamStudentApplication {
         examinations = examinations.stream().peek(examination -> {
             if (LocalDateTime.now().isAfter(examination.getEndTime())) {
                 examination.setStatus(2);
-                examination.getMarks().forEach(mark -> {
+                markRepository.findAllByExamination(examination).forEach(mark -> {
                     if (mark.getBeginTime()==null && mark.getScore()==null) {
                         mark.setScore(0);
                         mark.setBeginTime(LocalDateTime.now());
                         mark.setSubmittedTime(LocalDateTime.now());
+                        markRepository.save(mark);
                     }
                 });
                 examinationRepository.save(examination);

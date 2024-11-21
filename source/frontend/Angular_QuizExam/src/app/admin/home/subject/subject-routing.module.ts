@@ -17,27 +17,32 @@ const routes: Routes = [
       {
         path: '',
         component: ListComponent,
+        canActivate: [AuthGuard],
+        data: {roles: ['ADMIN', 'DIRECTOR', 'TEACHER']},
       },
-      // {
-      //   path: '',
-      //   redirectTo: 'subject',
-      //   pathMatch: 'full'
-      // },
       {
         path: ':subjectId',
-        component: ChapterComponent
+        component: ChapterComponent,
+        canActivate: [AuthGuard],
+        data: {roles: ['ADMIN', 'TEACHER']},
       },
       {
         path: ':subjectId/question-list',
         component: QuestionListComponent,
+        canActivate: [AuthGuard],
+        data: {roles: ['ADMIN', 'TEACHER']},
       },
       {
         path: ':subjectId/add-new-question',
-        component: QuestionFormComponent
+        component: QuestionFormComponent,
+        canActivate: [AuthGuard],
+        data: {roles: ['ADMIN', 'TEACHER']},
       },
       {
         path: ':subjectId/edit-question/:id',
-        component: QuestionUpdateComponent
+        component: QuestionUpdateComponent,
+        canActivate: [AuthGuard],
+        data: {roles: ['ADMIN', 'TEACHER']},
       },
     ],
     canActivate: [AuthGuard],

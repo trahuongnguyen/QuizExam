@@ -23,69 +23,62 @@ import java.util.List;
 @RequiredArgsConstructor
 @CrossOrigin(origins = "http://localhost:4200")
 @Validated
-@PreAuthorize("hasAnyRole('ADMIN', 'SRO', 'TEACHER')")
 public class StudentController {
     private final StudentService studentService;
     private final ExportService exportService;
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'SRO', 'DIRECTOR', 'TEACHER')")
     @GetMapping("/all-student")
     public List<StudentResponse> getAllStudents(){
         return studentService.getAllStudents();
     }
 
-//    @GetMapping("/all-student-inactive")
-//    public List<StudentResponse> getAllStudentsInactive(){
-//        return studentService.getAllStudentsAndStatusInactive();
-//    }
-
+    @PreAuthorize("hasAnyRole('ADMIN', 'SRO', 'TEACHER')")
     @GetMapping("/{status}")
     public List<StudentResponse> getAllStudentsNoneClass(@PathVariable Integer status){
         return studentService.getAllStudentsNoneClass(status);
     }
 
-//    @GetMapping("/inactive")
-//    public List<StudentResponse> getAllStudentsNoneClassInactive(){
-//        return studentService.getAllStudentsNoneClassAndStatusInactive();
-//    }
-
+    @PreAuthorize("hasAnyRole('ADMIN', 'SRO', 'TEACHER')")
     @GetMapping("/{classId}/{status}")
     public List<StudentResponse> getAllStudentsByClass(@PathVariable int classId, @PathVariable Integer status){
         return studentService.getAllStudentsByClass(classId, status);
     }
 
-//    @GetMapping("/inactive/{classId}")
-//    public List<StudentResponse> getAllStudentsByClassInactive(@PathVariable int classId){
-//        return studentService.getAllStudentsByClassAndStatusInactive(classId);
-//    }
-
+    @PreAuthorize("hasAnyRole('ADMIN', 'SRO')")
     @PostMapping("")
     public ResponseEntity<RegisterResponse> addStudent(@RequestBody @Valid StudentRequest studentRequest) {
         studentService.addStudent(studentRequest);
         return ResponseEntity.ok(new RegisterResponse(studentRequest.getUserRequest().getEmail(), "Student created successfully"));
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'SRO')")
     @PutMapping("/{id}")
     public ResponseEntity<RegisterResponse> updateStudent(@PathVariable int id, @RequestBody @Valid StudentRequest studentRequest) {
         studentService.updateStudent(studentRequest, id);
         return ResponseEntity.ok(new RegisterResponse(studentRequest.getUserRequest().getEmail(), "Student updated successfully"));
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'SRO')")
     @PutMapping("/update-class")
-    public ResponseEntity<String> updateClassForStudents(@RequestBody UpdateClassRequest request) {
+    public ResponseEntity<RegisterResponse> updateClassForStudents(@RequestBody UpdateClassRequest request) {
         studentService.updateClassForStudents(request.getUserIds(), request.getClassId());
-        return ResponseEntity.ok("Update class successfully");
+        return ResponseEntity.ok(new RegisterResponse("", "Update class successfully"));
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'SRO')")
     @PutMapping("/remove/{id}")
     public ResponseEntity<UserResponse> deleteStudent(@PathVariable int id) {
         return ResponseEntity.ok(studentService.deleteStudent(id));
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'SRO')")
     @PutMapping("/restore/{id}")
     public ResponseEntity<UserResponse> restoreStudent(@PathVariable int id) {
         return ResponseEntity.ok(studentService.restoreStudent(id));
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'SRO')")
     @PostMapping("/export/excel")
     public ResponseEntity<String> exportToExcel(HttpServletResponse response
             ,@RequestBody List<StudentResponse> studentResponses)
@@ -96,6 +89,7 @@ public class StudentController {
         return new ResponseEntity<>("Export To Excel Successfully", HttpStatus.OK);
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'SRO')")
     @PostMapping(value = "/export/pdf", produces = MediaType.APPLICATION_PDF_VALUE)
     public ResponseEntity<String> exportToPDF(HttpServletResponse response
             ,@RequestBody List<StudentResponse> studentResponses) throws IOException {

@@ -31,7 +31,6 @@ import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
 @RequiredArgsConstructor
 @CrossOrigin(origins = "http://localhost:4200")
 @Validated
-//@PreAuthorize("hasAnyRole('ADMIN', 'DIRECTOR', 'SRO', 'TEACHER')")
 public class SubjectController {
     private final SubjectService subjectService;
     private final ExportService exportService;
@@ -39,16 +38,19 @@ public class SubjectController {
     @Value("${uploads.subject}")
     private String uploadSubject;
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'DIRECTOR', 'SRO', 'TEACHER')")
     @GetMapping("")
     public List<Subject> getAll(){
         return subjectService.findAll();
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'DIRECTOR', 'TEACHER')")
     @GetMapping("/{id}")
     public Subject getSubjectById(@PathVariable int id){
         return subjectService.findById(id);
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'DIRECTOR', 'TEACHER')")
     @GetMapping("/sem/{id}")
     public List<Subject> getAllSubjects(@PathVariable Integer id){
         return subjectService.getAllSubjectBySem(id);
@@ -90,6 +92,7 @@ public class SubjectController {
         return ResponseEntity.ok(subjectService.deleteById(id));
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'DIRECTOR')")
     @PostMapping("/export/excel")
     public ResponseEntity<String> exportToExcel(HttpServletResponse response, @RequestBody List<Subject> subjects) throws IOException {
         exportService.export(response, "subject", "xlsx");
@@ -98,6 +101,7 @@ public class SubjectController {
         return new ResponseEntity<>("Export To Excel Successfully", HttpStatus.OK);
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'DIRECTOR')")
     @PostMapping(value = "/export/pdf", produces = MediaType.APPLICATION_PDF_VALUE)
     public ResponseEntity<String> exportToPDF(HttpServletResponse response, @RequestBody List<Subject> subjects) throws IOException {
         exportService.export(response, "subject", "pdf");

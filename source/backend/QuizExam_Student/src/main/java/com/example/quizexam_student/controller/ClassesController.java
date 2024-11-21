@@ -21,31 +21,36 @@ import java.util.List;
 @RequiredArgsConstructor
 @CrossOrigin(origins = "http://localhost:4200")
 @Validated
-@PreAuthorize("hasAnyRole('ADMIN', 'SRO')")
+
 public class ClassesController {
     private final ClassesService classesService;
     private final ExportService exportService;
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'SRO', 'DIRECTOR', 'TEACHER')")
     @GetMapping
     public List<Classes> getAllClasses(){
         return classesService.getAllClasses();
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'SRO')")
     @PostMapping
     public Classes addClass(@RequestBody @Valid Classes _class){
         return classesService.addClass(_class);
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'SRO')")
     @PutMapping("/{id}")
     public Classes updateClass(@PathVariable Integer id, @RequestBody @Valid Classes _class){
         return classesService.updateClass(id, _class);
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'SRO')")
     @PutMapping("/remove/{id}")
     public Classes deleteClass(@PathVariable Integer id) {
         return classesService.deleteClass(id);
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'SRO')")
     @PostMapping("/export/excel")
     public ResponseEntity<String> exportToExcel(HttpServletResponse response,@RequestBody List<Classes> classes) throws IOException {
         exportService.export(response, "classes", "xlsx");
@@ -54,6 +59,7 @@ public class ClassesController {
         return new ResponseEntity<>("Export To Excel Successfully", HttpStatus.OK);
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'SRO')")
     @PostMapping(value = "/export/pdf", produces = MediaType.APPLICATION_PDF_VALUE)
     public ResponseEntity<String> exportToPDF(HttpServletResponse response, @RequestBody List<Classes> classes) throws IOException {
         exportService.export(response, "classes", "pdf");

@@ -13,6 +13,9 @@
 .card {
     border: none;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: var(--color-card);
+    color: var(--color-text);
+    transition: all 0.9s ease;
 }
 
 .card-body {
@@ -38,7 +41,7 @@
 }
 
 .card .card-body .form-group-row .select-field {
-    width: 280px;
+    width: 200%;
     cursor: pointer;
 }
 
@@ -54,6 +57,13 @@
     top: 50%;
     transform: translateY(-50%);
     color: #888;
+}
+
+.card .tab-content .table tr th,
+.card .tab-content .table tr td {
+    background-color: var(--color-card);
+    color: var(--color-text);
+    transition: all 0.9s ease;
 }
 
 /* pagination */

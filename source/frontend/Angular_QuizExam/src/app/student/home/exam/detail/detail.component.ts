@@ -148,7 +148,7 @@ export class DetailComponent implements OnInit, OnDestroy {
     this.showPopupWarning = true;
     this.warningMessage = `Please do not click outside the exam.`;
     this.violationMessage = `(Current violations: ${this.examComponent.mark.warning})`;
-    this.noteMessage = `Note: The system will automatically submit the exam after 5 violations.`;
+    this.noteMessage = `Note: The system will automatically submit the exam after 3 violations.`;
   }
 
   updateWarning(): void {

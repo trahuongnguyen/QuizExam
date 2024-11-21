@@ -46,7 +46,7 @@ export class ListComponent implements OnInit, OnDestroy {
     private authService: AuthService,
     private titleService: Title,
     public admin: AdminComponent,
-    private home: HomeComponent,
+    public home: HomeComponent,
     private http: HttpClient,
     private toastr: ToastrService,
     public urlService: UrlService,
@@ -138,11 +138,22 @@ export class ListComponent implements OnInit, OnDestroy {
         {
           title: 'Action',
           data: null,
-          render: (data: any, type: any, row: any) =>
-            `<span class="mdi mdi-information-outline icon-action info-icon" title="Info" data-id="${row.id}"></span>
-            <span class="mdi mdi-pencil icon-action edit-icon" title="Edit" data-id="${row.id}"></span>
-            <span class="mdi mdi-comment-question-outline icon-action question-icon" title="Question" data-id="${row.id}"></span>
-            <span class="mdi mdi-delete-forever icon-action delete-icon" title="Remove" data-id="${row.id}"></span>`
+          render: (data: any, type: any, row: any) => {
+            if (this.home.isActive(['TEACHER'])) {
+              return `<span class="mdi mdi-information-outline icon-action info-icon" title="Info" data-id="${row.id}"></span>
+                      <span class="mdi mdi-comment-question-outline icon-action question-icon" title="Question" data-id="${row.id}"></span>`;
+            }
+            if (this.home.isActive(['DIRECTOR'])) {
+              return `<span class="mdi mdi-pencil icon-action edit-icon" title="Edit" data-id="${row.id}"></span>
+                      <span class="mdi mdi-delete-forever icon-action delete-icon" title="Remove" data-id="${row.id}"></span>`
+            }
+            return `<span class="mdi mdi-information-outline icon-action info-icon" title="Info" data-id="${row.id}"></span>
+                      <span class="mdi mdi-pencil icon-action edit-icon" title="Edit" data-id="${row.id}"></span>
+                      <span class="mdi mdi-comment-question-outline icon-action question-icon" title="Question" data-id="${row.id}"></span>
+                      <span class="mdi mdi-delete-forever icon-action delete-icon" title="Remove" data-id="${row.id}"></span>`;
+          }
+
+
         }
       ],
 
@@ -264,17 +275,17 @@ export class ListComponent implements OnInit, OnDestroy {
     this.changeImg = true;
     imgSubject.src = '';
     imgSubject.style.display = 'none';
-    
+
     // Đặt lại giá trị input file
     if (fileInput) {
-        fileInput.value = '';
+      fileInput.value = '';
     }
   }
 
   createSubject(): void {
     const formData = new FormData();
     const subject = { semId: this.subjectForm.sem.id, name: this.subjectForm.name }
-    
+
     formData.append('file', this.subjectForm.image || new Blob([]));
     formData.append('subject', new Blob([JSON.stringify(subject)], { type: 'application/json' }));
 
