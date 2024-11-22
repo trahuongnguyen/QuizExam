@@ -146,10 +146,8 @@ export class FormComponent implements OnInit {
   selectSubject(subject: any): void {
     this.selectedSubject = subject.target.value;
     this.subjectId = this.selectedSubject;
-    this.examsForm.chapterIds = [];
     this.allChecked = false;
     console.log('Selected Sem:', this.selectedSubject);
-    this.initializeLevel();
   }
 
   allChecked = false;

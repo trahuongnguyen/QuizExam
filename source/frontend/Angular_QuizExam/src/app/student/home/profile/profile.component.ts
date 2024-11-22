@@ -4,17 +4,22 @@ import { HttpClient } from '@angular/common/http';
 import { ToastrService } from 'ngx-toastr';
 import { Router } from '@angular/router';
 import { HomeComponent } from '../home.component';
+import { Title } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-profile',
   templateUrl: './profile.component.html',
-  styleUrl: './profile.component.css'
+  styleUrls: [
+    './../../../shared/styles/student/style.css',
+    './profile.component.css'
+  ]
 })
 export class ProfileComponent implements OnInit {
 
-  constructor(public authService: AuthService, private http: HttpClient, public toastr: ToastrService, private router: Router, public home: HomeComponent) { }
+  constructor(public authService: AuthService, private titleService: Title, private http: HttpClient, public toastr: ToastrService, private router: Router, public home: HomeComponent) { }
 
   ngOnInit(): void {
+    this.titleService.setTitle('Profile');
   }
 
   currentPassword: any;

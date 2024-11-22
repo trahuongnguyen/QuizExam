@@ -1,23 +1,20 @@
-.main-body {
-    background-color: var(--color-background);
-    color: var(--color-text);
-    transition: all 0.5s ease;
-}
-
 .bg-card {
     background-color: var(--color-card);
     border-radius: 0.5rem;
     padding: 1.5rem;
-    box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.06);
+    box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.2);
     margin-bottom: 50px;
     margin-top: 10px;
+    transition: all 0.9s ease;
 }
 
 .bg-card1 {
+    margin-bottom: 20px;
     background-color: var(--color-card);
     border-radius: 0.5rem;
     padding: 1.5rem;
-    box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.06);
+    box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.2);
+    transition: all 0.9s ease;
 }
 
 .carousel-item {
@@ -46,14 +43,6 @@
     padding-right: 4.5rem;
 }
 
-h1,
-h2,
-h3 {
-    color: var(--color-text);
-    padding: 1px;
-
-}
-
 .text-muted-foreground {
     color: #6c757d;
 }
@@ -73,6 +62,7 @@ h3 {
 
 .title, .title1 {
     background-color: var(--color-title);
+    transition: all 0.9s ease;
 }
 
 .title {
@@ -99,6 +89,11 @@ h3 {
     }
 }
 
+h2, h3, p {
+    color: var(--color-text);
+    transition: all 0.9s ease;
+}
+
 .title1 {
     margin: auto;
     border-radius: 3px;
@@ -108,7 +103,6 @@ h3 {
 }
 
 .title p {
-    color: var(--color-text);
     padding: 1px;
     font-family: 'Inter';
     font-weight: bold;
@@ -116,7 +110,6 @@ h3 {
 }
 
 .title1 p {
-    color: var(--color-text);
     font-family: 'Inter';
     font-weight: bold;
     font-size: xx-large;

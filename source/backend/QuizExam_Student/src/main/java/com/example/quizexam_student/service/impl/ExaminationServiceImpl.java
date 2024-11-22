@@ -113,7 +113,9 @@ public class ExaminationServiceImpl implements ExaminationService {
     @Override
     public ExaminationResponse getDetailExamination(int examinationId) {
         Examination examination = examinationRepository.findByIdAndStatus(examinationId,1);
-        assert examination != null;
+        if (examination == null) {
+            return null;
+        }
         ExaminationResponse examinationResponse = ExaminationMapper.convertToResponse(examination);
         return setQuestionRecord(examinationResponse);
     }

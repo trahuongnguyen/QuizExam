@@ -3,7 +3,7 @@
     <hr class="line">
     <div class="bottom-actions">
         <div class="sem-container">
-            <a class="btn btn-outline-light" *ngFor="let sem of semList" [ngClass]="{'active': selectedSem === sem.id}" (click)="setSelectedSem(sem.id)">{{ sem.name }}</a>
+            <a class="btn btn-outline-light" *ngFor="let sem of semList" [ngClass]="{'active': selectedSem == sem.id}" (click)="setSelectedSem(sem.id)">{{ sem.name }}</a>
         </div>
     </div>
     <div class="bottom-actions" *ngIf="home.isActive(['ADMIN', 'DIRECTOR'])">

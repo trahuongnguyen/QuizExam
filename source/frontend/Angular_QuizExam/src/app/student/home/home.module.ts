@@ -7,6 +7,7 @@ import { CommonModule, NgClass, NgFor, NgForOf } from '@angular/common';
 import { MarkComponent } from './mark/mark.component';
 import { FormsModule } from '@angular/forms';
 import { ProfileComponent } from './profile/profile.component';
+import { SharedModule } from '../../shared/shared.module';
 
 
 @NgModule({
@@ -22,7 +23,8 @@ import { ProfileComponent } from './profile/profile.component';
     NgClass,
     CommonModule,
     NgForOf,
-    FormsModule
+    FormsModule,
+    SharedModule
   ],
   providers: [
   ],

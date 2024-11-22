@@ -13,7 +13,10 @@ declare var $: any;
 @Component({
   selector: 'app-list',
   templateUrl: './list.component.html',
-  styleUrl: './list.component.css'
+  styleUrls: [
+    './../../../../shared/styles/student/style.css',
+    './list.component.css'
+  ]
 })
 export class ListComponent implements OnInit {
   constructor(
@@ -57,10 +60,7 @@ export class ListComponent implements OnInit {
     console.log(this.selectedExam);
   }
 
-  closePopupExam(event?: MouseEvent): void {
-    if (event) {
-      event.stopPropagation(); // Ngăn việc sự kiện click ra ngoài ảnh hưởng đến việc đóng modal
-    }
+  closePopup(): void {
     this.isPopupExam = false;
     this.popupExamIndex = 0; // Reset khi đóng popup
   }

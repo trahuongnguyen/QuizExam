@@ -10,6 +10,8 @@ export class UrlService {
 
   questionImageUrl: string = 'http://localhost:8080/uploads/img-question/';
 
+  subjectDefaultImageUrl: string = 'http://localhost:8080/uploads/img-subject/default.png';
+
   authorizeDetailUrl(authorizeId: number): string {
     return `/admin/authorize/detail/${authorizeId}`;
   }

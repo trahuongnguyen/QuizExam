@@ -222,5 +222,5 @@
 }
 
 .popup-container .popup-content .popup-footer .button {
-    width: 100px;
+    min-width: 100px;
 }

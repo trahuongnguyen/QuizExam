@@ -1,37 +1,42 @@
-.main-body {
-    background-color: var(--color-background);
-    color: var(--color-text);
+.nav-pills {
+    display: flex;
+    gap: 10px;
 }
 
-.mt-6 {
-    padding-top: 50px;
+.nav-pills .nav-link {
+    border-radius: 8px;
+    border: none;
+    color: var(--color-text);
+    font-size: 12px;
+    padding: 6px 12px;
 }
-.tab-content .table {
-    margin-top: 20px;
+
+.nav-pills .nav-link:hover {
+    background-color: #e6e6e680;
+    color: #000000;
 }
+
 .nav-pills .nav-link.active {
-    background-color: #E6E6E6;
-    color: black;
+    background-color: #e6e6e6;
+    color: #000000;
     font-weight: bold;
 }
-.nav-link {
-    color: var(--color-text);
-}
-.table th,
-.table td {
-    text-align: center;
-    border-right: none;
-    border-left: none;
-}
+
 .table th {
-    background-color: var(--color-nav);
+    padding: 14px;
+    font-size: 14px;
+    border-bottom: 2px solid var(--color-background);
+    background-color: var(--color-table-thead);
+    color: var(--color-text);
+    transition: all 0.9s ease;
 }
 
 .table td {
-    background-color: var(--color-card);
+    padding: 14px;
+    font-size: 14px;
+    vertical-align: middle;
+    border-bottom: 1px solid var(--color-background);
+    background-color: var(--color-table-tbody);
     color: var(--color-text);
-}
-hr {
-    border-top: 2px solid var(--color-text);
-    margin-top: 0;
+    transition: all 0.9s ease;
 }

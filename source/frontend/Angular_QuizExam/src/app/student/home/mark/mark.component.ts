@@ -3,11 +3,15 @@ import { CommonModule, DOCUMENT, NgForOf } from '@angular/common';
 import { AuthService } from '../../service/auth.service';
 import { HomeComponent } from '../home.component';
 import { HttpClient } from '@angular/common/http';
+import { Title } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-mark',
   templateUrl: './mark.component.html',
-  styleUrl: './mark.component.css'
+  styleUrls: [
+    './../../../shared/styles/student/style.css',
+    './mark.component.css'
+  ]
 })
 @Injectable()
 export class MarkComponent implements OnInit {
@@ -15,11 +19,11 @@ export class MarkComponent implements OnInit {
   selectedSem: number = 1; // Default chọn Sem 1
   subjects: any[] = [];
 
-  constructor(private authService: AuthService, private home: HomeComponent, private http: HttpClient) { }
+  constructor(private authService: AuthService, private titleService: Title, private home: HomeComponent, private http: HttpClient) { }
 
   ngOnInit(): void {
+    this.titleService.setTitle('Mark');
     this.selectSem(this.selectedSem);
-
     this.http.get<any>(`${this.authService.apiUrl}/sem`, this.home.httpOptions).subscribe(response => {
       this.semesters = response;
     }, error => {

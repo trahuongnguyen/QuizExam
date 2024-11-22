@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Title } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-login',
@@ -13,12 +14,24 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 export class LoginComponent {
   loginForm: FormGroup;
 
-  constructor(private authService: AuthService, private router: Router, public toastr: ToastrService, private formBuilder: FormBuilder, private http: HttpClient) {
+  constructor(private authService: AuthService, private titleService: Title, private router: Router, public toastr: ToastrService, private formBuilder: FormBuilder, private http: HttpClient) {
+    this.titleService.setTitle('Login');
     this.loginForm = this.formBuilder.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(8)]]
     });
-  }  //Login
+
+    if (this.isLocalStorageAvailable()) {
+      const role = localStorage.getItem('role');
+      if (role && role == 'STUDENT') {
+        this.router.navigate(['']);
+      }
+    }
+  }
+  
+  private isLocalStorageAvailable(): boolean {
+    return typeof localStorage !== 'undefined';
+  }
 
   login() {
     if (this.loginForm.valid) {

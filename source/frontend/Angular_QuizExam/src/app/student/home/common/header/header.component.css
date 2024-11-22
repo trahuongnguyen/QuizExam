@@ -1,9 +1,10 @@
 .navbar {
-    color: var(--color-text);
-    background-color: var(--color-background);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     position: sticky;
     top: 0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    background-color: var(--color-background);
+    color: var(--color-text);
+    transition: all 0.9s ease;
     z-index: 1000;
 }
 
@@ -16,14 +17,15 @@
     margin-left: 14px;
 }
 
-.navbar-nav .nav-link {
+.navbar-nav .nav-item .nav-link {
     text-decoration: none;
-    color: var(--color-text);
-    font-weight: bold;
     font-size: 14px;
+    font-weight: bold;
+    color: var(--color-text);
+    transition: color 0.9s ease;
 }
 
-.nav-item .active {
+.navbar-nav .nav-item .nav-link.active {
     color: #000;
     background-color: #e6e6e6;
     border-radius: 8px;

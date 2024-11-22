@@ -292,7 +292,7 @@ export class ListComponent implements OnInit, OnDestroy {
     this.createSubjectApi(formData).subscribe({
       next: () => {
         this.toastr.success('Create Successful!', 'Success', { timeOut: 2000 });
-        this.reloadTable(subject.semId);
+        this.setSelectedSem(subject.semId);
       },
       error: () => {
         this.toastr.error('Create Fail!', 'Error', { timeOut: 2000 });
@@ -312,7 +312,7 @@ export class ListComponent implements OnInit, OnDestroy {
     this.updateSubjectApi(formData, this.subjectForm.id).subscribe({
       next: () => {
         this.toastr.success('Update Successful!', 'Success', { timeOut: 2000 });
-        this.reloadTable(subject.semId);
+        this.setSelectedSem(subject.semId);
       },
       error: () => {
         this.toastr.error('Update Fail!', 'Error', { timeOut: 2000 });

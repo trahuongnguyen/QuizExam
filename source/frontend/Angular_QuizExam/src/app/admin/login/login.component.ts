@@ -32,6 +32,17 @@ export class LoginComponent implements AfterContentInit {
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(8)]]
     });
+
+    if (this.isLocalStorageAvailable()) {
+      const role = localStorage.getItem('role');
+      if (role && role != 'STUDENT') {
+        this.router.navigate(['/admin']);
+      }
+    }
+  }
+
+  private isLocalStorageAvailable(): boolean {
+    return typeof localStorage !== 'undefined';
   }
 
   ngAfterContentInit(): void {

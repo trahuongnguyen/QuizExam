@@ -57,9 +57,11 @@ public class SubjectServiceImpl implements SubjectService {
         if (subjectRepository.existsByNameAndStatusAndIdNot(subjectRequest.getName(),1, id)) {
             throw new AlreadyExistException("subjectName", "Class Name already exists.");
         }
+        Sem sem = semRepository.findById(subjectRequest.getSemId()).orElse(null);
         if (subjectRequest.getImage() != null) {
             subject.setImage(subjectRequest.getImage().isEmpty() ? null : subjectRequest.getImage());
         }
+        subject.setSem(sem);
         subject.setName(subjectRequest.getName());
         return subjectRepository.save(subject);
     }

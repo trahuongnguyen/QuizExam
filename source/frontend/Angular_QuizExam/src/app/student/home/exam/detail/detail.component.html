@@ -49,24 +49,20 @@
 </div>
 
 <!-- Popup xác nhận -->
-<div class="custom-popup" *ngIf="showPopupConfirm">
-    <div class="popup-content">
-        <h4 class="modal-title"><b>Confirm submission</b></h4>
-        <hr/>
-        <p>Are you sure you want to submit?</p>
-        <button class="btn submit-btn" (click)="submitExam()">Submit</button>
-        <button class="btn btn-secondary" (click)="closePopup()">Cancel</button>
-    </div>
-</div>
+<app-dialog-popup
+    [isVisible]="isPopupConfirm"
+    [title]="dialogTitle"
+    [message]="dialogMessage"
+    [isConfirmationPopup]="isConfirmationPopup"
+    (confirm)="submitExam()"
+    (close)="closePopup()">
+</app-dialog-popup>
 
 <!-- Popup cảnh báo -->
-<div class="custom-popup" *ngIf="showPopupWarning">
-    <div class="popup-content">
-        <h4 class="modal-title"><b class="text-warning">Warning</b></h4>
-        <hr/>
-        <h5>{{ warningMessage }}</h5>
-        <p *ngIf="noteMessage"><b class="text-danger">{{ noteMessage }}</b></p>
-        <p *ngIf="violationMessage"><i class="text-danger">{{ violationMessage }}</i></p>
-        <button class="btn btn-warning" (click)="closePopup()">Close</button>
-    </div>
-</div>
+<app-dialog-popup
+    [isVisible]="isPopupWarning"
+    [title]="dialogTitle"
+    [message]="dialogMessage"
+    [isConfirmationPopup]="isConfirmationPopup"
+    (close)="closePopup()">
+</app-dialog-popup>

@@ -6,6 +6,7 @@ import { DetailComponent } from './detail/detail.component';
 import { ExamComponent } from './exam.component';
 import { FormsModule } from '@angular/forms';
 import { ExamRoutingModule } from './exam-routing.module';
+import { SharedModule } from '../../../shared/shared.module';
 
 
 
@@ -19,7 +20,8 @@ import { ExamRoutingModule } from './exam-routing.module';
   imports: [
     CommonModule,
     FormsModule,
-    ExamRoutingModule
+    ExamRoutingModule,
+    SharedModule
   ]
 })
 export class ExamModule { }

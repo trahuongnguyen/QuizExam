@@ -12,7 +12,10 @@ import { forkJoin } from 'rxjs';
 @Component({
   selector: 'app-detail',
   templateUrl: './detail.component.html',
-  styleUrls: ['./detail.component.css']
+  styleUrls: [
+    './../../../../shared/styles/student/style.css',
+    './detail.component.css'
+  ]
 })
 export class DetailComponent implements OnInit, OnDestroy {
   examId: number = 0;
@@ -25,12 +28,14 @@ export class DetailComponent implements OnInit, OnDestroy {
   questionStatus: boolean[] = [];
   studentAnswers: { questionRecordId: number; selectedAnswerIds: number[] }[] = [];
 
-  showPopupConfirm: boolean = false;
-  showPopupWarning: boolean = false;
-  warningMessage: string = '';
-  noteMessage: string = '';
-  violationMessage: string = '';
   autoSubmitTimer: any;
+
+  isPopupConfirm: boolean = false;
+  isPopupWarning: boolean = false;
+
+  dialogTitle: string = '';
+  dialogMessage: string = '';
+  isConfirmationPopup: boolean = false;
 
   constructor(
     private authService: AuthService,
@@ -59,6 +64,11 @@ export class DetailComponent implements OnInit, OnDestroy {
     forkJoin([markRequest, examRequest]).subscribe(([markData, examData]) => {
       this.examComponent.mark = markData;
       this.examDetail = examData;
+
+      if (this.examDetail == null) {
+        this.router.navigate([this.urlService.examPageUrl()]);
+        return;
+      }
 
       const startTime = new Date(this.examDetail.startTime);
       const endTime = new Date(this.examDetail.endTime);
@@ -145,10 +155,13 @@ export class DetailComponent implements OnInit, OnDestroy {
   }
 
   setupWarnings(): void {
-    this.showPopupWarning = true;
-    this.warningMessage = `Please do not click outside the exam.`;
-    this.violationMessage = `(Current violations: ${this.examComponent.mark.warning})`;
-    this.noteMessage = `Note: The system will automatically submit the exam after 3 violations.`;
+    this.dialogTitle = 'Warning';
+    this.dialogMessage =
+    `Please do not click outside the exam.<br>
+    <b class="text-danger">Note: The system will automatically submit the exam after 3 violations.</b><br>
+    <i class="text-danger">(Current violations: ${this.examComponent.mark.warning})</i>`;
+    this.isConfirmationPopup = false;
+    this.isPopupWarning = true;
   }
 
   updateWarning(): void {
@@ -163,6 +176,13 @@ export class DetailComponent implements OnInit, OnDestroy {
     if (event.key === 'F12' || (event.ctrlKey && event.key === 'u')) {
       event.preventDefault();
       this.toastr.warning("This action is disabled.");
+    }
+  };
+
+  preventPrintScreen = (event: KeyboardEvent) => {
+    if (event.key === 'PrintScreen') {
+      event.preventDefault();
+      this.toastr.warning("Taking screenshots is not allowed.");
     }
   };
 
@@ -196,6 +216,7 @@ export class DetailComponent implements OnInit, OnDestroy {
 
   setupAntiCheatMonitoring() {
     document.addEventListener('keydown', this.preventDeveloperTools); // Ngăn chặn mở Developer Tools
+    document.addEventListener('keydown', this.preventPrintScreen); // Ngăn chặn Print Screen
     document.addEventListener('copy', this.preventCopy); // Ngăn chặn sao chép nội dung
     document.addEventListener('contextmenu', this.preventRightClick); // Ngăn chặn menu chuột phải
     window.addEventListener('beforeunload', this.handleBeforeUnload); // Xử lý sự kiện load lại trang
@@ -319,19 +340,26 @@ export class DetailComponent implements OnInit, OnDestroy {
   }
 
   openPopupConfirm(): void {
-    this.showPopupConfirm = true;
+    this.dialogTitle = 'Confirm submission';
+    this.dialogMessage = 'Are you sure you want to submit?';
+    this.isConfirmationPopup = true;
+    this.isPopupConfirm = true;
   }
 
   closePopup(): void {
-    this.noteMessage = '';
-    this.violationMessage = '';
-    this.showPopupWarning = false;
-    this.showPopupConfirm = false;
+    this.dialogTitle = '';
+    this.dialogMessage = '';
+    this.isConfirmationPopup = true;
+    this.isPopupConfirm = false;
+    this.isPopupWarning = false;
   }
 
   autoSubmit(): void {
     if (this.examComponent.mark.warning >= 3) {
-      this.violationMessage = `(Current violations: ${this.examComponent.mark.warning} - The exam will be automatically submitted in 5 seconds)`;
+      this.dialogMessage =
+      `<b class="text-danger">The exam will be automatically submitted in 5 seconds</b><br>
+      <i class="text-danger">(Current violations: ${this.examComponent.mark.warning})</i>`;
+
       this.autoSubmitTimer = setTimeout(() => {
         this.submitExam();
       }, 5000);
@@ -351,6 +379,7 @@ export class DetailComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     document.removeEventListener('keydown', this.preventDeveloperTools);
+    document.removeEventListener('keydown', this.preventPrintScreen);
     document.removeEventListener('copy', this.preventCopy);
     document.removeEventListener('contextmenu', this.preventRightClick);
     window.removeEventListener('beforeunload', this.handleBeforeUnload);

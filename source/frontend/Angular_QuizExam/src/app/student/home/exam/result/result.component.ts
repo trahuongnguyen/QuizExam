@@ -13,7 +13,10 @@ import { forkJoin } from 'rxjs';
 @Component({
   selector: 'app-result',
   templateUrl: './result.component.html',
-  styleUrls: ['./result.component.css']
+  styleUrls: [
+    './../../../../shared/styles/student/style.css',
+    './result.component.css'
+  ]
 })
 export class ResultComponent implements OnInit {
   examId: number = 0; // ID của bài kiểm tra
@@ -172,11 +175,30 @@ export class ResultComponent implements OnInit {
       },
       options: {
         indexAxis: 'y',
-        scales: { x: { beginAtZero: true, max: 100 } },
         plugins: { legend: { display: false } },
         animation: { duration: 2000 },
         responsive: true,
-        maintainAspectRatio: false
+        maintainAspectRatio: false,
+        scales: {
+          x: { 
+            beginAtZero: true, 
+            max: 100,
+            grid: {
+              color: '#A9A9A9',
+            },
+            ticks: {
+              color: '#A9A9A9',
+            }
+          },
+          y: {
+            grid: {
+              color: '#A9A9A9',
+            },
+            ticks: {
+              color: '#A9A9A9',
+            }
+          }
+        }
       }
     });
   }

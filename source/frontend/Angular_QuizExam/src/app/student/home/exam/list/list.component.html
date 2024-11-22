@@ -1,14 +1,13 @@
 <div class="main-body">
-    <div class="exam-container ">
-        <div class="exam-header ">
-            <h1>Your Exams</h1>
-        </div>
+    <div class="container">
+        <h2>Your Exams</h2>
+        <hr class="line">
         <div class="row mt-4">
             <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12 mb-5" *ngFor="let exam of examList">
                 <div class="card" (click)="openPopupExam(exam.id)">
                     <div class="card-image">
-                        <img [src]="exam.subject.image ? (urlService.subjectImageUrl + exam.subject.image) : 'https://hermes.dio.me/articles/cover/8baa0855-4bd5-4abf-a007-48527a7c5859.png'"
-                        alt="Quiz Thumbnail">
+                        <img [src]="exam.subject.image ? (urlService.subjectImageUrl + exam.subject.image) : urlService.subjectDefaultImageUrl"
+                            alt="Default image for {{exam.subject.name}}">
                     </div>
                     <div class="card-content">
                         <p class="card-title">{{exam.subject.name}}</p>
@@ -22,56 +21,54 @@
         </div>
     </div>
 </div>
-<div *ngIf="isPopupExam" class="modal-backdrop" (click)="closePopupExam($event)">
-    <div class="modal-content" (click)="$event.stopPropagation()">
-        <div class="modal-body">
-            <div class="d-flex">
-                <div class="title">
-                    <h2>{{selectedExam.subject.name}}</h2>
-                </div>
-                <div class="modal-header">
-                    <span class="close-icon" (click)="closePopupExam()">&times;</span>
-                </div>
-            </div>
-            <p class="quiz-id">Code: {{selectedExam.code}}</p>
-            <div class="quiz-info">
-                <div class="exam-info-span d-flex">
-                    <div class="span">
+
+<div *ngIf="isPopupExam" class="popup-container">
+    <div class="popup-content" (click)="$event.stopPropagation()">
+        <div class="popup-header">
+            <span>{{selectedExam.subject.name}}</span>
+            <span class="close-icon" (click)="closePopup()">&times;</span>
+        </div>
+        <div class="popup-body">
+            <table class="popup-table">
+                <tr>
+                    <td>
                         <span class="mdi mdi-clock icon"></span>
                         <span class="ms-1">Time limit</span>
-                    </div>
-                    <div class="popup-content-right">{{selectedExam.duration}} minutes</div>
-                </div>
-                <div class="exam-info-span d-flex">
-                    <div class="span">
+                    </td>
+                    <td>{{selectedExam.duration}} minutes</td>
+                </tr>
+                <tr>
+                    <td>
                         <span class="mdi mdi-calendar-blank icon"></span>
                         <span class="ms-1">Start time</span>
-                    </div>
-                    <div class="popup-content-right">{{selectedExam.startTime | date: 'dd/MM/yyyy HH:mm' }}</div>
-                </div>
-                <div class="exam-info-span d-flex">
-                    <div class="span">
+                    </td>
+                    <td>{{selectedExam.startTime | date: 'dd/MM/yyyy HH:mm' }}</td>
+                </tr>
+                <tr>
+                    <td>
                         <span class="mdi mdi-calendar-blank icon"></span>
                         <span class="ms-1">End time</span>
-                    </div>
-                    <div class="popup-content-right">{{selectedExam.endTime | date: 'dd/MM/yyyy HH:mm'}}</div>
-                </div>
-                <div class="exam-info-span d-flex">
-                    <div class="span">
+                    </td>
+                    <td>{{selectedExam.endTime | date: 'dd/MM/yyyy HH:mm'}}</td>
+                </tr>
+                <tr>
+                    <td>
                         <span class="mdi mdi-alert-circle-outline icon"></span>
                         <span class="ms-1">Number of questions</span>
-                    </div>
-                    <div class="popup-content-right">{{selectedExam.maxScore}}</div>
-                </div>
-                <div class="exam-info-span d-flex">
-                    <div class="span">
+                    </td>
+                    <td>{{selectedExam.maxScore}}</td>
+                </tr>
+                <tr>
+                    <td>
                         <span class="mdi mdi-trophy-outline icon"></span>
                         <span class="ms-1">Maximum score</span>
-                    </div>
-                    <div class="popup-content-right">{{selectedExam.maxScore}}</div>
-                </div>
-            </div>
-            <button (click)="startExam(selectedExam.id)" class="start-btn">Start the Exam</button>
+                    </td>
+                    <td>{{selectedExam.maxScore}}</td>
+                </tr>
+            </table>
+        </div>
+        <div class="popup-footer">
+            <button (click)="startExam(selectedExam.id)" class="btn btn-primary button">Start the Exam</button>
         </div>
     </div>
 </div>
