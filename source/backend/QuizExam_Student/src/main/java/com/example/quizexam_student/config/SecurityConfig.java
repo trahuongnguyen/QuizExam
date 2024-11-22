@@ -43,7 +43,7 @@ public class SecurityConfig {
                 .requestMatchers("/api/exam/**").permitAll()
                 .requestMatchers("/api/student-answers/**").hasRole("STUDENT")
                 .requestMatchers("/api/mark/**").permitAll()
-                .requestMatchers("/api/level/**").hasAnyRole("ADMIN", " SRO", "TEACHER")
+                .requestMatchers("/api/level/**").hasAnyRole("ADMIN", "SRO", "TEACHER")
                 .requestMatchers("/api/role/**").hasAnyRole("ADMIN", "DIRECTOR", "TEACHER", "SRO")
                 .requestMatchers("/api/question-record/**").hasRole("STUDENT")
                 .requestMatchers("/uploads/**").permitAll()
