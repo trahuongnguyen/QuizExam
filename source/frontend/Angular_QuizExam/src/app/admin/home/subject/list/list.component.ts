@@ -34,6 +34,8 @@ export class ListComponent implements OnInit, OnDestroy {
   selectedSem: number = 0;
   changeImg: boolean = false;
 
+  nameError: String = '';
+
   isPopupCreate: boolean = false;
   isPopupUpdate: boolean = false;
   isPopupDelete: boolean = false;
@@ -245,6 +247,7 @@ export class ListComponent implements OnInit, OnDestroy {
       image: null,
       status: 0
     };
+    this.nameError = '';
     this.changeImg = false;
     this.isPopupCreate = false;
     this.isPopupUpdate = false;
@@ -283,10 +286,11 @@ export class ListComponent implements OnInit, OnDestroy {
   }
 
   createSubject(): void {
+    this.nameError = '';
     const formData = new FormData();
     const subject = { semId: this.subjectForm.sem.id, name: this.subjectForm.name }
 
-    formData.append('file', this.subjectForm.image || new Blob([]));
+    formData.append('file', this.subjectForm.image || new Blob());
     formData.append('subject', new Blob([JSON.stringify(subject)], { type: 'application/json' }));
 
     this.createSubjectApi(formData).subscribe({
@@ -294,18 +298,27 @@ export class ListComponent implements OnInit, OnDestroy {
         this.toastr.success('Create Successful!', 'Success', { timeOut: 2000 });
         this.setSelectedSem(subject.semId);
       },
-      error: () => {
+      error: (err) => {
         this.toastr.error('Create Fail!', 'Error', { timeOut: 2000 });
+        this.nameError = err.error.message;
+        if (err.error.length > 0) {
+          err.error.forEach((e: any) => {
+            if (e.key == 'name') {
+              this.nameError = e.message;
+            }
+          });
+        }
       }
     });
   }
 
   updateSubject() {
+    this.nameError = '';
     const formData = new FormData();
     const subject = { semId: this.subjectForm.sem.id, name: this.subjectForm.name }
 
     if (this.changeImg) {
-      formData.append('file', this.subjectForm.image || new Blob([]));
+      formData.append('file', this.subjectForm.image || new Blob());
     }
     formData.append('subject', new Blob([JSON.stringify(subject)], { type: 'application/json' }));
 
@@ -314,8 +327,16 @@ export class ListComponent implements OnInit, OnDestroy {
         this.toastr.success('Update Successful!', 'Success', { timeOut: 2000 });
         this.setSelectedSem(subject.semId);
       },
-      error: () => {
+      error: (err) => {
         this.toastr.error('Update Fail!', 'Error', { timeOut: 2000 });
+        this.nameError = err.error.message;
+        if (err.error.length > 0) {
+          err.error.forEach((e: any) => {
+            if (e.key == 'name') {
+              this.nameError = e.message;
+            }
+          });
+        }
       }
     });
   }

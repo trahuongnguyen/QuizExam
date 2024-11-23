@@ -139,7 +139,7 @@ export class ClassComponent implements OnInit, OnDestroy {
 
   name: String = '';
   classDay: String = '2, 4, 6';
-  classTime: String = '8h00 - 10h00';
+  classTime: String = '08h00 - 10h00';
   admissionDate: String = '';
 
   nameError: String = '';

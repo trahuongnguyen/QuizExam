@@ -165,6 +165,10 @@
     margin-bottom: 15px;
 }
 
+.popup-container .popup-content .form-popup .popup-body .form-group .error {
+    margin-left: 3px;
+}
+
 .popup-container .popup-content .form-popup .popup-body .form-group .image-preview {
     display: flex;
     align-items: center;

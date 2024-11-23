@@ -30,7 +30,7 @@ public class SubjectServiceImpl implements SubjectService {
     @Override
     public List<Subject> getAllSubjectBySem(int id) {
         Sem sem = semRepository.findById(id).orElse(null);
-        return subjectRepository.findAllBySemAndStatusOrderByIdDesc(sem, 1);
+        return subjectRepository.findAllBySemAndStatus(sem, 1);
     }
 
     @Override
@@ -41,7 +41,7 @@ public class SubjectServiceImpl implements SubjectService {
     @Override
     public Subject save(SubjectRequest subjectRequest){
         if (subjectRepository.existsByNameAndStatus(subjectRequest.getName(),1)) {
-            throw new AlreadyExistException("subjectName", "Class Name already exists.");
+            throw new AlreadyExistException("name", "Subject Name already exists.");
         }
         Subject subject = new Subject();
         subject.setName(subjectRequest.getName());
@@ -55,7 +55,7 @@ public class SubjectServiceImpl implements SubjectService {
     public Subject update(int id, SubjectRequest subjectRequest){
         Subject subject = subjectRepository.findSubjectByIdAndStatus(id, 1).orElseThrow(() -> new NotFoundException("subject", "Subject not found"));
         if (subjectRepository.existsByNameAndStatusAndIdNot(subjectRequest.getName(),1, id)) {
-            throw new AlreadyExistException("subjectName", "Class Name already exists.");
+            throw new AlreadyExistException("name", "Subject Name already exists.");
         }
         Sem sem = semRepository.findById(subjectRequest.getSemId()).orElse(null);
         if (subjectRequest.getImage() != null) {

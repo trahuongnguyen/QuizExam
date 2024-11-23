@@ -60,15 +60,14 @@ public class SubjectController {
     @PostMapping(consumes = {MULTIPART_FORM_DATA_VALUE, APPLICATION_JSON_VALUE}, path = "")
     public ResponseEntity<Subject> saveSubject(@RequestPart(value = "file", required = false) MultipartFile file, @RequestPart("subject") @Valid SubjectRequest subjectRequest) throws IOException {
         if (file != null) {
-            String fileName = "";
             if (!file.isEmpty()) {
                 LocalDate date = LocalDate.now();
-                fileName = UUID.randomUUID() + "_" + date + "_" + file.getOriginalFilename();
+                String fileName = UUID.randomUUID() + "_" + date + "_" + file.getOriginalFilename();
                 Files.copy(file.getInputStream(), Paths.get(uploadSubject).resolve(fileName));
+                subjectRequest.setImage(fileName);
             }
-            subjectRequest.setImage(fileName);
         }
-        return  ResponseEntity.ok(subjectService.save(subjectRequest));
+        return ResponseEntity.ok(subjectService.save(subjectRequest));
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'DIRECTOR')")

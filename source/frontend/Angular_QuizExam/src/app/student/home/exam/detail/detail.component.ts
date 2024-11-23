@@ -172,6 +172,10 @@ export class DetailComponent implements OnInit, OnDestroy {
     });
   }
 
+  transformTextWithNewlines(text: string): string {
+    return text.replace(/\n/g, '<br>');
+  }
+
   preventDeveloperTools = (event: KeyboardEvent) => {
     if (event.key === 'F12' || (event.ctrlKey && event.key === 'u')) {
       event.preventDefault();

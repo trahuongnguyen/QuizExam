@@ -39,32 +39,32 @@
             </div>
             <div class="popup-body">
                 <div class="form-group">
-                    <label for="name" class="text-popup">Name:</label>
+                    <label for="name" class="label-popup">Name:</label>
                     <input type="text" class="form-control" [(ngModel)]="name" name="name" placeholder="Enter Class Name">
-                    <span class="text-danger error">{{ nameError }}</span>
+                    <span class="text-danger error" *ngIf="nameError">{{ nameError }}</span>
                 </div>
                 <div class="form-group">
-                    <label for="classDay" class="text-popup">Day:</label>
+                    <label for="classDay" class="label-popup">Day:</label>
                     <select class="form-select" [(ngModel)]="classDay" name="classDay">
                         <option value="2, 4, 6">2, 4, 6</option>
                         <option value="3, 5, 7">3, 5, 7</option>
                     </select>
-                    <span class="text-danger error">{{ classDayError }}</span>
+                    <span class="text-danger error" *ngIf="classDayError">{{ classDayError }}</span>
                 </div>
                 <div class="form-group">
-                    <label for="classTime" class="text-popup">Hour:</label>
+                    <label for="classTime" class="label-popup">Hour:</label>
                     <select class="form-select" [(ngModel)]="classTime" name="classTime">
                         <option value="08h00 - 10h00">08h00 - 10h00</option>
                         <option value="10h00 - 12h00">10h00 - 12h00</option>
                         <option value="13h30 - 16h30">13h30 - 16h30</option>
                         <option value="18h00 - 21h00">18h00 - 21h00</option>
                     </select>
-                    <span class="text-danger error">{{ classTimeError }}</span>
+                    <span class="text-danger error" *ngIf="classTimeError">{{ classTimeError }}</span>
                 </div>
                 <div class="form-group">
-                    <label for="admissionDate" class="text-popup">Admission Date:</label>
+                    <label for="admissionDate" class="label-popup">Admission Date:</label>
                     <input type="date" class="form-control" [(ngModel)]="admissionDate" name="admissionDate">
-                    <span class="text-danger error">{{ admissionDateError }}</span>
+                    <span class="text-danger error" *ngIf="admissionDateError">{{ admissionDateError }}</span>
                 </div>
             </div>
             <div class="popup-footer">

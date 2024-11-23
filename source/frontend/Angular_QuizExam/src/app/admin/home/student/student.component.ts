@@ -50,6 +50,14 @@ export class StudentComponent implements OnInit, OnDestroy {
 
   studentId: any;
 
+  nameError: String = '';
+  dobError: String = '';
+  addressError: String = '';
+  phoneNumberError: String = '';
+  emailError: String = '';
+  rollNumberError: String = '';
+  rollPortalError: String = '';
+
   dialogTitle: string = '';
   dialogMessage: string = '';
   isConfirmationPopup: boolean = false;
@@ -286,7 +294,18 @@ export class StudentComponent implements OnInit, OnDestroy {
     this.closePopup();
   }
 
+  errorEmpty(): void {
+    this.nameError = '';
+    this.dobError = '';
+    this.addressError = '';
+    this.phoneNumberError = '';
+    this.emailError = '';
+    this.rollNumberError = '';
+    this.rollPortalError = '';
+  }
+
   createStudent(): void {
+    this.errorEmpty();
     if (this._classId != 0) {
       this.stdRequest.classId = this._classId;
     }
@@ -309,6 +328,7 @@ export class StudentComponent implements OnInit, OnDestroy {
 
 
   updateStudent(): void {
+    this.errorEmpty();
     const _studentRequest = {
       userRequest: {
         fullName: this.stdResponse.userResponse.fullName,

@@ -79,7 +79,7 @@
 
         <div class="question-section-container">
             <div class="question-section" *ngFor="let question of selectedExam.questionRecordResponses; let i = index">
-                <h6><b>Question {{ i + 1 }}:</b> {{ question.content }}</h6>
+                <h6><b>Question {{ i + 1 }}: </b><span [innerHTML]="transformTextWithNewlines(question.content)"></span></h6>
 
                 <div *ngIf="question.image">
                     <img [src]="urlService.questionImageUrl + question.image" alt="Question Image">

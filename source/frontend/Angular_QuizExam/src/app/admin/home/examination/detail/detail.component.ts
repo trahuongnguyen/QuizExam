@@ -62,6 +62,10 @@ export class DetailComponent implements OnInit {
   navigateToAddStudentForExam(): void {
     this.router.navigate([this.urlService.addStudentForExamlUrl(this.examId)]);
   }
+
+  transformTextWithNewlines(text: string): string {
+    return text.replace(/\n/g, '<br>');
+  }
   
   exportPDF() {
     this.authService.listExporter = this.apiData;
