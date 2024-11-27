@@ -62,28 +62,33 @@
                 <div class="col-6">
                     <select class="form-select" [(ngModel)]="classId" name="classId" (change)="filterStudentsByClass()">
                         <option value=0>Student (No Class)</option>
-                        <option *ngFor="let data of listClass" [value]="data.id">{{data.name}}</option>
+                        <option *ngFor="let data of filterClass" [value]="data.id">{{data.name}}</option>
                     </select>
                 </div>
                 <div class="col-6">
-                    <input type="text" class="form-control search-input" [(ngModel)]="searchStudent" (ngModelChange)="onSearchChange()"
-                        name="searchStudent" placeholder="Search Students"/>
+                    <input type="text" class="form-control search-input" [(ngModel)]="searchClass" (ngModelChange)="onSearchClassChange()"
+                        name="searchStudent" placeholder="Search Class"/>
                     <i class="fa-solid fa-magnifying-glass search-icon"></i>
                 </div>
             </div>
         </div>
+        <div class="search-container">
+                <input type="text" class="form-control search-input" [(ngModel)]="searchStudent" (ngModelChange)="onSearchStudentsChange()"
+                        name="searchStudent" placeholder="Search Students"/>
+                <i class="fa-solid fa-magnifying-glass search-icon"></i>
+        </div>
         <div class="popup-body">
             <div class="form-popup">
                 <div class="checkbox-group">
-                    <div class="checkbox-input" *ngIf="classId != 0">
+                    <div class="checkbox-input" *ngIf=" searchStudent == '' ">
                         <input type="checkbox" id="student" [checked]="selectAllStatus[classId]" (change)="toggleSelectAll($event)"/>
-                        <label for="student">Select All</label>
+                        <label for="student" >Select All</label>
                     </div>
                     <div class="checkbox-input" *ngFor="let student of filterStudents">
                         <input type="checkbox" (change)="handleCheckboxChange(student.userResponse.id, $event)"
                             [checked]="isChecked(student.userResponse.id)"
                             id="student{{student.userResponse.id}}"/>
-                        <label for="student{{student.userResponse.id}}">{{ student.userResponse.fullName }} - {{ student.userResponse.email }}</label>
+                        <label for="student{{student.userResponse.id}}">{{ student.userResponse.fullName }} - {{ student.userResponse.email }} - {{ student.rollNumber }}</label>
                     </div>
                 </div>
             </div>

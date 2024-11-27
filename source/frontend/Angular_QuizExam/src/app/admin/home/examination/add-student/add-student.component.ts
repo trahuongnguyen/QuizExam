@@ -27,6 +27,8 @@ export class AddStudentComponent implements OnInit, OnDestroy {
   listStudentByClass: any[] = [];
   filterStudents: any[] = [];
   searchStudent: string = '';
+  searchClass: string = '';
+  filterClass: any[] = [];
 
   studentId: number = 0;
   studentIds: number[] = [];
@@ -77,6 +79,7 @@ export class AddStudentComponent implements OnInit, OnDestroy {
         }
 
         this.listClass = classResponse;
+        this.filterClass = classResponse;
         this.selectedStudents = studentForExamResponse;
         this.listStudentByClass = studentNoClassResponse;
 
@@ -119,11 +122,24 @@ export class AddStudentComponent implements OnInit, OnDestroy {
     this.isPopupAddStudent = true;
   }
 
-  onSearchChange(): void {
+  onSearchStudentsChange(): void {
     this.filterStudents = this.listStudentByClass.filter(student =>
       student.userResponse.fullName.toLowerCase().includes(this.searchStudent.toLowerCase()) ||
-      student.userResponse.email.toLowerCase().includes(this.searchStudent.toLowerCase())
+      student.userResponse.email.toLowerCase().includes(this.searchStudent.toLowerCase()) ||
+      student.rollNumber.toLowerCase().includes(this.searchStudent.toLowerCase()) 
     );
+  }
+
+  onSearchClassChange(): void {
+    this.filterClass = this.listClass.filter(c =>
+      c.name.toLowerCase().includes(this.searchClass.toLowerCase())
+    );
+    if (this.filterClass.some(() => true)) {
+      this.classId = this.filterClass[0].id;
+    } else {
+      this.classId = 0;
+    }
+    this.filterStudentsByClass();
   }
 
   filterStudentsByClass(): void {
@@ -198,7 +214,7 @@ export class AddStudentComponent implements OnInit, OnDestroy {
   closePopup(): void {
     this.searchStudent = '';
     this.tempSelectedStudents = [];
-    this.onSearchChange();
+    this.onSearchStudentsChange();
     this.isPopupAddStudent = false;
     this.isPopupDelete = false;
   }

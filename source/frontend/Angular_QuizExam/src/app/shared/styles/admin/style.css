@@ -90,7 +90,7 @@
 .popup-container .popup-content {
     display: flex;
     flex-direction: column;
-    width: 500px;
+    min-width: 500px;
     max-height: 80vh;
     color: var(--color-text);
     background-color: var(--color-background);

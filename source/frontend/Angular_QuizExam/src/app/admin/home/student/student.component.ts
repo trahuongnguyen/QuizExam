@@ -65,6 +65,9 @@ export class StudentComponent implements OnInit, OnDestroy {
   isPopupResetPassword: boolean = false;
   isPopupBackupRestore: boolean = false;
 
+  searchClass: string = '';
+  filterClass: any[] = [];
+
   get formattedDob(): string {
     const dob = this.stdResponse.userResponse.dob;
     // Chuyển đổi chuỗi "dd-MM-yyyy" sang định dạng "yyyy-MM-dd"
@@ -100,6 +103,7 @@ export class StudentComponent implements OnInit, OnDestroy {
     }
     this.http.get<any>(`${this.authService.apiUrl}/class`, this.home.httpOptions).subscribe((data: any) => {
       this.classes = data;
+      this.filterClass = data;
       for (let dt of data) {
         if (this._classId == dt.id) {
           this.class = dt.name;
@@ -418,6 +422,17 @@ export class StudentComponent implements OnInit, OnDestroy {
         this.toastr.error(err, 'Error', { timeOut: 2000 });
       }
     });
+  }
+
+  onSearchClassChange(): void {
+    this.filterClass = this.classes.filter((c: any) =>
+      c.name.toLowerCase().includes(this.searchClass.toLowerCase())
+    );
+    if (this.filterClass.some(() => true)) {
+      this.classId = this.filterClass[0].id;
+    } else {
+      this.classId = 0;
+    }
   }
 
   ngOnDestroy(): void {

@@ -57,7 +57,7 @@ export class FormComponent implements OnInit {
 
   examsForm: ExamForm = {
     name: '',
-    duration: 30,
+    duration: 40,
     startTime: "",
     endTime: "",
     classes: [],
