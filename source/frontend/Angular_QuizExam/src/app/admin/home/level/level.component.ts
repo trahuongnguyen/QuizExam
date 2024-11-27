@@ -33,9 +33,11 @@ export class LevelComponent implements OnInit, OnDestroy {
   _level: any = {
     id: 0,
     name: '',
+    point: 1,
   };
   levelId: any;
   name: String = '';
+  point: number = 1;
 
   isPopupDelete: boolean = false;
   dialogTitle: string = '';
@@ -69,6 +71,7 @@ export class LevelComponent implements OnInit, OnDestroy {
           }
         },
         { title: 'Level', data: 'name' },
+        { title: 'Point', data: 'point' },
         {
           title: 'Action',
           data: null,
@@ -147,6 +150,7 @@ export class LevelComponent implements OnInit, OnDestroy {
     const level =
     {
       name: this.name,
+      point: this.point
     }
 
     this.http.post(`${this.authService.apiUrl}/level`, level, this.home.httpOptions).subscribe(
@@ -185,6 +189,7 @@ export class LevelComponent implements OnInit, OnDestroy {
     {
       id: this.levelId,
       name: this._level.name,
+      point: this._level.point
     }
 
     this.http.put(`${this.authService.apiUrl}/level/${this.levelId}`, level, this.home.httpOptions).subscribe(

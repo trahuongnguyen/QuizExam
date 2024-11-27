@@ -33,7 +33,7 @@ public class LevelServiceImpl implements LevelService {
             throw new AlreadyExistException("Name", "Level Name already exist");
         }
         level.setStatus(1);
-        level.setPoint(1);
+        level.setPoint(level.getPoint());
         return levelRepository.save(level);
     }
 

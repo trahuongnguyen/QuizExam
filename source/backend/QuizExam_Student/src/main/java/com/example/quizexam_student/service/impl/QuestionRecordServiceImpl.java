@@ -22,7 +22,7 @@ public class QuestionRecordServiceImpl implements QuestionRecordService {
     private final QuestionRecordRepository questionRecordRepository;
 
     @Override
-    public Map<String, Integer> maxScoreByLevel(Integer examinationId) {
+    public Map<String, Double> maxScoreByLevel(Integer examinationId) {
         Examination examination = examinationRepository.findById(examinationId).orElse(null);
         if (Objects.isNull(examination)) {
             throw new NotFoundException("examination", "Not found examination");
@@ -32,7 +32,7 @@ public class QuestionRecordServiceImpl implements QuestionRecordService {
         // Tính tổng điểm cho từng level
         return questionRecords.stream().collect(Collectors.groupingBy(
                 QuestionRecord::getLevel,
-                Collectors.summingInt(QuestionRecord::getPoint)
+                Collectors.summingDouble(QuestionRecord::getPoint)
         ));
     }
 }

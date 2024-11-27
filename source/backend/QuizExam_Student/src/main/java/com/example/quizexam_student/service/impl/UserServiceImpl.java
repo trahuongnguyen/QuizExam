@@ -117,6 +117,8 @@ public class UserServiceImpl implements UserService {
         }
         user = UserMapper.convertFromRequest(userRequest);
         user.setId(id);
+        Role role = roleRepository.findById(userRequest.getRoleId()).orElse(null);
+        user.setRole(role);
         return userRepository.save(user);
     }
 

@@ -16,7 +16,7 @@ public class ExaminationResponse {
     private String code;
     private Subject subject;
     private List<QuestionRecordResponse> questionRecordResponses;
-    private Integer maxScore;
+    private Double maxScore;
     private List<StudentResponse> studentResponses;
     private List<MarkResponse> markResponses;
 }

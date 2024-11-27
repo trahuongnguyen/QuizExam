@@ -30,7 +30,7 @@ public class StudentAnswerController {
     }
 
     @GetMapping("/score-level/{examId}")
-    public Map<String, Integer> scoreByLevel(@PathVariable int examId) {
+    public Map<String, Double> scoreByLevel(@PathVariable int examId) {
         String email = ((org.springframework.security.core.userdetails.User)
                 SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
         User user = userService.findUserByEmail(email);

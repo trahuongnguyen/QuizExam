@@ -85,7 +85,7 @@ public class ExaminationServiceImpl implements ExaminationService {
             }
         } while (true);
 
-        int maxScore = 0;
+        double maxScore = 0;
         for (Question question : finalQuestions) {
             generateAnswerForQuestion(question);
             maxScore += question.getLevel().getPoint();
@@ -94,6 +94,7 @@ public class ExaminationServiceImpl implements ExaminationService {
         Examination exam = ExaminationMapper.convertFromRequest(examinationRequest);
         exam.setStatus(1);
         exam.setMaxScore(maxScore);
+        exam.setTotalQuestion(totalQuestions);
         exam.setQuestions(new HashSet<>(finalQuestions));
         exam.setSubject(subject);
 

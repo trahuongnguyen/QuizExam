@@ -29,7 +29,7 @@ public class QuestionRecord {
     private String level;
 
     @Column(name = "point", nullable = false)
-    private Integer point;
+    private Double point;
 
     @Column(name = "type", nullable = false)
     private Integer type;

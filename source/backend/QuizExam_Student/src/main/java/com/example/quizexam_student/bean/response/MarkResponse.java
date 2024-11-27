@@ -7,10 +7,10 @@ import java.time.LocalDateTime;
 @Data
 public class MarkResponse {
     private int id;
-    private Integer score;
+    private Double score;
     private LocalDateTime beginTime;
     private LocalDateTime submittedTime;
-    private Integer maxScore;
+    private Double maxScore;
     private Integer warning;
     private String subjectName;
 }

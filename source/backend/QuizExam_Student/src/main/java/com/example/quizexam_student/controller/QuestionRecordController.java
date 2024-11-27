@@ -16,7 +16,7 @@ public class QuestionRecordController {
     private final QuestionRecordService questionRecordService;
 
     @GetMapping("/max-score-level/{examinationId}")
-    public Map<String, Integer> maxScoreByLevel(@PathVariable Integer examinationId) {
+    public Map<String, Double> maxScoreByLevel(@PathVariable Integer examinationId) {
         return questionRecordService.maxScoreByLevel(examinationId);
     }
 }

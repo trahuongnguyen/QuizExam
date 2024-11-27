@@ -36,7 +36,7 @@ public class StudentAnswerServiceImpl implements StudentAnswerService {
                 throw new AlreadyExistException("mark", "This test has already been scored.");
             }
 
-            int totalScore = 0;
+            double totalScore = 0;
 
             for (StudentQuestionAnswer studentQuestionAnswer : studentAnswerRequest.getStudentQuestionAnswers()) {
                 QuestionRecord questionRecord = questionRecordRepository.findById(studentQuestionAnswer.getQuestionRecordId()).orElse(null);
@@ -80,7 +80,7 @@ public class StudentAnswerServiceImpl implements StudentAnswerService {
         return studentAnswerRequest;
     }
 
-    public Map<String, Integer> scoreByLevel(StudentDetail studentDetail, Integer examinationId) {
+    public Map<String, Double> scoreByLevel(StudentDetail studentDetail, Integer examinationId) {
         Mark mark = markRepository.findByStudentDetailAndExaminationId(studentDetail, examinationId);
 
         if (Objects.isNull(mark)) {
@@ -92,11 +92,11 @@ public class StudentAnswerServiceImpl implements StudentAnswerService {
         List<StudentAnswer> studentAnswers = studentAnswerRepository.findByMarkId(mark.getId());
 
         List<Level> levels = levelRepository.findAllByStatus(1);
-        Map<String, Integer> scoreByLevel = new HashMap<>();
+        Map<String, Double> scoreByLevel = new HashMap<>();
 
         // Khởi tạo điểm cho từng level
         for (Level level : levels) {
-            scoreByLevel.put(level.getName(), 0); // Gán điểm khởi tạo là 0
+            scoreByLevel.put(level.getName(), 0.0); // Gán điểm khởi tạo là 0
         }
 
         int totalScore = 0;
@@ -121,7 +121,7 @@ public class StudentAnswerServiceImpl implements StudentAnswerService {
             // Nếu tất cả đáp án đúng đều được học sinh chọn, cộng điểm
             if (selectedAnswerIds.containsAll(correctAnswerIds)) {
                 String level = questionRecord.getLevel();
-                scoreByLevel.put(level, scoreByLevel.getOrDefault(level, 0) + questionRecord.getPoint()); // Cộng điểm cho level tương ứng
+                scoreByLevel.put(level, scoreByLevel.getOrDefault(level, 0.0) + questionRecord.getPoint()); // Cộng điểm cho level tương ứng
             }
         }
 

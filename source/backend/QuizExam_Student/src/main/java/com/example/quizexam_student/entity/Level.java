@@ -25,7 +25,7 @@ public class Level {
     private String name;
 
     @Column(name = "point", nullable = false)
-    private Integer point;
+    private Double point;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "level")
     @JsonIgnore

@@ -20,7 +20,7 @@ public class Mark {
     private Integer id;
 
     @Column(name = "score")
-    private Integer score;
+    private Double score;
 
     @Column(name = "begin_time")
     private LocalDateTime beginTime;

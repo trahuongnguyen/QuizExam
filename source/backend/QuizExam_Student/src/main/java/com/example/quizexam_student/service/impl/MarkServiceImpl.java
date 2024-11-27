@@ -36,8 +36,8 @@ public class MarkServiceImpl implements MarkService {
         List<Mark> marks = markRepository.findAllByScoreIsNotNull();
 
         // Nhóm các điểm theo subjectName, tính tổng điểm, tổng maxScore, và số lượng bài pass
-        Map<String, Integer> subjectTotalScore = new HashMap<>();
-        Map<String, Integer> subjectTotalMaxScore = new HashMap<>();
+        Map<String, Double> subjectTotalScore = new HashMap<>();
+        Map<String, Double> subjectTotalMaxScore = new HashMap<>();
         Map<String, Integer> subjectPassCount = new HashMap<>();
         Map<String, Integer> subjectTotalExams = new HashMap<>();
 
@@ -46,10 +46,10 @@ public class MarkServiceImpl implements MarkService {
             String subjectName = mark.getSubject().getName();
 
             // Cộng dồn tổng score theo môn học
-            subjectTotalScore.put(subjectName, subjectTotalScore.getOrDefault(subjectName, 0) + mark.getScore());
+            subjectTotalScore.put(subjectName, subjectTotalScore.getOrDefault(subjectName, 0.0) + mark.getScore());
 
             // Cộng dồn tổng maxScore theo môn học từ kỳ thi
-            subjectTotalMaxScore.put(subjectName, subjectTotalMaxScore.getOrDefault(subjectName, 0) + mark.getExamination().getMaxScore());
+            subjectTotalMaxScore.put(subjectName, subjectTotalMaxScore.getOrDefault(subjectName, 0.0) + mark.getExamination().getMaxScore());
 
             // Cộng dồn số bài thi đã pass theo môn học
             double passPercentage = (double) mark.getScore() / mark.getExamination().getMaxScore() * 100;

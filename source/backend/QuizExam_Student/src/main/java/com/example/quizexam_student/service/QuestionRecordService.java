@@ -6,5 +6,5 @@ import java.util.Map;
 
 @Service
 public interface QuestionRecordService {
-    Map<String, Integer> maxScoreByLevel(Integer examinationId);
+    Map<String, Double> maxScoreByLevel(Integer examinationId);
 }

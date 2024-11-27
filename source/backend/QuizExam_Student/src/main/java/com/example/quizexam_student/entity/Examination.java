@@ -35,7 +35,10 @@ public class Examination {
     private String code;
 
     @Column(name = "max_score", nullable = false)
-    private Integer maxScore;
+    private Double maxScore;
+
+    @Column(name = "total_question", nullable = false)
+    private Integer totalQuestion;
 
     @Column(name = "status", nullable = false)
     private Integer status;
