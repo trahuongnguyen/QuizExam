@@ -8,6 +8,7 @@ import { HttpClient } from '@angular/common/http';
 import { ToastrService } from 'ngx-toastr';
 import { UrlService } from '../../../../shared/service/url.service';
 import { Router, ActivatedRoute } from '@angular/router';
+import e from 'express';
 
 interface ExamForm {
   name: string;
@@ -19,7 +20,9 @@ interface ExamForm {
   subjectId: number;
   chapterIds: number[];
   levelIds: number[];
+  type: number;
 }
+
 @Component({
   selector: 'app-form',
   templateUrl: './form.component.html',
@@ -53,8 +56,15 @@ export class FormComponent implements OnInit {
 
   isPopupLevel = false;
 
-  //classList: number[] = [];
+  _subjectId: any;
 
+  allQuestions: any[] = []; // All questions fetched from API
+  listQuestions: any[] = []; // Questions in "List Question"
+  examQuestions: any[] = []; // Questions in "Exam"
+  searchTextList: string = '';
+  searchTextExam: string = '';
+
+  
   examsForm: ExamForm = {
     name: '',
     duration: 40,
@@ -64,9 +74,12 @@ export class FormComponent implements OnInit {
     students: [],
     subjectId: 1,
     chapterIds: [],
-    levelIds: []
+    levelIds: [],
+    type: 0
   };
   checkedStates: any;
+
+  typeExam: number = 0;
 
   createdExam: any;
 
@@ -74,8 +87,22 @@ export class FormComponent implements OnInit {
     this.titleService.setTitle('Create Exam');
     this.http.get<any>(`${this.authService.apiUrl}/subject`, this.home.httpOptions).subscribe(response => {
       this.subjects = response;
+      console.log(this.subjects);
+      this.subjectName = this.subjects[0].name;
     });
     this.initializeLevel();
+    this.fetchQuestions();
+  }
+
+  nextStep(): void {
+    this.typeExam = this.examsForm.type;
+    if (this.typeExam == 0) {
+      this.isPopupLevel = true;
+    }
+  }
+
+  backStep(): void {
+    this.typeExam = 0;
   }
 
   createExam() {
@@ -144,13 +171,9 @@ export class FormComponent implements OnInit {
   }
 
   selectSubject(subject: any): void {
-    this.selectedSubject = subject.target.value;
-    this.subjectId = this.selectedSubject;
-    this.allChecked = false;
-    console.log('Selected Sem:', this.selectedSubject);
+    this.subjectId = subject.target.value;
+    this.subjectName = this.subjects.find((s: any) => s.id == this.subjectId).name;
   }
-
-  allChecked = false;
 
   openPopupLevel() {
     this.isPopupLevel = true;
@@ -219,4 +242,43 @@ export class FormComponent implements OnInit {
 
     this.isPopupLevel = false;
   }
+
+  fetchQuestions(): void {
+    this.http.get<any>(`${this.authService.apiUrl}/question/1`, this.home.httpOptions).subscribe((data: any) => {
+      this.listQuestions = data;
+    });
+  }
+
+  // Filtered questions for "List Question"
+  get filteredListQuestions(): any[] {
+    return this.listQuestions.filter((q) =>
+      q.content.toLowerCase().includes(this.searchTextList.toLowerCase())
+    );
+  }
+
+  // Filtered questions for "Exam"
+  get filteredExamQuestions(): any[] {
+    return this.examQuestions.filter((q) =>
+      q.content.toLowerCase().includes(this.searchTextExam.toLowerCase())
+    );
+  }
+
+  moveToExam(question: any): void {
+    const index = this.listQuestions.findIndex((q) => q.id == question.id);
+    console.log(index);
+    if (index !== -1) {
+      this.examQuestions.push(this.listQuestions[index]); // Thêm vào Exam
+      this.listQuestions.splice(index, 1); // Xóa khỏi List Question
+    }
+  }
+  
+  moveToList(question: any): void {
+    const index = this.examQuestions.findIndex((q) => q.id == question.id);
+    console.log(index);
+    if (index !== -1) {
+      this.listQuestions.push(this.examQuestions[index]); // Thêm vào List Question
+      this.examQuestions.splice(index, 1); // Xóa khỏi Exam
+    }
+  }
+
 }

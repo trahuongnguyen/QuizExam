@@ -25,7 +25,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User findUserByEmail(String email) {
-        return userRepository.findByEmail(email).orElseThrow(() -> new IncorrectEmailOrPassword("email", "Your Email Not Found"));
+        return userRepository.findByEmailAndStatus(email, 1).orElseThrow(() -> new IncorrectEmailOrPassword("email", "Your Email Not Found"));
     }
 
     @Override
@@ -39,7 +39,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Boolean existUserByEmail(String email) {
-        User user = userRepository.findByEmail(email).orElse(null);
+        User user = userRepository.findByEmailAndStatus(email, 1).orElse(null);
         return user != null;
     }
 

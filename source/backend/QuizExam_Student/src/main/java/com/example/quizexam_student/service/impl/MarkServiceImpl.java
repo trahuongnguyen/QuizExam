@@ -129,7 +129,7 @@ public class MarkServiceImpl implements MarkService {
     public User getUserByEmail() {
         String email = ((org.springframework.security.core.userdetails.User)
                 SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
-        User user = userRepository.findByEmail(email).orElse(null);
+        User user = userRepository.findByEmailAndStatus(email, 1).orElse(null);
         if (Objects.isNull(user)) {
             throw new IncorrectEmailOrPassword("email", "Your Email Not Found");
         }

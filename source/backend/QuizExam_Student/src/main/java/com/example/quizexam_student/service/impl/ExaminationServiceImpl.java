@@ -93,6 +93,7 @@ public class ExaminationServiceImpl implements ExaminationService {
 
         Examination exam = ExaminationMapper.convertFromRequest(examinationRequest);
         exam.setStatus(1);
+        exam.setType(0);
         exam.setMaxScore(maxScore);
         exam.setTotalQuestion(totalQuestions);
         exam.setQuestions(new HashSet<>(finalQuestions));
@@ -229,6 +230,7 @@ public class ExaminationServiceImpl implements ExaminationService {
         }
         Examination exam = ExaminationMapper.convertFromRequest(examinationRequest);
         exam.setStatus(1);
+        exam.setType(1);
         exam.setMaxScore(maxScore);
         exam.setTotalQuestion(questions.size());
         exam.setQuestions(new HashSet<>(questions));

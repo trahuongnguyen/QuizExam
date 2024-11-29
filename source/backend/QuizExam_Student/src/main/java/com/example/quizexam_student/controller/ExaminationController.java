@@ -72,7 +72,7 @@ public class ExaminationController {
     public List<ExaminationResponse> getAllExaminationsForStudent() {
         String email = ((org.springframework.security.core.userdetails.User)
                 SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
-        User user = userRepository.findByEmail(email).orElse(null);
+        User user = userRepository.findByEmailAndStatus(email, 1).orElse(null);
         assert user != null;
         StudentDetail studentDetail = user.getStudentDetail();
         List<Mark> marks = markRepository.findAllByStudentDetailAndScoreIsNull(studentDetail);

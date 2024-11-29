@@ -40,6 +40,9 @@ public class Examination {
     @Column(name = "total_question", nullable = false)
     private Integer totalQuestion;
 
+    @Column(name = "type", nullable = false)
+    private Integer type;
+
     @Column(name = "status", nullable = false)
     private Integer status;
 

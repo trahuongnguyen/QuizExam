@@ -2,35 +2,88 @@
     <h4>Examination</h4>
     <hr class="line">
 
-    <div class="row bs-wizard">
+    <div class="row bs-wizard bs-wizard-3" *ngIf="examsForm.type == 0">
         <div class="col-xs-3 bs-wizard-step active">
-          <div class="text-center bs-wizard-stepnum">Step 1</div>
-          <div class="progress"><div class="progress-bar"></div></div>
-          <a href="#" class="bs-wizard-dot"></a>
-          <div class="bs-wizard-info text-center">Create Exam</div>
+            <div class="text-center bs-wizard-stepnum">Step 1</div>
+            <div class="progress">
+                <div class="progress-bar"></div>
+            </div>
+            <a href="#" class="bs-wizard-dot"></a>
+            <div class="bs-wizard-info text-center">Create Exam</div>
         </div>
-        
+
         <div class="col-xs-3 bs-wizard-step disabled">
-          <div class="text-center bs-wizard-stepnum">Step 2</div>
-          <div class="progress"><div class="progress-bar"></div></div>
-          <a href="#" class="bs-wizard-dot"></a>
-          <div class="bs-wizard-info text-center">Add Student</div>
+            <div class="text-center bs-wizard-stepnum">Step 2</div>
+            <div class="progress">
+                <div class="progress-bar"></div>
+            </div>
+            <a href="#" class="bs-wizard-dot"></a>
+            <div class="bs-wizard-info text-center">Add Student</div>
         </div>
-        
+
         <div class="col-xs-3 bs-wizard-step disabled">
-          <div class="text-center bs-wizard-stepnum">Step 3</div>
-          <div class="progress"><div class="progress-bar"></div></div>
-          <a href="#" class="bs-wizard-dot"></a>
-          <div class="bs-wizard-info text-center">Complete</div>
+            <div class="text-center bs-wizard-stepnum">Step 3</div>
+            <div class="progress">
+                <div class="progress-bar"></div>
+            </div>
+            <a href="#" class="bs-wizard-dot"></a>
+            <div class="bs-wizard-info text-center">Complete</div>
         </div>
     </div>
-    
-    <div class="container">
+
+    <div class="row bs-wizard bs-wizard-4" *ngIf="examsForm.type == 1">
+        <div class="col-xs-3 bs-wizard-step {{typeExam == 1 ? 'complete' : 'active'}}">
+            <div class="text-center bs-wizard-stepnum">Step 1</div>
+            <div class="progress">
+                <div class="progress-bar"></div>
+            </div>
+            <a href="#" class="bs-wizard-dot"></a>
+            <div class="bs-wizard-info text-center">Create Exam</div>
+        </div>
+
+        <div class="col-xs-3 bs-wizard-step {{typeExam == 1 ? 'active' : 'disabled'}}">
+            <div class="text-center bs-wizard-stepnum">Step 2</div>
+            <div class="progress">
+                <div class="progress-bar"></div>
+            </div>
+            <a href="#" class="bs-wizard-dot"></a>
+            <div class="bs-wizard-info text-center">Add Question</div>
+        </div>
+
+        <div class="col-xs-3 bs-wizard-step disabled">
+            <div class="text-center bs-wizard-stepnum">Step 3</div>
+            <div class="progress">
+                <div class="progress-bar"></div>
+            </div>
+            <a href="#" class="bs-wizard-dot"></a>
+            <div class="bs-wizard-info text-center">Add Student</div>
+        </div>
+
+        <div class="col-xs-3 bs-wizard-step disabled">
+            <div class="text-center bs-wizard-stepnum">Step 4</div>
+            <div class="progress">
+                <div class="progress-bar"></div>
+            </div>
+            <a href="#" class="bs-wizard-dot"></a>
+            <div class="bs-wizard-info text-center">Complete</div>
+        </div>
+    </div>
+
+    <div class="bottom-actions" *ngIf="typeExam == 1">
+        <div>
+            <span class="mdi mdi-keyboard-backspace" title="Back to List" (click)="backStep()"></span>
+        </div>
+        <div>
+            <a class="button button-pdf">Next<span class="mdi mdi-forward icon"></span></a>
+        </div>
+    </div>
+
+    <div class="container create-exam" *ngIf="typeExam == 0">
         <div class="title">
             <h3 class="text-center mt-4">Create Examination</h3>
         </div>
         <div class="content">
-            <form (ngSubmit)="createExam()">
+            <form (ngSubmit)="nextStep()">
                 <div class="row">
                     <div class="col-md-6">
                         <div class="form-group">
@@ -41,7 +94,8 @@
                     <div class="col-md-6">
                         <div class="form-group">
                             <label for="duration">Duration(minutes)</label><br>
-                            <input type="number" class="form-control" name="duration" [(ngModel)]="examsForm.duration" id="duration">
+                            <input type="number" class="form-control" name="duration" [(ngModel)]="examsForm.duration"
+                                id="duration">
                         </div>
                     </div>
                 </div>
@@ -49,13 +103,15 @@
                     <div class="col-md-6">
                         <div class="form-group">
                             <label for="startTime">Start Time</label><br>
-                            <input type="datetime-local" class="form-control" name="startTime" [(ngModel)]="examsForm.startTime" id="startTime">
+                            <input type="datetime-local" class="form-control" name="startTime"
+                                [(ngModel)]="examsForm.startTime" id="startTime">
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="form-group">
                             <label for="endTime">End Time</label><br>
-                            <input type="datetime-local" class="form-control" name="endTime" [(ngModel)]="examsForm.endTime" id="endTime">
+                            <input type="datetime-local" class="form-control" name="endTime"
+                                [(ngModel)]="examsForm.endTime" id="endTime">
                         </div>
                     </div>
                 </div>
@@ -63,19 +119,19 @@
                     <div class="col-md-6">
                         <div class="form-group">
                             <label for="">Subject</label><br>
-                            <select [(ngModel)]="examsForm.subjectId" class="form-select" name="subjectId" id="subject" (change)="selectSubject($event)">
+                            <select [(ngModel)]="examsForm.subjectId" class="form-select" name="subjectId" id="subject"
+                                (change)="selectSubject($event)">
                                 <option *ngFor="let sub of subjects" [value]="sub.id" value="">{{sub.name}}</option>
                             </select>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label for="level">Level</label> <br>
-                            <button type="button" class="form-select" (click)="openPopupLevel()">
-                                <!-- Nếu đã có thông tin level, hiển thị text số câu hỏi, nếu chưa có thì hiển thị 'Choose Level' -->
-                                <span *ngIf="selectedLevelsText; else chooseText">{{ selectedLevelsText }}</span>
-                                <ng-template #chooseText>Choose Level</ng-template>
-                            </button>
+                            <label for="type">Type</label><br>
+                            <select class="form-select" [(ngModel)]="examsForm.type" name="examsForm.type">
+                                <option value=0>Gen đề tự động</option>
+                                <option value=1>Chọn câu hỏi</option>
+                            </select>
                         </div>
                     </div>
                 </div>
@@ -86,6 +142,74 @@
                     </div>
                 </div>
             </form>
+        </div>
+    </div>
+
+    <div class="container select-question mt-3" *ngIf="typeExam == 1">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="d-flex justify-content-between mb-3">
+                    <p class="label">Name:</p>
+                    <p class="content">{{examsForm.name}}</p>
+                </div>
+                <div class="d-flex justify-content-between mb-3">
+                    <p class="label">Subject:</p>
+                    <p class="content">{{subjectName}}</p>
+                </div>
+                <div class="d-flex justify-content-between mb-3">
+                    <p class="label">Start Time:</p>
+                    <p class="content">{{examsForm.startTime | date:'dd/MM/yyyy HH:mm'}}</p>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="d-flex justify-content-between mb-3">
+                    <p class="label">Duration:</p>
+                    <p class="content">{{examsForm.duration}}</p>
+                </div>
+                <div class="d-flex justify-content-between mb-3">
+                    <p class="label">End Time:</p>
+                    <p class="content">{{examsForm.endTime | date:'dd/MM/yyyy HH:mm'}}</p>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="question-container">
+                    <h3 class="text-center">List Question</h3>
+                    <div class="d-flex justify-content-end align-items-center mb-3">
+                        <input type="text" class="form-control search-input" [(ngModel)]="searchTextList"
+                            placeholder="Search" />
+                    </div>
+                    <div *ngIf="filteredListQuestions.length > 0; else noListQuestions">
+                        <div *ngFor="let question of filteredListQuestions" class="question-item">
+                            <span (click)="moveToExam(question)" class="text-success" style="cursor: pointer;" title="Add">➕</span>
+                            {{ question.content }}
+                        </div>
+                    </div>
+                    <ng-template #noListQuestions>
+                        <p>No questions found in List Question.</p>
+                    </ng-template>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="question-container">
+                    <h3 class="text-center">Exam</h3>
+                    <div class="d-flex justify-content-end mb-3">
+                        <input type="text" class="form-control search-input" [(ngModel)]="searchTextExam"
+                            placeholder="Search" />
+                    </div>
+                    <div *ngIf="filteredExamQuestions.length > 0; else noExamQuestions">
+                        <div *ngFor="let question of filteredExamQuestions" class="question-item">
+                            <span (click)="moveToList(question)" class="text-danger" style="cursor: pointer;" title="Remove">➖</span>
+                            {{ question.content }}
+                        </div>
+                    </div>
+                    <ng-template #noExamQuestions>
+                        <p>No questions found in Exam.</p>
+                    </ng-template>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -100,7 +224,8 @@
             <div class="popup-body">
                 <div class="form-group" *ngFor="let level of listLevel">
                     <label for="level{{level.id}}" class="text-popup">{{ level.name }}:</label>
-                    <input type="number" class="form-control" [(ngModel)]="levelId[level.id]" name="{{level.id}}" placeholder="Enter number">
+                    <input type="number" class="form-control" [(ngModel)]="levelId[level.id]" name="{{level.id}}"
+                        placeholder="Enter number">
                     <span class="text-danger error">{{errorMessageLevel[level.id]}}</span>
                 </div>
             </div>

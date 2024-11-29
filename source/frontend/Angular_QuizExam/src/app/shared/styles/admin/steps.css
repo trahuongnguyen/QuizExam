@@ -2,17 +2,23 @@
     margin: 30px 50px;
 }
 
-.bs-wizard>.bs-wizard-step {
+.bs-wizard.bs-wizard-3>.bs-wizard-step {
     padding: 0;
     position: relative;
     width: 33%;
+}
+
+.bs-wizard.bs-wizard-4>.bs-wizard-step {
+    padding: 0;
+    position: relative;
+    width: 25%;
 }
 
 .bs-wizard>.bs-wizard-step .bs-wizard-stepnum {
     color: var(--color-text);
     font-size: 16px;
     margin-bottom: 5px;
-    transition: all 0.9s ease;
+    transition: color 0.9s ease;
 }
 
 .bs-wizard>.bs-wizard-step .bs-wizard-info {
@@ -31,7 +37,7 @@
     margin-top: -15px;
     margin-left: -15px;
     border-radius: 50%;
-    transition: all 0.9s ease;
+    transition: background-color 0.9s ease;
 }
 
 .bs-wizard>.bs-wizard-step>.bs-wizard-dot:after {
@@ -52,14 +58,14 @@
     box-shadow: none;
     margin: 17px 0;
     background-color: var(--color-step);
-    transition: all 0.9s ease;
+    transition: background-color 0.9s ease;
 }
 
 .bs-wizard>.bs-wizard-step>.progress>.progress-bar {
     width: 0px;
     box-shadow: none;
     background-color: var(--color-progress-bar);
-    transition: all 0.9s ease;
+    transition: background-color 0.9s ease;
 }
 
 .bs-wizard>.bs-wizard-step.complete>.progress>.progress-bar {
@@ -80,7 +86,7 @@
 
 .bs-wizard>.bs-wizard-step.disabled>.bs-wizard-dot {
     background-color: var(--color-step);
-    transition: all 0.9s ease;
+    transition: background-color 0.9s ease;
 }
 
 .bs-wizard>.bs-wizard-step.disabled>.bs-wizard-dot:after {

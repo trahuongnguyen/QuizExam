@@ -1,4 +1,9 @@
-.container {
+.bottom-actions span {
+    font-size: 18px;
+    cursor: pointer;
+}
+
+.container.create-exam {
     margin-top: 50px;
     padding: 10px;
     max-width: 800px;
@@ -23,7 +28,7 @@
     padding-top: 30px;
 }
 
-.container .content .form-control, 
+.container .content .form-control,
 .container .content .form-select {
     width: 100%;
     min-height: 35px;
@@ -54,9 +59,54 @@
 }
 
 input:-webkit-autofill,
-input:-webkit-autofill:hover, 
-input:-webkit-autofill:focus, 
-input:-webkit-autofill:active{
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
     -webkit-box-shadow: 0 0 0 30px var(--color-input-exam) inset !important;
     -webkit-text-fill-color: var(--color-text) !important;
+}
+
+.container.select-question {
+    margin-top: 50px;
+    padding: 10px;
+    box-shadow: 0 2px 4px rgba(0.1, 0.1, 0.1, 0.2);
+    border-radius: 6px;
+    background-color: var(--color-card);
+    color: var(--color-text);
+    transition: background-color 0.9s ease, color 0.9s ease;
+}
+
+.question-container {
+    height: 400px;
+    overflow-y: auto;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 15px;
+    background-color: var(--color-card);
+    color: var(--color-text);
+    transition: background-color 0.9s ease, color 0.9s ease;
+}
+
+.search-input {
+    width: 50%;
+}
+
+.question-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.question-item span {
+    margin-right: 10px;
+    cursor: pointer;
+    font-size: 1.2rem;
+}
+
+.text-success {
+    color: green;
+}
+
+.text-danger {
+    color: red;
 }
