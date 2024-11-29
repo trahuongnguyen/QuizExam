@@ -5,6 +5,7 @@ import com.example.quizexam_student.bean.response.ExaminationResponse;
 import com.example.quizexam_student.bean.response.StudentResponse;
 import com.example.quizexam_student.entity.Examination;
 import com.example.quizexam_student.entity.Mark;
+import com.example.quizexam_student.entity.Question;
 import com.example.quizexam_student.entity.StudentDetail;
 import org.springframework.stereotype.Service;
 
@@ -23,4 +24,5 @@ public interface ExaminationService {
     List<ExaminationResponse> getAllExaminations();
     List<ExaminationResponse> getAllExaminationBySubjectId(int subjectId);
     List<ExaminationResponse> getAllExaminationFinishedBySemId(int subjectId);
+    Examination createExamination(ExaminationRequest examinationRequest, List<Question> questions); // Tạo đề thi bằng danh sách câu hỏi có cho sẵn
 }

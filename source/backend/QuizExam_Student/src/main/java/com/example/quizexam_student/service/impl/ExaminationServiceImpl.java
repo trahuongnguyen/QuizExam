@@ -102,7 +102,8 @@ public class ExaminationServiceImpl implements ExaminationService {
             int randomNumber = random.nextInt(1000);
             String randomNumberStr = String.format("%03d",randomNumber);
             String currentDate = new SimpleDateFormat("yyMM").format(new Date());
-            exam.setCode(allQuestions.get(0).getSubject().getName()+ "_" + randomNumberStr + "_" +currentDate);
+            assert subject != null;
+            exam.setCode(subject.getName()+ "_" + randomNumberStr + "_" +currentDate);
         } while (examinationRepository.existsByCode(exam.getCode()));
 
         for (Question question : finalQuestions) {
@@ -213,6 +214,37 @@ public class ExaminationServiceImpl implements ExaminationService {
         List<Mark> marks = markRepository.findAllByScoreIsNotNull();
         marks = marks.stream().filter(mark -> mark.getExamination().getSubject().getSem().getId() == semId).collect(Collectors.toList());
         return convertToExamResponseBymarks(marks);
+    }
+
+    @Override
+    public Examination createExamination(ExaminationRequest examinationRequest, List<Question> questions) {
+        if (examinationRequest.getEndTime().isBefore(examinationRequest.getStartTime())) {
+            throw new InvalidTimeException("DateTime", "End time must be after start time");
+        }
+        Subject subject = subjectRepository.findById(examinationRequest.getSubjectId()).orElse(null);
+        double maxScore = 0;
+        for (Question question : questions) {
+            generateAnswerForQuestion(question);
+            maxScore += question.getLevel().getPoint();
+        }
+        Examination exam = ExaminationMapper.convertFromRequest(examinationRequest);
+        exam.setStatus(1);
+        exam.setMaxScore(maxScore);
+        exam.setTotalQuestion(questions.size());
+        exam.setQuestions(new HashSet<>(questions));
+        exam.setSubject(subject);
+        do {
+            int randomNumber = random.nextInt(1000);
+            String randomNumberStr = String.format("%03d",randomNumber);
+            String currentDate = new SimpleDateFormat("yyMM").format(new Date());
+            assert subject != null;
+            exam.setCode(subject.getName()+ "_" + randomNumberStr + "_" +currentDate);
+        } while (examinationRepository.existsByCode(exam.getCode()));
+
+        for (Question question : questions) {
+            setAnswerForQuestion(exam, question);
+        }
+        return examinationRepository.save(exam);
     }
 
     @Override
