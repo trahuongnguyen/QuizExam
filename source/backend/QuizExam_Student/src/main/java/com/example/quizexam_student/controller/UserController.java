@@ -51,6 +51,7 @@ public class UserController {
             roles.forEach(role1 -> {
                 users.addAll(userService.getUserByRolePermission(role1, status));
             });
+            users.sort((user1, user2) -> Integer.compare(user2.getId(), user1.getId()));
             return users;
         }
         return null;
@@ -84,9 +85,8 @@ public class UserController {
 
     @PreAuthorize("hasAnyRole('ADMIN', 'DIRECTOR')")
     @PostMapping("")
-    public ResponseEntity<RegisterResponse> addEmployee(@RequestBody @Valid UserRequest userRequest) {
-        userService.saveUser(userRequest);
-        return ResponseEntity.ok(new RegisterResponse(userRequest.getEmail(), "Employee created successfully"));
+    public UserResponse addEmployee(@RequestBody @Valid UserRequest userRequest) {
+        return UserMapper.convertToResponse(userService.saveUser(userRequest));
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'DIRECTOR')")
@@ -97,20 +97,20 @@ public class UserController {
 
     @PreAuthorize("hasAnyRole('ADMIN', 'DIRECTOR', 'SRO', 'TEACHER')")
     @PutMapping("/{id}")
-    public ResponseEntity<User> updateUser(@PathVariable int id, @RequestBody @Valid UserRequest userRequest) {
-        return ResponseEntity.ok(userService.updateUser(id, userRequest));
+    public UserResponse updateUser(@PathVariable int id, @RequestBody @Valid UserRequest userRequest) {
+        return UserMapper.convertToResponse(userService.updateUser(id, userRequest));
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'DIRECTOR')")
     @PutMapping("/reset-password/{id}")
-    public ResponseEntity<User> resetPassword(@PathVariable int id) {
-        return ResponseEntity.ok(userService.resetPassword(id));
+    public UserResponse resetPassword(@PathVariable int id) {
+        return UserMapper.convertToResponse(userService.resetPassword(id));
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'DIRECTOR')")
     @PutMapping("/restore/{id}")
-    public ResponseEntity<User> restoreUser(@PathVariable int id){
-        return ResponseEntity.ok(userService.restoreUser(id));
+    public UserResponse restoreUser(@PathVariable int id){
+        return UserMapper.convertToResponse(userService.restoreUser(id));
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'DIRECTOR')")

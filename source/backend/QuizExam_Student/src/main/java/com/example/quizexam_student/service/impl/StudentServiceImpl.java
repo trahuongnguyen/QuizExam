@@ -93,10 +93,10 @@ public class StudentServiceImpl implements StudentService {
         User userUpdate = userRepository.findById(id).orElse(null);
         Role role = roleRepository.findById(5).orElse(null);
         StudentDetail studentUpdate = studentRepository.findById(id).orElse(null);
-
         if (Objects.isNull(userUpdate) || userUpdate.getStatus() == 0 || Objects.isNull(studentUpdate)) {
             throw new NotFoundException("student", "Student not found.");
         }
+
         UserRequest userRequest = studentRequest.getUserRequest();
         if (userRepository.existsByEmailAndIdNot(userRequest.getEmail(), id)) {
             throw new AlreadyExistException("email", "Email already exists.");
@@ -110,13 +110,14 @@ public class StudentServiceImpl implements StudentService {
         if (studentRepository.existsByRollNumberAndUserNot(studentRequest.getRollNumber(), userUpdate)) {
             throw new AlreadyExistException("rollNumber", "Roll Number already exists.");
         }
+        String currentPassword = userUpdate.getPassword();
 
         // Cập nhật bảng user
         userUpdate = UserMapper.convertFromRequest(userRequest);
+        userUpdate.setPassword(currentPassword);
         userUpdate.setRole(role);
-        userUpdate.setId(id);
-        userUpdate.setPassword(passwordEncoder.encode("@1234567"));
         userUpdate.setStatus(1);
+        userUpdate.setId(id);
         userRepository.save(userUpdate);
 
         // Cập nhật bảng student_detail

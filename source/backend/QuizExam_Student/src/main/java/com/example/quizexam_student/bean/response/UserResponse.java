@@ -17,7 +17,6 @@ public class UserResponse {
     private String email;
     private String phoneNumber;
     private String address;
-    @JsonFormat(pattern = "dd-MM-yyyy")
     private LocalDate dob;
     private int gender;
     private Role role;

@@ -5,8 +5,8 @@
     <div class="d-flex profile-content">
         <div class="profile-header">
             <img src="../../../../../img/profile.png" class="profile-img" alt="Profile Image">
-            <h3>{{user.fullName}}</h3>
-            <p>{{user.email}}</p>
+            <h3>{{ profile.fullName }}</h3>
+            <p>{{ profile.email }}</p>
             <div class="d-flex w-max m-auto">
                 <div>
                     <a (click)="showEditForm()" class="btn btn-primary button me-2">Edit</a>
@@ -19,58 +19,47 @@
         <div class="content infor" id="infor">
             <div class="form-group d-flex">
                 <label for="dob" class="label-title">Date Of Birth</label>
-                <p>{{user.dob}}</p>
+                <p>{{ convertDateFormat(profile.dob) }}</p>
             </div>
             <div class="form-group d-flex">
                 <label for="gender" class="label-title">Gender</label>
-                <P>{{user.gender == 1 ? "Male" : "Female"}}</P>
+                <P>{{ profile.gender == 1 ? "Male" : "Female" }}</P>
             </div>
             <div class="form-group d-flex">
                 <label for="phone" class="label-title">Phone Number</label>
-                <p>{{user.phoneNumber}}</p>
+                <p>{{ profile.phoneNumber }}</p>
             </div>
             <div class="form-group d-flex">
                 <label for="address" class="label-title">Address</label>
-                <p>{{user.address}}</p>
+                <p>{{ profile.address }}</p>
             </div>
         </div>
-        <form (ngSubmit)="edit()" method="post">
+        <form (ngSubmit)="updateProfile()">
             <div class="content form-infor" id="form-infor">
-                <div class="form-group d-none">
-                    <label for="phone" class="label-title">FullName</label>
-                    <input type="text" name="fullName" [(ngModel)]="fullName" class="form-control" hidden>
-                </div>
-                <div class="form-group d-none">
-                    <label for="phone" class="label-title">Email</label>
-                    <input type="text" name="email" [(ngModel)]="email" class="form-control" hidden>
-                </div>
                 <div class="form-group d-flex">
                     <label for="dob" class="label-title">Date Of Birth</label>
-                    <input type="date" name="dob" [ngModel]="dob | date:'yyyy-MM-dd'" (ngModelChange)="dob = $event"
-                        class="form-control">
+                    <input type="date" class="form-control" [(ngModel)]="profileForm.dob" name="dob">
                 </div>
                 <div class="form-group d-flex">
                     <label for="gender" class="label-title">Gender</label>
                     <div class="d-flex w-100">
                         <div class="form-check me-2">
-                            <input type="radio" name="gender" value=1 [checked]="gender == 1"
-                                (change)="onGenderSelectionChange(1)" class="form-check-input">
-                            <label for="" class="form-check-label">Male</label>
+                            <input type="radio" class="form-check-input" [(ngModel)]="profileForm.gender" [value]="1" name="gender" id="male">
+                            <label for="male" class="form-check-label">Male</label>
                         </div>
                         <div class="form-check">
-                            <input type="radio" name="gender" value=0 [checked]="gender == 0"
-                                (change)="onGenderSelectionChange(0)" class="form-check-input">
-                            <label for="" class="form-check-label">Female</label>
+                            <input type="radio" class="form-check-input" [(ngModel)]="profileForm.gender" [value]="2" name="gender" id="female">
+                            <label for="female" class="form-check-label">Female</label>
                         </div>
                     </div>
                 </div>
                 <div class="form-group d-flex">
-                    <label for="phone" class="label-title">Phone Number</label>
-                    <input type="text" name="phone" [(ngModel)]="phoneNumber" class="form-control">
+                    <label for="phoneNumber" class="label-title">Phone Number</label>
+                    <input type="text" class="form-control" [(ngModel)]="profileForm.phoneNumber" name="phoneNumber">
                 </div>
                 <div class="form-group d-flex">
                     <label for="address" class="label-title">Address</label>
-                    <input type="text" name="address" [(ngModel)]="address" class="form-control">
+                    <input type="text" class="form-control" [(ngModel)]="profileForm.address" name="address">
                 </div>
                 <div class="form-group d-flex">
                     <label for="" class="label-title"></label>
@@ -86,11 +75,10 @@
                 <div class="form-group d-flex">
                     <label for="old-pword" class="label-pword">Current Password</label>
                     <div class="d-flex form-control">
-                        <input type="password" name="oldPassword" [(ngModel)]="oldPassword" class="w-95 border-none"
+                        <input type="password" class="w-95 border-none" [(ngModel)]="currentPassword" name="oldPassword"
                             id="currentPassword" placeholder="Enter current password">
-                        <div class="toggle-password eye" id="togglecurrentPassword"
-                            (click)="visiblePassword('currentPassword', 'icon1')"><i id="icon1"
-                                class="fa-regular fa-eye-slash"></i>
+                        <div class="toggle-password eye" (click)="visiblePassword('currentPassword', 'icon1')" id="togglecurrentPassword">
+                            <i class="fa-regular fa-eye-slash" id="icon1"></i>
                         </div>
                     </div>
 
@@ -98,25 +86,22 @@
                 <div class="form-group d-flex">
                     <label for="new-pword" class="label-pword">New Password</label>
                     <div class="d-flex form-control">
-                        <input type="password" name="newPassword" class="w-95 border-none" [(ngModel)]="newPassword"
+                        <input type="password" class="w-95 border-none" [(ngModel)]="newPassword" name="newPassword"
                             id="newPassword" placeholder="Enter new password">
-                        <div class="toggle-newPassword eye" id="togglenewPassword"
-                            (click)="visiblePassword('newPassword', 'icon3')">
-                            <i id="icon3" class="fa-regular fa-eye-slash"></i>
+                        <div class="toggle-newPassword eye" (click)="visiblePassword('newPassword', 'icon2')" id="togglenewPassword">
+                            <i class="fa-regular fa-eye-slash" id="icon2"></i>
                         </div>
                     </div>
                 </div>
                 <div class="form-group d-flex">
                     <label for="confirm-pword" class="label-pword">Confirm Password</label>
                     <div class="d-flex form-control">
-                        <input type="password" name="confirmPassword" class="w-95 border-none"
-                            [(ngModel)]="confirmPassword" id="confirmPassword" placeholder="Confirm new password">
-                        <div class="toggle-confirmPassword eye" id="toggleconfirmPassword"
-                            (click)="visiblePassword('confirmPassword', 'icon2')"><i id="icon2"
-                                class="fa-regular fa-eye-slash"></i>
+                        <input type="password" class="w-95 border-none" [(ngModel)]="confirmPassword" name="confirmPassword"
+                            id="confirmPassword" placeholder="Confirm new password">
+                        <div class="toggle-confirmPassword eye" (click)="visiblePassword('confirmPassword', 'icon3')" id="toggleconfirmPassword">
+                            <i class="fa-regular fa-eye-slash" id="icon3"></i>
                         </div>
                     </div>
-
                 </div>
                 <div class="form-group d-flex">
                     <label for="" class="label-pword"></label>

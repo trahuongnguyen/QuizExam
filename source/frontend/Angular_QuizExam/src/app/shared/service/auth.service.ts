@@ -1,28 +1,24 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable } from 'rxjs';
 import { Router } from '@angular/router';
-import { response } from 'express';
-
-interface User {
-  email: string;
-  password: string;
-}
+import { Observable } from 'rxjs';
+import { LoginRequest, LoginResponse } from '../models/models';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
+  apiUrl = 'http://localhost:8080/api';
 
-  public apiUrl = 'http://localhost:8080/api';
+  tokenKey = 'jwtToken';
 
-  private tokenKey = 'jwtToken';
-
-  public roleKey = 'role';
-
-  public userLogged: any;
+  roleKey = 'role';
   
-  public myUser: any;
+  myUser: any;
+
+  entityExporter = '';
+
+  listExporter: any;
 
   httpOptions: { headers: HttpHeaders; responseType: 'json'; withCredentials: true } = {
     headers: new HttpHeaders({'Accept': 'application/json'}),
@@ -30,13 +26,24 @@ export class AuthService {
     withCredentials: true
   };
 
-  constructor(private http: HttpClient, private router: Router) {
-    this.loadToken();
+  constructor(private http: HttpClient, private router: Router) { }
+
+  login(loginRequest: LoginRequest): Observable<LoginResponse> {
+    return this.http.post<LoginResponse>(`${this.apiUrl}/auth/login`, loginRequest, { responseType: 'json' });
   }
 
-  private loadToken() {
-    if (this.isLoggedIn()) {
-      const token = localStorage.getItem('jwtToken');
+  takeRole(options: any): any {
+    return this.http.get<any>(`${this.apiUrl}/auth/role`, options);
+  }
+
+  // Kiểm tra xem localStorage có sẵn không trước khi sử dụng
+  isLocalStorageAvailable(): boolean {
+    return typeof localStorage !== 'undefined';
+  }
+
+  loadToken(pageType: 'USER' | 'ADMIN') {
+    if (this.isLoggedIn(pageType)) {
+      const token = localStorage.getItem(this.tokenKey);
       this.httpOptions = {
         headers: new HttpHeaders({ 
           'Authorization': `Bearer ${token}`,
@@ -47,48 +54,23 @@ export class AuthService {
       };
     }
     else {
-      this.router.navigate(['admin/login']);
+      this.router.navigate([pageType == 'USER' ? '/login' : 'admin/login']);
     }
   }
 
-  // Kiểm tra xem localStorage có sẵn không trước khi sử dụng
-  private isLocalStorageAvailable(): boolean {
-    return typeof localStorage !== 'undefined';
-  }
-
-
-  // Login user
-  login(user: User): Observable<any> {
-    return this.http.post(`${this.apiUrl}/auth/login`, user, { responseType: 'json' });
-  }
-
-  // Logout user
-  // logout() {
-  //   localStorage.removeItem(this.tokenKey);
-  //   this.router.navigate(['/login']);
-  // }
-  // Logout admin
-  logoutAdmin() {
+  logout(pageType: 'USER' | 'ADMIN') {
     localStorage.removeItem(this.tokenKey);
     localStorage.removeItem(this.roleKey);
-    this.userLogged = null;
-    this.isValidToken = false;
-    this.router.navigate(['admin/login']);
+    this.router.navigate([pageType == 'USER' ? '/login' : 'admin/login']);
   }
 
-  nagivateToPrePage(): void {
-    this.router.navigate(['admin'])
-  }
-
-  isValidToken: any;
-
-  isLoggedIn(): boolean {
+  isLoggedIn(pageType: 'USER' | 'ADMIN'): boolean {
     if (this.isLocalStorageAvailable()) {
       const token = localStorage.getItem(this.tokenKey);
-      const role = localStorage.getItem(this.roleKey);
+      const roles = localStorage.getItem(this.roleKey);
 
-      // Ensure both token and role exist
-      if (!token || !role) {
+      // Ensure both token and roles exist
+      if (!token || !roles) {
         return false;
       }
 
@@ -96,9 +78,12 @@ export class AuthService {
         // Decode the token and extract the expiration time
         const jwtToken = JSON.parse(atob(token.split('.')[1]));
         const tokenExpired = Date.now() > (jwtToken.exp * 1000);
+        const checkRole = (pageType == 'USER' ? ['STUDENT'].includes(roles) : ['ADMIN', 'DIRECTOR', 'TEACHER', 'SRO'].includes(roles));
+
         // Check if token is valid and not expired, and if the role is correct
-        return !tokenExpired && ['ADMIN', 'DIRECTOR', 'TEACHER', 'SRO'].includes(role);
-      } catch (error) {
+        return !tokenExpired && checkRole;
+      }
+      catch (error) {
         // If there's an issue with decoding the token, treat the token as invalid
         console.error('Error decoding token:', error);
         return false;
@@ -107,22 +92,19 @@ export class AuthService {
     return false;
   }
 
-  public getToken(): string | null {
-    return this.isLoggedIn() ? localStorage.getItem(this.tokenKey) : null;
+  getToken(pageType: 'USER' | 'ADMIN'): string | null {
+    return this.isLoggedIn(pageType) ? localStorage.getItem(this.tokenKey) : null;
   }
 
-  public entityExporter = '';
-  public listExporter: any;
-
   exportDataExcel() {
-    const token = this.getToken(); // Lấy token từ AuthService
+    const token = this.getToken('ADMIN');
     const headers = new HttpHeaders().set('Authorization', 'Bearer ' + token).set('Content-Type', 'application/json');
 
     return this.http.post(`${this.apiUrl}/${this.entityExporter}/export/excel`, this.listExporter, { headers: headers, responseType: 'blob', });
   }
 
   exportDataPDF() {
-    const token = this.getToken(); // Lấy token từ AuthService
+    const token = this.getToken('ADMIN');
     const headers = new HttpHeaders().set('Authorization', 'Bearer ' + token).set('Content-Type', 'application/json');
 
     return this.http.post(`${this.apiUrl}/${this.entityExporter}/export/pdf`, this.listExporter, { headers: headers, responseType: 'blob', });

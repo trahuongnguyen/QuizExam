@@ -69,6 +69,10 @@ export class HomeComponent implements OnInit {
     this.windowScrolled = Math.round(window.scrollY) !=0;
   }
 
+  urlProfile() {
+    this.router.navigate([`/admin/profile`]);
+  }
+
   onLogout() {
     this.authService.logoutAdmin();
   }

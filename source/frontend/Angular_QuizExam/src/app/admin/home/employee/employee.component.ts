@@ -1,14 +1,13 @@
 import { Component, OnInit, OnDestroy, ElementRef, Renderer2 } from '@angular/core';
-import { AuthService } from '../../service/auth.service';
+import { AuthService } from '../../../shared/service/auth.service';
 import { Title } from '@angular/platform-browser';
 import { AdminComponent } from '../../admin.component';
-import { HomeComponent } from '../home.component';
-import { HttpClient } from '@angular/common/http';
+import { EmployeeService } from '../../service/employee/employee.service';
+import { Role } from '../../../shared/models/role.model';
+import { UserResponse, UserRequest, UserValidationError } from '../../../shared/models/user.model';
 import { ToastrService } from 'ngx-toastr';
-import { UrlService } from '../../../shared/service/url.service';
-import { Router, ActivatedRoute } from '@angular/router';
-import { forkJoin, Observable } from 'rxjs';
-import { Role, User } from '../../../shared/models/models';
+import { DatePipe } from '@angular/common';
+import { forkJoin } from 'rxjs';
 declare var $: any;
 
 @Component({
@@ -22,19 +21,25 @@ declare var $: any;
 
 export class EmployeeComponent implements OnInit, OnDestroy {
   dataTable: any;
-  employeeList: User[] = [];
+  employeeList: UserResponse[] = [];
   roleList: Role[] = [];
 
   statusId: number = 1;
   employeeId: number = 0;
-  employeeForm: User = { gender: 1, role: { id: 4 } };
+  role: Role;
+  employee: UserResponse;
+  employeeForm: UserRequest = { };
+  employeeError: UserValidationError = { };
   
   isPopupCreate: boolean = false;
   isPopupDetail: boolean = false;
+  isPopupUpdate: boolean = false;
   isPopupDelete: boolean = false;
 
   isPopupResetPassword: boolean = false;
-  isPopupBackupRestore: boolean = false;
+  isPopupRestore: boolean = false;
+
+  isPopupViewInactive: boolean = false;
 
   dialogTitle: string = '';
   dialogMessage: string = '';
@@ -44,15 +49,49 @@ export class EmployeeComponent implements OnInit, OnDestroy {
     private authService: AuthService,
     private titleService: Title,
     public admin: AdminComponent,
-    private home: HomeComponent,
-    private el: ElementRef,
-    private renderer: Renderer2,
-    private http: HttpClient,
+    private employeeService: EmployeeService,
     private toastr: ToastrService,
-    public urlService: UrlService,
-    private router: Router,
-    private activatedRoute: ActivatedRoute
-  ) { }
+    private datePipe: DatePipe,
+    private el: ElementRef,
+    private renderer: Renderer2
+  ) {
+    this.role = {
+      id: 0,
+      name: '',
+      description: ''
+    };
+
+    this.employee = {
+      id: 0,
+      fullName: '',
+      dob: new Date(),
+      gender: 0,
+      address: '',
+      phoneNumber: '',
+      email: '',
+      role: this.role
+    };
+
+    this.initializeEmployeeForm();
+    this.initializeEmployeeError();
+  }
+
+  initializeEmployeeForm() {
+    this.employeeForm = { gender: 1, roleId: 4 };
+  }
+
+  initializeEmployeeError() {
+    this.employeeError = {
+      fullName: '',
+      dob: '',
+      gender: '',
+      address: '',
+      phoneNumber: '',
+      email: '',
+      roleId: '',
+      restore: ''
+    }
+  }
 
   ngOnInit(): void {
     this.titleService.setTitle('List of Employees');
@@ -60,36 +99,8 @@ export class EmployeeComponent implements OnInit, OnDestroy {
     this.loadData();
   }
 
-  getRoleListApi(): Observable<Role[]> {
-    return this.http.get<Role[]>(`${this.authService.apiUrl}/user/employee`, this.home.httpOptions);
-  }
-
-  getEmployeeListApi(): Observable<User[]> {
-    return this.http.get<User[]>(`${this.authService.apiUrl}/user/${this.statusId}`, this.home.httpOptions);
-  }
-
-  getEmployeeByIdApi(id: number): Observable<User> {
-    return this.http.get<User>(`${this.authService.apiUrl}/user/find/${id}`, this.home.httpOptions);
-  }
-
-  createEmployeeApi(): Observable<User> {
-    return this.http.post<User>(`${this.authService.apiUrl}/user`, this.employeeForm, this.home.httpOptions);
-  }
-
-  resetPasswordEmployeeApi(id: number): Observable<User> {
-    return this.http.put<User>(`${this.authService.apiUrl}/user/reset-password/${id}`, {}, this.home.httpOptions);
-  }
-
-  removeEmployeeApi(id: number): Observable<User> {
-    return this.http.put<User>(`${this.authService.apiUrl}/user/remove/${id}`, {}, this.home.httpOptions);
-  }
-
-  backupRestoreEmployeeApi(id: number): Observable<User> {
-    return this.http.put<User>(`${this.authService.apiUrl}/user/restore/${id}`, {}, this.home.httpOptions);
-  }
-
   loadData(): void {
-    forkJoin([this.getRoleListApi(), this.getEmployeeListApi()])
+    forkJoin([this.employeeService.getRoleList(), this.employeeService.getEmployeeList(this.statusId)])
       .subscribe(([roleResponse, employeeResponse]) => {
         this.roleList = roleResponse;
         this.employeeList = employeeResponse;
@@ -127,6 +138,7 @@ export class EmployeeComponent implements OnInit, OnDestroy {
           render: (data: any, type: any, row: any) => {
             if (this.statusId == 1) {
               return `<span class="mdi mdi-information-outline icon-action info-icon" title="Info" data-id="${row.id}"></span>
+              <span class="mdi mdi-pencil icon-action edit-icon" title="Edit" data-id="${row.id}"></span>
               <span class="mdi mdi-lock-reset icon-action reset-password-icon" title="Reset Password" data-id="${row.id}"></span>
               <span class="mdi mdi-delete-forever icon-action delete-icon" title="Remove" data-id="${row.id}"></span>`;
             }
@@ -156,28 +168,27 @@ export class EmployeeComponent implements OnInit, OnDestroy {
       this.openPopupDetail(this.employeeId);
     });
 
+    $('.edit-icon').on('click', (event: any) => {
+      this.employeeId = $(event.currentTarget).data('id');
+      this.openPopupUpdate(this.employeeId);
+    });
+
     $('.reset-password-icon').on('click', (event: any) => {
       this.employeeId = $(event.currentTarget).data('id');
-      this.dialogTitle = 'Are you sure?';
-      this.dialogMessage = 'Do you want to reset the password for this employee?';
-      this.isConfirmationPopup = true;
+      this.openPopupConfirm('Are you sure?', 'Do you want to reset the password for this employee?');
       this.isPopupResetPassword = true;
     });
 
     $('.delete-icon').on('click', (event: any) => {
       this.employeeId = $(event.currentTarget).data('id');
-      this.dialogTitle = 'Are you sure?';
-      this.dialogMessage = 'Do you really want to delete this Employee?';
-      this.isConfirmationPopup = true;
+      this.openPopupConfirm('Are you sure?', 'Do you really want to delete this Employee?');
       this.isPopupDelete = true;
     });
 
     $('.backup-restore-icon').on('click', (event: any) => {
       this.employeeId = $(event.currentTarget).data('id');
-      this.dialogTitle = 'Are you sure?';
-      this.dialogMessage = "Do you really want to recover this employee's account?";
-      this.isConfirmationPopup = true;
-      this.isPopupBackupRestore = true;
+      this.openPopupConfirm('Are you sure?', "Do you really want to recover this employee's account?");
+      this.isPopupRestore = true;
     });
   }
 
@@ -185,11 +196,13 @@ export class EmployeeComponent implements OnInit, OnDestroy {
     if (!$('#custom-select-status').length) {
       $('.dataTables_length').append(`
         <label for="" class="label-status">Status:</label>
-        <select id="custom-select-status" class="select-status">
+        <select class="select-status" id="custom-select-status">
           <option value=1>Active</option>
           <option value=0>Inactive</option>
         </select>
       `);
+
+      $('#custom-select-status').val(this.statusId);
 
       // Theo dõi sự thay đổi của dropdown
       $('#custom-select-status').on('change', () => {
@@ -218,21 +231,55 @@ export class EmployeeComponent implements OnInit, OnDestroy {
       this.dataTable.clear(); // Xóa dữ liệu hiện tại
       this.dataTable.rows.add(newData); // Thêm dữ liệu mới
       this.dataTable.draw(); // Vẽ lại bảng
+      $('#custom-select-status').val(this.statusId);
     }
   }
 
   reloadTable(): void {
-    this.getEmployeeListApi().subscribe({
-      next: (employeeResponse: User[]) => {
+    this.employeeService.getEmployeeList(this.statusId).subscribe({
+      next: (employeeResponse) => {
         this.employeeList = employeeResponse;
-        this.updateDataTable(this.employeeList); // Cập nhật bảng với dữ liệu mới
+        this.updateDataTable(this.employeeList);
         this.closePopup();
+      },
+      error: (err) => {
+        this.toastr.error(err.error.message, 'Error', { timeOut: 4000 });
+      }
+    });
+  }
+
+  convertDateFormat(dateObj: Date | undefined): string {
+    // Dùng DatePipe để chuyển đổi đối tượng Date sang định dạng 'yyyy-MM-dd'
+    return this.datePipe.transform(dateObj, 'dd-MM-yyyy')!;
+  }
+
+  convertToRequest(): void {
+    this.employeeForm.fullName = this.employee.fullName;
+    this.employeeForm.dob = this.employee.dob;
+    this.employeeForm.gender = this.employee.gender;
+    this.employeeForm.address = this.employee.address;
+    this.employeeForm.phoneNumber = this.employee.phoneNumber;
+    this.employeeForm.email = this.employee.email;
+    this.employeeForm.roleId = this.employee.role?.id;
+  }
+
+  loadEmployeeById(id: number, callback: (employee: UserResponse) => void): void {
+    this.employeeService.getEmployeeById(id).subscribe({
+      next: (employeeResponse) => {
+        this.employee = employeeResponse;
+        callback(employeeResponse); // Chạy hàm callback sau khi lấy thông tin thành công
       },
       error: (err) => {
         this.toastr.error(err.error.message, 'Error', { timeOut: 4000 });
         setTimeout(() => { this.reloadTable(); }, 4000);
       }
     });
+  }
+
+  openPopupConfirm(title: string, message: string): void {
+    this.dialogTitle = title;
+    this.dialogMessage = message;
+    this.isConfirmationPopup = true;
   }
 
   openPopupCreate(): void {
@@ -240,42 +287,88 @@ export class EmployeeComponent implements OnInit, OnDestroy {
   }
 
   openPopupDetail(id: number): void {
-    this.getEmployeeByIdApi(id).subscribe({
-      next: (employeeResponse: User) => {
-        this.employeeForm = employeeResponse;
-        this.isPopupDetail = true;
-      },
-      error: (err) => {
-        this.toastr.error(err.error.message, 'Error', { timeOut: 4000 });
-        setTimeout(() => { this.reloadTable(); }, 4000);
-      }
+    this.loadEmployeeById(id, () => {
+      this.isPopupDetail = true;
     });
+  }
+  
+  openPopupUpdate(id: number): void {
+    this.loadEmployeeById(id, () => {
+      this.convertToRequest();
+      this.isPopupUpdate = true;
+    });
+  }
+
+  openPopupViewInactive(): void {
+    if (this.employeeError.restore?.trim()) {
+      this.openPopupConfirm('Would you like to switch to the deleted user?', this.employeeError.restore);
+      this.isPopupViewInactive = true;
+    }
   }
 
   closePopup(): void {
     this.employeeId = 0;
-    this.employeeForm = { gender: 1, role: { id: 4 } };
+    this.initializeEmployeeForm();
+    this.initializeEmployeeError();
     this.isPopupCreate = false;
     this.isPopupDetail = false;
+    this.isPopupUpdate = false;
     this.isPopupDelete = false;
     this.isPopupResetPassword = false;
-    this.isPopupBackupRestore = false;
+    this.isPopupRestore = false;
+    this.isPopupViewInactive = false;
+  }
+
+  closePopupViewInactive(): void {
+    this.isPopupViewInactive = false;
+  }
+
+  errorForm(err: any, message: string): void {
+    if (err.status === 401) {
+      this.toastr.error('Unauthorized', 'Failed', { timeOut: 2000 });
+    }
+    else {
+      if (err.error.message) {
+        this.employeeError[err.error.key as keyof UserValidationError] = err.error.message;
+      }
+      else {
+        err.error.forEach((e: any) => {
+          this.employeeError[e.key as keyof UserValidationError] = e.message;
+        });
+      }
+      this.toastr.error(message + ' Employee Fail!', 'Error', { timeOut: 2000 });
+    }
+    this.openPopupViewInactive();
   }
 
   createEmployee(): void {
-    this.createEmployeeApi().subscribe({
+    this.initializeEmployeeError();
+    this.employeeService.createEmployee(this.employeeForm).subscribe({
       next: () => {
         this.toastr.success('Create Successful!', 'Success', { timeOut: 2000 });
         this.reloadTable();
       },
-      error: () => {
-        this.toastr.error('Create Employee Fail!', 'Error', { timeOut: 2000 });
+      error: (err) => {
+        this.errorForm(err, 'Create');
+      }
+    });
+  }
+
+  updateEmployee(): void {
+    this.initializeEmployeeError();
+    this.employeeService.updateEmployee(this.employeeId, this.employeeForm).subscribe({
+      next: () => {
+        this.toastr.success('Update Successful!', 'Success', { timeOut: 2000 });
+        this.reloadTable();
+      },
+      error: (err) => {
+        this.errorForm(err, 'Update');
       }
     });
   }
 
   resetPasswordEmployee(): void {
-    this.resetPasswordEmployeeApi(this.employeeId).subscribe({
+    this.employeeService.resetPasswordEmployee(this.employeeId).subscribe({
       next: () => {
         this.toastr.success('Reset Successful!', 'Success', { timeOut: 2000 });
         this.reloadTable();
@@ -287,7 +380,7 @@ export class EmployeeComponent implements OnInit, OnDestroy {
   }
 
   removeEmployee(): void {
-    this.removeEmployeeApi(this.employeeId).subscribe({
+    this.employeeService.removeEmployee(this.employeeId).subscribe({
       next: () => {
         this.toastr.success('Remove Successful!', 'Success', { timeOut: 2000 });
         this.reloadTable();
@@ -298,54 +391,44 @@ export class EmployeeComponent implements OnInit, OnDestroy {
     });
   }
 
-  backupRestoreEmployee(): void {
-    this.backupRestoreEmployeeApi(this.employeeId).subscribe({
+  viewEmployeeInactive(): void {
+    this.statusId = 0;
+    this.reloadTable();
+  }
+
+  restoreEmployee(): void {
+    this.employeeService.restoreEmployee(this.employeeId).subscribe({
       next: () => {
-        this.toastr.success('Backup Successful!', 'Success', { timeOut: 2000 });
+        this.toastr.success('Restore Successful!', 'Success', { timeOut: 2000 });
         this.reloadTable();
       },
       error: () => {
-        this.toastr.error('Backup Fail!', 'Error', { timeOut: 2000 });
+        this.toastr.error('Restore Fail!', 'Error', { timeOut: 2000 });
       }
     });
   }
 
   exportExcel() {
     this.authService.listExporter = this.employeeList;
-    this.authService.exportDataExcel().subscribe(
-      (response) => {
-        const url = window.URL.createObjectURL(new Blob([response], { type: 'blob' as 'json' }));
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = 'employee_excel.xlsx'; // Thay đổi tên file nếu cần
-        document.body.appendChild(a);
-        a.click();
-        window.URL.revokeObjectURL(url);
-        document.body.removeChild(a);
-      },
-      (error) => {
-        console.error('Export failed', error);
-      }
-    );
+    this.exportData(this.authService.exportDataExcel(), 'employee_excel.xlsx');
   }
 
   exportPDF() {
     this.authService.listExporter = this.employeeList;
-    this.authService.exportDataPDF().subscribe(
-      (response) => {
-        const url = window.URL.createObjectURL(new Blob([response], { type: 'blob' }));
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = 'employee_pdf.pdf'; // Thay đổi tên file nếu cần
-        document.body.appendChild(a);
-        a.click();
-        window.URL.revokeObjectURL(url);
-        document.body.removeChild(a);
-      },
-      (error) => {
-        console.error('Export failed', error);
-      }
-    );
+    this.exportData(this.authService.exportDataPDF(), 'employee_pdf.pdf');
+  }
+
+  exportData(exportFunction: any, fileName: string): void {
+    exportFunction.subscribe((response: any) => {
+      const url = window.URL.createObjectURL(new Blob([response], { type: 'application/octet-stream' }));
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = fileName;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    });
   }
 
   ngOnDestroy(): void {

@@ -12,14 +12,20 @@ import java.util.List;
 @Service
 public interface UserService {
     User findUserByEmail(String email);
+
     User findById(int id);
-    Boolean existUserByEmail(String email);
-    Boolean existUserByPhone(String phone);
+
     User saveUser(UserRequest userRequest);
+
     List<UserResponse> getUserByRolePermission(Role role, Integer status);
+
     User changePassword(PasswordRequest passwordRequest);
+
     User deleteUserById(int id);
+
     User updateUser(int id, UserRequest userRequest);
+
     User resetPassword(int id);
+
     User restoreUser(int id);
 }

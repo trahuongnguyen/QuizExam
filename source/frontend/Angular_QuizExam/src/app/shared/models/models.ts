@@ -1,24 +1,17 @@
-export interface Role {
-    id?: number;
-    name?: string;
-    description?: string;
+export interface LoginRequest {
+    email?: string;
+    password?: string;
+}
+
+export interface LoginResponse {
+    token: string;
+    message: string;
 }
 
 export interface Permission {
     id?: number;
     name?: string;
     description?: string;
-}
-
-export interface User {
-    id?: number;
-    fullName?: string;
-    dob?: Date;
-    gender?: number;
-    address?: string;
-    phoneNumber?: string;
-    email?: string;
-    role: Role;
 }
 
 export interface Sem {

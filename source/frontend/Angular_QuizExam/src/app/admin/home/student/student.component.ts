@@ -172,7 +172,6 @@ export class StudentComponent implements OnInit, OnDestroy {
     // Thêm placeholder vào input của DataTables
     $('.dataTables_filter input[type="search"]').attr('placeholder', 'Search');
 
-    // Click vào info icon sẽ hiện ra popup
     $('.edit-icon').on('click', (event: any) => {
       const id = $(event.currentTarget).data('id');
       this.studentId = id;
@@ -256,6 +255,8 @@ export class StudentComponent implements OnInit, OnDestroy {
 
   showPopupEdit(id: number): void {
     this.stdResponse = this.apiData.find((item: any) => item.userResponse.id === id);
+    const [day, month, year] = this.stdResponse.userResponse.dob.split('-');
+    this.dateOfBirth = `${year}-${month}-${day}`;
     this.isPopupUpdate = true;
   }
 

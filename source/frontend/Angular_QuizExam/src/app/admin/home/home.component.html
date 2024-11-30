@@ -19,7 +19,7 @@
         <div class="menu" id="menuToggle">
             <ul>
                 <li>
-                    <i class="fa-regular fa-circle-user"></i><a [routerLink]="'profile'">My profile</a>
+                    <i class="fa-regular fa-circle-user"></i><a (click)="urlProfile()">My profile</a>
                 </li>
                 <li>
                     <i class="fa-solid fa-arrow-right-from-bracket"></i><a (click)="onLogout()">Logout</a>
