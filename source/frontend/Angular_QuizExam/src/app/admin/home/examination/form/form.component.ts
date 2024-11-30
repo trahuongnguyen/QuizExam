@@ -12,6 +12,7 @@ import e from 'express';
 
 interface ExamForm {
   name: string;
+  code: string;
   duration: number;
   startTime: any;
   endTime: any;
@@ -67,6 +68,7 @@ export class FormComponent implements OnInit {
   
   examsForm: ExamForm = {
     name: '',
+    code: '',
     duration: 40,
     startTime: "",
     endTime: "",

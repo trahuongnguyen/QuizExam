@@ -71,10 +71,10 @@
 
     <div class="bottom-actions" *ngIf="typeExam == 1">
         <div>
-            <span class="mdi mdi-keyboard-backspace" title="Back to List" (click)="backStep()"></span>
+            <a class="button button-pdf" (click)="backStep()"><span class="mdi mdi-arrow-left-thick"></span>Back</a>
         </div>
         <div>
-            <a class="button button-pdf">Next<span class="mdi mdi-forward icon"></span></a>
+            <a class="button button-pdf">Next<span class="mdi mdi-arrow-right-thick"></span></a>
         </div>
     </div>
 
@@ -145,73 +145,79 @@
         </div>
     </div>
 
-    <div class="container select-question mt-3" *ngIf="typeExam == 1">
-        <div class="row">
-            <div class="col-md-6">
-                <div class="d-flex justify-content-between mb-3">
-                    <p class="label">Name:</p>
-                    <p class="content">{{examsForm.name}}</p>
+    <div class="container" *ngIf="typeExam == 1">
+        <div class="row exam-detail">
+            <div class="row justify-content-between">
+                <div class="col-md-6">
+                    <div class="d-flex justify-content-between">
+                        <p class="label">Name:</p>
+                        <p class="content">{{examsForm.name}}</p>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <p class="label">Subject:</p>
+                        <p class="content">{{subjectName}}</p>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <p class="label">Duration:</p>
+                        <p class="content">{{examsForm.duration}}</p>
+                    </div>
                 </div>
-                <div class="d-flex justify-content-between mb-3">
-                    <p class="label">Subject:</p>
-                    <p class="content">{{subjectName}}</p>
-                </div>
-                <div class="d-flex justify-content-between mb-3">
-                    <p class="label">Start Time:</p>
-                    <p class="content">{{examsForm.startTime | date:'dd/MM/yyyy HH:mm'}}</p>
+                <div class="col-md-6 d-flex flex-column align-items-end">
+                    <div class="d-flex">
+                        <p class="label me-2">Start Time:</p>
+                        <p class="content">{{examsForm.startTime | date:'dd/MM/yyyy HH:mm'}}</p>
+                    </div>
+                    <div class="d-flex">
+                        <p class="label me-2">End Time:</p>
+                        <p class="content">{{examsForm.endTime | date:'dd/MM/yyyy HH:mm'}}</p>
+                    </div>
                 </div>
             </div>
-            <div class="col-md-6">
-                <div class="d-flex justify-content-between mb-3">
-                    <p class="label">Duration:</p>
-                    <p class="content">{{examsForm.duration}}</p>
-                </div>
-                <div class="d-flex justify-content-between mb-3">
-                    <p class="label">End Time:</p>
-                    <p class="content">{{examsForm.endTime | date:'dd/MM/yyyy HH:mm'}}</p>
-                </div>
-            </div>
+            
         </div>
-        <div class="row">
-            <div class="col-md-6">
-                <div class="question-container">
-                    <h3 class="text-center">List Question</h3>
-                    <div class="d-flex justify-content-end align-items-center mb-3">
-                        <input type="text" class="form-control search-input" [(ngModel)]="searchTextList"
-                            placeholder="Search" />
-                    </div>
-                    <div *ngIf="filteredListQuestions.length > 0; else noListQuestions">
-                        <div *ngFor="let question of filteredListQuestions" class="question-item">
-                            <span (click)="moveToExam(question)" class="text-success" style="cursor: pointer;" title="Add">➕</span>
-                            {{ question.content }}
+        <div class="container select-question mt-3" >
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="question-container">
+                        <h3 class="text-center">List Question</h3>
+                        <div class="d-flex justify-content-start align-items-center mb-4">
+                            <input type="text" class="form-control search-input" [(ngModel)]="searchTextList"
+                                placeholder="Search" />
                         </div>
+                        <div *ngIf="filteredListQuestions.length > 0; else noListQuestions">
+                            <div *ngFor="let question of filteredListQuestions" class="question-item">
+                                <span class="mdi mdi-plus-circle-outline" (click)="moveToExam(question)" style="cursor: pointer;" title="Add"></span>
+                                {{ question.content }}
+                            </div>
+                        </div>
+                        <ng-template #noListQuestions>
+                            <p>No questions found in List Question.</p>
+                        </ng-template>
                     </div>
-                    <ng-template #noListQuestions>
-                        <p>No questions found in List Question.</p>
-                    </ng-template>
                 </div>
-            </div>
-
-            <div class="col-md-6">
-                <div class="question-container">
-                    <h3 class="text-center">Exam</h3>
-                    <div class="d-flex justify-content-end mb-3">
-                        <input type="text" class="form-control search-input" [(ngModel)]="searchTextExam"
-                            placeholder="Search" />
-                    </div>
-                    <div *ngIf="filteredExamQuestions.length > 0; else noExamQuestions">
-                        <div *ngFor="let question of filteredExamQuestions" class="question-item">
-                            <span (click)="moveToList(question)" class="text-danger" style="cursor: pointer;" title="Remove">➖</span>
-                            {{ question.content }}
+    
+                <div class="col-md-6">
+                    <div class="question-container">
+                        <h3 class="text-center">Exam</h3>
+                        <div class="d-flex justify-content-start mb-4">
+                            <input type="text" class="form-control search-input" [(ngModel)]="searchTextExam"
+                                placeholder="Search" />
                         </div>
+                        <div *ngIf="filteredExamQuestions.length > 0; else noExamQuestions">
+                            <div *ngFor="let question of filteredExamQuestions" class="question-item">
+                                <span class="mdi mdi-minus-circle-outline" (click)="moveToList(question)" style="cursor: pointer;" title="Remove"></span>
+                                {{ question.content }}
+                            </div>
+                        </div>
+                        <ng-template #noExamQuestions>
+                            <p>No questions found in Exam.</p>
+                        </ng-template>
                     </div>
-                    <ng-template #noExamQuestions>
-                        <p>No questions found in Exam.</p>
-                    </ng-template>
                 </div>
             </div>
         </div>
     </div>
+    
 </div>
 
 <div *ngIf="isPopupLevel" class="popup-container">
