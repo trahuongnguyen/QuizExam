@@ -29,7 +29,13 @@ public class ClassesController {
     @PreAuthorize("hasAnyRole('ADMIN', 'SRO', 'DIRECTOR', 'TEACHER')")
     @GetMapping
     public List<Classes> getAllClasses(){
-        return classesService.getAllClasses();
+        return classesService.findAllClasses();
+    }
+
+    @PreAuthorize("hasAnyRole('ADMIN', 'SRO')")
+    @GetMapping("/{id}")
+    public Classes getOneById(@PathVariable Integer id){
+        return classesService.findOneById(id);
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'SRO')")

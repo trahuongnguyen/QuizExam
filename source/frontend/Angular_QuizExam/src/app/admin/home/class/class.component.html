@@ -2,14 +2,13 @@
     <h4>Class</h4>
     <hr class="line">
 
-    <!-- Bottom Actions (Create and Export) -->
     <div class="bottom-actions">
         <div>
-            <a class="button button-create create"><span class="mdi mdi-plus icon"></span>Create</a>
+            <a class="button button-create" (click)="openPopupCreate()"><span class="mdi mdi-plus icon"></span>Create</a>
         </div>
         <div>
-            <a (click)="exportExcel()" class="button button-excel"><span class="mdi mdi-file-excel icon"></span>Export Excel</a>
-            <a (click)="exportPDF()" class="button button-pdf"><span class="mdi mdi-file-pdf icon"></span>Export PDF</a>
+            <a class="button button-excel" (click)="exportExcel()"><span class="mdi mdi-file-excel icon"></span>Export Excel</a>
+            <a class="button button-pdf" (click)="exportPDF()"><span class="mdi mdi-file-pdf icon"></span>Export PDF</a>
         </div>
     </div>
 
@@ -40,31 +39,31 @@
             <div class="popup-body">
                 <div class="form-group">
                     <label for="name" class="label-popup">Name:</label>
-                    <input type="text" class="form-control" [(ngModel)]="name" name="name" placeholder="Enter Class Name">
-                    <span class="text-danger error" *ngIf="nameError">{{ nameError }}</span>
+                    <input type="text" class="form-control" [(ngModel)]="classForm.name" name="name" placeholder="Enter Class Name">
+                    <span class="text-danger error" *ngIf="classError.name">{{ classError.name }}</span>
                 </div>
                 <div class="form-group">
                     <label for="classDay" class="label-popup">Day:</label>
-                    <select class="form-select" [(ngModel)]="classDay" name="classDay">
+                    <select class="form-select" [(ngModel)]="classForm.classDay" name="classDay">
                         <option value="2, 4, 6">2, 4, 6</option>
                         <option value="3, 5, 7">3, 5, 7</option>
                     </select>
-                    <span class="text-danger error" *ngIf="classDayError">{{ classDayError }}</span>
+                    <span class="text-danger error" *ngIf="classError.classDay">{{ classError.classDay }}</span>
                 </div>
                 <div class="form-group">
                     <label for="classTime" class="label-popup">Hour:</label>
-                    <select class="form-select" [(ngModel)]="classTime" name="classTime">
+                    <select class="form-select" [(ngModel)]="classForm.classTime" name="classTime">
                         <option value="08h00 - 10h00">08h00 - 10h00</option>
                         <option value="10h00 - 12h00">10h00 - 12h00</option>
                         <option value="13h30 - 16h30">13h30 - 16h30</option>
                         <option value="18h00 - 21h00">18h00 - 21h00</option>
                     </select>
-                    <span class="text-danger error" *ngIf="classTimeError">{{ classTimeError }}</span>
+                    <span class="text-danger error" *ngIf="classError.classTime">{{ classError.classTime }}</span>
                 </div>
                 <div class="form-group">
                     <label for="admissionDate" class="label-popup">Admission Date:</label>
-                    <input type="date" class="form-control" [(ngModel)]="admissionDate" name="admissionDate">
-                    <span class="text-danger error" *ngIf="admissionDateError">{{ admissionDateError }}</span>
+                    <input type="date" class="form-control" [(ngModel)]="classForm.admissionDate" name="admissionDate">
+                    <span class="text-danger error" *ngIf="classError.admissionDate">{{ classError.admissionDate }}</span>
                 </div>
             </div>
             <div class="popup-footer">
@@ -78,37 +77,37 @@
     <div class="popup-content" (click)="$event.stopPropagation()">
         <form class="form-popup" (ngSubmit)="updateClass()">
             <div class="popup-header">
-                <span>Edit Class</span>
+                <span>Update Class</span>
                 <span class="close-icon" (click)="closePopup()">&times;</span>
             </div>
             <div class="popup-body">
                 <div class="form-group">
-                    <label for="name" class="text-popup">Name:</label>
-                    <input type="text" class="form-control" [(ngModel)]="infoEdit.name" name="name" placeholder="Enter Class Name">
-                    <span class="text-danger error">{{ nameError }}</span>
+                    <label for="name" class="label-popup">Name:</label>
+                    <input type="text" class="form-control" [(ngModel)]="classForm.name" name="name" placeholder="Enter Class Name">
+                    <span class="text-danger error" *ngIf="classError.name">{{ classError.name }}</span>
                 </div>
                 <div class="form-group">
-                    <label for="classDay" class="text-popup">Day:</label>
-                    <select class="form-select" [(ngModel)]="infoEdit.classDay" name="classDay">
+                    <label for="classDay" class="label-popup">Day:</label>
+                    <select class="form-select" [(ngModel)]="classForm.classDay" name="classDay">
                         <option value="2, 4, 6">2, 4, 6</option>
                         <option value="3, 5, 7">3, 5, 7</option>
                     </select>
-                    <span class="text-danger error">{{ classDayError }}</span>
+                    <span class="text-danger error" *ngIf="classError.classDay">{{ classError.classDay }}</span>
                 </div>
                 <div class="form-group">
-                    <label for="classTime" class="text-popup">Hour:</label>
-                    <select class="form-select" [(ngModel)]="infoEdit.classTime" name="classTime">
+                    <label for="classTime" class="label-popup">Hour:</label>
+                    <select class="form-select" [(ngModel)]="classForm.classTime" name="classTime">
                         <option value="08h00 - 10h00">08h00 - 10h00</option>
                         <option value="10h00 - 12h00">10h00 - 12h00</option>
                         <option value="13h30 - 16h30">13h30 - 16h30</option>
                         <option value="18h00 - 21h00">18h00 - 21h00</option>
                     </select>
-                    <span class="text-danger error">{{ classTimeError }}</span>
+                    <span class="text-danger error" *ngIf="classError.classTime">{{ classError.classTime }}</span>
                 </div>
                 <div class="form-group">
-                    <label for="admissionDate" class="text-popup">Admission Date:</label>
-                    <input type="date" class="form-control" [(ngModel)]="infoEdit.admissionDate" name="admissionDate">
-                    <span class="text-danger error">{{ admissionDateError }}</span>
+                    <label for="admissionDate" class="label-popup">Admission Date:</label>
+                    <input type="date" class="form-control" [(ngModel)]="classForm.admissionDate" name="admissionDate">
+                    <span class="text-danger error" *ngIf="classError.admissionDate">{{ classError.admissionDate }}</span>
                 </div>
             </div>
             <div class="popup-footer">
@@ -124,6 +123,6 @@
   [title]="dialogTitle"
   [message]="dialogMessage"
   [isConfirmationPopup]="isConfirmationPopup"
-  (confirm)="deleteClass(classId)"
+  (confirm)="deleteClass()"
   (close)="closePopup()">
 </app-dialog-popup>

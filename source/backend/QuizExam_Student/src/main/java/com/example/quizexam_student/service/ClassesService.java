@@ -7,7 +7,9 @@ import java.util.List;
 
 @Service
 public interface ClassesService {
-    List<Classes> getAllClasses();
+    List<Classes> findAllClasses();
+
+    Classes findOneById(int id);
 
     Classes addClass(Classes _class);
 

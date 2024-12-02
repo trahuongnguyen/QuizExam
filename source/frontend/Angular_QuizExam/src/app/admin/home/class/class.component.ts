@@ -1,12 +1,13 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { AuthService } from '../../service/auth.service';
+import { AuthService } from '../../../shared/service/auth.service';
 import { Title } from '@angular/platform-browser';
 import { AdminComponent } from '../../admin.component';
-import { HomeComponent } from '../home.component';
-import { HttpClient } from '@angular/common/http';
-import { ToastrService } from 'ngx-toastr';
+import { ClassService } from '../../service/class/class.service';
+import { ClassResponse, ClassRequest, ClassValidationError } from '../../../shared/models/class.model';
 import { UrlService } from '../../../shared/service/url.service';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
+import { DatePipe } from '@angular/common';
 declare var $: any;
 
 @Component({
@@ -18,21 +19,13 @@ declare var $: any;
   ]
 })
 export class ClassComponent implements OnInit, OnDestroy {
-  constructor(
-    private authService: AuthService,
-    private titleService: Title,
-    public admin : AdminComponent,
-    private home: HomeComponent,
-    private http: HttpClient,
-    private toastr: ToastrService,
-    public urlService: UrlService,
-    private router: Router,
-    private activatedRoute: ActivatedRoute
-  ) { }
-
   dataTable: any;
-  apiData: any;
-  infoEdit: any = null;
+  classList: ClassResponse[] = [];
+
+  classId: number = 0;
+  _class: ClassResponse;
+  classForm: ClassRequest = { };
+  classError: ClassValidationError = { };
 
   isPopupCreate: boolean = false;
   isPopupUpdate: boolean = false;
@@ -42,20 +35,67 @@ export class ClassComponent implements OnInit, OnDestroy {
   dialogMessage: string = '';
   isConfirmationPopup: boolean = false;
 
-  classId: any;
+  constructor(
+    private authService: AuthService,
+    private titleService: Title,
+    public admin: AdminComponent,
+    private classService: ClassService,
+    public urlService: UrlService,
+    private router: Router,
+    private toastr: ToastrService,
+    private datePipe: DatePipe
+  ) {
+    this._class = {
+      id: 0,
+      name: '',
+      classDay: '',
+      classTime: '',
+      admissionDate: new Date(),
+      status: 0
+    };
+
+    this.initializeClassForm();
+    this.initializeClassError();
+  }
+
+  initializeClassForm() {
+    this.classForm = {
+      classDay: '2, 4, 6',
+      classTime: '08h00 - 10h00'
+    };
+  }
+
+  initializeClassError() {
+    this.classError = {
+      name: '',
+      classDay: '',
+      classTime: '',
+      admissionDate: ''
+    };
+  }
+
   ngOnInit(): void {
     this.titleService.setTitle('List of Classes');
     this.authService.entityExporter = 'class';
-    this.http.get<any>(`${this.authService.apiUrl}/class`, this.home.httpOptions).subscribe((data: any) => {
-      this.apiData = data;
-      this.authService.listExporter = data;
-      this.initializeDataTable();
+    this.loadData();
+  }
+
+  loadData(): void {
+    this.classService.getClassList().subscribe({
+      next: (classResponse) => {
+        this.classList = classResponse;
+        this.authService.listExporter = classResponse;
+        this.initializeDataTable();
+      },
+      error: (err) => {
+        console.log('Error:', err.error.message);
+      }
     });
   }
 
   initializeDataTable(): void {
     this.dataTable = $('#example').DataTable({
-      data: this.apiData,
+      data: this.classList,
       autoWidth: false, // Bỏ width của table
       pageLength: 10, // Đặt số lượng mục hiển thị mặc định là 10
       lengthMenu: [10, 15, 20, 25], // Tùy chọn trong dropdown: 10, 15, 20, 25
@@ -74,7 +114,11 @@ export class ClassComponent implements OnInit, OnDestroy {
         { title: 'Name', data: 'name' },
         { title: 'Day', data: 'classDay' },
         { title: 'Hour', data: 'classTime' },
-        { title: 'Admission Date', data: 'admissionDate' },
+        {
+          title: 'Admission Date', 
+          data: 'admissionDate',
+          render: (data: any) => { return this.convertDateFormat(data); }
+        },
         {
           title: 'Action',
           data: null,
@@ -88,73 +132,39 @@ export class ClassComponent implements OnInit, OnDestroy {
       ],
 
       drawCallback: () => {
-        // Sửa input search thêm button vào
-        if (!$('.dataTables_filter button').length) {
-          $('.dataTables_filter').append(`<button type="button"><i class="fa-solid fa-magnifying-glass search-icon"></i></button>`);
-        }
-
-        // Thêm placeholder vào input của DataTables
-        $('.dataTables_filter input[type="search"]').attr('placeholder', 'Search');
-
-        // Click vào edit icon sẽ hiện ra popup
-        $('.info-icon').on('click', (event: any) => {
-          const id = $(event.currentTarget).data('id');
-          this.classId = id;
-          this.router.navigate([this.urlService.classDetailUrl(id)])
-        });
-
-        $('.edit-icon').on('click', (event: any) => {
-          const id = $(event.currentTarget).data('id');
-          this.classId = id;
-          this.showPopupEdit(id);
-        });
-
-        $('.create').on('click', () => {
-          this.isPopupCreate = true;
-        });
-
-        $('.delete-icon').on('click', (event: any) => {
-          const id = $(event.currentTarget).data('id');
-          this.classId = id;
-          this.dialogTitle = 'Are you sure?';
-          this.dialogMessage = 'Do you really want to delete this Class? This action cannot be undone.';
-          this.isConfirmationPopup = true;
-          this.isPopupDelete = true;
-        });
+        this.addEventListeners();
       }
     });
   }
 
-  showPopupEdit(id: number): void {
-    this.infoEdit = this.apiData.find((item: any) => item.id === id);
-    this.isPopupUpdate = true;
+  addEventListeners(): void {
+    // Sửa input search thêm button vào
+    if (!$('.dataTables_filter button').length) {
+      $('.dataTables_filter').append(`<button type="button"><i class="fa-solid fa-magnifying-glass search-icon"></i></button>`);
+    }
+
+    // Thêm placeholder vào input của DataTables
+    $('.dataTables_filter input[type="search"]').attr('placeholder', 'Search');
+
+    // Click vào edit icon sẽ hiện ra popup
+    $('.info-icon').on('click', (event: any) => {
+      this.classId = $(event.currentTarget).data('id');
+      this.router.navigate([this.urlService.classDetailUrl(this.classId)])
+    });
+
+    $('.edit-icon').on('click', (event: any) => {
+      this.classId = $(event.currentTarget).data('id');
+      this.openPopupUpdate(this.classId);
+    });
+
+    $('.delete-icon').on('click', (event: any) => {
+      this.classId = $(event.currentTarget).data('id');
+      this.openPopupConfirm('Are you sure?', 'Do you really want to delete this Class?<br>The students in this class will also be deleted, and this action cannot be undone.');
+      this.isPopupDelete = true;
+    });
   }
 
-  closePopup(): void {
-    this.isPopupUpdate = false;
-    this.isPopupCreate = false;
-    this.isPopupDelete = false;
-  }
-
-
-  name: String = '';
-  classDay: String = '2, 4, 6';
-  classTime: String = '08h00 - 10h00';
-  admissionDate: String = '';
-
-  nameError: String = '';
-  classDayError: String = '';
-  classTimeError: String = '';
-  admissionDateError: String = '';
-  
-  errorEmpty(): void {
-    this.nameError = '';
-    this.classDayError = '';
-    this.classTimeError = '';
-    this.admissionDateError = '';
-  }
-
-  updateDataTable(newData: any[]): void {
+  updateDataTable(newData: any): void {
     if (this.dataTable) {
       this.dataTable.clear(); // Xóa dữ liệu hiện tại
       this.dataTable.rows.add(newData); // Thêm dữ liệu mới
@@ -163,135 +173,150 @@ export class ClassComponent implements OnInit, OnDestroy {
   }
 
   reloadTable(): void {
-    this.http.get<any>(`${this.authService.apiUrl}/class`, this.home.httpOptions).subscribe((data: any) => {
-      this.apiData = data;
-      this.updateDataTable(this.apiData); // Cập nhật bảng với dữ liệu mới
+    this.classService.getClassList().subscribe({
+      next: (classResponse) => {
+        this.classList = classResponse;
+        this.updateDataTable(this.classList);
+        this.closePopup();
+      },
+      error: (err) => {
+        console.log('Error:', err.error.message);
+      }
     });
-    this.closePopup();
+  }
+
+  loadClassById(id: number, callback: (_class: ClassResponse) => void): void {
+    this.classService.getClassById(id).subscribe({
+      next: (classResponse) => {
+        this._class = classResponse;
+        callback(this._class); // Chạy hàm callback sau khi lấy thông tin thành công
+      },
+      error: (err) => {
+        this.toastr.error(err.error.message, 'Error', { timeOut: 4000 });
+        setTimeout(() => { this.reloadTable(); }, 4000);
+      }
+    });
+  }
+
+  convertDateFormat(dateObj: Date | undefined): string {
+    // Dùng DatePipe để chuyển đổi đối tượng Date sang định dạng 'yyyy-MM-dd'
+    return this.datePipe.transform(dateObj, 'dd-MM-yyyy')!;
+  }
+
+  convertToRequest(): void {
+    this.classForm.name = this._class.name;
+    this.classForm.classDay = this._class.classDay;
+    this.classForm.classTime = this._class.classTime;
+    this.classForm.admissionDate = this._class.admissionDate;
+  }
+
+  openPopupConfirm(title: string, message: string): void {
+    this.dialogTitle = title;
+    this.dialogMessage = message;
+    this.isConfirmationPopup = true;
+  }
+
+  openPopupCreate(): void {
+    this.isPopupCreate = true;
+  }
+  
+  openPopupUpdate(id: number): void {
+    this.loadClassById(id, () => {
+      this.convertToRequest();
+      this.isPopupUpdate = true;
+    });
+  }
+
+  closePopup(): void {
+    this.classId = 0;
+    this.initializeClassForm();
+    this.initializeClassError();
+    this.isPopupCreate = false;
+    this.isPopupUpdate = false;
+    this.isPopupDelete = false;
+  }
+
+  errorForm(err: any, message: string): void {
+    if (err.status === 401) {
+      this.toastr.error('Unauthorized', 'Failed', { timeOut: 2000 });
+    }
+    else {
+      if (err.error.message) {
+        this.classError[err.error.key as keyof ClassValidationError] = err.error.message;
+      }
+      else {
+        err.error.forEach((e: any) => {
+          this.classError[e.key as keyof ClassValidationError] = e.message;
+        });
+      }
+      this.toastr.error(message + ' class fail!', 'Error', { timeOut: 2000 });
+    }
   }
 
   createClass(): void {
-    this.errorEmpty();
-    const _class =
-    {
-      name: this.name, classDay: this.classDay, classTime: this.classTime, admissionDate: this.admissionDate
-    }
-
-    this.http.post(`${this.authService.apiUrl}/class`, _class, this.home.httpOptions).subscribe(
-      response => {
-        this.toastr.success('Create Successful!', 'Success', {
-          timeOut: 2000,
-        });
+    this.initializeClassError();
+    this.classService.createClass(this.classForm).subscribe({
+      next: () => {
+        this.toastr.success('Create class successful!', 'Success', { timeOut: 2000 });
         this.reloadTable();
       },
-      error => {
-        this.toastr.error(error.error.message, 'Error', {
-          timeOut: 2000,
-        });
-        error.error.forEach((err:any) => {
-          if (err.key == 'name') {
-            this.nameError = err.message;
-          }
-          if (err.key == 'classDay') {
-            this.classDayError = err.message;
-          }
-          if (err.key == 'classTime') {
-            this.classTimeError = err.message;
-          }
-          if (err.key == 'admissionDate') {
-            this.admissionDateError = err.message;
-          }
-        });
+      error: (err) => {
+        this.errorForm(err, 'Create');
       }
-    )
+    });
   }
 
   updateClass(): void {
-    this.errorEmpty();
-    const _class =
-    {
-      name: this.infoEdit.name, classDay: this.infoEdit.classDay, classTime: this.infoEdit.classTime, admissionDate: this.infoEdit.admissionDate
-    }
-
-    this.http.put(`${this.authService.apiUrl}/class/${this.classId}`, _class, this.home.httpOptions).subscribe(
-      response => {
-        this.toastr.success('Update Successful!', 'Success', {
-          timeOut: 2000,
-        });
+    this.initializeClassError();
+    this.classService.updateClass(this.classId, this.classForm).subscribe({
+      next: () => {
+        this.toastr.success('Update class successful!', 'Success', { timeOut: 2000 });
         this.reloadTable();
       },
-      error => {
-        this.toastr.error(error.error.message, 'Error', {
-          timeOut: 2000,
-        });
-        console.log(error);
-        error.error.forEach((err:any) => {
-          if (err.key == 'name') {
-            this.nameError = err.message;
-          }
-          if (err.key == 'classDay') {
-            this.classDayError = err.message;
-          }
-          if (err.key == 'classTime') {
-            this.classTimeError = err.message;
-          }
-          if (err.key == 'admissionDate') {
-            this.admissionDateError = err.message;
-          }
-        });
+      error: (err) => {
+        this.errorForm(err, 'Update');
       }
-    )
+    });
   }
 
-  deleteClass(id: number): void {
-    this.isPopupDelete = false;
-    this.http.put(`${this.authService.apiUrl}/class/remove/${id}`, {}, this.home.httpOptions).subscribe({
+  deleteClass(): void {
+    this.classService.deleteClass(this.classId).subscribe({
       next: () => {
-        this.toastr.success('Delete Successful!', 'Success', { timeOut: 2000 });
+        this.toastr.success('Delete class successful!', 'Success', { timeOut: 2000 });
         this.reloadTable();
       },
       error: () => {
-        this.toastr.error('Delete Fail!', 'Error', { timeOut: 2000 });
+        this.toastr.error('Delete class fail!', 'Error', { timeOut: 2000 });
       }
     });
   }
 
   exportExcel() {
-    this.authService.listExporter = this.apiData;
-    this.authService.exportDataExcel().subscribe(
-      (response) => {
-        const url = window.URL.createObjectURL(new Blob([response], { type: 'blob' as 'json' }));
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = 'class_excel.xlsx'; // Thay đổi tên file nếu cần
-        document.body.appendChild(a);
-        a.click();
-        window.URL.revokeObjectURL(url);
-        document.body.removeChild(a);
-      },
-      (error) => {
-        console.error('Export failed', error);
-      }
-    );
+    this.authService.listExporter = this.classList;
+    this.exportData(this.authService.exportDataExcel(), 'class_excel.xlsx');
   }
 
   exportPDF() {
-    this.authService.listExporter = this.apiData;
-    this.authService.exportDataPDF().subscribe(
-      (response) => {
-        const url = window.URL.createObjectURL(new Blob([response], { type: 'blob' }));
+    this.authService.listExporter = this.classList;
+    this.exportData(this.authService.exportDataPDF(), 'class_pdf.pdf');
+  }
+
+  exportData(exportFunction: any, fileName: string): void {
+    exportFunction.subscribe({
+      next: (response: any) => {
+        const url = window.URL.createObjectURL(new Blob([response], { type: 'application/octet-stream' }));
         const a = document.createElement('a');
         a.href = url;
-        a.download = 'class_pdf.pdf'; // Thay đổi tên file nếu cần
+        a.download = fileName;
         document.body.appendChild(a);
         a.click();
         window.URL.revokeObjectURL(url);
         document.body.removeChild(a);
       },
-      (error) => {
-        console.error('Export failed', error);
+      error: (err: any) => {
+        console.error('Export failed:', err);
       }
-    );
+    });
   }
 
   ngOnDestroy(): void {

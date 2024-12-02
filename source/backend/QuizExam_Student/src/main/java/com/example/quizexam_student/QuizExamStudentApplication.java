@@ -46,7 +46,7 @@ public class QuizExamStudentApplication {
 
     @Scheduled(cron = "0 0 0 * * ?")
     public void updateStatusForClasses() {
-        List<Classes> classes = classesRepository.findByStatusOrderByIdDesc(0);
+        List<Classes> classes = classesRepository.findAllByStatusOrderByIdDesc(0);
         classes = classes.stream().peek(classes1 -> {
             if (LocalDate.now().isBefore(classes1.getAdmissionDate())) {
                 classes1.setStatus(1);

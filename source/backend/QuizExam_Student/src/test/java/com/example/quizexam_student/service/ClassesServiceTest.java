@@ -66,9 +66,9 @@ public class ClassesServiceTest {
     @WithMockUser(username = "admin@example.com", roles = {"ADMIN"})
     void getAll_success(){
         // GIVEN
-        Mockito.when(classesRepository.findByStatusOrderByIdDesc(1)).thenReturn(classesList);
+        Mockito.when(classesRepository.findAllByStatusOrderByIdDesc(1)).thenReturn(classesList);
         // WHEN
-        var respone = classesService.getAllClasses();
+        var respone = classesService.findAllClasses();
         // THEN
         Assertions.assertThat(respone).isNotNull();
         Assertions.assertThat(respone.get(0).getId()).isEqualTo(1);

@@ -90,7 +90,7 @@ export class EmployeeComponent implements OnInit, OnDestroy {
       email: '',
       roleId: '',
       restore: ''
-    }
+    };
   }
 
   ngOnInit(): void {
@@ -202,14 +202,15 @@ export class EmployeeComponent implements OnInit, OnDestroy {
         </select>
       `);
 
-      $('#custom-select-status').val(this.statusId);
-
       // Theo dõi sự thay đổi của dropdown
       $('#custom-select-status').on('change', () => {
         this.statusId = $('#custom-select-status').val();
+        this.dataTable.search('').draw();
         this.reloadTable();
       });
     }
+
+    $('#custom-select-status').val(this.statusId);
 
     const dataTablesLength = this.el.nativeElement.querySelector('.dataTables_length');
     this.renderer.setStyle(dataTablesLength, 'display', 'inline-flex');
@@ -248,6 +249,19 @@ export class EmployeeComponent implements OnInit, OnDestroy {
     });
   }
 
+  loadEmployeeById(id: number, callback: (employee: UserResponse) => void): void {
+    this.employeeService.getEmployeeById(id).subscribe({
+      next: (employeeResponse) => {
+        this.employee = employeeResponse;
+        callback(this.employee); // Chạy hàm callback sau khi lấy thông tin thành công
+      },
+      error: (err) => {
+        this.toastr.error(err.error.message, 'Error', { timeOut: 4000 });
+        setTimeout(() => { this.reloadTable(); }, 4000);
+      }
+    });
+  }
+
   convertDateFormat(dateObj: Date | undefined): string {
     // Dùng DatePipe để chuyển đổi đối tượng Date sang định dạng 'yyyy-MM-dd'
     return this.datePipe.transform(dateObj, 'dd-MM-yyyy')!;
@@ -261,19 +275,6 @@ export class EmployeeComponent implements OnInit, OnDestroy {
     this.employeeForm.phoneNumber = this.employee.phoneNumber;
     this.employeeForm.email = this.employee.email;
     this.employeeForm.roleId = this.employee.role?.id;
-  }
-
-  loadEmployeeById(id: number, callback: (employee: UserResponse) => void): void {
-    this.employeeService.getEmployeeById(id).subscribe({
-      next: (employeeResponse) => {
-        this.employee = employeeResponse;
-        callback(employeeResponse); // Chạy hàm callback sau khi lấy thông tin thành công
-      },
-      error: (err) => {
-        this.toastr.error(err.error.message, 'Error', { timeOut: 4000 });
-        setTimeout(() => { this.reloadTable(); }, 4000);
-      }
-    });
   }
 
   openPopupConfirm(title: string, message: string): void {
@@ -336,7 +337,7 @@ export class EmployeeComponent implements OnInit, OnDestroy {
           this.employeeError[e.key as keyof UserValidationError] = e.message;
         });
       }
-      this.toastr.error(message + ' Employee Fail!', 'Error', { timeOut: 2000 });
+      this.toastr.error(message + ' employee fail!', 'Error', { timeOut: 2000 });
     }
     this.openPopupViewInactive();
   }
@@ -345,7 +346,7 @@ export class EmployeeComponent implements OnInit, OnDestroy {
     this.initializeEmployeeError();
     this.employeeService.createEmployee(this.employeeForm).subscribe({
       next: () => {
-        this.toastr.success('Create Successful!', 'Success', { timeOut: 2000 });
+        this.toastr.success('Create employee successful!', 'Success', { timeOut: 2000 });
         this.reloadTable();
       },
       error: (err) => {
@@ -358,7 +359,7 @@ export class EmployeeComponent implements OnInit, OnDestroy {
     this.initializeEmployeeError();
     this.employeeService.updateEmployee(this.employeeId, this.employeeForm).subscribe({
       next: () => {
-        this.toastr.success('Update Successful!', 'Success', { timeOut: 2000 });
+        this.toastr.success('Update employee successful!', 'Success', { timeOut: 2000 });
         this.reloadTable();
       },
       error: (err) => {
@@ -370,11 +371,11 @@ export class EmployeeComponent implements OnInit, OnDestroy {
   resetPasswordEmployee(): void {
     this.employeeService.resetPasswordEmployee(this.employeeId).subscribe({
       next: () => {
-        this.toastr.success('Reset Successful!', 'Success', { timeOut: 2000 });
+        this.toastr.success('Reset employee successful!', 'Success', { timeOut: 2000 });
         this.reloadTable();
       },
       error: () => {
-        this.toastr.error('Reset Fail!', 'Error', { timeOut: 2000 });
+        this.toastr.error('Reset employee fail!', 'Error', { timeOut: 2000 });
       }
     });
   }
@@ -382,11 +383,11 @@ export class EmployeeComponent implements OnInit, OnDestroy {
   removeEmployee(): void {
     this.employeeService.removeEmployee(this.employeeId).subscribe({
       next: () => {
-        this.toastr.success('Remove Successful!', 'Success', { timeOut: 2000 });
+        this.toastr.success('Remove employee successful!', 'Success', { timeOut: 2000 });
         this.reloadTable();
       },
       error: () => {
-        this.toastr.error('Remove Employee Fail!', 'Error', { timeOut: 2000 });
+        this.toastr.error('Remove employee fail!', 'Error', { timeOut: 2000 });
       }
     });
   }
@@ -394,16 +395,24 @@ export class EmployeeComponent implements OnInit, OnDestroy {
   viewEmployeeInactive(): void {
     this.statusId = 0;
     this.reloadTable();
+    if (this.employeeError.restore) {
+      if (this.employeeError.restore.includes('Email')) {
+        this.dataTable.search(this.employeeForm.email).draw();
+      }
+      else {
+        this.dataTable.search(this.employeeForm.phoneNumber).draw();
+      }
+    }
   }
 
   restoreEmployee(): void {
     this.employeeService.restoreEmployee(this.employeeId).subscribe({
       next: () => {
-        this.toastr.success('Restore Successful!', 'Success', { timeOut: 2000 });
+        this.toastr.success('Restore employee successful!', 'Success', { timeOut: 2000 });
         this.reloadTable();
       },
       error: () => {
-        this.toastr.error('Restore Fail!', 'Error', { timeOut: 2000 });
+        this.toastr.error('Restore employee fail!', 'Error', { timeOut: 2000 });
       }
     });
   }
@@ -419,15 +428,20 @@ export class EmployeeComponent implements OnInit, OnDestroy {
   }
 
   exportData(exportFunction: any, fileName: string): void {
-    exportFunction.subscribe((response: any) => {
-      const url = window.URL.createObjectURL(new Blob([response], { type: 'application/octet-stream' }));
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = fileName;
-      document.body.appendChild(a);
-      a.click();
-      window.URL.revokeObjectURL(url);
-      document.body.removeChild(a);
+    exportFunction.subscribe({
+      next: (response: any) => {
+        const url = window.URL.createObjectURL(new Blob([response], { type: 'application/octet-stream' }));
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = fileName;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+      },
+      error: (err: any) => {
+        console.error('Export failed:', err);
+      }
     });
   }
 
