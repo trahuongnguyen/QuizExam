@@ -87,8 +87,8 @@ public class ExaminationController {
 
     @PreAuthorize("hasAnyRole('ADMIN', 'SRO')")
     @PostMapping("/createExamWithSelectingQuestions")
-    public ExaminationResponse createWithSelectingQuestions(@RequestBody @Valid ExaminationRequest examinationRequest, @RequestBody List<Question> questions) {
-        return ExaminationMapper.convertToResponse(examinationService.createExamination(examinationRequest, questions));
+    public ExaminationResponse createWithSelectingQuestions(@RequestPart(name = "exam") @Valid ExaminationRequest examinationRequest, @RequestPart(name = "question") List<Integer> questionIds) {
+        return ExaminationMapper.convertToResponse(examinationService.createExamination(examinationRequest, questionIds));
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'SRO')")
