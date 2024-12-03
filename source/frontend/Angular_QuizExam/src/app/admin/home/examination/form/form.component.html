@@ -74,7 +74,7 @@
             <a class="button button-pdf" (click)="backStep()"><span class="mdi mdi-arrow-left-thick"></span>Back</a>
         </div>
         <div>
-            <a class="button button-pdf">Next<span class="mdi mdi-arrow-right-thick"></span></a>
+            <a class="button button-pdf" (click)="createExam()">Next<span class="mdi mdi-arrow-right-thick"></span></a>
         </div>
     </div>
 
@@ -185,9 +185,9 @@
                                 placeholder="Search" />
                         </div>
                         <div *ngIf="filteredListQuestions.length > 0; else noListQuestions">
-                            <div *ngFor="let question of filteredListQuestions" class="question-item">
-                                <span class="mdi mdi-plus-circle-outline" (click)="moveToExam(question)" style="cursor: pointer;" title="Add"></span>
-                                {{ question.content }}
+                            <div *ngFor="let question of filteredListQuestions; let i = index" class="question-item">
+                                <span class="mdi mdi-plus-circle-outline icon" (click)="moveToExam(question)" style="cursor: pointer;" title="Add"></span>
+                                <span><strong>Question {{ i + 1 }}:</strong> {{ question.content }}</span>
                             </div>
                         </div>
                         <ng-template #noListQuestions>
@@ -204,9 +204,9 @@
                                 placeholder="Search" />
                         </div>
                         <div *ngIf="filteredExamQuestions.length > 0; else noExamQuestions">
-                            <div *ngFor="let question of filteredExamQuestions" class="question-item">
-                                <span class="mdi mdi-minus-circle-outline" (click)="moveToList(question)" style="cursor: pointer;" title="Remove"></span>
-                                {{ question.content }}
+                            <div *ngFor="let question of filteredExamQuestions; let i = index" class="question-item">
+                                <span class="mdi mdi-minus-circle-outline icon" (click)="moveToList(question)" style="cursor: pointer;" title="Remove"></span>
+                                <span><strong>Question {{ i + 1 }}:</strong> {{ question.content }}</span>
                             </div>
                         </div>
                         <ng-template #noExamQuestions>
@@ -222,7 +222,7 @@
 
 <div *ngIf="isPopupLevel" class="popup-container">
     <div class="popup-content" (click)="$event.stopPropagation()">
-        <form class="form-popup">
+        <form class="form-popup" (ngSubmit)="createExam()">
             <div class="popup-header">
                 <span>Enter the number of questions by level</span>
                 <span class="close-icon" (click)="closePopup()">&times;</span>

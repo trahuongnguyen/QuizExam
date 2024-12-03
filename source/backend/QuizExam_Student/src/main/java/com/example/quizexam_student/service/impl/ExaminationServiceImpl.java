@@ -218,12 +218,13 @@ public class ExaminationServiceImpl implements ExaminationService {
     }
 
     @Override
-    public Examination createExamination(ExaminationRequest examinationRequest, List<Question> questions) {
+    public Examination createExamination(ExaminationRequest examinationRequest, List<Integer> questionIds) {
         if (examinationRequest.getEndTime().isBefore(examinationRequest.getStartTime())) {
             throw new InvalidTimeException("DateTime", "End time must be after start time");
         }
         Subject subject = subjectRepository.findById(examinationRequest.getSubjectId()).orElse(null);
         double maxScore = 0;
+        List<Question> questions = questionRepository.findAllByIdInAndStatus(questionIds, 1);
         for (Question question : questions) {
             generateAnswerForQuestion(question);
             maxScore += question.getLevel().getPoint();
