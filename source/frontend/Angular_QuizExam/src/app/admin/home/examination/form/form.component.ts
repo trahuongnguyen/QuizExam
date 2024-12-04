@@ -93,13 +93,14 @@ export class FormComponent implements OnInit {
       this.subjectName = this.subjects[0].name;
     });
     this.initializeLevel();
-    this.fetchQuestions();
   }
 
   nextStep(): void {
     this.typeExam = this.examsForm.type;
     if (this.typeExam == 0) {
       this.isPopupLevel = true;
+    } else {
+      this.fetchQuestions();
     }
   }
 
@@ -114,41 +115,82 @@ export class FormComponent implements OnInit {
       startTime: this.examsForm.startTime,
       endTime: this.examsForm.endTime,
       subjectId: this.examsForm.subjectId,
-      levels: this.levelIdModel
+      levels: this.levelIdModel,
+      questions: this.examQuestions
     };
 
-    if (!this.validateLevel()) {
-      this.http.post(`${this.authService.apiUrl}/exam`, exam, this.home.httpOptions).subscribe(
-        response => {
-          this.toastr.success('Edit Exam Successful!', 'Success', {
-            timeOut: 2000,
-          });
-          this.createdExam = response;
-          this.examComponent.step = true;
-          this.router.navigate([this.urlService.addStudentForExamlUrl(this.createdExam.id)]);
-        },
-        error => {
-          if (error.status === 401) {
-            this.toastr.error('Unauthorized', 'Failed', {
+    if (this.typeExam == 0) {
+      if (!this.validateLevel()) {
+        this.http.post(`${this.authService.apiUrl}/exam`, exam, this.home.httpOptions).subscribe(
+          response => {
+            this.toastr.success('Create Exam Successful!', 'Success', {
               timeOut: 2000,
             });
-          } else {
-            let msg = '';
-            if (error.error.message) {
-              msg = error.error.message;
+            this.createdExam = response;
+            this.examComponent.step = true;
+            this.router.navigate([this.urlService.addStudentForExamlUrl(this.createdExam.id)]);
+          },
+          error => {
+            if (error.status === 401) {
+              this.toastr.error('Unauthorized', 'Failed', {
+                timeOut: 2000,
+              });
             } else {
-              error.error.forEach((err: any) => {
-                msg += ' ' + err.message;
-              })
+              let msg = '';
+              if (error.error.message) {
+                msg = error.error.message;
+              } else {
+                error.error.forEach((err: any) => {
+                  msg += ' ' + err.message;
+                })
+              }
+              this.toastr.error(msg, 'Failed', {
+                timeOut: 2000,
+              });
             }
-            this.toastr.error(msg, 'Failed', {
-              timeOut: 2000,
-            });
+            console.log('Error', error);
           }
-          console.log('Error', error);
-        }
-      )
+        )
+      }
     }
+    else {
+      let questionIds = this.examQuestions.map(q => q.id);
+      let formData = new FormData();
+      formData.append('exam', new Blob([JSON.stringify(exam)], { type: 'application/json' }));
+      formData.append('question', new Blob([JSON.stringify(questionIds)], { type: 'application/json' }));
+
+      if (!this.validateNumberQuestion()) {
+        this.http.post(`${this.authService.apiUrl}/exam/createExamWithSelectingQuestions`, formData, this.home.httpOptions).subscribe(
+          response => {
+            this.toastr.success('Create Exam Successful!', 'Success', { timeOut: 2000 });
+            this.createdExam = response;
+            this.examComponent.step = true;
+            this.router.navigate([this.urlService.addStudentForExamlUrl(this.createdExam.id)]);
+          },
+          error => {
+            if (error.status === 401) {
+              this.toastr.error('Unauthorized', 'Failed', {
+                timeOut: 2000,
+              });
+            } else {
+              let msg = '';
+              if (error.error.message) {
+                msg = error.error.message;
+              } else {
+                error.error.forEach((err: any) => {
+                  msg += ' ' + err.message;
+                })
+              }
+              this.toastr.error(msg, 'Failed', {
+                timeOut: 2000,
+              });
+            }
+            console.log('Error', error);
+          }
+        )
+      }
+    }
+    
   }
 
   levelId: { [key: string]: number; } = {};
@@ -218,6 +260,20 @@ export class FormComponent implements OnInit {
     return flag;
   }
 
+  validateNumberQuestion(): boolean {
+    var flag = false;
+    var totalQuestions = this.examQuestions.length;
+
+    if (totalQuestions >= 10 && totalQuestions <= 50) {
+      flag = false;
+    }
+    else {
+      this.toastr.error('Total of number questions must be between 10 and 50 (Question).', 'Error', { timeOut: 2000 });
+      flag = true;
+    }
+    return flag;
+  }
+
   selectedLevelsText: string = '';
 
   closePopup(): void {
@@ -246,7 +302,7 @@ export class FormComponent implements OnInit {
   }
 
   fetchQuestions(): void {
-    this.http.get<any>(`${this.authService.apiUrl}/question/1`, this.home.httpOptions).subscribe((data: any) => {
+    this.http.get<any>(`${this.authService.apiUrl}/question/${this.examsForm.subjectId}`, this.home.httpOptions).subscribe((data: any) => {
       this.listQuestions = data;
     });
   }
@@ -271,6 +327,7 @@ export class FormComponent implements OnInit {
     if (index !== -1) {
       this.examQuestions.push(this.listQuestions[index]); // Thêm vào Exam
       this.listQuestions.splice(index, 1); // Xóa khỏi List Question
+      console.log(this.examQuestions);
     }
   }
   

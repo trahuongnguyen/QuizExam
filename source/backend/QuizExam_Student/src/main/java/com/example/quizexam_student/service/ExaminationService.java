@@ -24,5 +24,5 @@ public interface ExaminationService {
     List<ExaminationResponse> getAllExaminations();
     List<ExaminationResponse> getAllExaminationBySubjectId(int subjectId);
     List<ExaminationResponse> getAllExaminationFinishedBySemId(int subjectId);
-    Examination createExamination(ExaminationRequest examinationRequest, List<Question> questions); // Tạo đề thi bằng danh sách câu hỏi có cho sẵn
+    Examination createExamination(ExaminationRequest examinationRequest, List<Integer> questionIds); // Tạo đề thi bằng danh sách câu hỏi có cho sẵn
 }
