@@ -13,7 +13,7 @@ export class UrlService {
   subjectDefaultImageUrl: string = 'http://localhost:8080/uploads/img-subject/default.png';
 
   authorizeDetailUrl(authorizeId: number): string {
-    return `/admin/authorize/detail/${authorizeId}`;
+    return `/admin/authorize/${authorizeId}`;
   }
 
   classDetailUrl(classId: number): string {

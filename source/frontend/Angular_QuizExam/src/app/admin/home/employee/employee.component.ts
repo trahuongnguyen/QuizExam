@@ -2,9 +2,10 @@ import { Component, OnInit, OnDestroy, ElementRef, Renderer2 } from '@angular/co
 import { AuthService } from '../../../shared/service/auth.service';
 import { Title } from '@angular/platform-browser';
 import { AdminComponent } from '../../admin.component';
-import { EmployeeService } from '../../service/employee/employee.service';
 import { Role } from '../../../shared/models/role.model';
-import { UserResponse, UserRequest, UserValidationError } from '../../../shared/models/user.model';
+import { UserResponse, UserRequest } from '../../../shared/models/user.model';
+import { ValidationError } from '../../../shared/models/models';
+import { EmployeeService } from '../../service/employee/employee.service';
 import { ToastrService } from 'ngx-toastr';
 import { DatePipe } from '@angular/common';
 import { forkJoin } from 'rxjs';
@@ -29,12 +30,12 @@ export class EmployeeComponent implements OnInit, OnDestroy {
   role: Role;
   employee: UserResponse;
   employeeForm: UserRequest = { };
-  employeeError: UserValidationError = { };
+  employeeError: ValidationError = { };
   
   isPopupCreate: boolean = false;
   isPopupDetail: boolean = false;
   isPopupUpdate: boolean = false;
-  isPopupDelete: boolean = false;
+  isPopupRemove: boolean = false;
 
   isPopupResetPassword: boolean = false;
   isPopupRestore: boolean = false;
@@ -71,26 +72,11 @@ export class EmployeeComponent implements OnInit, OnDestroy {
       email: '',
       role: this.role
     };
-
     this.initializeEmployeeForm();
-    this.initializeEmployeeError();
   }
 
   initializeEmployeeForm() {
     this.employeeForm = { gender: 1, roleId: 4 };
-  }
-
-  initializeEmployeeError() {
-    this.employeeError = {
-      fullName: '',
-      dob: '',
-      gender: '',
-      address: '',
-      phoneNumber: '',
-      email: '',
-      roleId: '',
-      restore: ''
-    };
   }
 
   ngOnInit(): void {
@@ -101,13 +87,18 @@ export class EmployeeComponent implements OnInit, OnDestroy {
 
   loadData(): void {
     forkJoin([this.employeeService.getRoleList(), this.employeeService.getEmployeeList(this.statusId)])
-      .subscribe(([roleResponse, employeeResponse]) => {
-        this.roleList = roleResponse;
-        this.employeeList = employeeResponse;
-
-        this.authService.listExporter = employeeResponse;
-        this.initializeDataTable();
-    });
+      .subscribe({
+        next: ([roleResponse, employeeResponse]) => {
+          this.roleList = roleResponse;
+          this.employeeList = employeeResponse;
+          this.authService.listExporter = employeeResponse;
+          this.initializeDataTable();
+        },
+        error: (err) => {
+          this.admin.handleError(err, this.employeeError, 'user', 'load data', this.reloadTable.bind(this));
+        }
+      }
+    );
   }
 
   initializeDataTable(): void {
@@ -182,7 +173,7 @@ export class EmployeeComponent implements OnInit, OnDestroy {
     $('.delete-icon').on('click', (event: any) => {
       this.employeeId = $(event.currentTarget).data('id');
       this.openPopupConfirm('Are you sure?', 'Do you really want to delete this Employee?');
-      this.isPopupDelete = true;
+      this.isPopupRemove = true;
     });
 
     $('.backup-restore-icon').on('click', (event: any) => {
@@ -244,7 +235,7 @@ export class EmployeeComponent implements OnInit, OnDestroy {
         this.closePopup();
       },
       error: (err) => {
-        this.toastr.error(err.error.message, 'Error', { timeOut: 4000 });
+        this.admin.handleError(err, this.employeeError, 'user', 'load data', this.reloadTable.bind(this));
       }
     });
   }
@@ -256,8 +247,7 @@ export class EmployeeComponent implements OnInit, OnDestroy {
         callback(this.employee); // Chạy hàm callback sau khi lấy thông tin thành công
       },
       error: (err) => {
-        this.toastr.error(err.error.message, 'Error', { timeOut: 4000 });
-        setTimeout(() => { this.reloadTable(); }, 4000);
+        this.admin.handleError(err, this.employeeError, 'user', 'load data', this.reloadTable.bind(this));
       }
     });
   }
@@ -301,93 +291,106 @@ export class EmployeeComponent implements OnInit, OnDestroy {
   }
 
   openPopupViewInactive(): void {
-    if (this.employeeError.restore?.trim()) {
-      this.openPopupConfirm('Would you like to switch to the deleted user?', this.employeeError.restore);
+    if (this.employeeError['restore']?.trim()) {
+      this.openPopupConfirm('Would you like to switch to the inactive user?', this.employeeError['restore']);
       this.isPopupViewInactive = true;
     }
   }
 
+  popupFormTitle(): string {
+    if (this.isPopupCreate) return 'Create';
+    if (this.isPopupUpdate) return 'Update';
+    return '';
+  }
+
   closePopup(): void {
-    this.employeeId = 0;
-    this.initializeEmployeeForm();
-    this.initializeEmployeeError();
-    this.isPopupCreate = false;
-    this.isPopupDetail = false;
-    this.isPopupUpdate = false;
-    this.isPopupDelete = false;
-    this.isPopupResetPassword = false;
-    this.isPopupRestore = false;
-    this.isPopupViewInactive = false;
-  }
-
-  closePopupViewInactive(): void {
-    this.isPopupViewInactive = false;
-  }
-
-  errorForm(err: any, message: string): void {
-    if (err.status === 401) {
-      this.toastr.error('Unauthorized', 'Failed', { timeOut: 2000 });
+    if (this.isPopupViewInactive) {
+      this.isPopupViewInactive = false;
     }
     else {
-      if (err.error.message) {
-        this.employeeError[err.error.key as keyof UserValidationError] = err.error.message;
-      }
-      else {
-        err.error.forEach((e: any) => {
-          this.employeeError[e.key as keyof UserValidationError] = e.message;
-        });
-      }
-      this.toastr.error(message + ' employee fail!', 'Error', { timeOut: 2000 });
+      this.employeeId = 0;
+      this.employeeError = { };
+      this.initializeEmployeeForm();
+      this.isPopupCreate = false;
+      this.isPopupDetail = false;
+      this.isPopupUpdate = false;
+      this.isPopupRemove = false;
+      this.isPopupResetPassword = false;
+      this.isPopupRestore = false;
     }
-    this.openPopupViewInactive();
+  }
+
+  confirmAction() {
+    if (this.isPopupResetPassword) {
+      this.resetPasswordEmployee();
+    }
+    else if (this.isPopupRemove) {
+      this.removeEmployee();
+    }
+    else if (this.isPopupViewInactive) {
+      this.viewEmployeeInactive();
+    }
+    else if (this.isPopupRestore) {
+      this.restoreEmployee();
+    }
+  }
+
+  submitForm(): void {
+    this.employeeError = { };
+    if (this.isPopupCreate) {
+      this.createEmployee();
+    }
+    else if (this.isPopupUpdate) {
+      this.updateEmployee();
+    }
   }
 
   createEmployee(): void {
-    this.initializeEmployeeError();
     this.employeeService.createEmployee(this.employeeForm).subscribe({
-      next: () => {
-        this.toastr.success('Create employee successful!', 'Success', { timeOut: 2000 });
+      next: (employeeResponse) => {
+        this.toastr.success(`Employee: ${employeeResponse.fullName} created successfully!`, 'Success', { timeOut: 3000 });
         this.reloadTable();
       },
       error: (err) => {
-        this.errorForm(err, 'Create');
+        this.admin.handleError(err, this.employeeError, 'user', 'create employee', this.reloadTable.bind(this));
+        this.openPopupViewInactive();
       }
     });
   }
 
   updateEmployee(): void {
-    this.initializeEmployeeError();
     this.employeeService.updateEmployee(this.employeeId, this.employeeForm).subscribe({
-      next: () => {
-        this.toastr.success('Update employee successful!', 'Success', { timeOut: 2000 });
+      next: (employeeResponse) => {
+        this.toastr.success(`Employee: ${employeeResponse.fullName} updated successfully!`, 'Success', { timeOut: 3000 });
         this.reloadTable();
       },
       error: (err) => {
-        this.errorForm(err, 'Update');
+        this.admin.handleError(err, this.employeeError, 'user', 'update employee', this.reloadTable.bind(this));
+        this.openPopupViewInactive();
       }
     });
   }
 
   resetPasswordEmployee(): void {
     this.employeeService.resetPasswordEmployee(this.employeeId).subscribe({
-      next: () => {
-        this.toastr.success('Reset employee successful!', 'Success', { timeOut: 2000 });
+      next: (employeeResponse) => {
+        this.toastr.success(`Password for Employee: ${employeeResponse.fullName} has been reset successfully!`, 'Success', { timeOut: 3000 });
         this.reloadTable();
       },
-      error: () => {
-        this.toastr.error('Reset employee fail!', 'Error', { timeOut: 2000 });
+      error: (err) => {
+        this.admin.handleError(err, this.employeeError, 'user', 'reset password employee', this.reloadTable.bind(this));
       }
     });
   }
 
   removeEmployee(): void {
     this.employeeService.removeEmployee(this.employeeId).subscribe({
-      next: () => {
-        this.toastr.success('Remove employee successful!', 'Success', { timeOut: 2000 });
+      next: (employeeResponse) => {
+        this.toastr.success(`Employee: ${employeeResponse.fullName} has been removed successfully!`, 'Success', { timeOut: 3000 });
         this.reloadTable();
       },
-      error: () => {
-        this.toastr.error('Remove employee fail!', 'Error', { timeOut: 2000 });
+      error: (err) => {
+        this.admin.handleError(err, this.employeeError, 'user', 'remove employee', this.reloadTable.bind(this));
       }
     });
   }
@@ -395,8 +398,8 @@ export class EmployeeComponent implements OnInit, OnDestroy {
   viewEmployeeInactive(): void {
     this.statusId = 0;
     this.reloadTable();
-    if (this.employeeError.restore) {
-      if (this.employeeError.restore.includes('Email')) {
+    if (this.employeeError['restore']) {
+      if (this.employeeError['restore'].includes('Email')) {
         this.dataTable.search(this.employeeForm.email).draw();
       }
       else {
@@ -407,12 +410,12 @@ export class EmployeeComponent implements OnInit, OnDestroy {
 
   restoreEmployee(): void {
     this.employeeService.restoreEmployee(this.employeeId).subscribe({
-      next: () => {
-        this.toastr.success('Restore employee successful!', 'Success', { timeOut: 2000 });
+      next: (employeeResponse) => {
+        this.toastr.success(`Employee: ${employeeResponse.fullName} has been restored successfully!`, 'Success', { timeOut: 3000 });
         this.reloadTable();
       },
-      error: () => {
-        this.toastr.error('Restore employee fail!', 'Error', { timeOut: 2000 });
+      error: (err) => {
+        this.admin.handleError(err, this.employeeError, 'user', 'restore employee', this.reloadTable.bind(this));
       }
     });
   }

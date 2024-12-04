@@ -8,11 +8,12 @@ export interface LoginResponse {
     message: string;
 }
 
-export interface Permission {
-    id?: number;
-    name?: string;
-    description?: string;
+export interface ValidationError {
+    [key: string]: string | undefined;
 }
+
+
+
 
 export interface Sem {
     id: number;

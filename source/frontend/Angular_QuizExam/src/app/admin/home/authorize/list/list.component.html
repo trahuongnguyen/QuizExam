@@ -3,13 +3,11 @@
     <hr class="line">
 
     <div class="container">
-        <div class="row justify-content-between">
-            <!-- Card 1 -->
-            <div class="col-lg-2 col-md-4 col-sm-6 col-xs-12 mb-5" *ngFor="let role of roleList">
-                <div class="card" (click)="getExamDetail(role.id)">
+        <div class="row">
+            <div class="col-12 col-sm-6 col-lg-4 col-xl-3 mb-5" *ngFor="let role of roleList">
+                <div class="card" (click)="getPermission(role.id)">
                     <div class="card-image">
-                        <img src="https://static.thenounproject.com/png/250405-200.png"
-                            alt="User Thumbnail">
+                        <img src="https://static.thenounproject.com/png/250405-200.png" alt="User Thumbnail">
                     </div>
                     <div class="card-content">
                         <span class="card-title">{{role.name}}</span>

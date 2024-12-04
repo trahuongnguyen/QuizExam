@@ -13,10 +13,3 @@ export interface ClassRequest {
     classTime?: string;
     admissionDate?: Date;
 }
-
-export interface ClassValidationError {
-    name?: string;
-    classDay?: string;
-    classTime?: string;
-    admissionDate?: string;
-}

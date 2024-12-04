@@ -1,8 +1,7 @@
 .card {
-    margin: auto;
-    cursor: pointer;
     border: 1px solid var(--color-text);
     background-color: var(--color-card);
+    cursor: pointer;
     transition: all 0.9s ease;
 }
 
@@ -30,32 +29,4 @@
 .card-title {
     font-size: medium;
     font-weight: bold;
-}
-
-@media (min-width: 1400px) {
-    .col-lg-3 {
-        flex: 0 0 auto;
-        width: 25%;
-    }
-}
-
-@media (max-width: 1400px) {
-    .col-md-4 {
-        flex: 0 0 auto;
-        width: 33.33%;
-    }
-}
-
-@media (max-width: 1100px) {
-    .col-sm-6 {
-        flex: 0 0 auto;
-        width: 50%;
-    }
-}
-
-@media (max-width: 800px) {
-    .col-xs-12 {
-        flex: 0 0 auto;
-        width: 100%;
-    }
 }

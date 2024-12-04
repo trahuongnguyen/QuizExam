@@ -18,15 +18,15 @@ export class ClassService {
     return this.http.get<ClassResponse>(`${this.authService.apiUrl}/class/${id}`, this.authService.httpOptions);
   }
 
-  createClass(classForm: ClassRequest): Observable<ClassRequest> {
-    return this.http.post<ClassRequest>(`${this.authService.apiUrl}/class`, classForm, this.authService.httpOptions);
+  createClass(classForm: ClassRequest): Observable<ClassResponse> {
+    return this.http.post<ClassResponse>(`${this.authService.apiUrl}/class`, classForm, this.authService.httpOptions);
   }
 
-  updateClass(id: number, classForm: ClassRequest): Observable<ClassRequest> {
-    return this.http.put<ClassRequest>(`${this.authService.apiUrl}/class/${id}`, classForm, this.authService.httpOptions);
+  updateClass(id: number, classForm: ClassRequest): Observable<ClassResponse> {
+    return this.http.put<ClassResponse>(`${this.authService.apiUrl}/class/${id}`, classForm, this.authService.httpOptions);
   }
 
-  deleteClass(id: number): Observable<ClassRequest> {
-    return this.http.put<ClassRequest>(`${this.authService.apiUrl}/class/remove/${id}`, {}, this.authService.httpOptions);
+  deleteClass(id: number): Observable<ClassResponse> {
+    return this.http.put<ClassResponse>(`${this.authService.apiUrl}/class/remove/${id}`, {}, this.authService.httpOptions);
   }
 }

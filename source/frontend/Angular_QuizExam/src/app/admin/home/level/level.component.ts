@@ -1,11 +1,10 @@
-import { HttpClient } from '@angular/common/http';
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { ToastrService } from 'ngx-toastr';
-import { ActivatedRoute, Router } from '@angular/router';
-import { AuthService } from '../../service/auth.service';
-import { HomeComponent } from '../home.component';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { AdminComponent } from '../../admin.component';
+import { LevelResponse, LevelRequest } from '../../../shared/models/level.model';
+import { ValidationError } from '../../../shared/models/models';
+import { LevelService } from '../../service/level/level.service';
+import { ToastrService } from 'ngx-toastr';
 declare var $: any;
 
 @Component({
@@ -17,44 +16,57 @@ declare var $: any;
   ]
 })
 export class LevelComponent implements OnInit, OnDestroy {
-  constructor(
-    private authService: AuthService,
-    private titleService: Title,
-    public admin : AdminComponent,
-    private home: HomeComponent,
-    private http: HttpClient,
-    private toastr: ToastrService,
-    private router: Router,
-    private activatedRoute: ActivatedRoute
-  ) { }
-
   dataTable: any;
-  apiData: any;
-  _level: any = {
-    id: 0,
-    name: '',
-    point: 1,
-  };
-  levelId: any;
-  name: String = '';
-  point: number = 1;
+  levelList: LevelResponse[] = [];
 
+  levelId: number = 0;
+  level: LevelResponse;
+  levelForm: LevelRequest = { };
+  levelError: ValidationError = { };
+
+  createMode: boolean = false;
+  updateMode: boolean = false;
+  
   isPopupDelete: boolean = false;
+
   dialogTitle: string = '';
   dialogMessage: string = '';
   isConfirmationPopup: boolean = false;
 
+  constructor(
+    private titleService: Title,
+    public admin: AdminComponent,
+    private levelService: LevelService,
+    private toastr: ToastrService
+  ) {
+    this.level = {
+      id: 0,
+      name: '',
+      point: 0,
+      status: 0
+    };
+  }
+
   ngOnInit(): void {
     this.titleService.setTitle('List of Levels');
-    this.http.get<any>(`${this.authService.apiUrl}/level`, this.home.httpOptions).subscribe((data: any) => {
-      this.apiData = data;
-      this.initializeDataTable();
+    this.loadData();
+  }
+
+  loadData(): void {
+    this.levelService.getLevelList().subscribe({
+      next: (levelResponse) => {
+        this.levelList = levelResponse;
+        this.initializeDataTable();
+      },
+      error: (err) => {
+        this.admin.handleError(err, this.levelError, 'level', 'load data', this.reloadTable.bind(this));
+      }
     });
   }
 
   initializeDataTable(): void {
     this.dataTable = $('#example').DataTable({
-      data: this.apiData,
+      data: this.levelList,
       autoWidth: false, // Bỏ width của table
       pageLength: 10, // Đặt số lượng mục hiển thị mặc định là 10
       lengthMenu: [10, 15, 20, 25], // Tùy chọn trong dropdown: 10, 15, 20, 25
@@ -76,61 +88,45 @@ export class LevelComponent implements OnInit, OnDestroy {
           title: 'Action',
           data: null,
           render: function (data: any, type: any, row: any) {
-            return `<span data-bs-toggle="collapse" role="button" aria-expanded="false"
-                    aria-controls="collapseExample" class="mdi mdi-pencil icon-action edit-icon" title="Edit" data-id="${row.id}"></span>
+            return `<span class="mdi mdi-pencil icon-action edit-icon" title="Edit" data-id="${row.id}"></span>
             <span class="mdi mdi-delete-forever icon-action delete-icon" title="Delete" data-id="${row.id}"></span>`;
           }
         }
-
       ],
 
       drawCallback: () => {
-        // Sửa input search thêm button vào
-        if (!$('.dataTables_filter button').length) {
-          $('.dataTables_filter').append(`<button type="button"><i class="fa-solid fa-magnifying-glass search-icon"></i></button>`);
-        }
-
-        // Thêm placeholder vào input của DataTables
-        $('.dataTables_filter input[type="search"]').attr('placeholder', 'Search');
-        $('.edit-icon').on('click', (event: any) => {
-          this.levelId = $(event.currentTarget).data('id');
-          this._level = this.apiData.find((item: any) => item.id === this.levelId);
-          $('#addLevel').removeClass('show');
-          $('#updateLevel').addClass('show');
-          setTimeout(() => {  // Cuộn xuống form mới thêm
-            const newLevelForm = document.getElementById('updateLevel');
-            if (newLevelForm) {
-              newLevelForm.scrollIntoView({ behavior: 'smooth' });
-            }
-          }, 0);
-        });
-        $('.btn-add').on('click', (event: any) => {
-          this.name = '';
-          $('#updateLevel').removeClass('show');
-          setTimeout(() => {  // Cuộn xuống form mới thêm
-            const newLevelForm = document.getElementById('addLevel');
-            if (newLevelForm) {
-              newLevelForm.scrollIntoView({ behavior: 'smooth' });
-            }
-          }, 0);
-        });
-        $('.delete-icon').on('click', (event: any) => {
-          const id = $(event.currentTarget).data('id');
-          this.levelId = id;
-          this.dialogTitle = 'Are you sure?';
-          this.dialogMessage = 'Do you really want to delete this Level? This action cannot be undone.';
-          this.isConfirmationPopup = true;
-          this.isPopupDelete = true;
-        });
+        this.addEventListeners();
       }
     });
   }
 
-  closePopup(): void {
-    this.isPopupDelete = false;
+  addEventListeners(): void {
+    // Sửa input search thêm button vào
+    if (!$('.dataTables_filter button').length) {
+      $('.dataTables_filter').append(`<button type="button"><i class="fa-solid fa-magnifying-glass search-icon"></i></button>`);
+    }
+
+    // Thêm placeholder vào input của DataTables
+    $('.dataTables_filter input[type="search"]').attr('placeholder', 'Search');
+
+    $('.edit-icon').on('click', (event: any) => {
+      this.levelId = $(event.currentTarget).data('id');
+      this.showFormUpdate(this.levelId);
+    });
+
+    $('.delete-icon').on('click', (event: any) => {
+      this.levelId = $(event.currentTarget).data('id');
+      this.loadLevelById(this.levelId,
+        (success) => {
+          this.openPopupConfirm('Are you sure?', 'Do you really want to delete this Level? This action cannot be undone.');
+          this.isPopupDelete = true;
+        },
+        (error) => { }
+      );
+    });
   }
 
-  updateDataTable(newData: any[]): void {
+  updateDataTable(newData: any): void {
     if (this.dataTable) {
       this.dataTable.clear(); // Xóa dữ liệu hiện tại
       this.dataTable.rows.add(newData); // Thêm dữ liệu mới
@@ -139,113 +135,134 @@ export class LevelComponent implements OnInit, OnDestroy {
   }
 
   reloadTable(): void {
-    this.http.get<any>(`${this.authService.apiUrl}/level`, this.home.httpOptions).subscribe((data: any) => {
-      this.apiData = data;
-      this.updateDataTable(this.apiData); // Cập nhật bảng với dữ liệu mới
+    this.levelService.getLevelList().subscribe({
+      next: (levelResponse) => {
+        this.levelList = levelResponse;
+        this.updateDataTable(this.levelList);
+        this.hiddenForm();
+        this.closePopup();
+      },
+      error: (err) => {
+        this.admin.handleError(err, this.levelError, 'level', 'load data', this.reloadTable.bind(this));
+      }
     });
-    this.closeform();
   }
 
-  createLevel(): void {
-    const level =
-    {
-      name: this.name,
-      point: this.point
-    }
-
-    this.http.post(`${this.authService.apiUrl}/level`, level, this.home.httpOptions).subscribe(
-      response => {
-        this.toastr.success('Create new level Successful!', 'Success', {
-          timeOut: 2000,
-        });
-        this.reloadTable();
-        this.closeform();
+  loadLevelById(id: number, handler: (level: LevelResponse) => void, errorHandler: (err: any) => void): void {
+    this.levelService.getLevelById(id).subscribe({
+      next: (levelResponse) => {
+        this.level = levelResponse;
+        handler(this.level); // Chạy hàm handler sau khi lấy thông tin thành công
       },
-      error => {
-        if (error.status === 401) {
-          this.toastr.error('Not found', 'Failed', {
-            timeOut: 2000,
-          });
-        } else {
-          let msg = '';
-          if (error.error.message) {
-            msg = error.error.message;
-          } else {
-            error.error.forEach((err: any) => {
-              msg += ' ' + err.message;
-            })
-          }
-          this.toastr.error(msg, 'Failed', {
-            timeOut: 2000,
-          });
-        }
-        console.log('Error', error);
+      error: (err) => {
+        this.admin.handleError(err, this.levelError, 'level', 'load data', this.reloadTable.bind(this));
+        errorHandler(err); // Chạy hàm errorHandler nếu có lỗi
       }
-    )
+    });
   }
 
-  updateLevel(): void {
-    const level =
-    {
-      id: this.levelId,
-      name: this._level.name,
-      point: this._level.point
-    }
-
-    this.http.put(`${this.authService.apiUrl}/level/${this.levelId}`, level, this.home.httpOptions).subscribe(
-      response => {
-        this.toastr.success('Update level Successful!', 'Success', {
-          timeOut: 2000,
-        });
-        this.reloadTable();
-        this.closeform();
-      },
-      error => {
-        if (error.status === 401) {
-          this.toastr.error('Not found', 'Failed', {
-            timeOut: 2000,
-          });
-        } else {
-          let msg = '';
-          if (error.error.message) {
-            msg = error.error.message;
-          } else {
-            error.error.forEach((err: any) => {
-              msg += ' ' + err.message;
-            })
-          }
-          this.toastr.error(msg, 'Failed', {
-            timeOut: 2000,
-          });
-        }
-        console.log('Error', error);
-      }
-    )
+  convertToRequest(): void {
+    this.levelForm.name = this.level.name;
+    this.levelForm.point = this.level.point;
   }
 
-  deletingLevel: any;
+  showFormCreate() {
+    this.updateMode = false;
+    this.createMode = true;
+    this.levelForm = { }
+  }
 
-  deleteLevel(id: number): void {
-    this.isPopupDelete = false;
-    this.http.put(`${this.authService.apiUrl}/level/delete/${id}`, {}, this.home.httpOptions).subscribe(
-      response => {
-        this.deletingLevel = response;
-        this.toastr.success(`Level with name ${this.deletingLevel.name} deleted successfully`, 'Success', {
-          timeOut: 2000,
-        });
-        this.reloadTable();
+  showFormUpdate(id: number) {
+    this.createMode = false;
+    this.loadLevelById(id,
+      (success) => {
+        this.convertToRequest();
+        this.updateMode = true;
       },
-      error => {
-        this.toastr.error('Error deleting item!', 'Error', {
-          timeOut: 2000,
-        });
-      }
+      (error) => { this.updateMode = false; }
     );
   }
 
-  closeform() {
-    document.getElementById('addLevel')?.classList.remove('show');
-    document.getElementById('updateLevel')?.classList.remove('show');
+  formTitle(): string {
+    if (this.createMode) return 'Create';
+    if (this.updateMode) return 'Update';
+    return '';
+  }
+
+  hiddenForm() {
+    this.levelId = 0;
+    this.levelError = { };
+    this.checkFormErrors();
+    this.createMode = false;
+    this.updateMode = false;
+  }
+
+  openPopupConfirm(title: string, message: string): void {
+    this.dialogTitle = title;
+    this.dialogMessage = message;
+    this.isConfirmationPopup = true;
+  }
+
+  closePopup(): void {
+    this.levelId = 0;
+    this.isPopupDelete = false;
+  }
+
+  submitForm(): void {
+    this.levelError = { };
+    if (this.createMode) {
+      this.createLevel();
+    }
+    else if (this.updateMode) {
+      this.updateLevel();
+    }
+  }
+
+  checkFormErrors(): void {
+    if (this.levelError['name']?.trim() || this.levelError['point']?.trim()) {
+      document.querySelector('.form-section')?.classList.add('error-active');
+    }
+    else {
+      document.querySelector('.form-section')?.classList.remove('error-active');
+    }
+  }
+
+  createLevel(): void {
+    this.levelService.createLevel(this.levelForm).subscribe({
+      next: (levelResponse) => {
+        this.toastr.success(`Level: ${levelResponse.name} created successfully!`, 'Success', { timeOut: 3000 });
+        this.reloadTable();
+      },
+      error: (err) => {
+        this.admin.handleError(err, this.levelError, 'level', 'create level', this.reloadTable.bind(this));
+        this.checkFormErrors();
+      }
+    });
+  }
+
+  updateLevel(): void {
+    this.levelService.updateLevel(this.levelId, this.levelForm).subscribe({
+      next: (levelResponse) => {
+        this.toastr.success(`Level: ${levelResponse.name} updated successfully!`, 'Success', { timeOut: 3000 });
+        this.reloadTable();
+      },
+      error: (err) => {
+        this.admin.handleError(err, this.levelError, 'level', 'update level', this.reloadTable.bind(this));
+        this.checkFormErrors();
+      }
+    });
+  }
+
+  deleteLevel(): void {
+    this.levelService.deleteLevel(this.levelId).subscribe({
+      next: (levelResponse) => {
+        this.toastr.success(`Level: ${levelResponse.name} has been deleted successfully!`, 'Success', { timeOut: 3000 });
+        this.reloadTable();
+      },
+      error: (err) => {
+        this.admin.handleError(err, this.levelError, 'level', 'delete level', this.reloadTable.bind(this));
+      }
+    });
   }
 
   ngOnDestroy(): void {

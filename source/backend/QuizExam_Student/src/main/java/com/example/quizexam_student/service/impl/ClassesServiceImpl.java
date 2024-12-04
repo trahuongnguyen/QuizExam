@@ -42,9 +42,6 @@ public class ClassesServiceImpl implements ClassesService {
     @Override
     public Classes updateClass(int id, Classes classInput) {
         Classes classUpdate = findOneById(id);
-        if (Objects.isNull(classUpdate)) {
-            throw new NotFoundException("class", "Class not found.");
-        }
         if (classesRepository.existsByNameAndStatusAndIdNot(classInput.getName(),1, id)) {
             throw new AlreadyExistException("name", "Class Name already exists.");
         }
@@ -55,9 +52,6 @@ public class ClassesServiceImpl implements ClassesService {
     @Override
     public Classes deleteClass(int id) {
         Classes classDelete = findOneById(id);
-        if (Objects.isNull(classDelete)) {
-            throw new NotFoundException("class", "Class not found.");
-        }
         classDelete.setStatus(0);
         classDelete.getStudentDetails().forEach(studentDetail -> {
             studentDetail.getUser().setStatus(0);

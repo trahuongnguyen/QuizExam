@@ -2,8 +2,9 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { AuthService } from '../../../shared/service/auth.service';
 import { Title } from '@angular/platform-browser';
 import { AdminComponent } from '../../admin.component';
+import { ClassResponse, ClassRequest } from '../../../shared/models/class.model';
+import { ValidationError } from '../../../shared/models/models';
 import { ClassService } from '../../service/class/class.service';
-import { ClassResponse, ClassRequest, ClassValidationError } from '../../../shared/models/class.model';
 import { UrlService } from '../../../shared/service/url.service';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
@@ -25,7 +26,7 @@ export class ClassComponent implements OnInit, OnDestroy {
   classId: number = 0;
   _class: ClassResponse;
   classForm: ClassRequest = { };
-  classError: ClassValidationError = { };
+  classError: ValidationError = { };
 
   isPopupCreate: boolean = false;
   isPopupUpdate: boolean = false;
@@ -53,24 +54,13 @@ export class ClassComponent implements OnInit, OnDestroy {
       admissionDate: new Date(),
       status: 0
     };
-
     this.initializeClassForm();
-    this.initializeClassError();
   }
 
   initializeClassForm() {
     this.classForm = {
       classDay: '2, 4, 6',
       classTime: '08h00 - 10h00'
-    };
-  }
-
-  initializeClassError() {
-    this.classError = {
-      name: '',
-      classDay: '',
-      classTime: '',
-      admissionDate: ''
     };
   }
 
@@ -88,7 +78,7 @@ export class ClassComponent implements OnInit, OnDestroy {
         this.initializeDataTable();
       },
       error: (err) => {
-        console.log('Error:', err.error.message);
+        this.admin.handleError(err, this.classError, 'class', 'load data', this.reloadTable.bind(this));
       }
     });
   }
@@ -128,7 +118,6 @@ export class ClassComponent implements OnInit, OnDestroy {
             <span class="mdi mdi-delete-forever icon-action delete-icon" title="Delete" data-id="${row.id}"></span>`;
           }
         }
-
       ],
 
       drawCallback: () => {
@@ -146,7 +135,6 @@ export class ClassComponent implements OnInit, OnDestroy {
     // Thêm placeholder vào input của DataTables
     $('.dataTables_filter input[type="search"]').attr('placeholder', 'Search');
 
-    // Click vào edit icon sẽ hiện ra popup
     $('.info-icon').on('click', (event: any) => {
       this.classId = $(event.currentTarget).data('id');
       this.router.navigate([this.urlService.classDetailUrl(this.classId)])
@@ -159,8 +147,10 @@ export class ClassComponent implements OnInit, OnDestroy {
 
     $('.delete-icon').on('click', (event: any) => {
       this.classId = $(event.currentTarget).data('id');
-      this.openPopupConfirm('Are you sure?', 'Do you really want to delete this Class?<br>The students in this class will also be deleted, and this action cannot be undone.');
-      this.isPopupDelete = true;
+      this.loadClassById(this.classId, () => {
+        this.openPopupConfirm('Are you sure?', 'Do you really want to delete this Class?<br>The students in this class will also be deleted, and this action cannot be undone.');
+        this.isPopupDelete = true;
+      });
     });
   }
 
@@ -180,7 +170,7 @@ export class ClassComponent implements OnInit, OnDestroy {
         this.closePopup();
       },
       error: (err) => {
-        console.log('Error:', err.error.message);
+        this.admin.handleError(err, this.classError, 'class', 'load data', this.reloadTable.bind(this));
       }
     });
   }
@@ -192,8 +182,7 @@ export class ClassComponent implements OnInit, OnDestroy {
         callback(this._class); // Chạy hàm callback sau khi lấy thông tin thành công
       },
       error: (err) => {
-        this.toastr.error(err.error.message, 'Error', { timeOut: 4000 });
-        setTimeout(() => { this.reloadTable(); }, 4000);
+        this.admin.handleError(err, this.classError, 'class', 'load data', this.reloadTable.bind(this));
       }
     });
   }
@@ -227,66 +216,63 @@ export class ClassComponent implements OnInit, OnDestroy {
     });
   }
 
+  popupFormTitle(): string {
+    if (this.isPopupCreate) return 'Create';
+    if (this.isPopupUpdate) return 'Update';
+    return '';
+  }
+
   closePopup(): void {
     this.classId = 0;
+    this.classError = { };
     this.initializeClassForm();
-    this.initializeClassError();
     this.isPopupCreate = false;
     this.isPopupUpdate = false;
     this.isPopupDelete = false;
   }
 
-  errorForm(err: any, message: string): void {
-    if (err.status === 401) {
-      this.toastr.error('Unauthorized', 'Failed', { timeOut: 2000 });
+  submitForm(): void {
+    this.classError = { };
+    if (this.isPopupCreate) {
+      this.createClass();
     }
-    else {
-      if (err.error.message) {
-        this.classError[err.error.key as keyof ClassValidationError] = err.error.message;
-      }
-      else {
-        err.error.forEach((e: any) => {
-          this.classError[e.key as keyof ClassValidationError] = e.message;
-        });
-      }
-      this.toastr.error(message + ' class fail!', 'Error', { timeOut: 2000 });
+    else if (this.isPopupUpdate) {
+      this.updateClass();
     }
   }
 
   createClass(): void {
-    this.initializeClassError();
     this.classService.createClass(this.classForm).subscribe({
-      next: () => {
-        this.toastr.success('Create class successful!', 'Success', { timeOut: 2000 });
+      next: (classResponse) => {
+        this.toastr.success(`Class: ${classResponse.name} created successfully!`, 'Success', { timeOut: 3000 });
         this.reloadTable();
       },
       error: (err) => {
-        this.errorForm(err, 'Create');
+        this.admin.handleError(err, this.classError, 'class', 'create class', this.reloadTable.bind(this));
       }
     });
   }
 
   updateClass(): void {
-    this.initializeClassError();
     this.classService.updateClass(this.classId, this.classForm).subscribe({
-      next: () => {
-        this.toastr.success('Update class successful!', 'Success', { timeOut: 2000 });
+      next: (classResponse) => {
+        this.toastr.success(`Class: ${classResponse.name} updated successfully!`, 'Success', { timeOut: 3000 });
         this.reloadTable();
       },
       error: (err) => {
-        this.errorForm(err, 'Update');
+        this.admin.handleError(err, this.classError, 'class', 'update class', this.reloadTable.bind(this));
       }
     });
   }
 
   deleteClass(): void {
     this.classService.deleteClass(this.classId).subscribe({
-      next: () => {
-        this.toastr.success('Delete class successful!', 'Success', { timeOut: 2000 });
+      next: (classResponse) => {
+        this.toastr.success(`Class: ${classResponse.name} has been deleted successfully!`, 'Success', { timeOut: 3000 });
         this.reloadTable();
       },
-      error: () => {
-        this.toastr.error('Delete class fail!', 'Error', { timeOut: 2000 });
+      error: (err) => {
+        this.admin.handleError(err, this.classError, 'class', 'delete class', this.reloadTable.bind(this));
       }
     });
   }

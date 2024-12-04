@@ -12,10 +12,12 @@ import java.time.LocalDate;
 public class UserRequest {
     @NotBlank(message = "Full Name is required")
     @Pattern(regexp="^[a-z A-Z]+$", message = "Full name cannot have number or special character")
+    @Size(max = 100, message = "Full name must be less than or equal to 100 characters")
     private String fullName;
 
     @NotBlank(message = "Email is required")
     @Email(message = "Email should be valid")
+    @Size(min = 5, max = 255, message = "Email must be between 5 and 255 characters")
     private String email;
 
     @Size(min = 8, message = "Password must be at least 8 characters long")
@@ -34,6 +36,7 @@ public class UserRequest {
     private String phoneNumber;
 
     @NotBlank(message = "Address is required")
+    @Size(max = 255, message = "Address must be less than or equal to 255 characters")
     private String address;
 
     @NotNull(message = "Gender is required")

@@ -23,12 +23,12 @@ export class EmployeeService {
     return this.http.get<UserResponse>(`${this.authService.apiUrl}/user/find/${id}`, this.authService.httpOptions);
   }
 
-  createEmployee(employeeForm: UserRequest): Observable<UserRequest> {
-    return this.http.post<UserRequest>(`${this.authService.apiUrl}/user`, employeeForm, this.authService.httpOptions);
+  createEmployee(employeeForm: UserRequest): Observable<UserResponse> {
+    return this.http.post<UserResponse>(`${this.authService.apiUrl}/user`, employeeForm, this.authService.httpOptions);
   }
 
-  updateEmployee(id: number, employeeForm: UserRequest): Observable<UserRequest> {
-    return this.http.put<UserRequest>(`${this.authService.apiUrl}/user/${id}`, employeeForm, this.authService.httpOptions);
+  updateEmployee(id: number, employeeForm: UserRequest): Observable<UserResponse> {
+    return this.http.put<UserResponse>(`${this.authService.apiUrl}/user/${id}`, employeeForm, this.authService.httpOptions);
   }
 
   resetPasswordEmployee(id: number): Observable<UserResponse> {

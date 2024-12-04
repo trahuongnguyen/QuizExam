@@ -2,9 +2,9 @@
     <h4>Level</h4>
     <hr class="line">
 
-    <div class="d-flex">
-        <div class="level">
-            <div class="m-2 mt-2">
+    <div class="flex-container d-flex">
+        <div class="item-container">
+            <div class="content-item m-2 mt-2">
                 <table class="table" id="example">
                     <thead>
                         <tr>
@@ -17,73 +17,45 @@
                     <tbody>
                     </tbody>
                 </table>
-                <div class=" collapse add-level mt-5" id="addLevel">
-                    <form method="post" (ngSubmit)="createLevel()">
-                        <div class="add">
-                            <div class="row mb-3 align-items-center">
-                                <label for="level" class="col-sm-2 col-form-label">Level New:</label>
-                                <div class="col-sm-10">
-                                    <input type="text" id="name" name="name" [(ngModel)]="name" class="form-control">
-                                </div>
-                            </div>
-                            <div class="row mb-3 align-items-center">
-                                <label for="point" class="col-sm-2 col-form-label">Point New:</label>
-                                <div class="col-sm-10">
-                                    <input type="number" step="0.01" id="point" name="point" [(ngModel)]="point" class="form-control">
-                                </div>
-                            </div>
-
-                            <div class="row">
-                                <div class="col-sm-10 offset-sm-5">
-                                    <button type="submit" class="btn btn-danger me-2">Save</button>
-                                    <span (click)="closeform()" class="btn cancel-btn">Cancel</span>
-                                </div>
-                            </div>
+                <form (ngSubmit)="submitForm()" class="form-section mt-3" [ngClass]="{'show': createMode || updateMode}">
+                    <h3 class="form-title mb-3">{{ formTitle() }} Level</h3>
+                    <div class="row align-items-center mb-3">
+                        <label for="name" class="col-sm-2">Level:</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" [(ngModel)]="levelForm.name" name="name" placeholder="Enter Level Name">
                         </div>
-                    </form>
-                </div>
-                <div class=" collapse add-level mt-5" id="updateLevel">
-                    <form (ngSubmit)="updateLevel()">
-                        <div class="add">
-                            <div class="row mb-3 align-items-center">
-                                <label for="level" class="col-sm-2 col-form-label">Level :</label>
-                                <div class="col-sm-10">
-                                    <input type="text" id="level" name="_level.name" [(ngModel)]="_level.name"
-                                        class="form-control">
-                                </div>
-                            </div>
-                            <div class="row mb-3 align-items-center">
-                                <label for="point" class="col-sm-2 col-form-label">Point :</label>
-                                <div class="col-sm-10">
-                                    <input type="number" step="0.01" id="point" name="_level.point" [(ngModel)]="_level.point" class="form-control">
-                                </div>
-                            </div>
-
-                            <div class="row">
-                                <div class="col-sm-10 offset-sm-5">
-                                    <button type="submit" class="btn btn-danger me-2">Save</button>
-                                    <span (click)="closeform()" class="btn cancel-btn">Cancel</span>
-                                </div>
-                            </div>
+                        <div class="col-sm-2"></div>
+                        <span class="text-danger error col-sm-10" *ngIf="levelError['name']">{{ levelError['name'] }}</span>
+                    </div>
+                    <div class="row align-items-center mb-3">
+                        <label for="point" class="col-sm-2">Point:</label>
+                        <div class="col-sm-10">
+                            <input type="number" step="0.01" class="form-control" [(ngModel)]="levelForm.point" name="point" placeholder="Enter Point">
                         </div>
-                    </form>
-                </div>
+                        <div class="col-sm-2"></div>
+                        <span class="text-danger error col-sm-10" *ngIf="levelError['point']">{{ levelError['point'] }}</span>
+                    </div>
+                    <div class="form-button text-center">
+                        <button type="submit" class="btn btn-save">Save</button>
+                        <span (click)="hiddenForm()" class="btn btn-cancel">Cancel</span>
+                    </div>
+                </form>
             </div>
         </div>
-        <div class="btn-level">
-            <div class="btn-add">
-                <i data-bs-toggle="collapse" href="#addLevel" role="button" aria-expanded="false"
-                    aria-controls="collapseExample" class="fa-solid fa-circle-plus"></i>
+        <div class="btn-action">
+            <div class="btn-add" (click)="showFormCreate()">
+                <i class="fa-solid fa-circle-plus"></i>
             </div>
         </div>
     </div>
 </div>
 
+<!-- Popup xác nhận -->
 <app-dialog-popup
   [isVisible]="isPopupDelete"
   [title]="dialogTitle"
   [message]="dialogMessage"
   [isConfirmationPopup]="isConfirmationPopup"
-  (confirm)="deleteLevel(levelId)"
+  (confirm)="deleteLevel()"
   (close)="closePopup()">
 </app-dialog-popup>

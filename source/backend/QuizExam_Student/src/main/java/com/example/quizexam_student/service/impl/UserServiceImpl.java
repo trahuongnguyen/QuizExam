@@ -32,7 +32,7 @@ public class UserServiceImpl implements UserService {
     public User findById(int id) {
         User user = userRepository.findByIdAndStatus(id,1);
         if (Objects.isNull(user)) {
-            throw new NotFoundException("user", "User Not Found");
+            throw new NotFoundException("user", "User not found.");
         }
         return user;
     }
@@ -132,7 +132,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public User restoreUser(int id) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("user", "User Not Found"));
+                .orElseThrow(() -> new NotFoundException("user", "User not found."));
         if (user != null) {
             user.setStatus(1);
         }

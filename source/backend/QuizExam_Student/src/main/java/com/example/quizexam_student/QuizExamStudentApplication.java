@@ -22,14 +22,14 @@ import java.util.List;
 @RequiredArgsConstructor
 @EnableScheduling
 public class QuizExamStudentApplication {
-
-    private final ClassesRepository classesRepository;
     private final ExaminationRepository examinationRepository;
+
     private final MarkRepository markRepository;
 
     public static void main(String[] args) {
         SpringApplication.run(QuizExamStudentApplication.class, args);
     }
+
     @Bean
     public WebMvcConfigurer corsConfigurer() {
         return new WebMvcConfigurer() {
@@ -42,17 +42,6 @@ public class QuizExamStudentApplication {
                         .allowCredentials(true);
             }
         };
-    }
-
-    @Scheduled(cron = "0 0 0 * * ?")
-    public void updateStatusForClasses() {
-        List<Classes> classes = classesRepository.findAllByStatusOrderByIdDesc(0);
-        classes = classes.stream().peek(classes1 -> {
-            if (LocalDate.now().isBefore(classes1.getAdmissionDate())) {
-                classes1.setStatus(1);
-                classesRepository.save(classes1);
-            }
-        }).toList();
     }
 
     @Scheduled(fixedRate = 1000)

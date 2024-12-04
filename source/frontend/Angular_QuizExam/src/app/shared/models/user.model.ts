@@ -20,14 +20,3 @@ export interface UserRequest {
     email?: string;
     roleId?: number;
 }
-
-export interface UserValidationError {
-    fullName?: string;
-    dob?: string;
-    gender?: string;
-    address?: string;
-    phoneNumber?: string;
-    email?: string;
-    roleId?: string;
-    restore?: string;
-}

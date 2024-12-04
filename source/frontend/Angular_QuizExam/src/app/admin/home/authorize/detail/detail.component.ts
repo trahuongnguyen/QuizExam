@@ -1,13 +1,11 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { AuthService } from '../../../service/auth.service';
+import { Component, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { AdminComponent } from '../../../admin.component';
-import { HomeComponent } from '../../home.component';
-import { AuthorizeComponent } from './../authorize.component';
-import { HttpClient } from '@angular/common/http';
-import { ToastrService } from 'ngx-toastr';
+import { Role, Permission } from '../../../../shared/models/role.model';
+import { RoleService } from '../../../service/role/role.service';
 import { UrlService } from '../../../../shared/service/url.service';
-import { Router, ActivatedRoute } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
+import { forkJoin } from 'rxjs';
 declare var $: any;
 
 @Component({
@@ -18,43 +16,44 @@ declare var $: any;
     './detail.component.css'
   ]
 })
-export class DetailComponent implements OnInit{
+export class DetailComponent implements OnInit {
+  dataTable: any;
+  role: Role;
+  roleId: number = 0;
+  permissionList: Permission[] = [];
+
   constructor(
-    private authService: AuthService,
     private titleService: Title,
     public admin : AdminComponent,
-    private home: HomeComponent,
-    private authorizeComponent: AuthorizeComponent,
-    private http: HttpClient,
-    private toastr: ToastrService,
+    private roleService: RoleService,
     public urlService: UrlService,
-    private router: Router,
     private activatedRoute: ActivatedRoute
-  ) { }
-
-  dataTable: any;
-  apiData: any;
-  roleId: number = 0;
-  roleName: string = '';
-  name: String = '';
-  description: String = '';
+  ) {
+    this.role = {
+      id: 0,
+      name: '',
+      description: ''
+    };
+  }
 
   ngOnInit(): void {
     this.titleService.setTitle('Authorize Details');
     this.roleId = Number(this.activatedRoute.snapshot.params['roleId']) ?? 0;
-    this.http.get<any>(`${this.authService.apiUrl}/permission/${this.roleId}`, this.home.httpOptions).subscribe((data: any) => {
-      this.apiData = data;
-      this.initializeDataTable();
-    });
-    this.http.get<any>(`${this.authService.apiUrl}/role/${this.roleId}`, this.home.httpOptions).subscribe((data: any) => {
-      this.roleName = data.name;
-      console.log(this.roleName);
+    this.loadData();
+  }
+
+  loadData(): void {
+    forkJoin([this.roleService.getRoleById(this.roleId), this.roleService.getPermissionList(this.roleId)])
+      .subscribe(([roleResponse, permissionResponse]) => {
+        this.role = roleResponse;
+        this.permissionList = permissionResponse;
+        this.initializeDataTable();
     });
   }
 
   initializeDataTable(): void {
     this.dataTable = $('#example').DataTable({
-      data: this.apiData,
+      data: this.permissionList,
       autoWidth: false, // Bỏ width của table
       pageLength: 10, // Đặt số lượng mục hiển thị mặc định là 10
       lengthMenu: [10, 15, 20, 25], // Tùy chọn trong dropdown: 10, 15, 20, 25
@@ -79,10 +78,9 @@ export class DetailComponent implements OnInit{
         if (!$('.dataTables_filter button').length) {
           $('.dataTables_filter').append(`<button type="button"><i class="fa-solid fa-magnifying-glass search-icon"></i></button>`);
         }
-
+        
         // Thêm placeholder vào input của DataTables
         $('.dataTables_filter input[type="search"]').attr('placeholder', 'Search');
-        
       }
     });
   }
