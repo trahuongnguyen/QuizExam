@@ -88,7 +88,7 @@ public class StudentExcelExporter {
             sheet.autoSizeColumn(1);
 
             cell = row.createCell(2);
-            cell.setCellValue(std.get_class().getName() != null ? std.get_class().getName(): "");
+            cell.setCellValue(std.getClasses().getName() != null ? std.getClasses().getName(): "");
             sheet.autoSizeColumn(2);
 
             cell = row.createCell(3);

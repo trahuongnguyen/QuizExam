@@ -20,13 +20,6 @@ public class UserRequest {
     @Size(min = 5, max = 255, message = "Email must be between 5 and 255 characters")
     private String email;
 
-    @Size(min = 8, message = "Password must be at least 8 characters long")
-    @Pattern(
-            regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@#$%^&+=.]).{8,}$",
-            message = "Password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, one number, and one special character"
-    )
-    private String password;
-
     @NotNull(message = "Date of Birth is required")
     @JsonFormat(pattern = "[yyyy-MM-dd][yyyy/MM/dd][dd-MM-yyyy][dd/MM/yyyy]")
     private LocalDate dob;

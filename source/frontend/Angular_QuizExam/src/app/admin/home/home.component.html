@@ -57,13 +57,13 @@
         <span class="mdi mdi-signal icon"></span>
         <span class="link-text" *ngIf="admin.contentSidebar">Level</span>
     </a>
-    <a [routerLink]="'authorize'" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: false }" class="sidebar-link">
-        <span class="mdi mdi-clipboard-outline icon"></span>
-        <span class="link-text" *ngIf="admin.contentSidebar">Authorize</span>
-    </a>
     <a [routerLink]="'employee'" *ngIf="isActive(['ADMIN','DIRECTOR'])" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: false }" class="sidebar-link active">
         <span class="mdi mdi-account-multiple icon"></span>
         <span class="link-text" *ngIf="admin.contentSidebar">Employee</span>
+    </a>
+    <a [routerLink]="'authorize'" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: false }" class="sidebar-link">
+        <span class="mdi mdi-clipboard-outline icon"></span>
+        <span class="link-text" *ngIf="admin.contentSidebar">Authorize</span>
     </a>
 </div>
 

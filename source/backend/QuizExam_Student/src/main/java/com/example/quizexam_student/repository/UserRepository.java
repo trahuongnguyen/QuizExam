@@ -14,17 +14,13 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 
     List<User> findByRoleAndStatus(Role role, Integer status);
 
-    Optional<User> findByEmail(String email);
+    User findByEmail(String email);
 
-    Optional<User> findByPhoneNumber(String phoneNumber);
+    User findByPhoneNumber(String phoneNumber);
 
-    Optional<User> findByEmailAndIdNot(String email, Integer id);
+    User findByEmailAndIdNot(String email, Integer id);
 
-    Optional<User> findByPhoneNumberAndIdNot(String phoneNumber, Integer id);
-
-    boolean existsByEmailAndIdNot(String email, Integer id); // Kiểm tra email đã tồn tại hay chưa, ngoại trừ chính nó (update)
-
-    boolean existsByPhoneNumberAndIdNot(String phoneNumber, Integer id); // Kiểm tra phone number đã tồn tại hay chưa, ngoại trừ chính nó (update)
+    User findByPhoneNumberAndIdNot(String phoneNumber, Integer id);
 
     User findByIdAndStatus(Integer id, Integer status);
 

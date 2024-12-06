@@ -11,7 +11,7 @@ import java.util.List;
 
 @Repository
 public interface MarkRepository extends JpaRepository<Mark, Integer> {
-    List<Mark> findAllByExaminationIdAndScoreAndBeginTime(int examinationId, Integer score, LocalDateTime beginTime);
+    List<Mark> findAllByExamination_IdAndScoreIsNullAndBeginTimeIsNull(Integer examinationId);
     List<Mark> findAllByExaminationId(int examinationId);
     List<Mark> findAllByStudentDetailAndScoreIsNotNull(StudentDetail studentDetail);
     Mark findByStudentDetailAndExaminationId(StudentDetail studentDetail, int examinationId);

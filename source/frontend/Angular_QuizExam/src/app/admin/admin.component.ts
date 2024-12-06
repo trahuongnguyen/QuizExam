@@ -9,8 +9,6 @@ import { ValidationError } from '../shared/models/models';
   templateUrl: './admin.component.html'
 })
 export class AdminComponent implements OnInit {
-  title = 'Angular_QuizExam';
-
   darkMode: boolean = false;
 
   isSidebarCollapsed: boolean = false;
@@ -91,36 +89,6 @@ export class AdminComponent implements OnInit {
     }
     if (this.isLocalStorageAvailable()) {
       localStorage.setItem('sidebar-collapsed', JSON.stringify(this.isSidebarCollapsed));
-    }
-  }
-
-  handleError(err: any, validationError: ValidationError, entity: string, action: string, reloadTable: () => void): void {
-    console.log(err);
-    if (err.status === 401) {
-      this.toastr.error('Unauthorized access. Please check your login credentials.', 'Failed', { timeOut: 3000 });
-    }
-    else if (err.status === 0) {
-      // Nếu status là 0, có thể là lỗi mạng hoặc API không phản hồi
-      this.toastr.error('Cannot connect to the server. Please check your connection or try again later.', 'Error', { timeOut: 3000 });
-    }
-    else {
-      if (err.error?.message) {
-        validationError[err.error.key] = err.error.message;
-      }
-      else if (Array.isArray(err.error)) {
-        err.error.forEach((e: any) => {
-          validationError[e.key] = e.message;
-        });
-      }
-
-      const errorMessage = validationError[entity]?.trim()
-      ? `${validationError[entity]}<br>Reloading table in 5 seconds...`
-      : `Failed to ${action}. Please try again.`;
-
-      if (validationError[entity]?.trim()) {
-        setTimeout(() => reloadTable(), 5000);
-      }
-      this.toastr.error(errorMessage, 'Error', { timeOut: 5000, enableHtml: true });
     }
   }
 }

@@ -8,6 +8,16 @@ import { Role } from '../../../shared/models/role.model';
   providedIn: 'root'
 })
 export class RoleService {
+  private id: number = 0;
+
+  setId(id: number): void {
+    this.id = id;
+  }
+
+  getId(): number {
+    return this.id;
+  }
+  
   constructor(private authService: AuthService, private http: HttpClient) { }
 
   getRoleList(): Observable<Role[]> {

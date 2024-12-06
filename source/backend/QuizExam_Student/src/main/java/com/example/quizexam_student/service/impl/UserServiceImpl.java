@@ -39,50 +39,51 @@ public class UserServiceImpl implements UserService {
 
     private void handleUserExist(User user, String key, String message) {
         if (user.getStatus() == 0) {
-            throw new AlreadyExistException("restore", message + " already exists, but the user is hidden. Would you like to view this user to restore?");
+            throw new AlreadyExistException("restore", message + " already exists, but the user is hidden. Would you like to view this user to restore? (" + user.getRole().getName() + ")");
         }
-        throw new AlreadyExistException(key, message + " already exists.");
+        throw new AlreadyExistException(key, message + " already exists. (" + user.getRole().getName() + ")");
     }
 
     @Override
-    public User saveUser(UserRequest userRequest) {
-        User findByEmail = userRepository.findByEmail(userRequest.getEmail()).orElse(null);
+    public User prepareUser(UserRequest userRequest, Integer userId, boolean isCreate) {
+        User findByEmail = isCreate
+                ? userRepository.findByEmail(userRequest.getEmail())
+                : userRepository.findByEmailAndIdNot(userRequest.getEmail(), userId);
         if (!Objects.isNull(findByEmail)) {
             handleUserExist(findByEmail, "email", "Email");
         }
-        User findByPhoneNumber = userRepository.findByPhoneNumber(userRequest.getPhoneNumber()).orElse(null);
+
+        User findByPhoneNumber = isCreate
+                ? userRepository.findByPhoneNumber(userRequest.getPhoneNumber())
+                : userRepository.findByPhoneNumberAndIdNot(userRequest.getPhoneNumber(), userId);
         if (!Objects.isNull(findByPhoneNumber)) {
             handleUserExist(findByPhoneNumber, "phoneNumber", "Phone Number");
         }
 
         Role role = roleRepository.findById(userRequest.getRoleId()).orElse(null);
-        User user = UserMapper.convertFromRequest(userRequest);
-        user.setPassword(passwordEncoder.encode("@1234567"));
+        User user;
+        if (isCreate) {
+            user = UserMapper.convertFromRequest(userRequest, new User());
+            user.setPassword(passwordEncoder.encode("@1234567"));
+        }
+        else {
+            user = UserMapper.convertFromRequest(userRequest, findById(userId));
+            user.setPassword(user.getPassword());
+        }
         user.setRole(role);
         user.setStatus(1);
+        return user;
+    }
+
+    @Override
+    public User saveUser(UserRequest userRequest) {
+        User user = prepareUser(userRequest, null, true);
         return userRepository.saveAndFlush(user);
     }
 
     @Override
     public User updateUser(int id, UserRequest userRequest) {
-        User user = findById(id);
-
-        User findByEmail = userRepository.findByEmailAndIdNot(userRequest.getEmail(), id).orElse(null);
-        if (!Objects.isNull(findByEmail)) {
-            handleUserExist(findByEmail, "email", "Email");
-        }
-        User findByPhoneNumber = userRepository.findByPhoneNumberAndIdNot(userRequest.getPhoneNumber(), id).orElse(null);
-        if (!Objects.isNull(findByPhoneNumber)) {
-            handleUserExist(findByPhoneNumber, "phoneNumber", "Phone Number");
-        }
-
-        Role role = roleRepository.findById(userRequest.getRoleId()).orElse(null);
-        String currentPassword = user.getPassword();
-        user = UserMapper.convertFromRequest(userRequest);
-        user.setPassword(currentPassword);
-        user.setRole(role);
-        user.setStatus(1);
-        user.setId(id);
+        User user = prepareUser(userRequest, id, false);
         return userRepository.save(user);
     }
 
@@ -98,13 +99,13 @@ public class UserServiceImpl implements UserService {
         User user = findUserByEmail(email);
         assert user != null;
         if (!passwordEncoder.matches(passwordRequest.getCurrentPassword(), user.getPassword())){
-            throw new IncorrectEmailOrPassword("password", "Your current password does not match");
+            throw new IncorrectEmailOrPassword("currentPassword", "Your current password does not match");
         }
         if (passwordEncoder.matches(passwordRequest.getNewPassword(), user.getPassword())){
-            throw new IncorrectEmailOrPassword("password", "Your new password must different current password");
+            throw new IncorrectEmailOrPassword("newPassword", "Your new password must different current password");
         }
         if (!passwordRequest.getNewPassword().equals(passwordRequest.getConfirmPassword())){
-            throw new IncorrectEmailOrPassword("password", "Your confirm password does not match");
+            throw new IncorrectEmailOrPassword("confirmPassword", "Your confirm password does not match");
         }
         user.setPassword(passwordEncoder.encode(passwordRequest.getNewPassword()));
         return userRepository.save(user);
@@ -112,13 +113,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User deleteUserById(int id) {
-        User user = userRepository.findByIdAndStatus(id,1);
-        if (user != null) {
-            user.setStatus(0);
-        }
-        else {
-            throw new EmptyException("employee", "Employee Detail is null");
-        }
+        User user = findById(id);
+        user.setStatus(0);
         return userRepository.save(user);
     }
 
@@ -129,13 +125,18 @@ public class UserServiceImpl implements UserService {
         return userRepository.save(user);
     }
 
+    public User findUserInactiveById(int id) {
+        User user = userRepository.findByIdAndStatus(id,0);
+        if (Objects.isNull(user)) {
+            throw new NotFoundException("user", "User not found.");
+        }
+        return user;
+    }
+
     @Override
     public User restoreUser(int id) {
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("user", "User not found."));
-        if (user != null) {
-            user.setStatus(1);
-        }
+        User user = findUserInactiveById(id);
+        user.setStatus(1);
         return userRepository.save(user);
     }
 }

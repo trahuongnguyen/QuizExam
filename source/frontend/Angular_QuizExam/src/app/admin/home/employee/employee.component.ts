@@ -30,7 +30,7 @@ export class EmployeeComponent implements OnInit, OnDestroy {
   role: Role;
   employee: UserResponse;
   employeeForm: UserRequest = { };
-  employeeError: ValidationError = { };
+  validationError: ValidationError = { };
   
   isPopupCreate: boolean = false;
   isPopupDetail: boolean = false;
@@ -56,22 +56,8 @@ export class EmployeeComponent implements OnInit, OnDestroy {
     private el: ElementRef,
     private renderer: Renderer2
   ) {
-    this.role = {
-      id: 0,
-      name: '',
-      description: ''
-    };
-
-    this.employee = {
-      id: 0,
-      fullName: '',
-      dob: new Date(),
-      gender: 0,
-      address: '',
-      phoneNumber: '',
-      email: '',
-      role: this.role
-    };
+    this.role = { id: 0, name: '', description: '' };
+    this.employee = { id: 0, fullName: '', dob: new Date(), gender: 0, address: '', phoneNumber: '', email: '', role: this.role };
     this.initializeEmployeeForm();
   }
 
@@ -95,7 +81,7 @@ export class EmployeeComponent implements OnInit, OnDestroy {
           this.initializeDataTable();
         },
         error: (err) => {
-          this.admin.handleError(err, this.employeeError, 'user', 'load data', this.reloadTable.bind(this));
+          this.authService.handleError(err, undefined, '', 'load data');
         }
       }
     );
@@ -172,7 +158,7 @@ export class EmployeeComponent implements OnInit, OnDestroy {
 
     $('.delete-icon').on('click', (event: any) => {
       this.employeeId = $(event.currentTarget).data('id');
-      this.openPopupConfirm('Are you sure?', 'Do you really want to delete this Employee?');
+      this.openPopupConfirm('Are you sure?', 'Do you really want to delete this employee?');
       this.isPopupRemove = true;
     });
 
@@ -235,7 +221,7 @@ export class EmployeeComponent implements OnInit, OnDestroy {
         this.closePopup();
       },
       error: (err) => {
-        this.admin.handleError(err, this.employeeError, 'user', 'load data', this.reloadTable.bind(this));
+        this.authService.handleError(err, undefined, '', 'load data');
       }
     });
   }
@@ -247,7 +233,7 @@ export class EmployeeComponent implements OnInit, OnDestroy {
         callback(this.employee); // Chạy hàm callback sau khi lấy thông tin thành công
       },
       error: (err) => {
-        this.admin.handleError(err, this.employeeError, 'user', 'load data', this.reloadTable.bind(this));
+        this.authService.handleError(err, this.validationError, 'user', 'load data', this.reloadTable.bind(this));
       }
     });
   }
@@ -264,7 +250,7 @@ export class EmployeeComponent implements OnInit, OnDestroy {
     this.employeeForm.address = this.employee.address;
     this.employeeForm.phoneNumber = this.employee.phoneNumber;
     this.employeeForm.email = this.employee.email;
-    this.employeeForm.roleId = this.employee.role?.id;
+    this.employeeForm.roleId = this.employee.role.id;
   }
 
   openPopupConfirm(title: string, message: string): void {
@@ -291,8 +277,8 @@ export class EmployeeComponent implements OnInit, OnDestroy {
   }
 
   openPopupViewInactive(): void {
-    if (this.employeeError['restore']?.trim()) {
-      this.openPopupConfirm('Would you like to switch to the inactive user?', this.employeeError['restore']);
+    if (this.validationError['restore']?.trim()) {
+      this.openPopupConfirm('Would you like to switch to the inactive user?', this.validationError['restore']);
       this.isPopupViewInactive = true;
     }
   }
@@ -309,7 +295,7 @@ export class EmployeeComponent implements OnInit, OnDestroy {
     }
     else {
       this.employeeId = 0;
-      this.employeeError = { };
+      this.validationError = { };
       this.initializeEmployeeForm();
       this.isPopupCreate = false;
       this.isPopupDetail = false;
@@ -336,7 +322,7 @@ export class EmployeeComponent implements OnInit, OnDestroy {
   }
 
   submitForm(): void {
-    this.employeeError = { };
+    this.validationError = { };
     if (this.isPopupCreate) {
       this.createEmployee();
     }
@@ -352,7 +338,7 @@ export class EmployeeComponent implements OnInit, OnDestroy {
         this.reloadTable();
       },
       error: (err) => {
-        this.admin.handleError(err, this.employeeError, 'user', 'create employee', this.reloadTable.bind(this));
+        this.authService.handleError(err, this.validationError, 'user', 'create employee', this.reloadTable.bind(this));
         this.openPopupViewInactive();
       }
     });
@@ -365,7 +351,7 @@ export class EmployeeComponent implements OnInit, OnDestroy {
         this.reloadTable();
       },
       error: (err) => {
-        this.admin.handleError(err, this.employeeError, 'user', 'update employee', this.reloadTable.bind(this));
+        this.authService.handleError(err, this.validationError, 'user', 'update employee', this.reloadTable.bind(this));
         this.openPopupViewInactive();
       }
     });
@@ -378,7 +364,7 @@ export class EmployeeComponent implements OnInit, OnDestroy {
         this.reloadTable();
       },
       error: (err) => {
-        this.admin.handleError(err, this.employeeError, 'user', 'reset password employee', this.reloadTable.bind(this));
+        this.authService.handleError(err, this.validationError, 'user', 'reset password employee', this.reloadTable.bind(this));
       }
     });
   }
@@ -390,7 +376,7 @@ export class EmployeeComponent implements OnInit, OnDestroy {
         this.reloadTable();
       },
       error: (err) => {
-        this.admin.handleError(err, this.employeeError, 'user', 'remove employee', this.reloadTable.bind(this));
+        this.authService.handleError(err, this.validationError, 'user', 'remove employee', this.reloadTable.bind(this));
       }
     });
   }
@@ -398,8 +384,10 @@ export class EmployeeComponent implements OnInit, OnDestroy {
   viewEmployeeInactive(): void {
     this.statusId = 0;
     this.reloadTable();
-    if (this.employeeError['restore']) {
-      if (this.employeeError['restore'].includes('Email')) {
+    this.isPopupCreate = false;
+    this.isPopupUpdate = false;
+    if (this.validationError['restore']) {
+      if (this.validationError['restore'].includes('Email')) {
         this.dataTable.search(this.employeeForm.email).draw();
       }
       else {
@@ -415,7 +403,7 @@ export class EmployeeComponent implements OnInit, OnDestroy {
         this.reloadTable();
       },
       error: (err) => {
-        this.admin.handleError(err, this.employeeError, 'user', 'restore employee', this.reloadTable.bind(this));
+        this.authService.handleError(err, this.validationError, 'user', 'restore employee', this.reloadTable.bind(this));
       }
     });
   }
@@ -443,7 +431,7 @@ export class EmployeeComponent implements OnInit, OnDestroy {
         document.body.removeChild(a);
       },
       error: (err: any) => {
-        console.error('Export failed:', err);
+        this.authService.handleError(err, undefined, '', 'export');
       }
     });
   }

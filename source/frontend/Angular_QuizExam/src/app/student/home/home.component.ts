@@ -24,6 +24,7 @@ export class HomeComponent {
   ngOnInit() {
     this.http.get<any>(`${this.authService.apiUrl}/auth/profile`, this.httpOptions).subscribe((student: any) => {
       this.authService.myUser = student;
+      console.log(student);
     });
   }
 

@@ -73,11 +73,11 @@
             </div>
         </div>
         <div class="search-container">
-                <input type="text" class="form-control search-input" [(ngModel)]="searchStudent" (ngModelChange)="onSearchStudentsChange()"
-                        name="searchStudent" placeholder="Search Students"/>
-                <i class="fa-solid fa-magnifying-glass search-icon"></i>
+            <input type="text" class="form-control search-input" [(ngModel)]="searchStudent" (ngModelChange)="onSearchStudentsChange()"
+                name="searchStudent" placeholder="Search Students"/>
+            <i class="fa-solid fa-magnifying-glass search-icon"></i>
         </div>
-        <div class="popup-body">
+        <div class="popup-body popup-add">
             <div class="form-popup">
                 <div class="checkbox-group">
                     <div class="checkbox-input" *ngIf=" searchStudent == '' ">

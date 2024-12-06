@@ -85,7 +85,13 @@ export class QuestionListComponent {
             return meta.row + 1; // Trả về số thứ tự, `meta.row` là chỉ số của hàng bắt đầu từ 0
           }
         },
-        { title: 'Question', data: 'content' },
+        {
+          title: 'Question',
+          data: 'content',
+          render: function (data: any, type: any, row: any) {
+            return `${data}`;
+          }
+        },
         {
           title: 'Chapter',
           data: 'chapters',
@@ -94,7 +100,7 @@ export class QuestionListComponent {
             data.forEach((val: any) => {
               value += `[${val.name}] `;
             });
-            return `<div class="chapter-names">${value}</div>`;
+            return `${value}`;
           }
         },
         { title: 'Level', data: 'level.name' },

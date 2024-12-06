@@ -1,8 +1,12 @@
 import { Injectable } from '@angular/core';
+import { LoginRequest, LoginResponse, ChangePassword, ValidationError } from '../models/models';
+import { UserResponse } from '../models/user.model';
+import { StudentResponse } from '../models/student.model';
+import { Role } from '../models/role.model';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Router } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
 import { Observable } from 'rxjs';
-import { LoginRequest, LoginResponse } from '../models/models';
 
 @Injectable({
   providedIn: 'root'
@@ -26,14 +30,50 @@ export class AuthService {
     withCredentials: true
   };
 
-  constructor(private http: HttpClient, private router: Router) { }
+  constructor(private http: HttpClient, private toastr: ToastrService, private router: Router) { }
 
   login(loginRequest: LoginRequest): Observable<LoginResponse> {
     return this.http.post<LoginResponse>(`${this.apiUrl}/auth/login`, loginRequest, { responseType: 'json' });
   }
 
-  takeRole(options: any): any {
-    return this.http.get<any>(`${this.apiUrl}/auth/role`, options);
+  takeRole(header: HttpHeaders): Observable<Role> {
+    return this.http.get<Role>(`${this.apiUrl}/auth/role`, { headers: header, responseType: 'json' });
+  }
+
+  getProfile(): Observable<UserResponse | StudentResponse> {
+    return this.http.get<UserResponse | StudentResponse>(`${this.apiUrl}/auth/profile`, this.httpOptions);
+  }
+
+  changePassword(changePasswordForm: ChangePassword): Observable<UserResponse> {
+    return this.http.put<UserResponse>(`${this.apiUrl}/auth/change-password`, changePasswordForm, this.httpOptions);
+  }
+
+  handleError(err: any, validationError: ValidationError = {}, field: string, action: string, reloadTable: () => void = () => {}): void {
+    console.log(err);
+    if (err.status === 401) {
+      this.toastr.error('Unauthorized access. Please check your login credentials.', 'Failed', { timeOut: 5000 });
+    }
+    else if (err.status === 0) {
+      // Nếu status là 0, có thể là lỗi mạng hoặc API không phản hồi
+      this.toastr.error('Cannot connect to the server. Please check your connection or try again later.', 'Error', { timeOut: 5000 });
+    }
+    else {
+      if (err.error?.message) {
+        validationError[err.error.key] = err.error.message;
+      }
+      else if (Array.isArray(err.error)) {
+        err.error.forEach((e: any) => {
+          validationError[e.key] = e.message;
+        });
+      }
+
+      let errorMessage = `Failed to ${action}. Please try again.`;
+      if (validationError[field]?.trim()) { // Nếu mà thuộc tính field có lỗi thì sẽ load lại table
+        errorMessage = `${validationError[field]}<br>Reloading table in 5 seconds...`;
+        setTimeout(() => reloadTable(), 5000);
+      }
+      this.toastr.error(errorMessage, 'Error', { timeOut: 5000, enableHtml: true });
+    }
   }
 
   // Kiểm tra xem localStorage có sẵn không trước khi sử dụng
@@ -99,14 +139,12 @@ export class AuthService {
   exportDataExcel() {
     const token = this.getToken('ADMIN');
     const headers = new HttpHeaders().set('Authorization', 'Bearer ' + token).set('Content-Type', 'application/json');
-
     return this.http.post(`${this.apiUrl}/${this.entityExporter}/export/excel`, this.listExporter, { headers: headers, responseType: 'blob', });
   }
 
   exportDataPDF() {
     const token = this.getToken('ADMIN');
     const headers = new HttpHeaders().set('Authorization', 'Bearer ' + token).set('Content-Type', 'application/json');
-
     return this.http.post(`${this.apiUrl}/${this.entityExporter}/export/pdf`, this.listExporter, { headers: headers, responseType: 'blob', });
   }
 }

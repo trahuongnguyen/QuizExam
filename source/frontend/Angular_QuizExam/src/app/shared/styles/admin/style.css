@@ -165,8 +165,10 @@
     margin-bottom: 15px;
 }
 
-.popup-container .popup-content .form-popup .popup-body .form-group .error {
+.popup-container .popup-content .form-popup .popup-body .form-group .error,
+.popup-container .popup-content .form-popup .search-container .error {
     margin-left: 3px;
+    font-size: 0.875rem;
 }
 
 .popup-container .popup-content .form-popup .popup-body .form-group .image-preview {
@@ -227,4 +229,80 @@
 
 .popup-container .popup-content .popup-footer .button {
     min-width: 100px;
+}
+
+
+/* CSS cho form Level và Chapter */
+.flex-container .item-container {
+    width: 100%;
+    margin-right: 50px;
+    padding: 10px;
+    border: 1px solid #ddd;
+}
+
+.flex-container .item-container .form-section {
+    height: 0;
+    width: 50%;
+    margin: auto;
+    overflow: hidden;
+    border-radius: 5px;
+    transition: height 0.5s ease-out, padding 0.5s ease-out;
+}
+
+.flex-container .item-container .form-section.show {
+    height: 233px;
+    padding: 20px;
+    border: 1px solid #ddd;
+}
+
+.flex-container .item-container .form-section.error-active {
+    height: auto; /* Tăng chiều cao khi có lỗi để chứa thông báo lỗi */
+}
+
+.flex-container .item-container .form-section .error {
+    font-size: 0.875rem;
+}
+
+.flex-container .item-container .form-section .form-title {
+    font-weight: bold;
+    text-align: center;
+}
+
+.flex-container .item-container .form-section .btn {
+    margin: 3px;
+    width: auto;
+    font-size: 12px;
+    border-radius: 6px;
+    color: white;
+}
+
+.flex-container .item-container .form-section .btn-save {
+    background-color: #aa1210;
+}
+
+.flex-container .item-container .form-section .btn-save:hover {
+    background-color: #ca3633;
+}
+
+.flex-container .item-container .form-section .btn-cancel {
+    background-color: #887f7f;
+}
+
+.flex-container .btn-action {
+    height: 38px;
+    border: 1px solid #ddd;
+    text-align: center;
+    position: fixed;
+    right: 20px;
+}
+
+.flex-container .btn-action i {
+    font-size: x-large;
+    margin: 6px;
+    color: grey;
+}
+
+.flex-container .btn-action .btn-add:hover {
+    cursor: pointer;
+    box-shadow: #e9ecef 0px 0px 3px 3px inset;
 }

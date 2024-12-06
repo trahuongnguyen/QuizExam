@@ -17,7 +17,7 @@ public class StudentResponse {
     private UserResponse userResponse;
     private String rollPortal;
     private String rollNumber;
-    private Classes _class;
+    private Classes classes;
     private List<Mark> marks;
 }
 

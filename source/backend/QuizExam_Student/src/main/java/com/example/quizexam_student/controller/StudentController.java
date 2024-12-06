@@ -2,8 +2,7 @@ package com.example.quizexam_student.controller;
 
 import com.example.quizexam_student.bean.request.*;
 import com.example.quizexam_student.bean.response.*;
-import com.example.quizexam_student.entity.StudentDetail;
-import com.example.quizexam_student.entity.User;
+import com.example.quizexam_student.mapper.StudentMapper;
 import com.example.quizexam_student.service.*;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -17,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/student-management")
@@ -29,53 +29,68 @@ public class StudentController {
 
     @PreAuthorize("hasAnyRole('ADMIN', 'SRO', 'DIRECTOR', 'TEACHER')")
     @GetMapping("/all-student")
-    public List<StudentResponse> getAllStudents(){
-        return studentService.getAllStudents();
+    public List<StudentResponse> getAllStudents() {
+        return studentService.findAllStudents().stream().map(StudentMapper::convertToResponse).collect(Collectors.toList());
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'SRO', 'TEACHER')")
     @GetMapping("/{status}")
-    public List<StudentResponse> getAllStudentsNoneClass(@PathVariable Integer status){
-        return studentService.getAllStudentsNoneClass(status);
+    public List<StudentResponse> getAllStudentsNoneClass(@PathVariable Integer status) {
+        return studentService.findAllStudentsNoneClass(status).stream().map(StudentMapper::convertToResponse).collect(Collectors.toList());
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'SRO', 'TEACHER')")
-    @GetMapping("/{classId}/{status}")
-    public List<StudentResponse> getAllStudentsByClass(@PathVariable int classId, @PathVariable Integer status){
-        return studentService.getAllStudentsByClass(classId, status);
+    @GetMapping("/{status}/{classId}")
+    public List<StudentResponse> getAllStudentsByClass(@PathVariable Integer status, @PathVariable Integer classId) {
+        return studentService.findAllStudentsByClass(status, classId).stream().map(StudentMapper::convertToResponse).collect(Collectors.toList());
+    }
+
+    @PreAuthorize("hasAnyRole('ADMIN', 'SRO')")
+    @GetMapping("/find/{id}")
+    public StudentResponse getStudentById(@PathVariable Integer id) {
+        return StudentMapper.convertToResponse(studentService.findStudentById(id));
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'SRO')")
     @PostMapping("")
-    public ResponseEntity<RegisterResponse> addStudent(@RequestBody @Valid StudentRequest studentRequest) {
-        studentService.addStudent(studentRequest);
-        return ResponseEntity.ok(new RegisterResponse(studentRequest.getUserRequest().getEmail(), "Student created successfully"));
+    public StudentResponse addStudent(@RequestBody @Valid StudentRequest studentRequest) {
+        return StudentMapper.convertToResponse(studentService.addStudent(studentRequest));
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'SRO')")
     @PutMapping("/{id}")
-    public ResponseEntity<RegisterResponse> updateStudent(@PathVariable int id, @RequestBody @Valid StudentRequest studentRequest) {
-        studentService.updateStudent(studentRequest, id);
-        return ResponseEntity.ok(new RegisterResponse(studentRequest.getUserRequest().getEmail(), "Student updated successfully"));
+    public StudentResponse updateStudent(@PathVariable int id, @RequestBody @Valid StudentRequest studentRequest) {
+        return StudentMapper.convertToResponse(studentService.updateStudent(studentRequest, id));
+    }
+
+    @PreAuthorize("hasAnyRole('ADMIN', 'SRO')")
+    @GetMapping("/moving-to-class")
+    public List<StudentResponse> getStudentsMovingToClass(@RequestParam List<Integer> userIds) {
+        return studentService.findStudentsMovingToClass(userIds).stream().map(StudentMapper::convertToResponse).collect(Collectors.toList());
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'SRO')")
     @PutMapping("/update-class")
-    public ResponseEntity<RegisterResponse> updateClassForStudents(@RequestBody UpdateClassRequest request) {
-        studentService.updateClassForStudents(request.getUserIds(), request.getClassId());
-        return ResponseEntity.ok(new RegisterResponse("", "Update class successfully"));
+    public List<StudentResponse> updateClassForStudents(@RequestBody UpdateStudentClassRequest request) {
+        return studentService.updateClassForStudents(request.getUserIds(), request.getClassId()).stream().map(StudentMapper::convertToResponse).collect(Collectors.toList());
+    }
+
+    @PreAuthorize("hasAnyRole('ADMIN', 'SRO')")
+    @PutMapping("/reset-password/{id}")
+    public StudentResponse resetPassword(@PathVariable int id) {
+        return StudentMapper.convertToResponse(studentService.resetPassword(id));
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'SRO')")
     @PutMapping("/remove/{id}")
-    public ResponseEntity<UserResponse> deleteStudent(@PathVariable int id) {
-        return ResponseEntity.ok(studentService.deleteStudent(id));
+    public StudentResponse deleteStudent(@PathVariable int id) {
+        return StudentMapper.convertToResponse(studentService.deleteStudent(id));
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'SRO')")
     @PutMapping("/restore/{id}")
-    public ResponseEntity<UserResponse> restoreStudent(@PathVariable int id) {
-        return ResponseEntity.ok(studentService.restoreStudent(id));
+    public StudentResponse restoreStudent(@PathVariable int id) {
+        return StudentMapper.convertToResponse(studentService.restoreStudent(id));
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'SRO')")

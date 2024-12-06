@@ -1,4 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
+import { AuthService } from '../../../shared/service/auth.service';
 import { Title } from '@angular/platform-browser';
 import { AdminComponent } from '../../admin.component';
 import { LevelResponse, LevelRequest } from '../../../shared/models/level.model';
@@ -22,7 +23,7 @@ export class LevelComponent implements OnInit, OnDestroy {
   levelId: number = 0;
   level: LevelResponse;
   levelForm: LevelRequest = { };
-  levelError: ValidationError = { };
+  validationError: ValidationError = { };
 
   createMode: boolean = false;
   updateMode: boolean = false;
@@ -34,6 +35,7 @@ export class LevelComponent implements OnInit, OnDestroy {
   isConfirmationPopup: boolean = false;
 
   constructor(
+    private authService: AuthService,
     private titleService: Title,
     public admin: AdminComponent,
     private levelService: LevelService,
@@ -59,7 +61,7 @@ export class LevelComponent implements OnInit, OnDestroy {
         this.initializeDataTable();
       },
       error: (err) => {
-        this.admin.handleError(err, this.levelError, 'level', 'load data', this.reloadTable.bind(this));
+        this.authService.handleError(err, undefined, '', 'load data');
       }
     });
   }
@@ -143,7 +145,7 @@ export class LevelComponent implements OnInit, OnDestroy {
         this.closePopup();
       },
       error: (err) => {
-        this.admin.handleError(err, this.levelError, 'level', 'load data', this.reloadTable.bind(this));
+        this.authService.handleError(err, undefined, '', 'load data');
       }
     });
   }
@@ -155,7 +157,7 @@ export class LevelComponent implements OnInit, OnDestroy {
         handler(this.level); // Chạy hàm handler sau khi lấy thông tin thành công
       },
       error: (err) => {
-        this.admin.handleError(err, this.levelError, 'level', 'load data', this.reloadTable.bind(this));
+        this.authService.handleError(err, this.validationError, 'level', 'load data', this.reloadTable.bind(this));
         errorHandler(err); // Chạy hàm errorHandler nếu có lỗi
       }
     });
@@ -167,16 +169,22 @@ export class LevelComponent implements OnInit, OnDestroy {
   }
 
   showFormCreate() {
+    this.levelForm = { }
+    this.validationError = { };
+    this.checkFormErrors();
+    
     this.updateMode = false;
     this.createMode = true;
-    this.levelForm = { }
   }
 
   showFormUpdate(id: number) {
-    this.createMode = false;
+    this.validationError = { };
+    this.checkFormErrors();
+
     this.loadLevelById(id,
       (success) => {
         this.convertToRequest();
+        this.createMode = false;
         this.updateMode = true;
       },
       (error) => { this.updateMode = false; }
@@ -191,7 +199,8 @@ export class LevelComponent implements OnInit, OnDestroy {
 
   hiddenForm() {
     this.levelId = 0;
-    this.levelError = { };
+    this.levelForm = { }
+    this.validationError = { };
     this.checkFormErrors();
     this.createMode = false;
     this.updateMode = false;
@@ -209,7 +218,7 @@ export class LevelComponent implements OnInit, OnDestroy {
   }
 
   submitForm(): void {
-    this.levelError = { };
+    this.validationError = { };
     if (this.createMode) {
       this.createLevel();
     }
@@ -219,7 +228,7 @@ export class LevelComponent implements OnInit, OnDestroy {
   }
 
   checkFormErrors(): void {
-    if (this.levelError['name']?.trim() || this.levelError['point']?.trim()) {
+    if (Object.values(this.validationError).some(error => error?.trim())) {
       document.querySelector('.form-section')?.classList.add('error-active');
     }
     else {
@@ -234,7 +243,7 @@ export class LevelComponent implements OnInit, OnDestroy {
         this.reloadTable();
       },
       error: (err) => {
-        this.admin.handleError(err, this.levelError, 'level', 'create level', this.reloadTable.bind(this));
+        this.authService.handleError(err, this.validationError, 'level', 'create level', this.reloadTable.bind(this));
         this.checkFormErrors();
       }
     });
@@ -247,7 +256,7 @@ export class LevelComponent implements OnInit, OnDestroy {
         this.reloadTable();
       },
       error: (err) => {
-        this.admin.handleError(err, this.levelError, 'level', 'update level', this.reloadTable.bind(this));
+        this.authService.handleError(err, this.validationError, 'level', 'update level', this.reloadTable.bind(this));
         this.checkFormErrors();
       }
     });
@@ -260,7 +269,7 @@ export class LevelComponent implements OnInit, OnDestroy {
         this.reloadTable();
       },
       error: (err) => {
-        this.admin.handleError(err, this.levelError, 'level', 'delete level', this.reloadTable.bind(this));
+        this.authService.handleError(err, this.validationError, 'level', 'delete level', this.reloadTable.bind(this));
       }
     });
   }

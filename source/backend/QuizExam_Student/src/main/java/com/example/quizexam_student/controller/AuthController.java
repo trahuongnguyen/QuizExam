@@ -46,11 +46,12 @@ public class AuthController {
     }
 
     @GetMapping("/profile")
-    public ResponseEntity getDetail(){
+    public ResponseEntity<Object> getDetail() {
         String email = ((org.springframework.security.core.userdetails.User) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
         UserResponse userResponse = UserMapper.convertToResponse(userService.findUserByEmail(email));
-        if (userResponse.getRole().getName().equals("STUDENT")){
-            return ResponseEntity.ok(StudentMapper.convertToResponse(userResponse, studentService.getStudentDetailByUser(userService.findUserByEmail(email))));
+        if (userResponse.getRole().getName().equals("STUDENT")) {
+            StudentResponse studentResponse = StudentMapper.convertToResponse(studentService.findStudentByUserId(userResponse.getId()));
+            return ResponseEntity.ok(studentResponse);
         }
         return ResponseEntity.ok(userResponse);
     }

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Data
@@ -12,7 +13,7 @@ import java.util.Set;
 @NoArgsConstructor
 @Getter
 @Setter
-@EqualsAndHashCode(exclude = {"user", "_class"})
+@EqualsAndHashCode(exclude = {"user", "classes"})
 public class StudentDetail {
     @Id
     @Column(name = "user_id")
@@ -32,10 +33,10 @@ public class StudentDetail {
     @JsonIgnore
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "class_id")
-    private Classes _class;
+    private Classes classes;
 
     @OneToMany(mappedBy = "studentDetail")
-    private Set<Mark> marks;
+    private Set<Mark> marks = new HashSet<>();
 
     @OneToMany(mappedBy = "studentDetail")
     private Set<REL_Student_PracticeExam> rel_Student_PracticeExam;

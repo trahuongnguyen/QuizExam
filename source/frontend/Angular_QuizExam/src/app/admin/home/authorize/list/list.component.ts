@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { AuthService } from '../../../../shared/service/auth.service';
 import { Title } from '@angular/platform-browser';
 import { AdminComponent } from '../../../admin.component';
 import { Role } from '../../../../shared/models/role.model';
@@ -18,6 +19,7 @@ export class ListComponent implements OnInit{
   roleList: Role[] = [];
 
   constructor(
+    private authService: AuthService,
     private titleService: Title,
     public admin: AdminComponent,
     private roleService: RoleService,
@@ -36,12 +38,13 @@ export class ListComponent implements OnInit{
         this.roleList = roleResponse;
       },
       error: (err) => {
-        console.log('Error:', err.error.message);
+        this.authService.handleError(err, undefined, '', 'load data');
       }
     });
   }
 
-  getPermission(id: any) {
-    this.router.navigate([this.urlService.authorizeDetailUrl(id)])
+  getPermission(id: number) {
+    this.roleService.setId(id);
+    this.router.navigate([this.urlService.authorizeDetailUrl()]);
   }
 }

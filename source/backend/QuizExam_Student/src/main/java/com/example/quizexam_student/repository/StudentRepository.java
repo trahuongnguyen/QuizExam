@@ -1,25 +1,23 @@
 package com.example.quizexam_student.repository;
 
 import com.example.quizexam_student.entity.StudentDetail;
-import com.example.quizexam_student.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface StudentRepository extends JpaRepository<StudentDetail, Integer> {
-    StudentDetail findStudentDetailByUser(User user);
+    List<StudentDetail> findAllByUser_StatusAndUser_Role_IdOrderByUserIdDesc(Integer status, Integer roleId);
 
-    StudentDetail findByUser(User user);
+    List<StudentDetail> findAllByUser_StatusAndUser_Role_IdAndClassesIsNullOrderByUserIdDesc(Integer status, Integer roleId);
 
-    boolean existsByRollPortal(String rollPortal);
+    List<StudentDetail> findAllByUser_StatusAndUser_Role_IdAndClasses_IdOrderByUserIdDesc(Integer status, Integer roleId, Integer classId);
 
-    boolean existsByRollNumber(String rollNumber);
+    Optional<StudentDetail> findByUserId(Integer userId);
 
-    boolean existsByRollPortalAndUserNot(String rollPortal, User user);
-
-    boolean existsByRollNumberAndUserNot(String rollNumber, User user);
+    StudentDetail findByUserIdAndUser_StatusAndUser_Role_Id(Integer userId, Integer status, Integer roleId);
 
     List<StudentDetail> findAllByUserIdIn(List<Integer> users);
 
@@ -27,4 +25,7 @@ public interface StudentRepository extends JpaRepository<StudentDetail, Integer>
 
     StudentDetail findByRollPortal(String rollPortal);
 
+    StudentDetail findByRollPortalAndUserIdNot(String rollPortal, Integer id);
+
+    StudentDetail findByRollNumberAndUserIdNot(String rollNumber, Integer id);
 }

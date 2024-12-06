@@ -5,7 +5,7 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-public class UpdateClassRequest {
+public class UpdateStudentClassRequest {
     private List<Integer> userIds;
 
     private int classId;

@@ -20,8 +20,7 @@ public class UserMapper {
         return userResponse;
     }
 
-    public static User convertFromRequest(UserRequest userRequest){
-        User user = new User();
+    public static User convertFromRequest(UserRequest userRequest, User user) {
         user.setEmail(userRequest.getEmail());
         user.setDob(userRequest.getDob());
         user.setGender(userRequest.getGender());

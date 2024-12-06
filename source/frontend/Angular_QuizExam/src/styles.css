@@ -263,6 +263,11 @@
 
 
 /* Table (admin) */
+.dataTables_wrapper table.dataTable {
+    table-layout: fixed;
+    width: 100%;
+}
+
 .dataTables_wrapper table.dataTable.no-footer {
     border-bottom: none;
     overflow: hidden;
@@ -320,8 +325,7 @@
     color: #bfc21e;
 }
 
-.dataTables_wrapper .table td .chapter-names {
-    width: 300px;
+.dataTables_wrapper .table td {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;

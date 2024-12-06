@@ -145,7 +145,7 @@ export class AddStudentComponent implements OnInit, OnDestroy {
   filterStudentsByClass(): void {
     const url = this.classId == 0 
       ? `${this.authService.apiUrl}/student-management/1` 
-      : `${this.authService.apiUrl}/student-management/${this.classId}/1`;
+      : `${this.authService.apiUrl}/student-management/1/${this.classId}`;
     
     this.http.get<any>(url, this.home.httpOptions).subscribe(response => {
       this.listStudentByClass = response;

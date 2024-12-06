@@ -5,19 +5,29 @@ import com.example.quizexam_student.bean.response.*;
 import com.example.quizexam_student.entity.StudentDetail;
 
 public class StudentMapper {
-    public static StudentDetail convertFromRequest(StudentRequest studentRequest){
-        StudentDetail studentDetail = new StudentDetail();
+    public static StudentDetail convertFromRequest(StudentRequest studentRequest, StudentDetail studentDetail) {
         studentDetail.setRollPortal(studentRequest.getRollPortal());
         studentDetail.setRollNumber(studentRequest.getRollNumber());
         return studentDetail;
     }
 
-    public static StudentResponse convertToResponse(UserResponse userResponse, StudentDetail studentDetail){
+    public static StudentResponse convertToResponse1(UserResponse userResponse, StudentDetail studentDetail) {
         StudentResponse studentResponse = new StudentResponse();
         studentResponse.setUserResponse(userResponse);
         studentResponse.setRollPortal(studentDetail.getRollPortal());
         studentResponse.setRollNumber(studentDetail.getRollNumber());
-        studentResponse.set_class(studentDetail.get_class());
+        studentResponse.setClasses(studentDetail.getClasses());
+        studentResponse.setMarks(studentDetail.getMarks().stream().toList());
+        return studentResponse;
+    }
+
+    public static StudentResponse convertToResponse(StudentDetail studentDetail) {
+        StudentResponse studentResponse = new StudentResponse();
+        UserResponse userResponse = UserMapper.convertToResponse(studentDetail.getUser());
+        studentResponse.setUserResponse(userResponse);
+        studentResponse.setRollPortal(studentDetail.getRollPortal());
+        studentResponse.setRollNumber(studentDetail.getRollNumber());
+        studentResponse.setClasses(studentDetail.getClasses());
         studentResponse.setMarks(studentDetail.getMarks().stream().toList());
         return studentResponse;
     }

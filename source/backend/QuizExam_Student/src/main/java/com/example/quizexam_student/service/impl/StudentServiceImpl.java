@@ -1,7 +1,6 @@
 package com.example.quizexam_student.service.impl;
 
 import com.example.quizexam_student.bean.request.*;
-import com.example.quizexam_student.bean.response.*;
 import com.example.quizexam_student.entity.*;
 import com.example.quizexam_student.exception.*;
 import com.example.quizexam_student.mapper.*;
@@ -12,153 +11,141 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class StudentServiceImpl implements StudentService {
     private final UserRepository userRepository;
 
-    private final RoleRepository roleRepository;
-
     private final StudentRepository studentRepository;
 
     private final ClassesRepository classesRepository;
 
-    private final PasswordEncoder passwordEncoder;
-
     private final UserService userService;
 
-    @Override
-    public List<StudentResponse> getAllStudents() {
-        Role role = roleRepository.findByName("STUDENT");
-        List<UserResponse> userResponses = userRepository.findByRoleAndStatus(role,1).stream().map(UserMapper::convertToResponse).toList();
-        return userResponses.stream().map(userResponse -> StudentMapper.convertToResponse(userResponse, studentRepository.findByUser(userRepository.findById(userResponse.getId()).orElse(null)))).collect(Collectors.toList());
-    }
-
-
+    private final PasswordEncoder passwordEncoder;
 
     @Override
-    public StudentDetail getStudentDetailByUser(User user) {
-        return studentRepository.findStudentDetailByUser(user);
+    public List<StudentDetail> findAllStudents() {
+        return studentRepository.findAllByUser_StatusAndUser_Role_IdOrderByUserIdDesc(1, 5);
     }
 
     @Override
-    public List<StudentResponse> getAllStudentsNoneClass(Integer status) {
-        Role role = roleRepository.findByName("STUDENT");
-        List<UserResponse> userResponses = userRepository.findByRoleAndStatus(role,status).stream().map(UserMapper::convertToResponse).toList();
-        List<StudentResponse> studentResponses = userResponses.stream().map(userResponse -> StudentMapper.convertToResponse(userResponse, studentRepository.findByUser(userRepository.findById(userResponse.getId()).orElse(null)))).collect(Collectors.toList());
-        studentResponses.removeIf(std->std.get_class()!=null);
-        return studentResponses;
+    public List<StudentDetail> findAllStudentsNoneClass(Integer status) {
+        return studentRepository.findAllByUser_StatusAndUser_Role_IdAndClassesIsNullOrderByUserIdDesc(status, 5);
     }
-
-
 
     @Override
-    public List<StudentResponse> getAllStudentsByClass(int classId, Integer status) {
-        Role role = roleRepository.findByName("STUDENT");
-        List<UserResponse> userResponses = userRepository.findByRoleAndStatus(role,status).stream().map(UserMapper::convertToResponse).toList();
-        List<StudentResponse> studentResponses = userResponses.stream().map(userResponse -> StudentMapper.convertToResponse(userResponse, studentRepository.findByUser(userRepository.findById(userResponse.getId()).orElse(null)))).collect(Collectors.toList());
-        studentResponses.removeIf(std->std.get_class()==null||std.get_class().getId()!=classId);
-        return studentResponses;
+    public List<StudentDetail> findAllStudentsByClass(Integer status, Integer classId) {
+        return studentRepository.findAllByUser_StatusAndUser_Role_IdAndClasses_IdOrderByUserIdDesc(status, 5, classId);
     }
 
+    @Override
+    public StudentDetail findStudentById(Integer id) {
+        StudentDetail student = studentRepository.findByUserIdAndUser_StatusAndUser_Role_Id(id, 1, 5);
+        if (Objects.isNull(student)) {
+            throw new NotFoundException("student", "Student not found.");
+        }
+        return student;
+    }
+
+    @Override
+    public StudentDetail findStudentByUserId(Integer id) {
+        return studentRepository.findByUserId(id).orElse(null);
+    }
+
+    private void handleStudentExist(StudentDetail student, String key, String message) {
+        if (student.getUser().getStatus() == 0) {
+            throw new AlreadyExistException("restore", message + " already exists, but the user is hidden. Would you like to view this user to restore?");
+        }
+        throw new AlreadyExistException(key, message + " already exists.");
+    }
+
+    public StudentDetail prepareStudent(StudentRequest studentRequest, Integer userId, boolean isCreate) {
+        User user = userService.prepareUser(studentRequest.getUserRequest(), userId, isCreate);
+
+        StudentDetail findByRollPortal = isCreate
+                ? studentRepository.findByRollPortal(studentRequest.getRollPortal())
+                : studentRepository.findByRollPortalAndUserIdNot(studentRequest.getRollPortal(), userId);
+        if (!Objects.isNull(findByRollPortal)) {
+            handleStudentExist(findByRollPortal, "rollPortal", "Roll Portal");
+        }
+
+        StudentDetail findByRollNumber = isCreate
+                ? studentRepository.findByRollNumber(studentRequest.getRollNumber())
+                : studentRepository.findByRollNumberAndUserIdNot(studentRequest.getRollNumber(), userId);
+        if (!Objects.isNull(findByRollNumber)) {
+            handleStudentExist(findByRollNumber, "rollNumber", "Roll Number");
+        }
+
+        userRepository.saveAndFlush(user);
+
+        StudentDetail studentDetail;
+        if (isCreate) {
+            studentDetail = StudentMapper.convertFromRequest(studentRequest, new StudentDetail());
+        }
+        else {
+            studentDetail = StudentMapper.convertFromRequest(studentRequest, findStudentById(userId));
+        }
+        Classes classes = classesRepository.findById(studentRequest.getClassId()).orElse(null);
+        studentDetail.setClasses(classes);
+        studentDetail.setUser(user);
+        return studentDetail;
+    }
 
     @Override
     public StudentDetail addStudent(StudentRequest studentRequest) {
-        if (studentRepository.existsByRollPortal(studentRequest.getRollPortal())) {
-            StudentDetail studentDetail = studentRepository.findByRollPortal(studentRequest.getRollPortal());
-            if (studentDetail.getUser().getStatus() == 0){
-                throw new AlreadyExistException("studentRestore","Student already hide. Do you want restore student?");
-            }
-            throw new AlreadyExistException("rollPortal", "Roll Portal already exists.");
+        StudentDetail student = prepareStudent(studentRequest, null, true);
+        return studentRepository.save(student);
+    }
+
+    @Override
+    public StudentDetail updateStudent(StudentRequest studentRequest, Integer id) {
+        StudentDetail student = prepareStudent(studentRequest, id, false);
+        return studentRepository.save(student);
+    }
+
+    @Override
+    public List<StudentDetail> findStudentsMovingToClass(List<Integer> userIds) {
+        return studentRepository.findAllByUserIdIn(userIds);
+    }
+
+    @Override
+    public List<StudentDetail> updateClassForStudents(List<Integer> userIds, Integer classId) {
+        Classes _class = classesRepository.findByIdAndStatus(classId, 1).orElse(null);
+        List<StudentDetail> students = findStudentsMovingToClass(userIds);
+        for (StudentDetail student : students) {
+            student.setClasses(_class);
         }
-        if (studentRepository.existsByRollNumber(studentRequest.getRollNumber())) {
-            StudentDetail studentDetail = studentRepository.findByRollNumber(studentRequest.getRollNumber());
-            if (studentDetail.getUser().getStatus() == 0){
-                throw new AlreadyExistException("studentRestore","Student already hide. Do you want restore student?");
-            }
-            throw new AlreadyExistException("rollNumber", "Roll Number already exists.");
-        }
-        User user = userService.saveUser(studentRequest.getUserRequest());
-        StudentDetail studentDetail = StudentMapper.convertFromRequest(studentRequest);
-        Classes classes = classesRepository.findById(studentRequest.getClassId()).orElse(null);
-        studentDetail.setUser(user);
-        studentDetail.set_class(classes);
+        return studentRepository.saveAll(students);
+    }
+
+    @Override
+    public StudentDetail resetPassword(Integer id) {
+        StudentDetail studentDetail = findStudentById(id);
+        studentDetail.getUser().setPassword(passwordEncoder.encode("@1234567"));
         return studentRepository.save(studentDetail);
     }
 
     @Override
-    public StudentDetail updateStudent(StudentRequest studentRequest, int id) {
-        User userUpdate = userRepository.findById(id).orElse(null);
-        Role role = roleRepository.findById(5).orElse(null);
-        StudentDetail studentUpdate = studentRepository.findById(id).orElse(null);
-        if (Objects.isNull(userUpdate) || userUpdate.getStatus() == 0 || Objects.isNull(studentUpdate)) {
+    public StudentDetail deleteStudent(Integer id) {
+        StudentDetail studentDetail = findStudentById(id);
+        studentDetail.getUser().setStatus(0);
+        return studentRepository.save(studentDetail);
+    }
+
+    public StudentDetail findStudentInactiveById(Integer id) {
+        StudentDetail student = studentRepository.findByUserIdAndUser_StatusAndUser_Role_Id(id, 0, 5);
+        if (Objects.isNull(student)) {
             throw new NotFoundException("student", "Student not found.");
         }
-
-        UserRequest userRequest = studentRequest.getUserRequest();
-        if (userRepository.existsByEmailAndIdNot(userRequest.getEmail(), id)) {
-            throw new AlreadyExistException("email", "Email already exists.");
-        }
-        if (userRepository.existsByPhoneNumberAndIdNot(userRequest.getPhoneNumber(), id)) {
-            throw new AlreadyExistException("phoneNumber", "Phone Number already exists.");
-        }
-        if (studentRepository.existsByRollPortalAndUserNot(studentRequest.getRollPortal(), userUpdate)) {
-            throw new AlreadyExistException("rollPortal", "Roll Portal already exists.");
-        }
-        if (studentRepository.existsByRollNumberAndUserNot(studentRequest.getRollNumber(), userUpdate)) {
-            throw new AlreadyExistException("rollNumber", "Roll Number already exists.");
-        }
-        String currentPassword = userUpdate.getPassword();
-
-        // Cập nhật bảng user
-        userUpdate = UserMapper.convertFromRequest(userRequest);
-        userUpdate.setPassword(currentPassword);
-        userUpdate.setRole(role);
-        userUpdate.setStatus(1);
-        userUpdate.setId(id);
-        userRepository.save(userUpdate);
-
-        // Cập nhật bảng student_detail
-        studentUpdate.setRollPortal(studentRequest.getRollPortal());
-        studentUpdate.setRollNumber(studentRequest.getRollNumber());
-        return studentRepository.save(studentUpdate);
+        return student;
     }
 
     @Override
-    public void updateClassForStudents(List<Integer> userIds, int classId) {
-        Classes newClass = classesRepository.findById(classId).orElse(null);
-        if (Objects.isNull(newClass) && newClass.getStatus() == 0) {
-            throw new NotFoundException("class", "Class not found.");
-        }
-        List<StudentDetail> students = studentRepository.findAllByUserIdIn(userIds);
-        for (StudentDetail student : students) {
-            student.set_class(newClass);
-        }
-        studentRepository.saveAll(students);
+    public StudentDetail restoreStudent(Integer id) {
+        StudentDetail studentDetail = findStudentInactiveById(id);
+        studentDetail.getUser().setStatus(1);
+        return studentRepository.save(studentDetail);
     }
-
-    @Override
-    public UserResponse deleteStudent(int id) {
-        Role role = roleRepository.findByName("STUDENT");
-        User user = userRepository.findByIdAndStatusAndRole(id,1,role);
-        if (Objects.isNull(user)){
-            throw new NotFoundException("student", "Student not found.");
-        }
-        user.setStatus(0);
-        return UserMapper.convertToResponse(userRepository.save(user));
-    }
-
-    @Override
-    public UserResponse restoreStudent(int id) {
-        Role role = roleRepository.findByName("STUDENT");
-        User user = userRepository.findByIdAndStatusAndRole(id,0,role);
-        if (Objects.isNull(user)){
-            throw new NotFoundException("student", "Student not found.");
-        }
-        user.setStatus(1);
-        return UserMapper.convertToResponse(userRepository.save(user));
-    }
-
 }

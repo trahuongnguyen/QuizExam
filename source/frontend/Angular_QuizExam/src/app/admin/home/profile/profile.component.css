@@ -1,108 +1,87 @@
-.profile-header {
+.profile {
+    margin: auto;
+    width: max-content;
+    min-height: 500px;
+    align-items: center;
+}
+
+.profile .profile-header {
     padding: 0 30px;
     text-align: center;
 }
 
-.button{
-    font-size: 15px;
-    border: none;
-    border-radius: 8px;
+.profile .profile-header .profile-img {
+    width: 100px;
 }
 
-.btn-primary{
+.profile .profile-header h3 {
+    margin: 10px 0;
+}
+
+.profile .btn {
+    margin: 3px;
+    width: auto;
+    font-size: 12px;
+    border-radius: 6px;
+    color: white;
+}
+
+.profile .button-default {
     background-color: #aa1210;
 }
 
-.btn-secondary{
+.profile .button-default:hover {
+    background-color: #ca3633;
+}
+
+.profile .button-cancel {
     background-color: #887f7f;
 }
 
-.line{
-    margin-top: 0;
+.profile .content {
+    width: 0;
+    overflow: hidden;
+    transition: width 0.5s ease-in-out;
 }
 
-.profile-content{
-    margin: auto;
-    width: max-content;
-    height: fit-content;
-    min-height: 514px;
-    align-items: center;
-}
-
-.content {
+.profile .content.show {
+    width: 330px;
     padding: 10px;
-    margin: 0;
 }
 
-.content p {
+.profile .content.update-form.show,
+.profile .content.change-password-form.show {
+    width: 430px;
+    padding: 10px;
+}
+
+.profile .content p {
     margin-bottom: 0;
     display: block;
 }
 
-.profile-img {
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
-    margin: 0 40px 10px 40px;
-}
-
-.profile-header h3 {
-    margin: 10px 0;
-}
-
-.profile-header p {
-    color: #666;
-}
-
-.btn-update {
-    background-color: #b30000;
-    color: white;
-    width: 100%;
-}
-
-.form-group{
+.profile .content .form-group {
     margin-bottom: 1.5rem;
     margin-left: 4.5rem;
 }
 
-.content .form-group .label-title, .content .form-group .label-pword{
+.profile .content .label-title {
     font-weight: 600;
-    align-content: center;
 }
 
-.content .form-group .label-title{
-    width: 180px;
+.profile .content .error {
+    font-size: 0.875rem;
 }
 
-.content .form-group .label-pword{
-    width: 250px;
+.profile .content.change-password-form .position-relative {
+    position: relative;
 }
 
-.infor{
-    display: block;
-}
-
-.form-infor{
-    display: none;
-}
-
-.change-password-form{
-    display: none;
-}
-
-.w-max {
-    width: max-content;
-}
-
-.w-95 {
-    width: 95%;
-}
-
-.border-none {
-    border: none;
-}
-
-input:focus,
-input:active {
-    border: none;
+.profile .content.change-password-form .fa-eye-slash,
+.profile .content.change-password-form .fa-eye {
+    position: absolute;
+    right: 18px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
 }

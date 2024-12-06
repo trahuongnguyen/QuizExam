@@ -47,7 +47,7 @@ public class Classes {
     @Column(name = "status", nullable = false)
     private int status;
 
-    @OneToMany(mappedBy = "_class")
+    @OneToMany(mappedBy = "classes")
     @JsonIgnore
     private Set<StudentDetail> studentDetails;
 }

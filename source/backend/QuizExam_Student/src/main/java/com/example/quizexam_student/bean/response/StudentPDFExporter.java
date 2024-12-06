@@ -60,7 +60,7 @@ public class StudentPDFExporter {
         for (StudentResponse std : studentResponses) {
             table.addCell(String.valueOf(std.getRollPortal()));
             table.addCell(String.valueOf(std.getRollNumber()));
-            table.addCell(String.valueOf(std.get_class().getName() != null ? std.get_class().getName() : ""));
+            table.addCell(String.valueOf(std.getClasses() != null ? std.getClasses().getName() : "No Class"));
             table.addCell(String.valueOf(std.getUserResponse().getFullName()));
             table.addCell(String.valueOf(std.getUserResponse().getEmail()));
             table.addCell(String.valueOf(std.getUserResponse().getGender() == 1 ? "Male" : "Female"));

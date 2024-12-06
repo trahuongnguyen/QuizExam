@@ -2,113 +2,118 @@
     <h4>Profile</h4>
     <hr class="line">
 
-    <div class="d-flex profile-content">
+    <div class="profile d-flex">
         <div class="profile-header">
             <img src="../../../../../img/profile.png" class="profile-img" alt="Profile Image">
             <h3>{{ profile.fullName }}</h3>
             <p>{{ profile.email }}</p>
             <div class="d-flex w-max m-auto">
                 <div>
-                    <a (click)="showEditForm()" class="btn btn-primary button me-2">Edit</a>
+                    <a (click)="showEditForm()" class="btn button-default me-2">Edit Info</a>
                 </div>
                 <div>
-                    <a (click)="showPasswordForm()" class="btn btn-secondary button">Change Password</a>
+                    <a (click)="showPasswordForm()" class="btn button-default">Change Password</a>
                 </div>
             </div>
         </div>
-        <div class="content infor" id="infor">
-            <div class="form-group d-flex">
-                <label for="dob" class="label-title">Date Of Birth</label>
-                <p>{{ convertDateFormat(profile.dob) }}</p>
+
+        <div class="content" [ngClass]="{'show': isViewInfo}">
+            <div class="row align-items-center mb-4">
+                <label for="dob" class="label-title col-5">Date of Birth:</label>
+                <p class="col-7">{{ convertDateFormat(profile.dob) }}</p>
             </div>
-            <div class="form-group d-flex">
-                <label for="gender" class="label-title">Gender</label>
-                <P>{{ profile.gender == 1 ? "Male" : "Female" }}</P>
+            <div class="row align-items-center mb-4">
+                <label for="dob" class="label-title col-5">Gender:</label>
+                <p class="col-7">{{ profile.gender == 1 ? "Male" : "Female" }}</p>
             </div>
-            <div class="form-group d-flex">
-                <label for="phone" class="label-title">Phone Number</label>
-                <p>{{ profile.phoneNumber }}</p>
+            <div class="row align-items-center mb-4">
+                <label for="dob" class="label-title col-5">Phone Number:</label>
+                <p class="col-7">{{ profile.phoneNumber }}</p>
             </div>
-            <div class="form-group d-flex">
-                <label for="address" class="label-title">Address</label>
-                <p>{{ profile.address }}</p>
+            <div class="row align-items-center mb-4">
+                <label for="dob" class="label-title col-5">Address:</label>
+                <p class="col-7">{{ profile.address }}</p>
             </div>
         </div>
-        <form (ngSubmit)="updateProfile()">
-            <div class="content form-infor" id="form-infor">
-                <div class="form-group d-flex">
-                    <label for="dob" class="label-title">Date Of Birth</label>
+
+        <form (ngSubmit)="updateProfile()" class="content update-form" [ngClass]="{'show': isEditMode}">
+            <div class="row align-items-center mb-3">
+                <label for="dob" class="label-title col-4">Date of Birth:</label>
+                <div class="col-8">
                     <input type="date" class="form-control" [(ngModel)]="profileForm.dob" name="dob">
                 </div>
-                <div class="form-group d-flex">
-                    <label for="gender" class="label-title">Gender</label>
-                    <div class="d-flex w-100">
-                        <div class="form-check me-2">
-                            <input type="radio" class="form-check-input" [(ngModel)]="profileForm.gender" [value]="1" name="gender" id="male">
-                            <label for="male" class="form-check-label">Male</label>
-                        </div>
-                        <div class="form-check">
-                            <input type="radio" class="form-check-input" [(ngModel)]="profileForm.gender" [value]="2" name="gender" id="female">
-                            <label for="female" class="form-check-label">Female</label>
-                        </div>
-                    </div>
+                <div class="col-4"></div>
+                <span class="text-danger error col-8" *ngIf="formError['dob']">{{ formError['dob'] }}</span>
+            </div>
+            <div class="row align-items-center mb-3">
+                <label for="gender" class="label-title col-4">Gender:</label>
+                <div class="col-8">
+                    <input type="radio" class="form-check-input me-1" [(ngModel)]="profileForm.gender" [value]="1" name="gender" id="male">
+                    <label for="male" class="me-3">Male</label>
+                    <input type="radio" class="form-check-input me-1" [(ngModel)]="profileForm.gender" [value]="2" name="gender" id="female">
+                    <label for="female">Female</label>
                 </div>
-                <div class="form-group d-flex">
-                    <label for="phoneNumber" class="label-title">Phone Number</label>
+                <div class="col-4"></div>
+                <span class="text-danger error col-8" *ngIf="formError['gender']">{{ formError['gender'] }}</span>
+            </div>
+            <div class="row align-items-center mb-3">
+                <label for="phoneNumber" class="label-title col-4">Phone Number:</label>
+                <div class="col-8">
                     <input type="text" class="form-control" [(ngModel)]="profileForm.phoneNumber" name="phoneNumber">
                 </div>
-                <div class="form-group d-flex">
-                    <label for="address" class="label-title">Address</label>
+                <div class="col-4"></div>
+                <span class="text-danger error col-8" *ngIf="formError['phoneNumber']">{{ formError['phoneNumber'] }}</span>
+            </div>
+            <div class="row align-items-center mb-3">
+                <label for="address" class="label-title col-4">Address:</label>
+                <div class="col-8">
                     <input type="text" class="form-control" [(ngModel)]="profileForm.address" name="address">
                 </div>
-                <div class="form-group d-flex">
-                    <label for="" class="label-title"></label>
-                    <div class="w-100">
-                        <button type="submit" class="btn btn-primary button me-2">Save</button>
-                        <a (click)="showInformation()" class="btn btn-secondary button me-2">Cancel</a>
-                    </div>
+                <div class="col-4"></div>
+                <span class="text-danger error col-8" *ngIf="formError['address']">{{ formError['address'] }}</span>
+            </div>
+            <div class="row align-items-center">
+                <div class="col-4"></div>
+                <div class="col-8">
+                    <input type="submit" class="btn button-default me-2" value="Save"/>
+                    <a (click)="showInformation()" class="btn button-cancel">Cancel</a>
                 </div>
             </div>
         </form>
-        <form (submit)="chagePassword()">
-            <div class="content change-password-form" id="change-password-form">
-                <div class="form-group d-flex">
-                    <label for="old-pword" class="label-pword">Current Password</label>
-                    <div class="d-flex form-control">
-                        <input type="password" class="w-95 border-none" [(ngModel)]="currentPassword" name="oldPassword"
-                            id="currentPassword" placeholder="Enter current password">
-                        <div class="toggle-password eye" (click)="visiblePassword('currentPassword', 'icon1')" id="togglecurrentPassword">
-                            <i class="fa-regular fa-eye-slash" id="icon1"></i>
-                        </div>
-                    </div>
 
+        <form (ngSubmit)="chagePassword()" class="content change-password-form" [ngClass]="{'show': isChangePasswordMode}">
+            <div class="row align-items-center mb-3">
+                <label for="currentPassword" class="label-title col-5">Current Password:</label>
+                <div class="col-7 position-relative">
+                    <input type="password" class="form-control" [(ngModel)]="changePasswordForm.currentPassword" name="currentPassword" id="currentPassword">
+                    <i class="fa-regular fa-eye-slash" id="icon1" (click)="togglePasswordVisibility('currentPassword', 'icon1')"></i>
                 </div>
-                <div class="form-group d-flex">
-                    <label for="new-pword" class="label-pword">New Password</label>
-                    <div class="d-flex form-control">
-                        <input type="password" class="w-95 border-none" [(ngModel)]="newPassword" name="newPassword"
-                            id="newPassword" placeholder="Enter new password">
-                        <div class="toggle-newPassword eye" (click)="visiblePassword('newPassword', 'icon2')" id="togglenewPassword">
-                            <i class="fa-regular fa-eye-slash" id="icon2"></i>
-                        </div>
-                    </div>
+                <div class="col-5"></div>
+                <span class="text-danger error col-7" *ngIf="formError['currentPassword']">{{ formError['currentPassword'] }}</span>
+            </div>
+            <div class="row align-items-center mb-3">
+                <label for="newPassword" class="label-title col-5">New Password:</label>
+                <div class="col-7 position-relative">
+                    <input type="password" class="form-control" [(ngModel)]="changePasswordForm.newPassword" name="newPassword" id="newPassword">
+                    <i class="fa-regular fa-eye-slash" id="icon2" (click)="togglePasswordVisibility('newPassword', 'icon2')"></i>
                 </div>
-                <div class="form-group d-flex">
-                    <label for="confirm-pword" class="label-pword">Confirm Password</label>
-                    <div class="d-flex form-control">
-                        <input type="password" class="w-95 border-none" [(ngModel)]="confirmPassword" name="confirmPassword"
-                            id="confirmPassword" placeholder="Confirm new password">
-                        <div class="toggle-confirmPassword eye" (click)="visiblePassword('confirmPassword', 'icon3')" id="toggleconfirmPassword">
-                            <i class="fa-regular fa-eye-slash" id="icon3"></i>
-                        </div>
-                    </div>
+                <div class="col-5"></div>
+                <span class="text-danger error col-7" *ngIf="formError['newPassword']">{{ formError['newPassword'] }}</span>
+            </div>
+            <div class="row align-items-center mb-3">
+                <label for="confirmPassword" class="label-title col-5">Confirm Password:</label>
+                <div class="col-7 position-relative">
+                    <input type="password" class="form-control" [(ngModel)]="changePasswordForm.confirmPassword" name="confirmPassword" id="confirmPassword">
+                    <i class="fa-regular fa-eye-slash" id="icon3" (click)="togglePasswordVisibility('confirmPassword', 'icon3')"></i>
                 </div>
-                <div class="form-group d-flex">
-                    <label for="" class="label-pword"></label>
-                    <div class="w-100 d-flex">
-                        <button type="submit" class="btn btn-primary button me-2">Change Password</button>
-                        <a (click)="showInformation()" class="btn btn-secondary button me-2">Cancel</a>
-                    </div>
+                <div class="col-5"></div>
+                <span class="text-danger error col-7" *ngIf="formError['confirmPassword']">{{ formError['confirmPassword'] }}</span>
+            </div>
+            <div class="row align-items-center">
+                <div class="col-5"></div>
+                <div class="col-7">
+                    <input type="submit" class="btn button-default me-2" value="Save"/>
+                    <a (click)="showInformation()" class="btn button-cancel">Cancel</a>
                 </div>
             </div>
         </form>

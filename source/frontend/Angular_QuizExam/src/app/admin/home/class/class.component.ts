@@ -24,9 +24,9 @@ export class ClassComponent implements OnInit, OnDestroy {
   classList: ClassResponse[] = [];
 
   classId: number = 0;
-  _class: ClassResponse;
+  classes: ClassResponse;
   classForm: ClassRequest = { };
-  classError: ValidationError = { };
+  validationError: ValidationError = { };
 
   isPopupCreate: boolean = false;
   isPopupUpdate: boolean = false;
@@ -46,14 +46,7 @@ export class ClassComponent implements OnInit, OnDestroy {
     private toastr: ToastrService,
     private datePipe: DatePipe
   ) {
-    this._class = {
-      id: 0,
-      name: '',
-      classDay: '',
-      classTime: '',
-      admissionDate: new Date(),
-      status: 0
-    };
+    this.classes = { id: 0, name: '', classDay: '', classTime: '', admissionDate: new Date(), status: 0 };
     this.initializeClassForm();
   }
 
@@ -78,7 +71,7 @@ export class ClassComponent implements OnInit, OnDestroy {
         this.initializeDataTable();
       },
       error: (err) => {
-        this.admin.handleError(err, this.classError, 'class', 'load data', this.reloadTable.bind(this));
+        this.authService.handleError(err, undefined, '', 'load data');
       }
     });
   }
@@ -147,10 +140,8 @@ export class ClassComponent implements OnInit, OnDestroy {
 
     $('.delete-icon').on('click', (event: any) => {
       this.classId = $(event.currentTarget).data('id');
-      this.loadClassById(this.classId, () => {
-        this.openPopupConfirm('Are you sure?', 'Do you really want to delete this Class?<br>The students in this class will also be deleted, and this action cannot be undone.');
-        this.isPopupDelete = true;
-      });
+      this.openPopupConfirm('Are you sure?', 'Do you really want to delete this Class?<br>The students in this class will also be deleted, and this action cannot be undone.');
+      this.isPopupDelete = true;
     });
   }
 
@@ -170,19 +161,19 @@ export class ClassComponent implements OnInit, OnDestroy {
         this.closePopup();
       },
       error: (err) => {
-        this.admin.handleError(err, this.classError, 'class', 'load data', this.reloadTable.bind(this));
+        this.authService.handleError(err, undefined, '', 'load data');
       }
     });
   }
 
-  loadClassById(id: number, callback: (_class: ClassResponse) => void): void {
+  loadClassById(id: number, callback: (classes: ClassResponse) => void): void {
     this.classService.getClassById(id).subscribe({
       next: (classResponse) => {
-        this._class = classResponse;
-        callback(this._class); // Chạy hàm callback sau khi lấy thông tin thành công
+        this.classes = classResponse;
+        callback(this.classes); // Chạy hàm callback sau khi lấy thông tin thành công
       },
       error: (err) => {
-        this.admin.handleError(err, this.classError, 'class', 'load data', this.reloadTable.bind(this));
+        this.authService.handleError(err, this.validationError, 'class', 'load data', this.reloadTable.bind(this));
       }
     });
   }
@@ -193,10 +184,10 @@ export class ClassComponent implements OnInit, OnDestroy {
   }
 
   convertToRequest(): void {
-    this.classForm.name = this._class.name;
-    this.classForm.classDay = this._class.classDay;
-    this.classForm.classTime = this._class.classTime;
-    this.classForm.admissionDate = this._class.admissionDate;
+    this.classForm.name = this.classes.name;
+    this.classForm.classDay = this.classes.classDay;
+    this.classForm.classTime = this.classes.classTime;
+    this.classForm.admissionDate = this.classes.admissionDate;
   }
 
   openPopupConfirm(title: string, message: string): void {
@@ -224,7 +215,7 @@ export class ClassComponent implements OnInit, OnDestroy {
 
   closePopup(): void {
     this.classId = 0;
-    this.classError = { };
+    this.validationError = { };
     this.initializeClassForm();
     this.isPopupCreate = false;
     this.isPopupUpdate = false;
@@ -232,7 +223,7 @@ export class ClassComponent implements OnInit, OnDestroy {
   }
 
   submitForm(): void {
-    this.classError = { };
+    this.validationError = { };
     if (this.isPopupCreate) {
       this.createClass();
     }
@@ -248,7 +239,7 @@ export class ClassComponent implements OnInit, OnDestroy {
         this.reloadTable();
       },
       error: (err) => {
-        this.admin.handleError(err, this.classError, 'class', 'create class', this.reloadTable.bind(this));
+        this.authService.handleError(err, this.validationError, 'class', 'create class', this.reloadTable.bind(this));
       }
     });
   }
@@ -260,7 +251,7 @@ export class ClassComponent implements OnInit, OnDestroy {
         this.reloadTable();
       },
       error: (err) => {
-        this.admin.handleError(err, this.classError, 'class', 'update class', this.reloadTable.bind(this));
+        this.authService.handleError(err, this.validationError, 'class', 'update class', this.reloadTable.bind(this));
       }
     });
   }
@@ -272,7 +263,7 @@ export class ClassComponent implements OnInit, OnDestroy {
         this.reloadTable();
       },
       error: (err) => {
-        this.admin.handleError(err, this.classError, 'class', 'delete class', this.reloadTable.bind(this));
+        this.authService.handleError(err, this.validationError, 'class', 'delete class', this.reloadTable.bind(this));
       }
     });
   }
@@ -300,7 +291,7 @@ export class ClassComponent implements OnInit, OnDestroy {
         document.body.removeChild(a);
       },
       error: (err: any) => {
-        console.error('Export failed:', err);
+        this.authService.handleError(err, undefined, '', 'export');
       }
     });
   }

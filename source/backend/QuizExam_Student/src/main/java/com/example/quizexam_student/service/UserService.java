@@ -15,6 +15,8 @@ public interface UserService {
 
     User findById(int id);
 
+    User prepareUser(UserRequest userRequest, Integer userId, boolean isCreate);
+
     User saveUser(UserRequest userRequest);
 
     List<UserResponse> getUserByRolePermission(Role role, Integer status);

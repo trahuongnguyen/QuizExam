@@ -1,33 +1,34 @@
 package com.example.quizexam_student.service;
 
 import com.example.quizexam_student.bean.request.StudentRequest;
-import com.example.quizexam_student.bean.response.StudentResponse;
-import com.example.quizexam_student.bean.response.UserResponse;
 import com.example.quizexam_student.entity.StudentDetail;
-import com.example.quizexam_student.entity.User;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
 public interface StudentService {
-    List<StudentResponse> getAllStudents();
+    List<StudentDetail> findAllStudents();
 
+    List<StudentDetail> findAllStudentsNoneClass(Integer status);
 
-    StudentDetail getStudentDetailByUser(User user);
+    List<StudentDetail> findAllStudentsByClass(Integer status, Integer classId);
 
-    List<StudentResponse> getAllStudentsNoneClass(Integer status);
+    StudentDetail findStudentById(Integer id);
 
-
-    List<StudentResponse> getAllStudentsByClass(int classId, Integer status);
+    StudentDetail findStudentByUserId(Integer userId);
 
     StudentDetail addStudent(StudentRequest studentRequest);
 
-    StudentDetail updateStudent(StudentRequest studentRequest, int id);
+    StudentDetail updateStudent(StudentRequest studentRequest, Integer id);
 
-    void updateClassForStudents(List<Integer> userIds, int classId);
+    List<StudentDetail> findStudentsMovingToClass(List<Integer> userIds);
 
-    UserResponse deleteStudent(int id);
+    List<StudentDetail> updateClassForStudents(List<Integer> userIds, Integer classId);
 
-    UserResponse restoreStudent(int id);
+    StudentDetail resetPassword(Integer id);
+
+    StudentDetail deleteStudent(Integer id);
+
+    StudentDetail restoreStudent(Integer id);
 }

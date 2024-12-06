@@ -1,13 +1,19 @@
 import { Component, OnInit, OnDestroy, ElementRef, Renderer2 } from '@angular/core';
-import { AuthService } from '../../service/auth.service';
+import { AuthService } from '../../../shared/service/auth.service';
 import { Title } from '@angular/platform-browser';
 import { AdminComponent } from '../../admin.component';
-import { HomeComponent } from '../home.component';
-import { HttpClient } from '@angular/common/http';
-import { ToastrService } from 'ngx-toastr';
+import { Role } from '../../../shared/models/role.model';
+import { UserResponse } from '../../../shared/models/user.model';
+import { ClassResponse } from '../../../shared/models/class.model';
+import { StudentRequest, StudentResponse, UpdateStudentClassRequest } from '../../../shared/models/student.model';
+import { ValidationError } from '../../../shared/models/models';
+import { ClassService } from '../../service/class/class.service';
+import { StudentService } from '../../service/student/student.service';
 import { UrlService } from '../../../shared/service/url.service';
 import { Router, ActivatedRoute } from '@angular/router';
-import { forkJoin, Observable } from 'rxjs';
+import { ToastrService } from 'ngx-toastr';
+import { DatePipe } from '@angular/common';
+import { forkJoin } from 'rxjs';
 declare var $: any;
 
 @Component({
@@ -19,102 +25,97 @@ declare var $: any;
   ]
 })
 export class StudentComponent implements OnInit, OnDestroy {
-  constructor(
-    private authService: AuthService,
-    private titleService: Title,
-    public admin: AdminComponent,
-    private home: HomeComponent,
-    private el: ElementRef,
-    private renderer: Renderer2,
-    private http: HttpClient,
-    private toastr: ToastrService,
-    public urlService: UrlService,
-    private router: Router,
-    private activatedRoute: ActivatedRoute
-  ) { }
-
+  classId: number = 0;
+  className: string = '';
+  
   dataTable: any;
-  apiData: any;
-  stdResponse: any = null;
-  isPopupUpdate = false;
-  isPopupCreate = false;
-  isPopupMove = false;
-  classes: any;
-  _classId: any;
-  classId: any = 1;
-  class: String = '';
-  userIds: Number[] = [];
+  classList: ClassResponse[] = [];
+  studentList: StudentResponse[] = [];
+
   statusId: number = 1;
+  studentId: number = 0;
+  role: Role;
+  user: UserResponse;
+  classes: ClassResponse;
+  student: StudentResponse;
+  studentForm: StudentRequest;
+  getStudentsMovingToClass: StudentResponse[] = [];
+  studentClassForm: UpdateStudentClassRequest;
+  validationError: ValidationError = { };
 
-  dateOfBirth: string = '';
+  searchClass: string = '';
+  filterClass: ClassResponse[] = [];
 
-  studentId: any;
+  isPopupCreate: boolean = false;
+  isPopupDetail: boolean = false;
+  isPopupUpdate: boolean = false;
+  isPopupRemove: boolean = false;
 
-  nameError: String = '';
-  dobError: String = '';
-  addressError: String = '';
-  phoneNumberError: String = '';
-  emailError: String = '';
-  rollNumberError: String = '';
-  rollPortalError: String = '';
+  isPopupResetPassword: boolean = false;
+  isPopupRestore: boolean = false;
+
+  isPopupViewInactive: boolean = false;
+
+  isPopupMoveToClass = false;
 
   dialogTitle: string = '';
   dialogMessage: string = '';
   isConfirmationPopup: boolean = false;
-  isPopupDelete: boolean = false;
-  isPopupResetPassword: boolean = false;
-  isPopupBackupRestore: boolean = false;
 
-  searchClass: string = '';
-  filterClass: any[] = [];
-
-  get formattedDob(): string {
-    const dob = this.stdResponse.userResponse.dob;
-    // Chuyển đổi chuỗi "dd-MM-yyyy" sang định dạng "yyyy-MM-dd"
-    if (dob) {
-      const [day, month, year] = dob.split('-');
-      return `${year}-${month}-${day}`;  // Định dạng yyyy-MM-dd
-    }
-    return '';
+  constructor(
+    private authService: AuthService,
+    private titleService: Title,
+    public admin: AdminComponent,
+    private classService: ClassService,
+    private studentService: StudentService,
+    public urlService: UrlService,
+    private router: Router,
+    private activatedRoute: ActivatedRoute,
+    private toastr: ToastrService,
+    private datePipe: DatePipe,
+    private el: ElementRef,
+    private renderer: Renderer2
+  ) {
+    this.classId = Number(this.activatedRoute.snapshot.params['classId']) ?? 0;
+    this.role = { id: 0, name: '', description: '' };
+    this.user = { id: 0, fullName: '', dob: new Date(), gender: 0, address: '', phoneNumber: '', email: '', role: this.role };
+    this.classes = { id: 0, name: '', classDay: '', classTime: '', admissionDate: new Date(), status: 0 };
+    this.student = { userResponse: this.user, rollPortal: '', rollNumber: '', classes: this.classes };
+    this.studentForm = { userRequest: { gender: 1, roleId: 5 }, classId: this.classId };
+    this.studentClassForm = { userIds: [], classId: 0 };
   }
 
-  onDateChange(event: any) {
-    // Khi người dùng thay đổi ngày, lưu giá trị đó lại
-    this.dateOfBirth = event; // Giá trị sẽ ở định dạng yyyy-MM-dd
+  isClassIdValid(): boolean {
+    return (isNaN(this.classId) || this.classId == 0);
   }
 
   ngOnInit(): void {
     this.titleService.setTitle('List of Students');
-    this.authService.entityExporter = 'studentManagement';
-    this._classId = Number(this.activatedRoute.snapshot.params['classId']) ?? 0;
-    if (this._classId != 0 && !Number.isNaN(this._classId)) {
-      this.http.get<any>(`${this.authService.apiUrl}/student-management/${this._classId}/${this.statusId}`, this.home.httpOptions).subscribe((data: any) => {
-        this.apiData = data;
-        this.authService.listExporter = data;
-        this.initializeDataTable();
-      });
-    }
-    else {
-      this._classId = 0;
-      this.http.get<any>(`${this.authService.apiUrl}/student-management/${this.statusId}`, this.home.httpOptions).subscribe((data: any) => {
-        this.apiData = data;
-        this.initializeDataTable();
-      });
-    }
-    this.http.get<any>(`${this.authService.apiUrl}/class`, this.home.httpOptions).subscribe((data: any) => {
-      this.classes = data;
-      this.filterClass = data;
-      for (let dt of data) {
-        if (this._classId == dt.id) {
-          this.class = dt.name;
+    this.authService.entityExporter = 'student-management';
+    this.loadData();
+  }
+
+  loadData(): void {
+    forkJoin([this.classService.getClassList(), this.studentService.getStudentList(this.classId, this.statusId)])
+      .subscribe({
+        next: ([classResponse, studentResponse]) => {
+          this.classList = (classResponse as ClassResponse[]);
+          this.filterClass = (classResponse as ClassResponse[]);
+          this.studentList = studentResponse;
+          this.authService.listExporter = studentResponse;
+          this.className = this.classList.find(c => c.id == this.classId)?.name!;
+          this.initializeDataTable();
+        },
+        error: (err) => {
+          this.authService.handleError(err, undefined, '', 'load data');
         }
       }
-    });
+    );
   }
 
   initializeDataTable(): void {
     this.dataTable = $('#example').DataTable({
-      data: this.apiData,
+      data: this.studentList,
       autoWidth: false, // Bỏ width của table
       pageLength: 10, // Đặt số lượng mục hiển thị mặc định là 10
       lengthMenu: [10, 15, 20, 25], // Tùy chọn trong dropdown: 10, 15, 20, 25
@@ -130,26 +131,20 @@ export class StudentComponent implements OnInit, OnDestroy {
             return meta.row + 1; // Trả về số thứ tự, `meta.row` là chỉ số của hàng bắt đầu từ 0
           }
         },
-        { title: 'Roll Number', data: 'rollNumber' },
-        { title: 'Roll Portal', data: 'rollPortal' },
         { title: 'Full Name', data: 'userResponse.fullName' },
+        { title: 'Email', data: 'userResponse.email' },
         { title: 'Phone Number', data: 'userResponse.phoneNumber' },
+        { title: 'Roll Portal', data: 'rollPortal' },
+        { title: 'Roll Number', data: 'rollNumber' },
         {
           title: 'Action',
-          data: '_class',
+          data: null,
           render: (data: any, type: any, row: any) => {
             if (this.statusId == 1) {
-              if (data == null) {
-                return `<input type="checkbox" class="icon-action chk_box" data-id="${row.userResponse.id}">
-                <span class="mdi mdi-pencil icon-action edit-icon" title="Edit" data-id="${row.userResponse.id}"></span>
-                <span class="mdi mdi-lock-reset icon-action reset-password-icon" title="Reset Password" data-id="${row.userResponse.id}"></span>
-                <span class="mdi mdi-delete-forever icon-action delete-icon" title="Delete" data-id="${row.userResponse.id}"></span>`;
-              }
-              else {
-                return `<span class="mdi mdi-pencil icon-action edit-icon" title="Edit" data-id="${row.userResponse.id}"></span>
-                <span class="mdi mdi-lock-reset icon-action reset-password-icon" title="Reset Password" data-id="${row.userResponse.id}"></span>
-                <span class="mdi mdi-delete-forever icon-action delete-icon" title="Delete" data-id="${row.userResponse.id}"></span>`;
-              }
+              return `<input type="checkbox" class="icon-action chk_box" data-id="${row.userResponse.id}">
+              <span class="mdi mdi-pencil icon-action edit-icon" title="Edit" data-id="${row.userResponse.id}"></span>
+              <span class="mdi mdi-lock-reset icon-action reset-password-icon" title="Reset Password" data-id="${row.userResponse.id}"></span>
+              <span class="mdi mdi-delete-forever icon-action delete-icon" title="Delete" data-id="${row.userResponse.id}"></span>`;
             }
             return `<span class="mdi mdi-backup-restore icon-action backup-restore-icon" title="Backup Restore" data-id="${row.userResponse.id}"></span>`;
           },
@@ -172,44 +167,35 @@ export class StudentComponent implements OnInit, OnDestroy {
     // Thêm placeholder vào input của DataTables
     $('.dataTables_filter input[type="search"]').attr('placeholder', 'Search');
 
-    $('.edit-icon').on('click', (event: any) => {
+    $('.chk_box').on('click', (event: any) => {
       const id = $(event.currentTarget).data('id');
-      this.studentId = id;
-      console.log(this.studentId);
-      this.showPopupEdit(id);
+      this.studentClassForm.userIds.includes(id)
+      ? this.studentClassForm.userIds.splice(this.studentClassForm.userIds.indexOf(id), 1)
+      : this.studentClassForm.userIds.push(id);
+      console.log(this.studentClassForm);
+    });
+
+    $('.edit-icon').on('click', (event: any) => {
+      this.studentId = $(event.currentTarget).data('id');
+      this.openPopupUpdate(this.studentId);
     });
 
     $('.reset-password-icon').on('click', (event: any) => {
       this.studentId = $(event.currentTarget).data('id');
-      this.dialogTitle = 'Are you sure?';
-      this.dialogMessage = 'Do you want to reset the password for this Student?';
-      this.isConfirmationPopup = true;
+      this.openPopupConfirm('Are you sure?', 'Do you want to reset the password for this student?');
       this.isPopupResetPassword = true;
     });
 
     $('.delete-icon').on('click', (event: any) => {
       this.studentId = $(event.currentTarget).data('id');
-      this.dialogTitle = 'Are you sure?';
-      this.dialogMessage = 'Do you really want to delete this Student?';
-      this.isConfirmationPopup = true;
-      this.isPopupDelete = true;
+      this.openPopupConfirm('Are you sure?', 'Do you really want to delete this student?');
+      this.isPopupRemove = true;
     });
 
     $('.backup-restore-icon').on('click', (event: any) => {
       this.studentId = $(event.currentTarget).data('id');
-      this.dialogTitle = 'Are you sure?';
-      this.dialogMessage = "Do you really want to recover this Student's account?";
-      this.isConfirmationPopup = true;
-      this.isPopupBackupRestore = true;
-    });
-
-    // $('.create').on('click', () => {
-    //   this.isPopupCreate = true;
-    // });
-
-    $('.chk_box').on('click', (event: any) => {
-      const id = $(event.currentTarget).data('id');
-      this.userIds.includes(id) ? this.userIds.splice(this.userIds.indexOf(id), 1) : this.userIds.push(id);
+      this.openPopupConfirm('Are you sure?', "Do you really want to recover this student's account?");
+      this.isPopupRestore = true;
     });
   }
 
@@ -217,7 +203,7 @@ export class StudentComponent implements OnInit, OnDestroy {
     if (!$('#custom-select-status').length) {
       $('.dataTables_length').append(`
         <label for="" class="label-status">Status:</label>
-        <select id="custom-select-status" class="select-status">
+        <select class="select-status" id="custom-select-status">
           <option value=1>Active</option>
           <option value=0>Inactive</option>
         </select>
@@ -226,9 +212,12 @@ export class StudentComponent implements OnInit, OnDestroy {
       // Theo dõi sự thay đổi của dropdown
       $('#custom-select-status').on('change', () => {
         this.statusId = $('#custom-select-status').val();
-        this.reloadTable(this._classId);
+        this.dataTable.search('').draw();
+        this.reloadTable();
       });
     }
+
+    $('#custom-select-status').val(this.statusId);
 
     const dataTablesLength = this.el.nativeElement.querySelector('.dataTables_length');
     this.renderer.setStyle(dataTablesLength, 'display', 'inline-flex');
@@ -245,238 +234,276 @@ export class StudentComponent implements OnInit, OnDestroy {
     this.renderer.setStyle(selectStatus, 'cursor', 'pointer');
   }
 
-  showMovePopup(): void {
-    this.isPopupMove = true;
-  }
-
-  showCreatePopup(): void {
-    this.isPopupCreate = true;
-  }
-
-  showPopupEdit(id: number): void {
-    this.stdResponse = this.apiData.find((item: any) => item.userResponse.id === id);
-    const [day, month, year] = this.stdResponse.userResponse.dob.split('-');
-    this.dateOfBirth = `${year}-${month}-${day}`;
-    this.isPopupUpdate = true;
-  }
-
-  closePopup(): void {
-    this.isPopupUpdate = false;
-    this.isPopupCreate = false;
-    this.isPopupMove = false;
-    this.isPopupDelete = false;
-    this.isPopupBackupRestore = false;
-    this.isPopupResetPassword = false;
-  }
-  
-  stdRequest: any = {
-    userRequest: {
-      fullName: "",
-      email: "",
-      dob: "",
-      phoneNumber: "",
-      address: "",
-      gender: 1,
-      roleId: 5
-    },
-    rollNumber: "",
-    rollPortal: ""
-  }
-
-  updateDataTable(newData: any[]): void {
+  updateDataTable(newData: any): void {
     if (this.dataTable) {
       this.dataTable.clear(); // Xóa dữ liệu hiện tại
       this.dataTable.rows.add(newData); // Thêm dữ liệu mới
       this.dataTable.draw(); // Vẽ lại bảng
+      $('#custom-select-status').val(this.statusId);
     }
   }
 
-  reloadTable(id: number): void {
-    this.http.get<any>(id != 0 ? `${this.authService.apiUrl}/student-management/${id}/${this.statusId}` : `${this.authService.apiUrl}/student-management/${this.statusId}`, this.home.httpOptions).subscribe((data: any) => {
-      this.apiData = data;
-      this.updateDataTable(this.apiData); // Cập nhật bảng với dữ liệu mới
-    });
-    this.closePopup();
-  }
-
-  errorEmpty(): void {
-    this.nameError = '';
-    this.dobError = '';
-    this.addressError = '';
-    this.phoneNumberError = '';
-    this.emailError = '';
-    this.rollNumberError = '';
-    this.rollPortalError = '';
-  }
-
-  createStudent(): void {
-    this.errorEmpty();
-    if (this._classId != 0) {
-      this.stdRequest.classId = this._classId;
-    }
-    this.http.post(`${this.authService.apiUrl}/student-management`, this.stdRequest, this.home.httpOptions).subscribe(
-      response => {
-        this.toastr.success('Create Successful!', 'Success', {
-          timeOut: 2000,
-        });
-        console.log('Create successfully', response);
-        this.reloadTable(this._classId);
-      },
-      error => {
-        this.toastr.error('Error create Student', 'Error', {
-          timeOut: 2000,
-        });
-        console.log('Error', error);
-      }
-    )
-  }
-
-
-  updateStudent(): void {
-    this.errorEmpty();
-    const _studentRequest = {
-      userRequest: {
-        fullName: this.stdResponse.userResponse.fullName,
-        email: this.stdResponse.userResponse.email,
-        dob: this.dateOfBirth,
-        phoneNumber: this.stdResponse.userResponse.phoneNumber,
-        address: this.stdResponse.userResponse.address,
-        gender: this.stdResponse.userResponse.gender,
-        roleId: 5
-      },
-      rollNumber: this.stdResponse.rollNumber,
-      rollPortal: this.stdResponse.rollPortal
-    }
-    this.http.put(`${this.authService.apiUrl}/student-management/${this.studentId}`, _studentRequest, this.home.httpOptions).subscribe(
-      response => {
-        this.toastr.success('Update Successful!', 'Success', {
-          timeOut: 2000,
-        });
-        this.reloadTable(this._classId);
-      },
-      error => {
-        this.toastr.error(error.error.message, 'Error', {
-          timeOut: 2000,
-        });
-        console.log(error);
-      }
-    )
-  }
-
-  deletingStudent: any;
-
-  deleteStudent(id: number): void {
-    this.isPopupDelete = false;
-    this.http.put(`${this.authService.apiUrl}/student-management/remove/${id}`, {}, this.home.httpOptions).subscribe(
-      response => {
-        this.deletingStudent = response;
-        this.toastr.success(`Student with name ${this.deletingStudent.fullName} deleted successfully`, 'Success', {
-          timeOut: 2000,
-        });
-        this.reloadTable(this._classId);
-      },
-      error => {
-        this.toastr.error('Error deleting item!', 'Error', {
-          timeOut: 2000,
-        });
-      }
-    );
-  }
-
-  resetPasswordStudent(): void {
-    this.http.put(`${this.authService.apiUrl}/user/reset-password/${this.studentId}`, {}, this.home.httpOptions).subscribe(
-      response => {
-        this.toastr.success('Reset Successful!', 'Success', { timeOut: 2000 });
-        this.reloadTable(this._classId);
-      },
-      error => {
-        this.toastr.error('Reset Fail!', 'Error', { timeOut: 2000 });
-      }
-    );
-  }
-
-  backupRestoreStudent(): void {
-    this.http.put(`${this.authService.apiUrl}/student-management/restore/${this.studentId}`, {}, this.home.httpOptions).subscribe(
-      response => {
-        this.toastr.success('Backup Successful!', 'Success', { timeOut: 2000 });
-        this.reloadTable(this._classId);
-      },
-      error => {
-        this.toastr.error('Backup Fail!', 'Error', { timeOut: 2000 });
-      }
-    );
-  }
-
-  moveStudent(): void {
-    const _class =
-    {
-      classId: this.classId,
-      userIds: this.userIds
-    }
-
-    this.http.put(`${this.authService.apiUrl}/student-management/update-class`, _class, this.home.httpOptions).subscribe({
-      next: () => {
-        this.toastr.success('Move Successful!', 'Success', { timeOut: 2000 });
-        this.router.navigate([this.urlService.classDetailUrl(this.classId)]);
+  reloadTable(): void {
+    this.studentService.getStudentList(this.classId, this.statusId).subscribe({
+      next: (studentResponse) => {
+        this.studentList = studentResponse;
+        this.updateDataTable(this.studentList);
+        this.closePopup();
       },
       error: (err) => {
-        this.toastr.error(err, 'Error', { timeOut: 2000 });
+        this.authService.handleError(err, undefined, '', 'load data');
       }
     });
+  }
+
+  loadStudentById(id: number, callback: (student: StudentResponse) => void): void {
+    this.studentService.getStudentById(id).subscribe({
+      next: (studentResponse) => {
+        this.student = studentResponse;
+        callback(this.student); // Chạy hàm callback sau khi lấy thông tin thành công
+      },
+      error: (err) => {
+        this.authService.handleError(err, this.validationError, 'student', 'load data', this.reloadTable.bind(this));
+      }
+    });
+  }
+
+  convertDateFormat(dateObj: Date | undefined): string {
+    // Dùng DatePipe để chuyển đổi đối tượng Date sang định dạng 'yyyy-MM-dd'
+    return this.datePipe.transform(dateObj, 'dd-MM-yyyy')!;
+  }
+
+  convertToRequest(): void {
+    this.studentForm.userRequest.fullName = this.student.userResponse.fullName;
+    this.studentForm.userRequest.dob = this.student.userResponse.dob;
+    this.studentForm.userRequest.gender = this.student.userResponse.gender;
+    this.studentForm.userRequest.address = this.student.userResponse.address;
+    this.studentForm.userRequest.phoneNumber = this.student.userResponse.phoneNumber;
+    this.studentForm.userRequest.email = this.student.userResponse.email;
+    this.studentForm.userRequest.roleId = this.student.userResponse.role.id;
+    this.studentForm.rollPortal = this.student.rollPortal;
+    this.studentForm.rollNumber = this.student.rollNumber;
+  }
+
+  openPopupConfirm(title: string, message: string): void {
+    this.dialogTitle = title;
+    this.dialogMessage = message;
+    this.isConfirmationPopup = true;
+  }
+
+  openPopupMoveToClass(): void {
+    this.studentService.getStudentsMovingToClass(this.studentClassForm.userIds).subscribe({
+      next: (studentResponse) => {
+        this.getStudentsMovingToClass = studentResponse;
+        this.isPopupMoveToClass = true;
+      },
+      error: (err) => {
+        this.authService.handleError(err, undefined, '', 'load data');
+      }
+    });
+  }
+
+  openPopupCreate(): void {
+    this.isPopupCreate = true;
+  }
+  
+  openPopupUpdate(id: number): void {
+    this.loadStudentById(id, () => {
+      this.convertToRequest();
+      this.isPopupUpdate = true;
+    });
+  }
+
+  openPopupViewInactive(): void {
+    if (this.validationError['restore']?.trim()) {
+      this.openPopupConfirm('Would you like to switch to the inactive user?', this.validationError['restore']);
+      this.isPopupViewInactive = true;
+    }
+  }
+
+  popupFormTitle(): string {
+    if (this.isPopupCreate) return 'Create';
+    if (this.isPopupUpdate) return 'Update';
+    return '';
+  }
+
+  closePopup(): void {
+    if (this.isPopupViewInactive) {
+      this.isPopupViewInactive = false;
+    }
+    else {
+      this.studentId = 0;
+      this.validationError = { };
+      this.studentForm = { userRequest: { gender: 1, roleId: 5 }, classId: this.classId };
+      this.isPopupCreate = false;
+      this.isPopupDetail = false;
+      this.isPopupUpdate = false;
+      this.isPopupRemove = false;
+      this.isPopupResetPassword = false;
+      this.isPopupRestore = false;
+      this.isPopupMoveToClass = false;
+    }
   }
 
   onSearchClassChange(): void {
-    this.filterClass = this.classes.filter((c: any) =>
-      c.name.toLowerCase().includes(this.searchClass.toLowerCase())
-    );
+    this.filterClass = this.classList.filter((c: any) => c.name.toLowerCase().includes(this.searchClass.toLowerCase()));
     if (this.filterClass.some(() => true)) {
-      this.classId = this.filterClass[0].id;
-    } else {
-      this.classId = 0;
+      this.studentClassForm.classId = this.filterClass[0].id;
     }
+    else {
+      this.studentClassForm.classId = 0;
+    }
+  }
+
+  confirmAction() {
+    if (this.isPopupResetPassword) {
+      this.resetPasswordStudent();
+    }
+    else if (this.isPopupRemove) {
+      this.removeStudent();
+    }
+    else if (this.isPopupViewInactive) {
+      this.viewStudentInactive();
+    }
+    else if (this.isPopupRestore) {
+      this.restoreStudent();
+    }
+  }
+
+  submitForm(): void {
+    this.validationError = { };
+    if (this.isPopupCreate) {
+      this.createStudent();
+    }
+    else if (this.isPopupUpdate) {
+      this.updateStudent();
+    }
+  }
+
+  createStudent(): void {
+    this.studentService.createStudent(this.studentForm).subscribe({
+      next: (studentResponse) => {
+        this.toastr.success(`Student: ${studentResponse.userResponse.fullName} created successfully!`, 'Success', { timeOut: 3000 });
+        this.reloadTable();
+      },
+      error: (err) => {
+        this.authService.handleError(err, this.validationError, 'student', 'create student', this.reloadTable.bind(this));
+        this.openPopupViewInactive();
+      }
+    });
+  }
+
+  updateStudent(): void {
+    this.studentService.updateStudent(this.studentId, this.studentForm).subscribe({
+      next: (studentResponse) => {
+        this.toastr.success(`Student: ${studentResponse.userResponse.fullName} updated successfully!`, 'Success', { timeOut: 3000 });
+        this.reloadTable();
+      },
+      error: (err) => {
+        this.authService.handleError(err, this.validationError, 'student', 'update student', this.reloadTable.bind(this));
+        this.openPopupViewInactive();
+      }
+    });
+  }
+
+  updateStudentClass(): void {
+    this.studentService.updateStudentClass(this.studentClassForm).subscribe({
+      next: (studentResponse) => {
+        this.toastr.success(`Student: Update student class successfully!`, 'Success', { timeOut: 3000 });
+        let url = this.studentClassForm.classId == 0
+        ? this.urlService.studentListUrl()
+        : this.urlService.classDetailUrl(this.studentClassForm.classId);
+        this.router.navigate([url]);
+      },
+      error: (err) => {
+        this.authService.handleError(err, this.validationError, 'student', 'update student', this.reloadTable.bind(this));
+        this.openPopupViewInactive();
+      }
+    });
+  }
+
+  resetPasswordStudent(): void {
+    this.studentService.resetPasswordStudent(this.studentId).subscribe({
+      next: (studentResponse) => {
+        this.toastr.success(`Password for Student: ${studentResponse.userResponse.fullName} has been reset successfully!`, 'Success', { timeOut: 3000 });
+        this.reloadTable();
+      },
+      error: (err) => {
+        this.authService.handleError(err, this.validationError, 'student', 'reset password student', this.reloadTable.bind(this));
+      }
+    });
+  }
+
+  removeStudent(): void {
+    this.studentService.removeStudent(this.studentId).subscribe({
+      next: (studentResponse) => {
+        this.toastr.success(`Student: ${studentResponse.userResponse.fullName} has been removed successfully!`, 'Success', { timeOut: 3000 });
+        this.reloadTable();
+      },
+      error: (err) => {
+        this.authService.handleError(err, this.validationError, 'student', 'remove student', this.reloadTable.bind(this));
+      }
+    });
+  }
+
+  viewStudentInactive(): void {
+    this.statusId = 0;
+    this.reloadTable();
+    this.isPopupCreate = false;
+    this.isPopupUpdate = false;
+    if (this.validationError['restore']) {
+      if (this.validationError['restore'].includes('Email')) {
+        this.dataTable.search(this.studentForm.userRequest?.email).draw();
+      }
+      else {
+        this.dataTable.search(this.studentForm.userRequest?.phoneNumber).draw();
+      }
+    }
+  }
+
+  restoreStudent(): void {
+    this.studentService.restoreStudent(this.studentId).subscribe({
+      next: (studentResponse) => {
+        this.toastr.success(`Studen: ${studentResponse.userResponse.fullName} has been restored successfully!`, 'Success', { timeOut: 3000 });
+        this.reloadTable();
+      },
+      error: (err) => {
+        this.authService.handleError(err, this.validationError, 'student', 'restore student', this.reloadTable.bind(this));
+      }
+    });
+  }
+
+  exportExcel() {
+    this.authService.listExporter = this.studentList;
+    this.exportData(this.authService.exportDataExcel(), 'student_excel.xlsx');
+  }
+
+  exportPDF() {
+    this.authService.listExporter = this.studentList;
+    this.exportData(this.authService.exportDataPDF(), 'student_pdf.pdf');
+  }
+
+  exportData(exportFunction: any, fileName: string): void {
+    exportFunction.subscribe({
+      next: (response: any) => {
+        const url = window.URL.createObjectURL(new Blob([response], { type: 'application/octet-stream' }));
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = fileName;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+      },
+      error: (err: any) => {
+        this.authService.handleError(err, undefined, '', 'export');
+      }
+    });
   }
 
   ngOnDestroy(): void {
     if (this.dataTable) {
       this.dataTable.destroy();
     }
-  }
-
-  exportExcel() {
-    this.authService.listExporter = this.apiData;
-    this.authService.exportDataExcel().subscribe(
-      (response) => {
-        const url = window.URL.createObjectURL(new Blob([response], { type: 'blob' as 'json' }));
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = 'student_excel.xlsx'; // Thay đổi tên file nếu cần
-        document.body.appendChild(a);
-        a.click();
-        window.URL.revokeObjectURL(url);
-        document.body.removeChild(a);
-      },
-      (error) => {
-        console.error('Export failed', error);
-      }
-    );
-  }
-
-  exportPDF() {
-    this.authService.listExporter = this.apiData;
-    this.authService.exportDataPDF().subscribe(
-      (response) => {
-        const url = window.URL.createObjectURL(new Blob([response], { type: 'blob' }));
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = 'student_pdf.pdf'; // Thay đổi tên file nếu cần
-        document.body.appendChild(a);
-        a.click();
-        window.URL.revokeObjectURL(url);
-        document.body.removeChild(a);
-      },
-      (error) => {
-        console.error('Export failed', error);
-      }
-    );
   }
 }

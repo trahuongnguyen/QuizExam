@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
+import { AuthService } from '../../../../shared/service/auth.service';
 import { Title } from '@angular/platform-browser';
 import { AdminComponent } from '../../../admin.component';
 import { Role, Permission } from '../../../../shared/models/role.model';
 import { RoleService } from '../../../service/role/role.service';
 import { UrlService } from '../../../../shared/service/url.service';
-import { ActivatedRoute } from '@angular/router';
+import { Router } from '@angular/router';
 import { forkJoin } from 'rxjs';
 declare var $: any;
 
@@ -19,15 +20,15 @@ declare var $: any;
 export class DetailComponent implements OnInit {
   dataTable: any;
   role: Role;
-  roleId: number = 0;
   permissionList: Permission[] = [];
 
   constructor(
+    private authService: AuthService,
     private titleService: Title,
     public admin : AdminComponent,
     private roleService: RoleService,
     public urlService: UrlService,
-    private activatedRoute: ActivatedRoute
+    private router: Router
   ) {
     this.role = {
       id: 0,
@@ -38,17 +39,26 @@ export class DetailComponent implements OnInit {
 
   ngOnInit(): void {
     this.titleService.setTitle('Authorize Details');
-    this.roleId = Number(this.activatedRoute.snapshot.params['roleId']) ?? 0;
+    if (this.roleService.getId() == 0) {
+      this.router.navigate([this.urlService.authorizeListUrl()]);
+      return;
+    }
     this.loadData();
   }
 
   loadData(): void {
-    forkJoin([this.roleService.getRoleById(this.roleId), this.roleService.getPermissionList(this.roleId)])
-      .subscribe(([roleResponse, permissionResponse]) => {
-        this.role = roleResponse;
-        this.permissionList = permissionResponse;
-        this.initializeDataTable();
-    });
+    forkJoin([this.roleService.getRoleById(this.roleService.getId()), this.roleService.getPermissionList(this.roleService.getId())])
+      .subscribe({
+        next: ([roleResponse, permissionResponse]) => {
+          this.role = roleResponse;
+          this.permissionList = permissionResponse;
+          this.initializeDataTable();
+        },
+        error: (err) => {
+          this.authService.handleError(err, undefined, '', 'load data');
+        }
+      }
+    );
   }
 
   initializeDataTable(): void {
