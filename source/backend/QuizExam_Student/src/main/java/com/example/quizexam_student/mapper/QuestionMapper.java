@@ -8,7 +8,7 @@ public class QuestionMapper {
     public static Question convertFromRequest(QuestionRequest questionRequest) {
         Question question = new Question();
         question.setContent(questionRequest.getContent());
-        question.setImage(questionRequest.getImage());
+        question.setImage(questionRequest.getImage().isEmpty() ? null : questionRequest.getImage());
         return question;
     }
 

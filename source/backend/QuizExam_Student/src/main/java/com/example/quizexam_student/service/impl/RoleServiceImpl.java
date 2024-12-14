@@ -1,9 +1,7 @@
 package com.example.quizexam_student.service.impl;
 
-import com.example.quizexam_student.entity.Permission;
 import com.example.quizexam_student.entity.Role;
 import com.example.quizexam_student.exception.NotFoundException;
-import com.example.quizexam_student.repository.PermissionRepository;
 import com.example.quizexam_student.repository.RoleRepository;
 import com.example.quizexam_student.service.RoleService;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +13,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class RoleServiceImpl implements RoleService {
     private final RoleRepository roleRepository;
-    private final PermissionRepository permissionRepository;
 
     @Override
     public Role findById(int id) {
@@ -46,7 +43,7 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
-    public List<Role> findAllByPermissionToEmployee(int id) {
+    public List<Role> findAllToEmployee(int id) {
         Role role = findById(id);
         List<Role> roles = roleRepository.findAll();
         roles.removeIf(x->x.getName().equals("ADMIN"));

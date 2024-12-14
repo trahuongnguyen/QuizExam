@@ -30,4 +30,6 @@ public interface UserService {
     User resetPassword(int id);
 
     User restoreUser(int id);
+
+    Long countAllEmployees();
 }

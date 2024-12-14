@@ -30,29 +30,25 @@ public class StudentAnswerServiceImpl implements StudentAnswerService {
     @Override
     public StudentAnswerRequest saveStudentAnswers(StudentAnswerRequest studentAnswerRequest) {
         Mark mark = markRepository.findById(studentAnswerRequest.getMarkId()).orElse(null);
-
         if (!Objects.isNull(mark)) {
             if (mark.getScore() != null) {
                 throw new AlreadyExistException("mark", "This test has already been scored.");
             }
 
             double totalScore = 0;
-
             for (StudentQuestionAnswer studentQuestionAnswer : studentAnswerRequest.getStudentQuestionAnswers()) {
                 QuestionRecord questionRecord = questionRecordRepository.findById(studentQuestionAnswer.getQuestionRecordId()).orElse(null);
-
                 if (!Objects.isNull(questionRecord)) {
                     // Lấy tất cả các đáp án đúng cho câu hỏi này
                     Set<Integer> correctAnswerIds = new HashSet<>();
                     for (AnswerRecord answerRecord : questionRecord.getAnswerRecords()) {
-                        if (answerRecord.getIsCorrect() == 1) {
+                        if (answerRecord.getIsCorrect()) {
                             correctAnswerIds.add(answerRecord.getId());
                         }
                     }
 
                     // Tạo Set để lưu các đáp án được sinh viên chọn
                     Set<Integer> selectedAnswerIds = new HashSet<>(studentQuestionAnswer.getSelectedAnswerIds());
-
                     // Kiểm tra nếu sinh viên chọn đúng tất cả các đáp án
                     if (selectedAnswerIds.equals(correctAnswerIds)) {
                         totalScore += questionRecord.getPoint(); // Cộng điểm
@@ -61,7 +57,6 @@ public class StudentAnswerServiceImpl implements StudentAnswerService {
                     // Lưu từng câu trả lời của sinh viên
                     for (Integer selectedAnswerId : studentQuestionAnswer.getSelectedAnswerIds()) {
                         AnswerRecord answerRecord = answerRecordRepository.findById(selectedAnswerId).orElse(null);
-
                         StudentAnswer studentAnswer = new StudentAnswer();
                         studentAnswer.setMark(mark);
                         studentAnswer.setQuestionRecord(questionRecord);
@@ -80,9 +75,9 @@ public class StudentAnswerServiceImpl implements StudentAnswerService {
         return studentAnswerRequest;
     }
 
+    @Override
     public Map<String, Double> scoreByLevel(StudentDetail studentDetail, Integer examinationId) {
-        Mark mark = markRepository.findByStudentDetailAndExaminationId(studentDetail, examinationId);
-
+        Mark mark = markRepository.findByStudentDetailAndExamination_IdOrderByIdDesc(studentDetail, examinationId);
         if (Objects.isNull(mark)) {
             throw new NotFoundException("mark", "Mark not found");
         }
@@ -90,7 +85,6 @@ public class StudentAnswerServiceImpl implements StudentAnswerService {
         // Lấy danh sách câu hỏi và câu trả lời liên quan đến bài thi
         List<QuestionRecord> questionRecords = questionRecordRepository.findQuestionRecordsByExaminationId(mark.getExamination().getId());
         List<StudentAnswer> studentAnswers = studentAnswerRepository.findByMarkId(mark.getId());
-
         List<Level> levels = levelRepository.findAllByStatus(1);
         Map<String, Double> scoreByLevel = new HashMap<>();
 
@@ -99,8 +93,6 @@ public class StudentAnswerServiceImpl implements StudentAnswerService {
             scoreByLevel.put(level.getName(), 0.0); // Gán điểm khởi tạo là 0
         }
 
-        int totalScore = 0;
-
         // Duyệt qua từng câu hỏi
         for (QuestionRecord questionRecord : questionRecords) {
             // Lấy các đáp án cho câu hỏi
@@ -108,7 +100,7 @@ public class StudentAnswerServiceImpl implements StudentAnswerService {
 
             // Lưu các ID đáp án đúng
             Set<Integer> correctAnswerIds = answerRecords.stream()
-                    .filter(answerRecord -> answerRecord.getIsCorrect() == 1)
+                    .filter(AnswerRecord::getIsCorrect)
                     .map(AnswerRecord::getId)
                     .collect(Collectors.toSet());
 
@@ -124,7 +116,6 @@ public class StudentAnswerServiceImpl implements StudentAnswerService {
                 scoreByLevel.put(level, scoreByLevel.getOrDefault(level, 0.0) + questionRecord.getPoint()); // Cộng điểm cho level tương ứng
             }
         }
-
         return scoreByLevel;
     }
 }

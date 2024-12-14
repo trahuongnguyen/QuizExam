@@ -6,5 +6,5 @@ import { Component } from '@angular/core';
   styleUrl: './detail.component.css'
 })
 export class DetailComponent {
-
+  constructor() { }
 }

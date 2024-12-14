@@ -139,4 +139,9 @@ public class UserServiceImpl implements UserService {
         user.setStatus(1);
         return userRepository.save(user);
     }
+
+    @Override
+    public Long countAllEmployees() {
+        return userRepository.countByRole_IdNotAndStatus(5, 1);
+    }
 }

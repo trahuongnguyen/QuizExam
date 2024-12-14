@@ -1,27 +1,20 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { AuthService } from '../../../service/auth.service';
+import { Component, OnInit } from '@angular/core';
+import { AuthService } from '../../../../shared/service/auth.service';
 import { Title } from '@angular/platform-browser';
 import { AdminComponent } from '../../../admin.component';
-import { HomeComponent } from '../../home.component';
-import { HttpClient } from '@angular/common/http';
-import { ToastrService } from 'ngx-toastr';
+import { Sem, SubjectResponse } from '../../../../shared/models/subject.model';
+import { ChapterResponse } from '../../../../shared/models/chapter.model';
+import { LevelResponse } from '../../../../shared/models/level.model';
+import { QuestionRequest, AnswerRequest } from '../../../../shared/models/question.model';
+import { ValidationError } from '../../../../shared/models/models';
+import { SubjectService } from '../../../../shared/service/subject/subject.service';
+import { ChapterService } from '../../../../shared/service/chapter/chapter.service';
+import { LevelService } from '../../../../shared/service/level/level.service';
+import { QuestionService } from '../../../../shared/service/question/question.service';
 import { UrlService } from '../../../../shared/service/url.service';
 import { Router, ActivatedRoute } from '@angular/router';
-import { forkJoin, Observable } from 'rxjs';
-declare var $: any;
-
-interface Answer {
-  content: string;
-  isCorrect: number;
-}
-
-interface QuestionForm {
-  content: string;
-  chapters: number[];
-  levelId: number;
-  imageFile?: File | null;
-  answers: Answer[];
-}
+import { ToastrService } from 'ngx-toastr';
+import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-question-form',
@@ -33,19 +26,30 @@ interface QuestionForm {
   ]
 })
 export class QuestionFormComponent implements OnInit {
-  questionForms: QuestionForm[] = [];
-  subjects: any;
-  subjectId: number = 0;
-  subjectName: string = '';
-  listChapter: any = [];
-  listLevel: any = [];
+  subjectId: number;
+  
+  sem: Sem;
+  subject: SubjectResponse;
+  chapterList: ChapterResponse[] = [];
+  levelList: LevelResponse[] = [];
+
+  answerForms: AnswerRequest[] = [];
+  questionForms: QuestionRequest[] = [];
+  validationError: ValidationError = { };
   
   isPopupChapter: boolean[] = [];
   popupChapterIndex: number = 0;
 
   searchChapter: string = '';
-  filterChapters: any = [];
+  filterChapters: ChapterResponse[] = [];
   tempSelectedChapters: number[] = [];
+
+  isPopupDeleteQuestion: boolean = false;
+  isPopupDeleteAnswer: boolean = false;
+  isPopupCancel: boolean = false;
+
+  questionIndex: number | null = null;
+  answerIndex: number | null = null;
 
   dialogTitle: string = '';
   dialogMessage: string = '';
@@ -55,64 +59,103 @@ export class QuestionFormComponent implements OnInit {
     private authService: AuthService,
     private titleService: Title,
     public admin: AdminComponent,
-    private home: HomeComponent,
-    private http: HttpClient,
-    private toastr: ToastrService,
+    private subjectService: SubjectService,
+    private chapterService: ChapterService,
+    private levelService: LevelService,
+    private questionService: QuestionService,
     public urlService: UrlService,
     private router: Router,
-    private activatedRoute: ActivatedRoute
-  ) { }
+    private activatedRoute: ActivatedRoute,
+    private toastr: ToastrService
+  ) {
+    this.subjectId = Number(this.activatedRoute.snapshot.params['subjectId']) || 0;
+    this.sem = { id: 0, name: '' };
+    this.subject = { id: 0, name: '', image: '', status: 0, sem: this.sem };
+  }
 
   ngOnInit(): void {
     this.titleService.setTitle('Add new Question');
-    this.subjectId = Number(this.activatedRoute.snapshot.params['subjectId']) || 0;
     this.loadData();
-    this.initializeQuestion();
   }
 
-  loadData() {
-    const subjectRequest = this.http.get<any>(`${this.authService.apiUrl}/subject/${this.subjectId}`, this.home.httpOptions);
-    const chapterRequest = this.http.get<any>(`${this.authService.apiUrl}/chapter/${this.subjectId}`, this.home.httpOptions);
-    const levelRequest = this.http.get<any>(`${this.authService.apiUrl}/level`, this.home.httpOptions);
-
-    forkJoin([subjectRequest, chapterRequest, levelRequest]).subscribe(([subjectData, chapterData, levelData]) => {
-      // Giải mã dữ liệu từ các request
-      this.subjects = subjectData; // Lưu dữ liệu subjects
-      this.subjectName = this.subjects.name;
-      this.listChapter = chapterData; // Lưu dữ liệu chapters
-      this.listLevel = levelData; // Lưu dữ liệu levels
+  loadData(): void {
+    this.subjectService.getSubjectById(this.subjectId).subscribe({
+      next: (subjectResponse) => {
+        this.subject = subjectResponse;
+        
+        forkJoin([this.chapterService.getChapterList(this.subjectId), this.levelService.getLevelList()])
+        .subscribe({
+          next: ([chapterResponse, levelResponse]) => {
+            if (!Array.isArray(levelResponse) || levelResponse.length <= 0) {
+              this.toastr.warning('Level not found', 'Warning');
+              this.router.navigate([this.urlService.questionListUrl(this.subjectId)]);
+              return;
+            }
+            this.chapterList = chapterResponse; // Lưu dữ liệu chapters
+            this.levelList = levelResponse; // Lưu dữ liệu levels
+            this.initializeQuestion();
+          },
+          error: (err) => {
+            this.authService.handleError(err, undefined, '', 'load data');
+          }
+        });
+      },
+      error: (err) => {
+        this.router.navigate([this.urlService.subjectListUrl()]);
+      }
     });
   }
 
-  initializeQuestion() {
+  initializeQuestion(): void {
+    this.answerForms = [
+      { content: '', isCorrect: false },
+      { content: '', isCorrect: false },
+      { content: '', isCorrect: false },
+      { content: '', isCorrect: false }
+    ];
     this.questionForms = [{
-      content: '',
+      subjectId: this.subjectId,
       chapters: [],
-      levelId: this.listLevel[0]?.id || 1,
-      answers: [{ content: '', isCorrect: 0 }, { content: '', isCorrect: 0 }, { content: '', isCorrect: 0 }, { content: '', isCorrect: 0 }]
+      levelId: this.levelList[0]?.id,
+      content: '',
+      answers: this.answerForms,
+      image: ''
     }];
     this.isPopupChapter = Array(this.questionForms.length).fill(false);
   }
 
-  getSelectedChaptersNames(question: QuestionForm): string {
-    const selectedChapters = this.listChapter.filter((ch: any) => question.chapters.includes(ch.id));
-    return selectedChapters.map((ch: any) => `[${ch.name}]`).join(' ') || 'Choose Chapter';
+  getSelectedChaptersNames(question: QuestionRequest): string {
+    const selectedChapters = this.chapterList.filter(chapter => question.chapters.includes(chapter.id));
+    return selectedChapters.map(chapter => `[${chapter.name}]`).join(' ') || 'Choose Chapter';
   }
 
-  openPopup(questionIndex: number) {
+  openPopupConfirm(title: string, message: string): void {
+    this.dialogTitle = title;
+    this.dialogMessage = message;
+    this.isConfirmationPopup = true;
+  }
+
+  openPopupNotice(title: string, message: string): void {
+    this.dialogTitle = title;
+    this.dialogMessage = message;
+    this.isConfirmationPopup = false;
+  }
+
+  openPopupChapter(questionIndex: number): void {
     this.popupChapterIndex = questionIndex;
     this.isPopupChapter[questionIndex] = true;
-    this.tempSelectedChapters = this.questionForms[questionIndex].chapters.slice();
+    if (this.questionForms[questionIndex].chapters) {
+      this.tempSelectedChapters = this.questionForms[questionIndex].chapters.slice();
+    }
     this.searchChapter = '';
     this.onSearchChange();
   }
 
-  onSearchChange() {
-    this.filterChapters = this.listChapter
-      .filter((chapter: any) => chapter.name.toLowerCase().includes(this.searchChapter.toLowerCase()));
+  onSearchChange(): void {
+    this.filterChapters = this.chapterList.filter(chapter => chapter.name.toLowerCase().includes(this.searchChapter.toLowerCase()));
   }
 
-  toggleChapterSelection(chapterId: number, event: Event) {
+  toggleChapterSelection(chapterId: number, event: Event): void {
     const checkbox = (event.target as HTMLInputElement);
 
     if (checkbox.checked) {
@@ -128,7 +171,7 @@ export class QuestionFormComponent implements OnInit {
     }
   }
 
-  confirmChapterSelection() {
+  confirmChapterSelection(): void {
     // Cập nhật chapters cho câu hỏi
     this.questionForms[this.popupChapterIndex].chapters = this.tempSelectedChapters;
     
@@ -136,93 +179,106 @@ export class QuestionFormComponent implements OnInit {
     this.closePopupChapter();
   }
 
-  closePopupChapter() {
+  closePopupChapter(): void {
     this.isPopupChapter[this.popupChapterIndex] = false;
     this.popupChapterIndex = 0;
     this.tempSelectedChapters = [];
   }
 
-  addQuestionForm() {
+  addQuestionForm(): void {
+    this.answerForms = [
+      { content: '', isCorrect: false },
+      { content: '', isCorrect: false },
+      { content: '', isCorrect: false },
+      { content: '', isCorrect: false }
+    ];
     this.questionForms.push({
-      content: '',
+      subjectId: this.subjectId,
       chapters: [],
-      levelId: this.listLevel[0]?.id || 1,
-      answers: [{ content: '', isCorrect: 0 }, { content: '', isCorrect: 0 }, { content: '', isCorrect: 0 }, { content: '', isCorrect: 0 }]
+      levelId: this.levelList[0].id,
+      content: '',
+      answers: this.answerForms,
+      image: ''
     });
     this.isPopupChapter.push(false);
     setTimeout(() => document.getElementById(`question-form-${this.questionForms.length - 1}`)?.scrollIntoView({ behavior: 'smooth' }), 0);
   }
 
-  isPopupDeleteQuestion: boolean = false;
-  questionIndexToDelete: number | null = null;
-
-  showPopupDeleteQuestion(index: number) {
+  openPopupDeleteQuestion(index: number): void {
     if (this.questionForms.length > 1) {
-      this.questionIndexToDelete = index;
-      this.dialogTitle = 'Are you sure?';
-      this.dialogMessage = `Do you really want to delete this <b>Question ${index + 1}</b>? This action cannot be undone.`;
-      this.isConfirmationPopup = true;
+      this.questionIndex = index;
+      this.openPopupConfirm('Are you sure?', `Do you really want to delete this <b>Question ${index + 1}</b>? This action cannot be undone.`);
     }
     else {
-      this.dialogTitle = 'Notice';
-      this.dialogMessage = 'At least one question must remain.';
-      this.isConfirmationPopup = false;
+      this.openPopupNotice('Notice', 'At least one question must remain.');
     }
     this.isPopupDeleteQuestion = true;
   }
 
-  confirmDeleteQuestion() {
-    if (this.questionIndexToDelete !== null) {
-      this.questionForms.splice(this.questionIndexToDelete, 1);
+  confirmDeleteQuestion(): void {
+    if (this.questionIndex !== null) {
+      this.questionForms.splice(this.questionIndex, 1);
       this.closePopupDialog();
       this.toastr.success('The question has been deleted.', '', { timeOut: 2000 });
     }
   }
 
-  addAnswer(index: number) {
-    this.questionForms[index].answers.push({ content: '', isCorrect: 0 });
+  addAnswer(index: number): void {
+    this.questionForms[index].answers.push({ content: '', isCorrect: false });
   }
 
-  toggleIsCorrect(answer: Answer) {
-    answer.isCorrect = answer.isCorrect === 1 ? 0 : 1;
-  }
-
-  isPopupDeleteAnswer: boolean = false;
-  questionIndexToDeleteAnswer: number | null = null; // Lưu chỉ mục câu hỏi
-  answerIndexToDelete: number | null = null; // Lưu chỉ mục câu trả lời
-
-  showPopupDeleteAnswer(questionIndex: number, answerIndex: number) {
-    const question = this.questionForms[questionIndex];
-
+  openPopupDeleteAnswer(qIndex: number, aIndex: number): void {
     // Kiểm tra nếu câu hỏi có nhiều hơn 4 câu trả lời
-    if (question.answers.length > 4) {
-      this.questionIndexToDeleteAnswer = questionIndex;
-      this.answerIndexToDelete = answerIndex;
-      this.dialogTitle = 'Are you sure?'
-      this.dialogMessage = 'Do you really want to delete this answer? This action cannot be undone.';
-      this.isConfirmationPopup = true;
+    if (this.questionForms[qIndex].answers.length > 4) {
+      this.questionIndex = qIndex;
+      this.answerIndex = aIndex;
+      this.openPopupConfirm('Are you sure?', 'Do you really want to delete this answer? This action cannot be undone.');
     }
     else {
-      this.dialogTitle = 'Notice'
-      this.dialogMessage = 'You cannot delete any answer because at least 4 answers are required for each question.';
-      this.isConfirmationPopup = false;
+      this.openPopupNotice('Notice', 'You cannot delete any answer because at least 4 answers are required for each question.');
     }
     this.isPopupDeleteAnswer = true;
   }
 
-  confirmDeleteAnswer() {
-    if (this.questionIndexToDeleteAnswer !== null && this.answerIndexToDelete !== null) {
-      this.questionForms[this.questionIndexToDeleteAnswer].answers.splice(this.answerIndexToDelete, 1);
+  confirmDeleteAnswer(): void {
+    if (this.questionIndex !== null && this.answerIndex !== null) {
+      this.questionForms[this.questionIndex].answers.splice(this.answerIndex, 1);
       this.closePopupDialog();
       this.toastr.success('The answer has been deleted.', '', { timeOut: 2000 });
     }
   }
 
-  removeAnswer(questionIndex: number, answerIndex: number) {
-    this.questionForms[questionIndex].answers.splice(answerIndex, 1);
+  openPopupConfirmCancel(): void {
+    this.openPopupConfirm('Are you sure?', 'Do you really want to cancel? Any unsaved changes will be lost.');
+    this.isPopupCancel = true;
   }
 
-  chooseImage(event: Event, questionIndex: number) {
+  confirmCancel(): void {
+    this.closePopupDialog();
+    this.router.navigate([this.urlService.questionListUrl(this.subjectId)]);
+  }
+
+  confirmAction(): void {
+    if (this.isPopupDeleteQuestion) {
+      this.confirmDeleteQuestion();
+    }
+    if (this.isPopupDeleteAnswer) {
+      this.confirmDeleteAnswer();
+    }
+    if (this.isPopupCancel) {
+      this.confirmCancel();
+    }
+  }
+
+  closePopupDialog(): void {
+    this.questionIndex = null;
+    this.answerIndex = null;
+    this.isPopupDeleteQuestion = false;
+    this.isPopupDeleteAnswer = false;
+    this.isPopupCancel = false;
+  }
+
+  chooseImage(event: Event, questionIndex: number): void {
     const file = (event.target as HTMLInputElement).files?.[0];
     const imgQuestion = document.getElementById(`image-question${questionIndex}`) as HTMLImageElement;
     if (file) {
@@ -232,16 +288,18 @@ export class QuestionFormComponent implements OnInit {
         imgQuestion.style.display = 'block';
       };
       reader.readAsDataURL(file);
-      this.questionForms[questionIndex].imageFile = file;
+      this.questionForms[questionIndex].file = file;
+      this.questionForms[questionIndex].image = file.name;
     }
   }
 
-  removeImage(questionIndex: number) {
+  removeImage(questionIndex: number): void {
     const imgQuestion = document.getElementById(`image-question${questionIndex}`) as HTMLImageElement;
     const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement;
 
     // Xóa ảnh
-    this.questionForms[questionIndex].imageFile = null;
+    this.questionForms[questionIndex].file = null;
+    this.questionForms[questionIndex].image = '';
     imgQuestion.src = '';
     imgQuestion.style.display = 'none';
     
@@ -251,17 +309,11 @@ export class QuestionFormComponent implements OnInit {
     }
   }
 
-  contentError: string[] = [];
-  answersError: string[][] = [[]];
-
-  validateAnswers(answers: Answer[]): boolean {
-    return answers.some(a => a.isCorrect === 1) && answers.some(a => a.isCorrect === 0);
+  validateAnswers(answers: AnswerRequest[]): boolean {
+    return answers.some(a => a.isCorrect) && answers.some(a => !a.isCorrect);
   }
 
-  saveQuestions() {
-    this.contentError = [];
-    this.answersError = this.questionForms.map(() => []);
-    let formData = new FormData();
+  validateQuestions(): boolean {
     let errors = false;
     let errorMessage = '';
     let questionNumber = -1;
@@ -269,14 +321,14 @@ export class QuestionFormComponent implements OnInit {
     for (var i = 0; i < this.questionForms.length; i++) {
       // Kiểm tra nếu câu hỏi chưa có nội dung
       if (!this.questionForms[i].content.trim()) {
-        this.contentError[i] = 'Content Question is required';
+        this.validationError[`question[${i}].content`] = 'Content Question is required';
         errors = true;
       }
   
       // Kiểm tra nếu câu trả lời không có nội dung
       this.questionForms[i].answers.forEach((answer, j) => {
         if (!answer.content.trim()) {
-          this.answersError[i][j] = 'Content Answer is required';
+          this.validationError[`question[${i}].answer[${j}].content`] = 'Content Answer is required';
           errors = true;
         }
       });
@@ -324,60 +376,23 @@ export class QuestionFormComponent implements OnInit {
           questionError.scrollIntoView({ behavior: 'smooth' });
         }
       }, 0);
-  
-      return; // Dừng quá trình lưu khi có lỗi
     }
-  
-    // Nếu không có lỗi, tiếp tục với việc lưu câu hỏi
-    const questionsList = this.questionForms.map(question => ({
-      content: question.content,
-      subjectId: this.subjectId,
-      chapters: question.chapters,
-      levelId: question.levelId,
-      answers: question.answers
-    }));
-    formData.append('questions', new Blob([JSON.stringify(questionsList)], { type: 'application/json' }));
-    this.questionForms.forEach((question) => {
-      formData.append('files', question.imageFile || new Blob([]));
-    });
-  
-    this.http.post(`${this.authService.apiUrl}/question`, formData, this.home.httpOptions).subscribe(
-      () => {
-        this.toastr.success('Questions saved successfully!');
+    return errors;
+  }
+
+  saveQuestions(): void {
+    this.validationError = { }
+    if (this.validateQuestions()) {
+      return; // Dừng lại nếu có lỗi
+    }
+    this.questionService.createQuestion(this.questionForms).subscribe({
+      next: (questionResponse) => {
+        this.toastr.success(`Question has been saved successfully!`, 'Success', { timeOut: 3000 });
         this.router.navigate([this.urlService.questionListUrl(this.subjectId)]);
       },
-      err => {
-        this.toastr.error(err.error.message, 'Error');
+      error: (err) => {
+        this.authService.handleError(err, this.validationError, 'question', 'create question');
       }
-    );
-  }
-
-  isPopupConfirmCancel: boolean = false;
-
-  showPopupConfirmCancel() {
-    this.dialogTitle = 'Are you sure?';
-    this.dialogMessage = 'Do you really want to cancel? Any unsaved changes will be lost.';
-    this.isConfirmationPopup = true;
-    this.isPopupConfirmCancel = true;
-  }
-
-  confirmCancel() {
-    this.closePopupDialog();
-    this.router.navigate([this.urlService.questionListUrl(this.subjectId)]);
-  }
-
-  closePopupDialog() {
-    this.dialogTitle = '';
-    this.dialogMessage = '';
-    this.isConfirmationPopup = false;
-
-    this.questionIndexToDelete = null;
-    this.isPopupDeleteQuestion = false;
-
-    this.questionIndexToDeleteAnswer = null;
-    this.answerIndexToDelete = null;
-    this.isPopupDeleteAnswer = false;
-
-    this.isPopupConfirmCancel = false;
+    });
   }
 }

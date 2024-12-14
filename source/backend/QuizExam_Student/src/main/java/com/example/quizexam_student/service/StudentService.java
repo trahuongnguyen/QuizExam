@@ -8,8 +8,6 @@ import java.util.List;
 
 @Service
 public interface StudentService {
-    List<StudentDetail> findAllStudents();
-
     List<StudentDetail> findAllStudentsNoneClass(Integer status);
 
     List<StudentDetail> findAllStudentsByClass(Integer status, Integer classId);
@@ -31,4 +29,8 @@ public interface StudentService {
     StudentDetail deleteStudent(Integer id);
 
     StudentDetail restoreStudent(Integer id);
+
+    List<StudentDetail> findAllStudentsForExam(Integer status, Integer classId, Integer examId);
+
+    Long countAllStudents();
 }

@@ -1,28 +1,20 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { AuthService } from '../../../service/auth.service';
+import { Component, OnInit } from '@angular/core';
+import { AuthService } from '../../../../shared/service/auth.service';
 import { Title } from '@angular/platform-browser';
 import { AdminComponent } from '../../../admin.component';
-import { HomeComponent } from '../../home.component';
-import { HttpClient } from '@angular/common/http';
-import { ToastrService } from 'ngx-toastr';
+import { Sem, SubjectResponse } from '../../../../shared/models/subject.model';
+import { ChapterResponse } from '../../../../shared/models/chapter.model';
+import { LevelResponse } from '../../../../shared/models/level.model';
+import { QuestionResponse, QuestionRequest, AnswerRequest } from '../../../../shared/models/question.model';
+import { ValidationError } from '../../../../shared/models/models';
+import { SubjectService } from '../../../../shared/service/subject/subject.service';
+import { ChapterService } from '../../../../shared/service/chapter/chapter.service';
+import { LevelService } from '../../../../shared/service/level/level.service';
+import { QuestionService } from '../../../../shared/service/question/question.service';
 import { UrlService } from '../../../../shared/service/url.service';
 import { Router, ActivatedRoute } from '@angular/router';
-import { forkJoin, Observable } from 'rxjs';
-import { Chapter, Level, Question, Subject } from '../../../../shared/models/models';
-declare var $: any;
-
-interface Answer {
-  content: string;
-  isCorrect: number;
-}
-
-interface QuestionForm {
-  content: string;
-  chapters: number[];
-  levelId: number;
-  imageFile?: File | null;
-  answers: Answer[];
-}
+import { ToastrService } from 'ngx-toastr';
+import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-question-update',
@@ -35,28 +27,30 @@ interface QuestionForm {
 })
 
 export class QuestionUpdateComponent implements OnInit {
-  question: any;
-  questionId: number = 0;
-  questionForm: QuestionForm = {
-    content: '',
-    chapters: [],
-    levelId: 0,
-    imageFile: null,
-    answers: []
-  };
+  subjectId: number;
+  questionId: number;
+
+  sem: Sem;
+  subject: SubjectResponse;
+  chapterList: ChapterResponse[] = [];
+  levelList: LevelResponse[] = [];
+
+  answerForms: AnswerRequest[] = [];
+  questionForm: QuestionRequest;
+  validationError: ValidationError = { };
+
   changeImg: boolean = false;
-  
-  subjects: any;
-  subjectId: number = 0;
-  subjectName: string = '';
-  listChapter: any = [];
-  listLevel: any = [];
-  
+
   isPopupChapter: boolean = false;
 
   searchChapter: string = '';
-  filterChapters: any = [];
+  filterChapters: ChapterResponse[] = [];
   tempSelectedChapters: number[] = [];
+
+  isPopupDeleteAnswer: boolean = false;
+  isPopupCancel: boolean = false;
+
+  answerIndex: number | null = null;
 
   dialogTitle: string = '';
   dialogMessage: string = '';
@@ -66,91 +60,104 @@ export class QuestionUpdateComponent implements OnInit {
     private authService: AuthService,
     private titleService: Title,
     public admin: AdminComponent,
-    private home: HomeComponent,
-    private http: HttpClient,
-    private toastr: ToastrService,
+    private subjectService: SubjectService,
+    private chapterService: ChapterService,
+    private levelService: LevelService,
+    private questionService: QuestionService,
     public urlService: UrlService,
     private router: Router,
-    private activatedRoute: ActivatedRoute
-  ) { }
+    private activatedRoute: ActivatedRoute,
+    private toastr: ToastrService
+  ) {
+    this.subjectId = Number(this.activatedRoute.snapshot.params['subjectId']) ?? 0;
+    this.questionId = Number(this.activatedRoute.snapshot.params['id']) ?? 0;
+    this.sem = { id: 0, name: '' };
+    this.subject = { id: 0, name: '', image: '', status: 0, sem: this.sem };
+    this.questionForm = { subjectId: this.subjectId, chapters: [], levelId: 0, content: '', answers: [] }
+  }
 
   ngOnInit(): void {
     this.titleService.setTitle('Edit Question');
-    this.subjectId = Number(this.activatedRoute.snapshot.params['subjectId']) || 0;
-    this.questionId = Number(this.activatedRoute.snapshot.params['id']) ?? 0;
-    this.initializeQuestion();
     this.loadData();
   }
 
-  getSubjectByIdApi(id: number): Observable<Subject> {
-    return this.http.get<Subject>(`${this.authService.apiUrl}/subject/${id}`, this.home.httpOptions);
-  }
-
-  getChapterListBySubjectIdApi(id: number): Observable<Chapter> {
-    return this.http.get<Chapter>(`${this.authService.apiUrl}/chapter/${id}`, this.home.httpOptions);
-  }
-
-  getLevelListApi(id: number): Observable<Level> {
-    return this.http.get<Level>(`${this.authService.apiUrl}/level`, this.home.httpOptions);
-  }
-
-  getQuestionApi(id: number): Observable<Question> {
-    return this.http.get<Question>(`${this.authService.apiUrl}/question/detail/${id}`, this.home.httpOptions);
-  }
-
-  loadData() {
-    const subjectRequest = this.http.get<any>(`${this.authService.apiUrl}/subject/${this.subjectId}`, this.home.httpOptions);
-    const chapterRequest = this.http.get<any>(`${this.authService.apiUrl}/chapter/${this.subjectId}`, this.home.httpOptions);
-    const levelRequest = this.http.get<any>(`${this.authService.apiUrl}/level`, this.home.httpOptions);
-    const questionRequest = this.http.get<any>(`${this.authService.apiUrl}/question/detail/${this.questionId}`, this.home.httpOptions);
-
-    forkJoin([subjectRequest, chapterRequest, levelRequest, questionRequest]).subscribe(([subjectData, chapterData, levelData, questionData]) => {
-      // Giải mã dữ liệu từ các request
-      this.subjects = subjectData; // Lưu dữ liệu subjects
-      this.subjectName = this.subjects.name;
-      this.listChapter = chapterData; // Lưu dữ liệu chapters
-      this.listLevel = levelData; // Lưu dữ liệu levels
-      this.question = questionData;
-
-      this.questionForm.content = this.question.content;
-      this.questionForm.imageFile = this.question.image;
-      this.questionForm.levelId = this.question.level.id;
-      this.questionForm.answers = this.question.answers;
-
-      for (let chapter of this.question.chapters) {
-        this.questionForm.chapters.push(chapter.id);
+  loadData(): void {
+    forkJoin([
+      this.subjectService.getSubjectById(this.subjectId),
+      this.chapterService.getChapterList(this.subjectId),
+      this.levelService.getLevelList(),
+      this.questionService.getQuestionById(this.questionId)
+    ])
+    .subscribe({
+      next: ([subjectResponse, chapterResponse, levelResponse, questionResponse]) => {
+        if (!subjectResponse || !subjectResponse.id) {
+          this.toastr.warning('Subject not found', 'Warning');
+          this.router.navigate([this.urlService.subjectListUrl()]);
+          return;
+        }
+        if (!Array.isArray(levelResponse) || levelResponse.length <= 0) {
+          this.toastr.warning('Level not found', 'Warning');
+          this.router.navigate([this.urlService.questionListUrl(this.subjectId)]);
+          return;
+        }
+        if (!questionResponse || !questionResponse.id) {
+          this.toastr.warning('Question not found', 'Warning');
+          this.router.navigate([this.urlService.questionListUrl(this.subjectId)]);
+          return;
+        }
+  
+        this.subject = subjectResponse; // Lưu dữ liệu subject
+        this.chapterList = chapterResponse; // Lưu dữ liệu chapters
+        this.levelList = levelResponse; // Lưu dữ liệu levels
+        this.convertToRequest(questionResponse);
+      },
+      error: (err) => {
+        this.authService.handleError(err, undefined, '', 'load data');
       }
     });
   }
 
-  initializeQuestion() {
-    this.questionForm = {
-      content: '',
-      chapters: [],
-      levelId: 0,
-      imageFile: null,
-      answers: []
-    };
+  convertToRequest(question: QuestionResponse): void {
+    this.questionForm.subjectId = question.subject.id;
+    this.questionForm.chapters = question.chapters.map(chapter => chapter.id);
+    this.questionForm.levelId = question.level.id;
+    this.questionForm.content = question.content;
+    this.questionForm.answers = question.answers.map(answer => ({
+      content: answer.content,
+      isCorrect: answer.isCorrect
+    }));
+    this.questionForm.image = question.image;
   }
 
   getSelectedChaptersNames(): string {
-    const selectedChapters = this.listChapter.filter((ch: any) => this.questionForm.chapters.includes(ch.id));
-    return selectedChapters.map((ch: any) => `[${ch.name}]`).join(' ') || 'Choose Chapter';
+    const selectedChapters = this.chapterList.filter(chapter => this.questionForm.chapters.includes(chapter.id));
+    return selectedChapters.map(chapter => `[${chapter.name}]`).join(' ') || 'Choose Chapter';
   }
 
-  openPopup() {
+  openPopupConfirm(title: string, message: string): void {
+    this.dialogTitle = title;
+    this.dialogMessage = message;
+    this.isConfirmationPopup = true;
+  }
+
+  openPopupNotice(title: string, message: string): void {
+    this.dialogTitle = title;
+    this.dialogMessage = message;
+    this.isConfirmationPopup = false;
+  }
+
+  openPopupChapter(): void {
     this.isPopupChapter = true;
     this.tempSelectedChapters = this.questionForm.chapters.slice();
     this.searchChapter = '';
     this.onSearchChange();
   }
 
-  onSearchChange() {
-    this.filterChapters = this.listChapter
-      .filter((chapter: any) => chapter.name.toLowerCase().includes(this.searchChapter.toLowerCase()));
+  onSearchChange(): void {
+    this.filterChapters = this.chapterList.filter(chapter => chapter.name.toLowerCase().includes(this.searchChapter.toLowerCase()));
   }
 
-  toggleChapterSelection(chapterId: number, event: Event) {
+  toggleChapterSelection(chapterId: number, event: Event): void {
     const checkbox = (event.target as HTMLInputElement);
 
     if (checkbox.checked) {
@@ -166,7 +173,7 @@ export class QuestionUpdateComponent implements OnInit {
     }
   }
 
-  confirmChapterSelection() {
+  confirmChapterSelection(): void {
     // Cập nhật chapters cho câu hỏi
     this.questionForm.chapters = this.tempSelectedChapters;
     
@@ -174,53 +181,61 @@ export class QuestionUpdateComponent implements OnInit {
     this.closePopupChapter();
   }
 
-  closePopupChapter() {
+  closePopupChapter(): void {
     this.isPopupChapter = false;
     this.tempSelectedChapters = [];
   }
 
-  addAnswer() {
-    this.questionForm.answers.push({ content: '', isCorrect: 0 });
+  addAnswer(): void {
+    this.questionForm.answers.push({ content: '', isCorrect: false });
   }
 
-  toggleIsCorrect(answer: Answer) {
-    answer.isCorrect = answer.isCorrect === 1 ? 0 : 1;
-  }
-
-  isPopupDeleteAnswer: boolean = false;
-  answerIndexToDelete: number | null = null; // Lưu chỉ mục câu trả lời
-
-  showPopupDeleteAnswer(answerIndex: number) {
-    const question = this.questionForm;
-
+  openPopupDeleteAnswer(index: number): void {
     // Kiểm tra nếu câu hỏi có nhiều hơn 4 câu trả lời
-    if (question.answers.length > 4) {
-      this.answerIndexToDelete = answerIndex;
-      this.dialogTitle = 'Are you sure?'
-      this.dialogMessage = 'Do you really want to delete this answer? This action cannot be undone.';
-      this.isConfirmationPopup = true;
+    if (this.questionForm.answers.length > 4) {
+      this.answerIndex = index;
+      this.openPopupConfirm('Are you sure?', 'Do you really want to delete this answer? This action cannot be undone.');
     }
     else {
-      this.dialogTitle = 'Notice'
-      this.dialogMessage = 'You cannot delete any answer because at least 4 answers are required for each question.';
-      this.isConfirmationPopup = false;
+      this.openPopupNotice('Notice', 'You cannot delete any answer because at least 4 answers are required for each question.');
     }
     this.isPopupDeleteAnswer = true;
   }
 
-  confirmDeleteAnswer() {
-    if (this.answerIndexToDelete !== null) {
-      this.questionForm.answers.splice(this.answerIndexToDelete, 1);
+  confirmDeleteAnswer(): void {
+    if (this.answerIndex !== null) {
+      this.questionForm.answers.splice(this.answerIndex, 1);
       this.closePopupDialog();
       this.toastr.success('The answer has been deleted.', '', { timeOut: 2000 });
     }
   }
 
-  removeAnswer(answerIndex: number) {
-    this.questionForm.answers.splice(answerIndex, 1);
+  openPopupConfirmCancel(): void {
+    this.openPopupConfirm('Are you sure?', 'Do you really want to cancel? Any unsaved changes will be lost.');
+    this.isPopupCancel = true;
   }
 
-  chooseImage(event: Event) {
+  confirmCancel(): void {
+    this.closePopupDialog();
+    this.router.navigate([this.urlService.questionListUrl(this.subjectId)]);
+  }
+
+  confirmAction(): void {
+    if (this.isPopupDeleteAnswer) {
+      this.confirmDeleteAnswer();
+    }
+    if (this.isPopupCancel) {
+      this.confirmCancel();
+    }
+  }
+
+  closePopupDialog(): void {
+    this.answerIndex = null;
+    this.isPopupDeleteAnswer = false;
+    this.isPopupCancel = false;
+  }
+
+  chooseImage(event: Event): void {
     const file = (event.target as HTMLInputElement).files?.[0];
     const imgQuestion = document.getElementById(`image-question`) as HTMLImageElement;
     if (file) {
@@ -230,17 +245,19 @@ export class QuestionUpdateComponent implements OnInit {
         imgQuestion.style.display = 'block';
       };
       reader.readAsDataURL(file);
-      this.questionForm.imageFile = file;
+      this.questionForm.file = file;
+      this.questionForm.image = file.name;
       this.changeImg = true;
     }
   }
 
-  removeImage() {
+  removeImage(): void {
     const imgQuestion = document.getElementById(`image-question`) as HTMLImageElement;
     const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement;
 
     // Xóa ảnh
-    this.questionForm.imageFile = null;
+    this.questionForm.file = null;
+    this.questionForm.image = '';
     this.changeImg = true;
     imgQuestion.src = '';
     imgQuestion.style.display = 'none';
@@ -251,108 +268,16 @@ export class QuestionUpdateComponent implements OnInit {
     }
   }
 
-  contentError: string = '';
-  answersError: string[] = [];
-
-  validateAnswers(answers: Answer[]): boolean {
-    return answers.some(a => a.isCorrect === 1) && answers.some(a => a.isCorrect === 0);
-  }
-
-  saveQuestion() {
-    this.contentError = '';
-    this.answersError = [];
-    let formData = new FormData();
-    let errors = false;
-    let errorMessage = '';
-  
-    // Kiểm tra nếu câu hỏi chưa có nội dung
-    if (!this.questionForm.content.trim()) {
-      this.contentError = 'Content Question is required';
-      errors = true;
-    }
-
-    // Kiểm tra nếu câu trả lời không có nội dung
-    this.questionForm.answers.forEach((answer, i) => {
-      if (!answer.content.trim()) {
-        this.answersError[i] = 'Content Answer is required';
-        errors = true;
-      }
-    });
-
-    // Kiểm tra câu trả lời giống nhau trong từng câu hỏi
-    const answerContents = this.questionForm.answers.map(a => a.content.trim());
-    const uniqueAnswers = new Set(answerContents);
-    if (answerContents.length !== uniqueAnswers.size) {
-      errorMessage = `Answers must be unique.`;
-      errors = true;
-    }
-
-    // Kiểm tra nếu không có câu trả lời đúng và sai
-    if (!this.validateAnswers(this.questionForm.answers)) {
-      errorMessage = `Must have at least one correct and one incorrect answer.`;
-      errors = true;
-    }
-
-    // Kiểm tra nếu số lượng câu trả lời < 4
-    if (this.questionForm.answers.length < 4) {
-      errorMessage = `Must have at least 4 answers.`;
-      errors = true;
-    }
-  
-    if (errors) {
-      if (this.contentError.trim() !== '' || this.answersError.some(error => error.trim() !== '')) {
-        errorMessage = `Please fill out all fields correctly.`;
-      }
-      this.toastr.error(errorMessage, 'Error', { timeOut: 3000 });
-      return;
-    }
-  
-    // Nếu không có lỗi, tiếp tục với việc lưu câu hỏi
-    const questionsList = {
-      content: this.questionForm.content,
-      subjectId: this.subjectId,
-      chapters: this.questionForm.chapters,
-      levelId: this.questionForm.levelId,
-      answers: this.questionForm.answers
-    };
-    formData.append('question', new Blob([JSON.stringify(questionsList)], { type: 'application/json' }));
-    if (this.changeImg) {
-      formData.append('file', this.questionForm.imageFile || new Blob([])); // Sử dụng file đã lưu
-    }
-  
-    this.http.put(`${this.authService.apiUrl}/question/${this.questionId}`, formData, this.home.httpOptions).subscribe(
-      () => {
-        this.toastr.success('Questions saved successfully!');
+  saveQuestion(): void {
+    this.validationError = { }
+    this.questionService.updateQuestion(this.questionId, this.questionForm, this.changeImg).subscribe({
+      next: (questionResponse) => {
+        this.toastr.success(`Question has been saved successfully!`, 'Success', { timeOut: 3000 });
         this.router.navigate([this.urlService.questionListUrl(this.subjectId)]);
       },
-      err => {
-        this.toastr.error(err.error.message, 'Error');
+      error: (err) => {
+        this.authService.handleError(err, this.validationError, 'question', 'update question');
       }
-    );
-  }
-
-  isPopupConfirmCancel: boolean = false;
-
-  showPopupConfirmCancel() {
-    this.dialogTitle = 'Are you sure?';
-    this.dialogMessage = 'Do you really want to cancel? Any unsaved changes will be lost.';
-    this.isConfirmationPopup = true;
-    this.isPopupConfirmCancel = true;
-  }
-
-  confirmCancel() {
-    this.closePopupDialog();
-    this.router.navigate([this.urlService.questionListUrl(this.subjectId)]);
-  }
-
-  closePopupDialog() {
-    this.dialogTitle = '';
-    this.dialogMessage = '';
-    this.isConfirmationPopup = false;
-    
-    this.answerIndexToDelete = null;
-    this.isPopupDeleteAnswer = false;
-
-    this.isPopupConfirmCancel = false;
+    });
   }
 }

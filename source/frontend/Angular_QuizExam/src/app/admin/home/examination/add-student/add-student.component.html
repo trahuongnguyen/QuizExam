@@ -1,48 +1,52 @@
 <div class="content-wrapper" [ngClass]="{'content-wrapper-collapsed': admin.isSidebarCollapsed}">
-    <h4>Register Students for Exam</h4>
+    <h4>{{ titlePage() }}</h4>
     <hr class="line">
 
-    <div class="row bs-wizard" [ngClass]="{'d-none': !examComponent.step}">
-        <div class="col-xs-3 bs-wizard-step complete">
-          <div class="text-center bs-wizard-stepnum">Step 1</div>
-          <div class="progress"><div class="progress-bar"></div></div>
-          <a href="#" class="bs-wizard-dot"></a>
-          <div class="bs-wizard-info text-center">Create Exam</div>
+    <app-wizard-step *ngIf="examComponent.step && exam.type == 0" [steps]="examComponent.autoGenerateExamSteps">
+    </app-wizard-step>
+
+    <app-wizard-step *ngIf="examComponent.step && exam.type == 1" [steps]="examComponent.manualQuestionSelectionSteps">
+    </app-wizard-step>
+
+    <div class="bottom-actions" *ngIf="isTimeValidToSave()">
+        <div>
+            <a class="button button-create me-2" *ngIf="!examComponent.step" (click)="navigateExamDetail()">
+                <span class="mdi mdi-arrow-left-thick icon"></span>Back
+            </a>
+            <a class="button button-create" (click)="openStudentPopup()">
+                <span class="mdi mdi-plus icon"></span>Add Student
+            </a>
         </div>
-        
-        <div class="col-xs-3 bs-wizard-step active">
-          <div class="text-center bs-wizard-stepnum">Step 2</div>
-          <div class="progress"><div class="progress-bar"></div></div>
-          <a href="#" class="bs-wizard-dot"></a>
-          <div class="bs-wizard-info text-center">Add Student</div>
-        </div>
-        
-        <div class="col-xs-3 bs-wizard-step disabled">
-          <div class="text-center bs-wizard-stepnum">Step 3</div>
-          <div class="progress"><div class="progress-bar"></div></div>
-          <a href="#" class="bs-wizard-dot"></a>
-          <div class="bs-wizard-info text-center">Complete</div>
+        <div>
+            <a class="button button-create" (click)="updateMark()">
+                <span *ngIf="!examComponent.step" class="mdi mdi-content-save-all icon"></span>
+                {{ examComponent.step ? 'Next' : 'Save' }}
+                <span *ngIf="examComponent.step" class="mdi mdi-arrow-right-thick icon-right"></span>
+            </a>
         </div>
     </div>
 
-    <div class="bottom-actions">
-        <div>
-            <a class="button button-create" (click)="showStudentPopup()"><span class="mdi mdi-plus icon"></span>Add Student</a>
+    <div class="bottom-actions" *ngIf="!isTimeValidToSave()">
+        <div class="col-3">
+            <a class="button button-create" (click)="navigateExamDetail()"><span class="mdi mdi-arrow-left-thick icon"></span>Back</a>
         </div>
-        <div>
-            <a class="button button-pdf" (click)="addStudentInExam();">Next<span class="mdi mdi-forward icon"></span></a>
+        <div class="col-9 text-end">
+            <span class="text-danger">
+                The end time must be at least {{ exam.duration + 30 }} minutes later than the current time
+                (exam duration + 30 minutes) to allow editing.
+            </span>
         </div>
     </div>
 
     <table class="table" id="example">
         <thead>
             <tr>
-                <th>STT</th>
-                <th>Roll Number</th>
-                <th>Roll Portal</th>
-                <th>Full Name</th>
-                <th>Phone Number</th>
-                <th>Action</th>
+                <th style="width: 10%;">STT</th>
+                <th style="width: 30%;">Full Name</th>
+                <th style="width: 16%;">Roll Portal</th>
+                <th style="width: 16%;">Roll Number</th>
+                <th style="width: 15%;">Status</th>
+                <th style="width: 8%;">Action</th>
             </tr>
         </thead>
         <tbody>

@@ -8,6 +8,7 @@ import { ListComponent } from './list/list.component';
 import { DetailComponent } from './detail/detail.component';
 import { AddFormComponent } from './add-form/add-form.component';
 import { AddStudentComponent } from './add-student/add-student.component';
+import { Roles } from '../../../shared/enums';
 
 const routes: Routes = [
   {
@@ -36,7 +37,7 @@ const routes: Routes = [
       },
     ],
     canActivate: [AuthGuard],
-    data: { roles: ['ADMIN', 'TEACHER'] },
+    data: { roles: [Roles.ADMIN, Roles.TEACHER] },
   },
 ];
 

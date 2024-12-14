@@ -12,11 +12,10 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/level")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "http://localhost:4200")
 public class LevelController {
     private final LevelService levelService;
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'SRO', 'TEACHER')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'TEACHER', 'SRO')")
     @GetMapping
     public List<Level> getAllLevels() {
         return levelService.getAllLevels();

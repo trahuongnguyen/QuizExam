@@ -24,5 +24,5 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 
     User findByIdAndStatus(Integer id, Integer status);
 
-    User findByIdAndStatusAndRole(Integer id, Integer status, Role role);
+    Long countByRole_IdNotAndStatus(Integer roleId, Integer status);
 }

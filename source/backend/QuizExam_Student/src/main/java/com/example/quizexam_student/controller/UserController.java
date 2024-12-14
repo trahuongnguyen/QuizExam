@@ -3,13 +3,9 @@ package com.example.quizexam_student.controller;
 import com.example.quizexam_student.bean.request.UserRequest;
 import com.example.quizexam_student.bean.response.EmpExcelExporter;
 import com.example.quizexam_student.bean.response.EmpPDFExporter;
-import com.example.quizexam_student.bean.response.RegisterResponse;
 import com.example.quizexam_student.bean.response.UserResponse;
 import com.example.quizexam_student.entity.Role;
-import com.example.quizexam_student.entity.User;
-import com.example.quizexam_student.exception.EmptyException;
 import com.example.quizexam_student.mapper.UserMapper;
-import com.example.quizexam_student.repository.RoleRepository;
 import com.example.quizexam_student.service.ExportService;
 import com.example.quizexam_student.service.RoleService;
 import com.example.quizexam_student.service.UserService;
@@ -31,21 +27,21 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/user")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "http://localhost:4200")
 @Validated
 public class UserController {
     private final UserService userService;
-    private final RoleService roleService;
-    private final ExportService exportService;
-    private final RoleRepository roleRepository;
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'SRO', 'DIRECTOR', 'TEACHER')")
+    private final RoleService roleService;
+
+    private final ExportService exportService;
+
+    @PreAuthorize("hasAnyRole('ADMIN', 'DIRECTOR')")
     @GetMapping("/{status}")
     public List<UserResponse> getAll(@PathVariable Integer status){
         String email = ((org.springframework.security.core.userdetails.User) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
         Role role = userService.findUserByEmail(email).getRole();
         System.out.println(role);
-        List<Role> roles = roleService.findAllByPermissionToEmployee(role.getId());
+        List<Role> roles = roleService.findAllToEmployee(role.getId());
         if(roles!=null){
             List<UserResponse> users = new ArrayList<>();
             roles.forEach(role1 -> {
@@ -57,30 +53,10 @@ public class UserController {
         return null;
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'SRO', 'DIRECTOR', 'TEACHER')")
-    @GetMapping("/dashboard/{status}")
-    public List<UserResponse> getAllEmployee(@PathVariable Integer status){
-        List<Role> roles = roleRepository.findAll();
-        roles.removeIf(role -> role.getName().equals("STUDENT"));
-        List<UserResponse> users = new ArrayList<>();
-        roles.forEach(role1 -> {
-            users.addAll(userService.getUserByRolePermission(role1, status));
-        });
-        return users;
-    }
-
     @PreAuthorize("hasAnyRole('ADMIN', 'DIRECTOR')")
     @GetMapping("/find/{id}")
     public UserResponse getEmployeeById(@PathVariable Integer id) {
         return UserMapper.convertToResponse(userService.findById(id));
-    }
-
-    @PreAuthorize("hasAnyRole('ADMIN', 'DIRECTOR')")
-    @GetMapping("/employee")
-    public List<Role> getRolePermissionToEmployees() {
-        String email = ((org.springframework.security.core.userdetails.User) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
-        Role role = userService.findUserByEmail(email).getRole();
-        return roleService.findAllByPermissionToEmployee(role.getId());
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'DIRECTOR')")
@@ -89,16 +65,16 @@ public class UserController {
         return UserMapper.convertToResponse(userService.saveUser(userRequest));
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'DIRECTOR', 'TEACHER', 'SRO')")
+    @PutMapping("/{id}")
+    public UserResponse updateUser(@PathVariable int id, @RequestBody @Valid UserRequest userRequest) {
+        return UserMapper.convertToResponse(userService.updateUser(id, userRequest));
+    }
+
     @PreAuthorize("hasAnyRole('ADMIN', 'DIRECTOR')")
     @PutMapping("/remove/{id}")
     public UserResponse remove(@PathVariable int id) {
         return UserMapper.convertToResponse(userService.deleteUserById(id));
-    }
-
-    @PreAuthorize("hasAnyRole('ADMIN', 'DIRECTOR', 'SRO', 'TEACHER')")
-    @PutMapping("/{id}")
-    public UserResponse updateUser(@PathVariable int id, @RequestBody @Valid UserRequest userRequest) {
-        return UserMapper.convertToResponse(userService.updateUser(id, userRequest));
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'DIRECTOR')")
@@ -111,6 +87,12 @@ public class UserController {
     @PutMapping("/restore/{id}")
     public UserResponse restoreUser(@PathVariable int id){
         return UserMapper.convertToResponse(userService.restoreUser(id));
+    }
+
+    @PreAuthorize("hasAnyRole('ADMIN', 'DIRECTOR', 'TEACHER', 'SRO')")
+    @GetMapping("/count")
+    public Long countAllEmployees() {
+        return userService.countAllEmployees();
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'DIRECTOR')")

@@ -8,6 +8,7 @@ import { StudentComponent } from './student/student.component';
 import { ProfileComponent } from './profile/profile.component';
 import { AuthGuard } from '../service/authguard.service';
 import { LevelComponent } from './level/level.component';
+import { Roles } from '../../shared/enums';
 
 const routes: Routes = [
   {
@@ -16,75 +17,76 @@ const routes: Routes = [
     children: [
       {
         path: '',
-        component: DashboardComponent
+        component: DashboardComponent,
+        canActivate: [AuthGuard],
+        data: { roles: [Roles.ADMIN, Roles.DIRECTOR, Roles.TEACHER, Roles.SRO] },
       },
       {
         path: 'employee',
         component: EmployeeComponent,
         canActivate: [AuthGuard],
-        data: { roles: ['ADMIN', 'DIRECTOR'] },
+        data: { roles: [Roles.ADMIN, Roles.DIRECTOR] },
       },
       {
         path: 'class',
         component: ClassComponent,
         canActivate: [AuthGuard],
-        data: { roles: ['ADMIN', 'SRO'] },
+        data: { roles: [Roles.ADMIN, Roles.SRO] },
       },
       {
         path: 'student',
         component: StudentComponent,
         canActivate: [AuthGuard],
-        data: { roles: ['ADMIN', 'SRO'] },
+        data: { roles: [Roles.ADMIN, Roles.SRO] },
       },
       {
         path: 'class/:classId',
         component: StudentComponent,
         canActivate: [AuthGuard],
-        data: { roles: ['ADMIN', 'SRO'] },
+        data: { roles: [Roles.ADMIN, Roles.SRO] },
       },
       {
         path: 'level',
         component: LevelComponent,
         canActivate: [AuthGuard],
-        data: { roles: ['ADMIN', 'TEACHER'] },
+        data: { roles: [Roles.ADMIN, Roles.TEACHER] },
       },
       {
         path: 'profile',
         component: ProfileComponent,
         canActivate: [AuthGuard],
-        data: { roles: ['ADMIN', 'DIRECTOR', 'TEACHER', 'SRO'] },
+        data: { roles: [Roles.ADMIN, Roles.DIRECTOR, Roles.TEACHER, Roles.SRO] },
       },
       {
         path: 'subject',
         loadChildren: () => import('./subject/subject.module')
           .then(m => m.SubjectModule),
         canActivate: [AuthGuard],
-        data: { roles: ['ADMIN', 'DIRECTOR', 'TEACHER'] },
+        data: { roles: [Roles.ADMIN, Roles.DIRECTOR, Roles.TEACHER] },
       },
       {
         path: 'exam',
         loadChildren: () => import('./examination/examination.module')
           .then(m => m.ExaminationModule),
         canActivate: [AuthGuard],
-        data: { roles: ['ADMIN', 'SRO'] },
+        data: { roles: [Roles.ADMIN, Roles.SRO] },
       },
       {
         path: 'practice',
         loadChildren: () => import('./practice/practice.module')
           .then(m => m.PracticeModule),
         canActivate: [AuthGuard],
-        data: { roles: ['EXAMPLE'] }, //data: { roles: ['ADMIN', 'TEACHER'] },
+        data: { roles: ['EXAMPLE'] },
       },
       {
         path: 'authorize',
         loadChildren: () => import('./authorize/authorize.module')
           .then(m => m.AuthorizeModule),
         canActivate: [AuthGuard],
-        data: { roles: ['ADMIN', 'DIRECTOR', 'TEACHER', 'SRO'] },
+        data: { roles: [Roles.ADMIN, Roles.DIRECTOR, Roles.TEACHER, Roles.SRO] },
       },
     ]
   },
-
 ];
 
 @NgModule({

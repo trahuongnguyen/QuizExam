@@ -10,10 +10,7 @@ import com.example.quizexam_student.service.QuestionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -26,21 +23,21 @@ public class QuestionServiceImpl implements QuestionService {
     private final AnswerRepository answerRepository;
 
     @Override
-    public List<QuestionResponse> getAllQuestionsBySubjectId(int subjectId) {
-        return questionRepository.findAllBySubjectAndStatusOrderByIdDesc(subjectRepository.findById(subjectId).orElse(null), 1).stream().map(QuestionMapper::convertToResponse).collect(Collectors.toList());
+    public List<Question> findAllQuestionsBySubjectId(int subjectId) {
+        return questionRepository.findAllBySubjectAndStatusOrderByIdDesc(subjectRepository.findById(subjectId).orElse(null), 1);
     }
 
     @Override
-    public QuestionResponse getQuestionById(int questionId) {
+    public Question findQuestionById(int questionId) {
         Question question = questionRepository.findByIdAndStatus(questionId, 1);
-        if (Objects.isNull(question) || question.getStatus() == 0) {
+        if (Objects.isNull(question)) {
             throw new NotFoundException("question", "Question not found.");
         }
-        return QuestionMapper.convertToResponse(question);
+        return question;
     }
 
     @Override
-    public List<Question> saveQuestions(List<QuestionRequest> questionRequests){
+    public List<Question> saveQuestions(List<QuestionRequest> questionRequests) {
         List<Question> savedQuestions = new ArrayList<>();
         for (QuestionRequest questionRequest : questionRequests) {
             Question question = QuestionMapper.convertFromRequest(questionRequest);
@@ -57,8 +54,8 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
     @Override
-    public Question updateQuestion(int id, QuestionRequest questionRequest){
-        Question question = questionRepository.findById(id).orElse(null);
+    public Question updateQuestion(int id, QuestionRequest questionRequest) {
+        Question question = findQuestionById(id);
         assert question != null;
         question.setContent(questionRequest.getContent());
         if (questionRequest.getImage() != null) {
@@ -74,10 +71,18 @@ public class QuestionServiceImpl implements QuestionService {
             throw new InvalidQuantityException("question", "Must have at least 4 answers.");
         }
 
-        boolean hasCorrectAnswer = answers.stream().anyMatch(answer -> answer.getIsCorrect() == 1);
-        boolean hasIncorrectAnswer = answers.stream().anyMatch(answer -> answer.getIsCorrect() == 0);
+        boolean hasCorrectAnswer = answers.stream().anyMatch(Answer::getIsCorrect);
+        boolean hasIncorrectAnswer = answers.stream().anyMatch(answer -> !answer.getIsCorrect());
         if (!hasCorrectAnswer || !hasIncorrectAnswer) {
             throw new NotFoundException("question", "Must have at least one correct answer and one incorrect answer.");
+        }
+
+        // Kiểm tra có trùng lặp câu trả lời
+        Set<String> uniqueAnswers = new HashSet<>();
+        for (Answer answer : answers) {
+            if (!uniqueAnswers.add(answer.getContent())) {  // Trả về false nếu đã tồn tại câu trả lời giống
+                throw new AlreadyExistException("question", "Answers must be unique.");
+            }
         }
 
         question.setAnswers(new HashSet<>());
@@ -89,11 +94,8 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
     @Override
-    public Question deleteQuestion(int questionId) {
-        Question question = questionRepository.findByIdAndStatus(questionId, 1);
-        if (Objects.isNull(question) || question.getStatus() == 0) {
-            throw new NotFoundException("question", "Question not found.");
-        }
+    public Question deleteQuestion(int id) {
+        Question question = findQuestionById(id);
         question.setStatus(0);
         return questionRepository.save(question);
     }

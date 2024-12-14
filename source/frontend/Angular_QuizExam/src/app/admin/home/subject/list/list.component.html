@@ -3,12 +3,12 @@
     <hr class="line">
     <div class="bottom-actions">
         <div class="sem-container">
-            <a class="btn btn-outline-light" *ngFor="let sem of semList" [ngClass]="{'active': selectedSem == sem.id}" (click)="setSelectedSem(sem.id)">{{ sem.name }}</a>
+            <a class="btn btn-outline-light" *ngFor="let s of semList" [ngClass]="{'active': sem.id == s.id}" (click)="setSelectedSem(s.id)">{{ s.name }}</a>
         </div>
     </div>
     <div class="bottom-actions" *ngIf="home.isActive(['ADMIN', 'DIRECTOR'])">
         <div>
-            <a class="button button-create" (click)="showPopupCreate()"><span class="mdi mdi-plus icon"></span>Create</a>
+            <a class="button button-create" (click)="openPopupCreate()"><span class="mdi mdi-plus icon"></span>Create</a>
         </div>
         <div>
             <a class="button button-excel" (click)="exportExcel()"><span class="mdi mdi-file-excel icon"></span>Export Excel</a>
@@ -28,31 +28,32 @@
     </table>
 </div>
 
-<div *ngIf="isPopupCreate" class="popup-container">
-    <div class="popup-content" (click)="$event.stopPropagation()">
-        <form class="form-popup" (ngSubmit)="createSubject()">
+<div *ngIf="isPopupCreate || isPopupUpdate" class="popup-container">
+    <div class="popup-content popup-subject" (click)="$event.stopPropagation()">
+        <form class="form-popup" (ngSubmit)="submitForm()">
             <div class="popup-header">
-                <span>Create Subject</span>
+                <span>{{ popupFormTitle() }} Subject</span>
                 <span class="close-icon" (click)="closePopup()">&times;</span>
             </div>
             <div class="popup-body">
                 <div class="form-group">
                     <label for="semId" class="label-popup">SEM:</label>
-                    <select class="form-select" [(ngModel)]="subjectForm.sem.id" name="subject.sem.id">
-                        <option *ngFor="let sem of semList" [value]="sem.id">{{sem.name}}</option>
+                    <select class="form-select" [(ngModel)]="subjectForm.semId" name="semId">
+                        <option *ngFor="let s of semList" [value]="s.id">{{ s.name }}</option>
                     </select>
                 </div>
                 <div class="form-group">
                     <label for="name" class="label-popup">Name:</label>
-                    <input type="text" class="form-control" [(ngModel)]="subjectForm.name" name="subject.name"
+                    <input type="text" class="form-control" [(ngModel)]="subjectForm.name" name="name"
                         placeholder="Enter Subject Name">
-                    <span class="text-danger error" *ngIf="nameError">{{ nameError }}</span>
+                    <span class="text-danger error" *ngIf="validationError['name']">{{ validationError['name'] }}</span>
                 </div>
                 <div class="form-group">
                     <label for="img" *ngIf="!subjectForm.image" class="label-popup">Image:</label>
                     <input type="file" *ngIf="!subjectForm.image" class="form-control" (change)="chooseImage($event)">  
                     <div class="image-preview" [ngClass]="{'hidden-border': subjectForm.image}">
-                        <img id="image-subject" src="#" alt="Subject Image" style="display: none;">
+                        <img id="image-subject" [src]="subjectForm.image ? (urlService.subjectImageUrl + subjectForm.image) : null"
+                            alt="Subject Image" [style.display]="subjectForm.image ? 'block' : 'none'">
                         <span class="remove-image" *ngIf="subjectForm.image" (click)="removeImage()"><b>&times;</b></span>
                     </div> 
                 </div>
@@ -64,42 +65,7 @@
     </div>
 </div>
 
-<div *ngIf="isPopupUpdate" class="popup-container">
-    <div class="popup-content" (click)="$event.stopPropagation()">
-        <form class="form-popup" (ngSubmit)="updateSubject()">
-            <div class="popup-header">
-                <span>Update Subject</span>
-                <span class="close-icon" (click)="closePopup()">&times;</span>
-            </div>
-            <div class="popup-body">
-                <div class="form-group">
-                    <label for="semId" class="label-popup">SEM:</label>
-                    <select class="form-select" [(ngModel)]="subjectForm.sem.id" name="subject.sem.id">
-                        <option *ngFor="let sem of semList" [value]="sem.id">{{sem.name}}</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="name" class="label-popup">Name:</label>
-                    <input type="text" class="form-control" [(ngModel)]="subjectForm.name" name="subject.name"
-                        placeholder="Enter Subject Name">
-                </div>
-                <div class="form-group">
-                    <label for="img" *ngIf="!subjectForm.image" class="label-popup">Image:</label>
-                    <input type="file" *ngIf="!subjectForm.image" class="form-control" (change)="chooseImage($event)">  
-                    <div class="image-preview">
-                        <img id="image-subject" [src]="subjectForm.image ? (urlService.subjectImageUrl + subjectForm.image) : null"
-                            alt="Subject Image" [style.display]="subjectForm.image ? 'block' : 'none'">
-                        <span class="remove-image" *ngIf="subjectForm.image" (click)="removeImage()"><b>&times;</b></span>
-                    </div>
-                </div>
-            </div>
-            <div class="popup-footer">
-                <button type="submit" class="btn btn-primary button">Save</button>
-            </div>
-        </form>
-    </div>
-</div>
-
+<!-- Popup xác nhận -->
 <app-dialog-popup
   [isVisible]="isPopupDelete"
   [title]="dialogTitle"

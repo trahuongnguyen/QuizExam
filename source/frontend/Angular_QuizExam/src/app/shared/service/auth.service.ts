@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { LoginRequest, LoginResponse, ChangePassword, ValidationError } from '../models/models';
+import { Role } from '../models/role.model';
 import { UserResponse } from '../models/user.model';
 import { StudentResponse } from '../models/student.model';
-import { Role } from '../models/role.model';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { TokenKey, RoleKey } from '../enums';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { Observable } from 'rxjs';
@@ -14,11 +15,9 @@ import { Observable } from 'rxjs';
 export class AuthService {
   apiUrl = 'http://localhost:8080/api';
 
-  tokenKey = 'jwtToken';
+  employeeProfile: UserResponse = { } as UserResponse;
 
-  roleKey = 'role';
-  
-  myUser: any;
+  studentProfile: StudentResponse = { } as StudentResponse;
 
   entityExporter = '';
 
@@ -30,7 +29,24 @@ export class AuthService {
     withCredentials: true
   };
 
-  constructor(private http: HttpClient, private toastr: ToastrService, private router: Router) { }
+  constructor(private http: HttpClient, private toastr: ToastrService, private router: Router) {
+    this.initializeEmployee();
+    this.initializeStudent();
+  }
+
+  initializeEmployee(): void {
+    this.employeeProfile = {
+      id: 0, fullName: '', dob: new Date(), gender: 0, address: '', phoneNumber: '', email: '',
+      role: { id: 0, name: '', description: '' }
+    };
+  }
+
+  initializeStudent(): void {
+    this.studentProfile = {
+      userResponse: this.employeeProfile, rollPortal: '', rollNumber: '',
+      classes: { id: 0, name: '', classDay: '', classTime: '', admissionDate: new Date(), status: 0 }
+    };
+  }
 
   login(loginRequest: LoginRequest): Observable<LoginResponse> {
     return this.http.post<LoginResponse>(`${this.apiUrl}/auth/login`, loginRequest, { responseType: 'json' });
@@ -48,7 +64,7 @@ export class AuthService {
     return this.http.put<UserResponse>(`${this.apiUrl}/auth/change-password`, changePasswordForm, this.httpOptions);
   }
 
-  handleError(err: any, validationError: ValidationError = {}, field: string, action: string, reloadTable: () => void = () => {}): void {
+  handleError(err: any, validationError: ValidationError = {}, field: string, action: string, reloadTable?: () => void): void {
     console.log(err);
     if (err.status === 401) {
       this.toastr.error('Unauthorized access. Please check your login credentials.', 'Failed', { timeOut: 5000 });
@@ -68,9 +84,16 @@ export class AuthService {
       }
 
       let errorMessage = `Failed to ${action}. Please try again.`;
-      if (validationError[field]?.trim()) { // Nếu mà thuộc tính field có lỗi thì sẽ load lại table
-        errorMessage = `${validationError[field]}<br>Reloading table in 5 seconds...`;
-        setTimeout(() => reloadTable(), 5000);
+      // Kiểm tra nếu có lỗi cho trường `field`
+      if (validationError[field]?.trim()) {
+        // Kiểm tra nếu `reloadTable` có được truyền vào (không phải là `undefined`)
+        if (reloadTable) {
+          errorMessage = `${validationError[field]}<br>Reloading table in 5 seconds...`;
+          setTimeout(() => reloadTable(), 5000);
+        }
+        else {
+          errorMessage = `${validationError[field]}`;
+        }
       }
       this.toastr.error(errorMessage, 'Error', { timeOut: 5000, enableHtml: true });
     }
@@ -81,69 +104,97 @@ export class AuthService {
     return typeof localStorage !== 'undefined';
   }
 
-  loadToken(pageType: 'USER' | 'ADMIN') {
-    if (this.isLoggedIn(pageType)) {
-      const token = localStorage.getItem(this.tokenKey);
-      this.httpOptions = {
-        headers: new HttpHeaders({ 
-          'Authorization': `Bearer ${token}`,
-          'Accept': 'application/json'
-        }),
-        responseType: 'json',
-        withCredentials: true
-      };
-    }
-    else {
-      this.router.navigate([pageType == 'USER' ? '/login' : 'admin/login']);
-    }
-  }
-
-  logout(pageType: 'USER' | 'ADMIN') {
-    localStorage.removeItem(this.tokenKey);
-    localStorage.removeItem(this.roleKey);
-    this.router.navigate([pageType == 'USER' ? '/login' : 'admin/login']);
-  }
-
-  isLoggedIn(pageType: 'USER' | 'ADMIN'): boolean {
+  loadToken(tokenKey: TokenKey): boolean {
     if (this.isLocalStorageAvailable()) {
-      const token = localStorage.getItem(this.tokenKey);
-      const roles = localStorage.getItem(this.roleKey);
-
-      // Ensure both token and roles exist
-      if (!token || !roles) {
-        return false;
-      }
-
-      try {
-        // Decode the token and extract the expiration time
-        const jwtToken = JSON.parse(atob(token.split('.')[1]));
-        const tokenExpired = Date.now() > (jwtToken.exp * 1000);
-        const checkRole = (pageType == 'USER' ? ['STUDENT'].includes(roles) : ['ADMIN', 'DIRECTOR', 'TEACHER', 'SRO'].includes(roles));
-
-        // Check if token is valid and not expired, and if the role is correct
-        return !tokenExpired && checkRole;
-      }
-      catch (error) {
-        // If there's an issue with decoding the token, treat the token as invalid
-        console.error('Error decoding token:', error);
-        return false;
+      const token = localStorage.getItem(tokenKey);
+      if (token) {
+        this.httpOptions = {
+          headers: new HttpHeaders({ 
+            'Authorization': `Bearer ${token}`,
+            'Accept': 'application/json'
+          }),
+          responseType: 'json',
+          withCredentials: true
+        };
+        return true;
       }
     }
     return false;
   }
 
-  getToken(pageType: 'USER' | 'ADMIN'): string | null {
-    return this.isLoggedIn(pageType) ? localStorage.getItem(this.tokenKey) : null;
+  loadProfile(tokenKey: TokenKey): void {
+    if (this.loadToken(tokenKey)) {
+      const token = localStorage.getItem(tokenKey);
+      this.getProfile().subscribe({
+        next: (profileResponse) => {
+          // Kiểm tra nếu profileResponse có thuộc tính 'userResponse', tức là nó là student
+          if (this.isStudentResponse(profileResponse)) {
+            this.handleStudentProfile(tokenKey, token, profileResponse);
+          }
+          else {
+            this.handleEmployeeProfile(tokenKey, token, profileResponse);
+          }
+        },
+        error: (err) => {
+          this.logout(tokenKey);
+        }
+      });
+    }
+    else {
+      this.router.navigate([tokenKey == TokenKey.STUDENT ? '/login' : 'admin/login']);
+    }
+  }
+
+  // Hàm kiểm tra nếu profileResponse là StudentResponse
+  isStudentResponse(profileResponse: any): profileResponse is StudentResponse {
+    return (profileResponse as StudentResponse).userResponse !== undefined;
+  }
+
+  handleStudentProfile(tokenKey: TokenKey, token: string | null, profileResponse: StudentResponse): void {
+    if (tokenKey == TokenKey.ADMIN) {
+      // Nếu là token admin mà lấy ra profile lại là student, thực hiện chuyển token và điều hướng
+      localStorage.setItem(TokenKey.STUDENT, JSON.stringify(token));
+      localStorage.removeItem(TokenKey.ADMIN);
+      this.router.navigate(['admin/login']);
+      return;
+    }
+    this.studentProfile = profileResponse;
+    localStorage.setItem(RoleKey.ADMIN, profileResponse.userResponse.role.name);
+  }
+  
+  handleEmployeeProfile(tokenKey: TokenKey, token: string | null, profileResponse: UserResponse): void {
+    if (tokenKey == TokenKey.STUDENT) {
+      // Nếu là token student mà lấy ra profile lại là admin, thực hiện chuyển token và điều hướng
+      localStorage.setItem(TokenKey.ADMIN, JSON.stringify(token));
+      localStorage.removeItem(TokenKey.STUDENT);
+      this.router.navigate(['/login']);
+      return;
+    }
+    this.employeeProfile = profileResponse;
+    localStorage.setItem(RoleKey.ADMIN, profileResponse.role.name);
+  }
+
+  logout(tokenKey: TokenKey): void {
+    localStorage.removeItem(tokenKey);
+    if (tokenKey == TokenKey.ADMIN) {
+      this.initializeEmployee();
+      localStorage.removeItem(RoleKey.ADMIN);
+    }
+    if (tokenKey == TokenKey.STUDENT) {
+      this.initializeStudent();
+      localStorage.removeItem(RoleKey.STUDENT);
+    }
+    this.router.navigate([tokenKey == TokenKey.STUDENT ? '/login' : 'admin/login']);
   }
 
   exportDataExcel() {
-    const token = this.getToken('ADMIN');
+    const token = localStorage.getItem(TokenKey.ADMIN) || null;
     const headers = new HttpHeaders().set('Authorization', 'Bearer ' + token).set('Content-Type', 'application/json');
     return this.http.post(`${this.apiUrl}/${this.entityExporter}/export/excel`, this.listExporter, { headers: headers, responseType: 'blob', });
   }
 
   exportDataPDF() {
-    const token = this.getToken('ADMIN');
+    const token = localStorage.getItem(TokenKey.ADMIN) || null;
     const headers = new HttpHeaders().set('Authorization', 'Bearer ' + token).set('Content-Type', 'application/json');
     return this.http.post(`${this.apiUrl}/${this.entityExporter}/export/pdf`, this.listExporter, { headers: headers, responseType: 'blob', });
   }

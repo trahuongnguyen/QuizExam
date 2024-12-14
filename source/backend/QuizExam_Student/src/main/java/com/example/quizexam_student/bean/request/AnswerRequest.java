@@ -8,5 +8,5 @@ public class AnswerRequest {
     @NotBlank(message = "Content Answer is required")
     private String content;
 
-    private int isCorrect;
+    private Boolean isCorrect;
 }

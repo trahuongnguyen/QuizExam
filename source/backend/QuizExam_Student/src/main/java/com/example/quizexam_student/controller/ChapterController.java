@@ -15,15 +15,18 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/chapter")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "http://localhost:4200")
 @Validated
-@PreAuthorize("hasAnyRole('ADMIN', 'TEACHER')")
 public class ChapterController {
     private final ChapterService chapterService;
 
     @GetMapping("/{subjectId}")
     public List<Chapter> getAllChapters(@PathVariable int subjectId) {
         return chapterService.getAllChaptersBySubjectId(subjectId);
+    }
+
+    @GetMapping("/find/{id}")
+    public Chapter getChapterById(@PathVariable int id) {
+        return chapterService.findChapterById(id);
     }
 
     @PostMapping("")
@@ -36,7 +39,7 @@ public class ChapterController {
         return chapterService.updateChapter(id, chapterRequest);
     }
 
-    @PutMapping("/remove/{id}")
+    @PutMapping("/delete/{id}")
     public ResponseEntity<Chapter> removeChapter(@PathVariable int id) {
         return ResponseEntity.ok(chapterService.deleteChapter(id));
     }

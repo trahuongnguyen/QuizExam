@@ -3,7 +3,7 @@ import { AuthService } from '../../../../shared/service/auth.service';
 import { Title } from '@angular/platform-browser';
 import { AdminComponent } from '../../../admin.component';
 import { Role } from '../../../../shared/models/role.model';
-import { RoleService } from '../../../service/role/role.service';
+import { RoleService } from '../../../../shared/service/role/role.service';
 import { UrlService } from '../../../../shared/service/url.service';
 import { Router } from '@angular/router';
 
@@ -43,7 +43,7 @@ export class ListComponent implements OnInit{
     });
   }
 
-  getPermission(id: number) {
+  getPermission(id: number): void {
     this.roleService.setId(id);
     this.router.navigate([this.urlService.authorizeDetailUrl()]);
   }

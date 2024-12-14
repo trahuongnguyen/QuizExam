@@ -1,13 +1,15 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { AuthService } from '../../../service/auth.service';
+import { Component, OnInit } from '@angular/core';
+import { AuthService } from '../../../../shared/service/auth.service';
 import { Title } from '@angular/platform-browser';
 import { AdminComponent } from '../../../admin.component';
-import { HomeComponent } from '../../home.component';
 import { ExaminationComponent } from '../examination.component';
-import { HttpClient } from '@angular/common/http';
-import { ToastrService } from 'ngx-toastr';
+import { Sem } from '../../../../shared/models/subject.model';
+import { ExaminationResponse } from '../../../../shared/models/examination.model';
+import { SubjectService } from '../../../../shared/service/subject/subject.service';
+import { ExaminationService } from '../../../../shared/service/examination/examination.service';
 import { UrlService } from '../../../../shared/service/url.service';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router } from '@angular/router';
+import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-list',
@@ -18,73 +20,69 @@ import { Router, ActivatedRoute } from '@angular/router';
   ]
 })
 export class ListComponent implements OnInit {
-  constructor(
-    private authService: AuthService,
-    private titleService: Title,
-    public admin : AdminComponent,
-    private home: HomeComponent,
-    public examComponent: ExaminationComponent,
-    private http: HttpClient,
-    private toastr: ToastrService,
-    public urlService: UrlService,
-    private router: Router,
-    private activatedRoute: ActivatedRoute
-  ) { }
+  semList: Sem[] = [];
+  selectedSem: number = 0;
 
-  examId: any;
-  semId: number = 1;
-  name: String = '';
-  semester: any;
-  selectedSem: number = 1; // Default chọn Sem 1
-
-  examList: any = [];
-  filteredExamList: any = [];
-  searchTerm: string = '';
-  
+  examList: ExaminationResponse[] = [];
+  filteredExamList: ExaminationResponse[] = [];
+  searchExam: string = '';
   pagedExamList: any = [];
   currentPage: number = 1; // Trang hiện tại
   itemsPerPage: number = 4; // Số phần tử trên mỗi trang
   totalPages: number = 0; // Tổng số trang
   pages: number[] = []; // Mảng số trang
 
+  constructor(
+    private authService: AuthService,
+    private titleService: Title,
+    public admin: AdminComponent,
+    public examComponent: ExaminationComponent,
+    private subjectService: SubjectService,
+    private examService: ExaminationService,
+    public urlService: UrlService,
+    private router: Router,
+    private datePipe: DatePipe
+  ) { }
+
   ngOnInit(): void {
     this.titleService.setTitle('List of Exams');
-    this.selectSem(this.selectedSem);
-    this.http.get<any>(`${this.authService.apiUrl}/sem`, this.home.httpOptions).subscribe(response => {
-      this.semester = response;
-    })
+    this.loadData();
   }
 
-  navigateToCreateExam(): void {
-    this.router.navigate([this.urlService.createExamUrl()]);
-  }
-
-  selectSem(sem: number): void {
-    this.selectedSem = sem;
-    this.http.get<any>(`${this.authService.apiUrl}/exam/sem/${this.selectedSem}`, this.home.httpOptions).subscribe((data: any) => {
-      this.examList = data;
-      this.filteredExamList = data;
-      this.calculatePagination();
-      this.updatePagedList();
+  loadData(): void {
+    this.subjectService.getSemList().subscribe({
+      next: (semResponse) => {
+        this.semList = semResponse;
+        if (this.semList && this.semList.length > 0) {
+          this.setSelectedSem(this.semList[0].id);
+        }
+      },
+      error: (err) => {
+        this.authService.handleError(err, undefined, '', 'load data');
+      }
     });
-    this.semId = sem;
-    console.log('Selected Sem:', sem);
   }
 
-  getExamDetail(id: any) {
-    this.examComponent.step = false;
-    this.router.navigate([this.urlService.examDetailUrl(id)]);
+  setSelectedSem(semId: number): void {
+    this.selectedSem = semId;
+    this.examService.getExamListBySem(semId).subscribe({
+      next: (examResponse) => {
+        this.examList = examResponse;
+        this.filteredExamList = examResponse;
+        this.calculatePagination();
+        this.updatePagedList();
+      },
+      error: (err) => {
+        this.authService.handleError(err, undefined, '', 'load data');
+      }
+    });
   }
 
-  onSearch(): void {
-    const term = this.searchTerm.toLowerCase();
-    this.filteredExamList = this.examList.filter((exam: any) =>
-      exam.subject.name.toLowerCase().includes(term) || exam.code.toLowerCase().includes(term)
-    );
-    this.calculatePagination();
-    this.updatePagedList();
+  convertDateFormat(dateObj: Date | undefined): string {
+    // Dùng DatePipe để chuyển đổi đối tượng Date sang định dạng 'dd/MM/yyyy HH:mm'
+    return this.datePipe.transform(dateObj, 'dd/MM/yyyy HH:mm')!;
   }
-  
+
   calculatePagination(): void {
     this.totalPages = Math.ceil(this.filteredExamList.length / this.itemsPerPage);
     this.pages = Array.from({ length: this.totalPages }, (_, i) => i + 1);
@@ -94,6 +92,16 @@ export class ListComponent implements OnInit {
     const start = (this.currentPage - 1) * this.itemsPerPage;
     const end = start + this.itemsPerPage;
     this.pagedExamList = this.filteredExamList.slice(start, end);
+  }
+
+  onSearch(): void {
+    this.currentPage = 1;
+    this.filteredExamList = this.examList.filter(exam =>
+      exam.subject.name.toLowerCase().includes(this.searchExam.toLowerCase()) ||
+      exam.code.toLowerCase().includes(this.searchExam.toLowerCase())
+    );
+    this.calculatePagination();
+    this.updatePagedList();
   }
 
   goToPage(page: number): void {
@@ -117,6 +125,12 @@ export class ListComponent implements OnInit {
     }
   }
 
+  getExamDetail(id: any): void {
+    this.examComponent.step = false;
+    this.router.navigate([this.urlService.examDetailUrl(id)]);
+  }
+
+  navigateToCreateExam(): void {
+    this.router.navigate([this.urlService.createExamUrl()]);
+  }
 }
-
-

@@ -48,7 +48,6 @@
 .card .card-body .search-container {
     position: relative;
     margin-left: auto;
-    width: 280px;
 }
 
 .card .card-body .search-container .search-icon {
@@ -64,6 +63,22 @@
     background-color: var(--color-card);
     color: var(--color-text);
     transition: all 0.9s ease;
+}
+
+.card .card-body.nav-fill .form-group-row {
+    width: 100%;
+}
+
+.card .card-body.nav-fill label {
+    flex-shrink: 0;
+}
+
+.card .card-body.nav-fill .form-select {
+    text-overflow: ellipsis;
+}
+
+.card .card-body.nav-fill .search-filter-column {
+    border-right: #888 1px solid;
 }
 
 /* pagination */

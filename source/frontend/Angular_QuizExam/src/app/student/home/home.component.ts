@@ -11,12 +11,12 @@ import { filter } from 'rxjs/operators';
   styleUrl: './home.component.css'
 })
 export class HomeComponent {
-  title = 'Angular_QuizExam';
-  thisRouter = '/student/home#'
   windowScrolled = false;
+
   scrollToTop(): void {
     window.scrollTo(0, 0);
   }
+
   scrolled(): void {
     this.windowScrolled = Math.round(window.scrollY) != 0;
   }

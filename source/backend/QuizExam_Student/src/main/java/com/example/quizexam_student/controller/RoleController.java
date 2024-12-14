@@ -1,8 +1,6 @@
 package com.example.quizexam_student.controller;
 
-import com.example.quizexam_student.entity.Permission;
 import com.example.quizexam_student.entity.Role;
-import com.example.quizexam_student.service.PermissionService;
 import com.example.quizexam_student.service.RoleService;
 import com.example.quizexam_student.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +14,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/role")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "http://localhost:4200")
 @Validated
 public class RoleController {
     private final RoleService roleService;
@@ -28,6 +25,14 @@ public class RoleController {
         String email = ((org.springframework.security.core.userdetails.User) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
         Role role = userService.findUserByEmail(email).getRole();
         return roleService.findAllToAuthorize(role);
+    }
+
+    @PreAuthorize("hasAnyRole('ADMIN', 'DIRECTOR')")
+    @GetMapping("/employee")
+    public List<Role> getRoleToEmployees() {
+        String email = ((org.springframework.security.core.userdetails.User) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
+        Role role = userService.findUserByEmail(email).getRole();
+        return roleService.findAllToEmployee(role.getId());
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'DIRECTOR', 'TEACHER', 'SRO')")

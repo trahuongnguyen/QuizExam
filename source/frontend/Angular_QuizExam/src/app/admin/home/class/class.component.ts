@@ -4,7 +4,7 @@ import { Title } from '@angular/platform-browser';
 import { AdminComponent } from '../../admin.component';
 import { ClassResponse, ClassRequest } from '../../../shared/models/class.model';
 import { ValidationError } from '../../../shared/models/models';
-import { ClassService } from '../../service/class/class.service';
+import { ClassService } from '../../../shared/service/class/class.service';
 import { UrlService } from '../../../shared/service/url.service';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
@@ -50,7 +50,7 @@ export class ClassComponent implements OnInit, OnDestroy {
     this.initializeClassForm();
   }
 
-  initializeClassForm() {
+  initializeClassForm(): void {
     this.classForm = {
       classDay: '2, 4, 6',
       classTime: '08h00 - 10h00'
@@ -67,7 +67,6 @@ export class ClassComponent implements OnInit, OnDestroy {
     this.classService.getClassList().subscribe({
       next: (classResponse) => {
         this.classList = classResponse;
-        this.authService.listExporter = classResponse;
         this.initializeDataTable();
       },
       error: (err) => {
@@ -268,12 +267,12 @@ export class ClassComponent implements OnInit, OnDestroy {
     });
   }
 
-  exportExcel() {
+  exportExcel(): void {
     this.authService.listExporter = this.classList;
     this.exportData(this.authService.exportDataExcel(), 'class_excel.xlsx');
   }
 
-  exportPDF() {
+  exportPDF(): void {
     this.authService.listExporter = this.classList;
     this.exportData(this.authService.exportDataPDF(), 'class_pdf.pdf');
   }

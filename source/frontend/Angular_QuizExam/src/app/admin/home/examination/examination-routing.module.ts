@@ -9,6 +9,7 @@ import { FormComponent } from './form/form.component';
 import { DetailComponent } from './detail/detail.component';
 import { AddStudentComponent } from './add-student/add-student.component';
 import { EditExamInfoComponent } from './edit-exam-info/edit-exam-info.component';
+import { Roles } from '../../../shared/enums';
 
 const routes: Routes = [
   {
@@ -37,7 +38,7 @@ const routes: Routes = [
       },
     ],
     canActivate: [AuthGuard],
-    data: { roles: ['ADMIN', 'SRO'] },
+    data: { roles: [Roles.ADMIN, Roles.SRO] },
   },
 ];
 

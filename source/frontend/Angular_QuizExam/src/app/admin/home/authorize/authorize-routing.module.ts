@@ -6,6 +6,7 @@ import { AuthGuard } from '../../service/authguard.service';
 import { AuthorizeComponent } from './authorize.component';
 import { ListComponent } from './list/list.component';
 import { DetailComponent } from './detail/detail.component';
+import { Roles } from '../../../shared/enums';
 
 const routes: Routes = [
   {
@@ -22,7 +23,7 @@ const routes: Routes = [
       },
     ],
     canActivate: [AuthGuard],
-    data: { roles: ['ADMIN', 'DIRECTOR', 'TEACHER', 'SRO'] },
+    data: { roles: [Roles.ADMIN, Roles.DIRECTOR, Roles.TEACHER, Roles.SRO] },
   },
 ];
 

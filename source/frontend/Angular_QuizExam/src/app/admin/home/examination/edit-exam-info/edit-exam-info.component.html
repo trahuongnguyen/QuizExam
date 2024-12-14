@@ -1,51 +1,47 @@
 <div class="content-wrapper" [ngClass]="{'content-wrapper-collapsed': admin.isSidebarCollapsed}">
     <h4>Examination</h4>
     <hr class="line">
-    
-    <div class="container">
+
+    <div class="container edit-exam-info">
         <div class="title">
-            <h3 class="text-center mt-4">Edit Examination</h3>
+            <h3 class="text-center mt-4">Edit Examination Info</h3>
         </div>
         <div class="content">
             <form (ngSubmit)="saveExam()">
                 <div class="row">
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label for="name">Name</label><br>
-                            <input type="text" class="form-control" [(ngModel)]="exam.name" name="name">
+                            <label for="name">Name</label>
+                            <input type="text" class="form-control" [(ngModel)]="examForm.name" name="name">
+                            <div class="text-danger error" *ngIf="validationError['name']">{{ validationError['name'] }}</div>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label for="duration">Duration(minutes)</label><br>
-                            <select class="form-select" [(ngModel)]="exam.duration" name="duration">
-                                <option value=30>30</option>
-                                <option value=60>60</option>
-                                <option value=90>90</option>
-                                <option value=120>120</option>
-                            </select>
+                            <label for="duration">Duration (minutes)</label>
+                            <input type="number" class="form-control" [(ngModel)]="examForm.duration" name="duration">
+                            <div class="text-danger error" *ngIf="validationError['duration']">{{ validationError['duration'] }}</div>
                         </div>
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-md-6">
+                    <div class="col-md-6" *ngIf="isTimeValidToSave()">
                         <div class="form-group">
-                            <label for="startTime">Start Time</label><br>
-                            <input type="datetime-local" class="form-control" [(ngModel)]="exam.startTime" name="startTime">
+                            <label for="startTime">Start Time</label>
+                            <input type="datetime-local" class="form-control" [(ngModel)]="examForm.startTime" name="startTime">
+                            <div class="text-danger error" *ngIf="validationError['startTime']">{{ validationError['startTime'] }}</div>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label for="endTime">End Time</label><br>
-                            <input type="datetime-local" class="form-control" [(ngModel)]="exam.endTime" name="endTime">
+                            <label for="endTime">End Time</label>
+                            <input type="datetime-local" class="form-control" [(ngModel)]="examForm.endTime" name="endTime">
+                            <div class="text-danger error" *ngIf="validationError['endTime']">{{ validationError['endTime'] }}</div>
                         </div>
                     </div>
                 </div>
-                <div class="form-group">
-                    <label for="" class="label-title"></label>
-                    <div class="w-30">
-                        <button type="submit" class="btn button me-2">Save</button>
-                    </div>
+                <div class="form-group text-center mt-4">
+                    <button type="submit" class="btn button-next">Next</button>
                 </div>
             </form>
         </div>

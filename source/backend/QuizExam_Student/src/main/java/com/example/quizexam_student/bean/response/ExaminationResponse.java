@@ -10,13 +10,15 @@ import java.util.List;
 public class ExaminationResponse {
     private int id;
     private String name;
+    private String code;
     private LocalDateTime startTime;
     private LocalDateTime endTime;
     private Integer duration;
-    private String code;
+    private Integer totalQuestion;
+    private Double maxScore;
+    private Integer type;
     private Subject subject;
     private List<QuestionRecordResponse> questionRecordResponses;
-    private Double maxScore;
     private List<StudentResponse> studentResponses;
     private List<MarkResponse> markResponses;
 }

@@ -53,22 +53,21 @@ public class SubjectServiceImpl implements SubjectService {
 
     @Override
     public Subject update(int id, SubjectRequest subjectRequest){
-        Subject subject = subjectRepository.findSubjectByIdAndStatus(id, 1).orElseThrow(() -> new NotFoundException("subject", "Subject not found"));
+        Subject subject = findById(id);
         if (subjectRepository.existsByNameAndStatusAndIdNot(subjectRequest.getName(),1, id)) {
             throw new AlreadyExistException("name", "Subject Name already exists.");
         }
-        Sem sem = semRepository.findById(subjectRequest.getSemId()).orElse(null);
         if (subjectRequest.getImage() != null) {
             subject.setImage(subjectRequest.getImage().isEmpty() ? null : subjectRequest.getImage());
         }
-        subject.setSem(sem);
+        subject.setSem(semRepository.findById(subjectRequest.getSemId()).orElse(null));
         subject.setName(subjectRequest.getName());
         return subjectRepository.save(subject);
     }
 
     @Override
     public Subject deleteById(int id) {
-        Subject subject = subjectRepository.findSubjectByIdAndStatus(id, 1).orElseThrow(() -> new NotFoundException("subject", "Subject not found"));
+        Subject subject = findById(id);
         subject.setStatus(0);
         return subjectRepository.save(subject);
     }

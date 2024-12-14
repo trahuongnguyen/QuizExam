@@ -1,52 +1,7 @@
-/* table */
-.chapter {
-    width: 100%;
-    border: 1px solid #ddd;
-    margin-right: 50px;
+.flex-container .item-container .form-section.show {
+    height: 185px;
 }
 
-/* button add*/
-.btn-chapter {
-    height: 72px;
-    border: 1px solid #ddd;
-    text-align: center;
-    position: fixed;
-    right: 20px;
-}
-
-.btn-chapter i {
-    font-size: x-large;
-    margin: 6px;
-    color: grey;
-}
-
-.btn-chapter .btn-list:hover, .btn-chapter .btn-add:hover {
-    cursor: pointer;
-    box-shadow: #e9ecef 0px 0px 3px 3px inset;
-}
-
-.add-chapter {
-    margin: auto;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    width: 100%;
-}
-
-.add-chapter .btn {
-    font-size: 12px;
-    border-radius: 6px;
-}
-
-.add-chapter .btn-danger {
-    margin: auto;
-    background-color: rgba(170, 18, 16, 0.93);
-}
-
-.add {
-    margin: 15px 15px;
-}
-
-.add-chapter .cancel-btn {
-    background-color: #ADADAD;
-    color: white;
+.flex-container .item-container .form-section.error-active {
+    height: auto; /* Tăng chiều cao khi có lỗi để chứa thông báo lỗi */
 }

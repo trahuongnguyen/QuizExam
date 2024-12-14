@@ -9,8 +9,6 @@ import java.util.Optional;
 
 @Repository
 public interface StudentRepository extends JpaRepository<StudentDetail, Integer> {
-    List<StudentDetail> findAllByUser_StatusAndUser_Role_IdOrderByUserIdDesc(Integer status, Integer roleId);
-
     List<StudentDetail> findAllByUser_StatusAndUser_Role_IdAndClassesIsNullOrderByUserIdDesc(Integer status, Integer roleId);
 
     List<StudentDetail> findAllByUser_StatusAndUser_Role_IdAndClasses_IdOrderByUserIdDesc(Integer status, Integer roleId, Integer classId);
@@ -28,4 +26,6 @@ public interface StudentRepository extends JpaRepository<StudentDetail, Integer>
     StudentDetail findByRollPortalAndUserIdNot(String rollPortal, Integer id);
 
     StudentDetail findByRollNumberAndUserIdNot(String rollNumber, Integer id);
+
+    Long countByUser_StatusAndUser_Role_Id(Integer status, Integer roleId);
 }

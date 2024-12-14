@@ -31,3 +31,7 @@
 #example td:nth-child(3) {
     width: 20%;
 }
+
+.popup-container .popup-content.popup-subject {
+    width: 500px;
+}

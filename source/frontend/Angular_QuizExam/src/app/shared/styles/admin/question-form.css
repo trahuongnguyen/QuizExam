@@ -49,11 +49,13 @@
 
 .content-error {
     margin-left: 85px;
+    font-size: 0.875rem;
 }
 
 .answer-error {
     color: #aa1210;
     margin-left: 35px;
+    font-size: 0.875rem;
 }
 
 .img-preview {

@@ -16,9 +16,6 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/student-answers")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "http://localhost:4200")
-@Validated
-@PreAuthorize("hasRole('STUDENT')")
 public class StudentAnswerController {
     private final StudentAnswerService studentAnswerService;
 

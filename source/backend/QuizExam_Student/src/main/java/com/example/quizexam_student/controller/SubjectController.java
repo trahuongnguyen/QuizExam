@@ -19,7 +19,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -29,7 +28,6 @@ import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
 @RestController
 @RequestMapping("/api/subject")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "http://localhost:4200")
 @Validated
 public class SubjectController {
     private final SubjectService subjectService;
@@ -38,7 +36,7 @@ public class SubjectController {
     @Value("${uploads.subject}")
     private String uploadSubject;
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'DIRECTOR', 'SRO', 'TEACHER')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'DIRECTOR', 'TEACHER', 'SRO')")
     @GetMapping("")
     public List<Subject> getAll(){
         return subjectService.findAll();
@@ -50,7 +48,7 @@ public class SubjectController {
         return subjectService.findById(id);
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'DIRECTOR', 'TEACHER')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'DIRECTOR', 'TEACHER', 'SRO')")
     @GetMapping("/sem/{id}")
     public List<Subject> getAllSubjects(@PathVariable Integer id){
         return subjectService.getAllSubjectBySem(id);
@@ -61,8 +59,11 @@ public class SubjectController {
     public ResponseEntity<Subject> saveSubject(@RequestPart(value = "file", required = false) MultipartFile file, @RequestPart("subject") @Valid SubjectRequest subjectRequest) throws IOException {
         if (file != null) {
             if (!file.isEmpty()) {
-                LocalDate date = LocalDate.now();
-                String fileName = UUID.randomUUID() + "_" + date + "_" + file.getOriginalFilename();
+                String extension = "";
+                if (file.getOriginalFilename() != null && file.getOriginalFilename().contains(".")) {
+                    extension = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf(".")); // Lấy phần đuôi file (extension)
+                }
+                String fileName = UUID.randomUUID() + "_" + System.currentTimeMillis() + "_" + System.nanoTime() + extension;
                 Files.copy(file.getInputStream(), Paths.get(uploadSubject).resolve(fileName));
                 subjectRequest.setImage(fileName);
             }
@@ -76,8 +77,11 @@ public class SubjectController {
         if (file != null) {
             String fileName = "";
             if (!file.isEmpty()) {
-                LocalDate date = LocalDate.now();
-                fileName = UUID.randomUUID() + "_" + date + "_" + file.getOriginalFilename();
+                String extension = "";
+                if (file.getOriginalFilename() != null && file.getOriginalFilename().contains(".")) {
+                    extension = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf(".")); // Lấy phần đuôi file (extension)
+                }
+                fileName = UUID.randomUUID() + "_" + System.currentTimeMillis() + "_" + System.nanoTime() + extension;
                 Files.copy(file.getInputStream(), Paths.get(uploadSubject).resolve(fileName));
             }
             subjectRequest.setImage(fileName);

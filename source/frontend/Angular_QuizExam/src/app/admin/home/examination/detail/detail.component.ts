@@ -1,54 +1,83 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { AuthService } from '../../../service/auth.service';
+import { Component, OnInit } from '@angular/core';
+import { AuthService } from '../../../../shared/service/auth.service';
 import { Title } from '@angular/platform-browser';
 import { AdminComponent } from '../../../admin.component';
-import { HomeComponent } from '../../home.component';
 import { ExaminationComponent } from '../examination.component';
-import { HttpClient } from '@angular/common/http';
-import { ToastrService } from 'ngx-toastr';
+import { Sem, SubjectResponse } from '../../../../shared/models/subject.model';
+import { ExaminationResponse } from '../../../../shared/models/examination.model';
+import { ExaminationService } from '../../../../shared/service/examination/examination.service';
 import { UrlService } from '../../../../shared/service/url.service';
 import { Router, ActivatedRoute } from '@angular/router';
-import { forkJoin, Observable } from 'rxjs';
-import { Timestamp } from 'rxjs';
-declare var $: any;
+import { ToastrService } from 'ngx-toastr';
+import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-detail',
   templateUrl: './detail.component.html',
   styleUrls: [
     './../../../../shared/styles/admin/style.css',
-    './../../../../shared/styles/admin/steps.css',
     './detail.component.css'
   ]
 })
 export class DetailComponent implements OnInit {
+  examId: number;
+
+  sem: Sem;
+  subject: SubjectResponse;
+  exam: ExaminationResponse;
+
   constructor(
     private authService: AuthService,
     private titleService: Title,
     public admin: AdminComponent,
-    private home: HomeComponent,
     public examComponent: ExaminationComponent,
-    private http: HttpClient,
-    private toastr: ToastrService,
+    private examService: ExaminationService,
     public urlService: UrlService,
     private router: Router,
-    private activatedRoute: ActivatedRoute
-  ) { }
-
-  apiData: any;
-  examId: number = 0;
-
-  selectedExam: any;  // Bài thi được chọn
+    private activatedRoute: ActivatedRoute,
+    private toastr: ToastrService,
+    private datePipe: DatePipe
+  ) {
+    this.examId = Number(this.activatedRoute.snapshot.params['examId']) ?? 0;
+    this.sem = { id: 0, name: '' };
+    this.subject = { id: 0, name: '', image: '', status: 0, sem: this.sem };
+    this.exam = {
+      id: 0, name: '', code: '', startTime: new Date(), endTime: new Date(), duration: 0, maxScore: 0, type: 0,
+      subject: this.subject, markResponses: [], studentResponses: [],
+      questionRecordResponses: []
+    }
+  }
 
   ngOnInit(): void {
-    this.titleService.setTitle('Exam Details');
+    this.titleService.setTitle('Exam Detail');
     this.authService.entityExporter = 'exam';
-    this.examId = Number(this.activatedRoute.snapshot.params['examId']) ?? 0;
-    this.http.get<any>(`${this.authService.apiUrl}/exam/${this.examId}`, this.home.httpOptions).subscribe((data: any) => {
-      this.authService.listExporter = data;
-      this.apiData = data;
-      this.selectedExam = data;
+    this.loadData();
+  }
+
+  loadData(): void {
+    this.examService.getExamDetailById(this.examId).subscribe({
+      next: (examResponse) => {
+        if (new Date() >= new Date(examResponse.endTime)) {
+          this.toastr.warning('The exam has ended', 'Warning', { timeOut: 3000 });
+          this.router.navigate([this.urlService.examListUrl()]);
+          return;
+        }
+        this.exam = examResponse;
+      },
+      error: (err) => {
+        this.authService.handleError(err, undefined, 'exam', 'load data');
+        this.navigateToExamList();
+      }
     });
+  }
+
+  convertDateFormat(dateObj: Date | undefined): string {
+    // Dùng DatePipe để chuyển đổi đối tượng Date sang định dạng 'dd/MM/yyyy HH:mm'
+    return this.datePipe.transform(dateObj, 'dd/MM/yyyy - HH:mm')!;
+  }
+
+  transformTextWithNewlines(text: string): string {
+    return text.replace(/\n/g, '<br>');
   }
 
   navigateToExamList(): void {
@@ -56,62 +85,37 @@ export class DetailComponent implements OnInit {
   }
 
   navigateToEditExam(): void {
-    this.router.navigate([this.urlService.editExamUrl(this.examId)]);
+    this.router.navigate([this.urlService.editExamInfoUrl(this.examId)]);
   }
 
-  navigateToAddStudentForExam(): void {
+  navigateToExamParticipants(): void {
     this.router.navigate([this.urlService.addStudentForExamlUrl(this.examId)]);
   }
 
-  transformTextWithNewlines(text: string): string {
-    return text.replace(/\n/g, '<br>');
+  navigateToEditQuestionExam(): void {
+    this.router.navigate([]);
   }
-  
-  exportPDF() {
-    this.authService.listExporter = this.apiData;
-    this.authService.exportDataPDF().subscribe(
-      (response) => {
-        const url = window.URL.createObjectURL(new Blob([response], { type: 'blob' }));
+
+  exportPDF(): void {
+    this.authService.listExporter = this.exam;
+    this.exportData(this.authService.exportDataPDF(), 'exam_pdf.pdf');
+  }
+
+  exportData(exportFunction: any, fileName: string): void {
+    exportFunction.subscribe({
+      next: (response: any) => {
+        const url = window.URL.createObjectURL(new Blob([response], { type: 'application/octet-stream' }));
         const a = document.createElement('a');
         a.href = url;
-        a.download = 'exam_pdf.pdf'; // Thay đổi tên file nếu cần
+        a.download = fileName;
         document.body.appendChild(a);
         a.click();
         window.URL.revokeObjectURL(url);
         document.body.removeChild(a);
       },
-      (error) => {
-        console.error('Export failed', error);
+      error: (err: any) => {
+        this.authService.handleError(err, undefined, '', 'export');
       }
-    );
+    });
   }
-}
-
-
-export interface Exam {
-  id: number;
-  subjectId: number;
-  name: string;
-  code: string;
-  startTime: Timestamp<Date>;
-  endTime: Timestamp<Date>;
-  duration: number;
-  status: number;
-  type: number;
-  questions: Question[];
-}
-
-
-export interface Question {
-  id: number;
-  content: string;
-  image: string;
-  status: number;
-  answers: Answer[];
-}
-
-export interface Answer {
-  id: number;
-  content: string;
-  isCorrect: number;
 }

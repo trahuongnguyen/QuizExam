@@ -1,8 +1,6 @@
 <div class="content-wrapper" [ngClass]="{'content-wrapper-collapsed': admin.isSidebarCollapsed}">
-    <h4>{{_subjectName}} / Question</h4>
+    <h4>{{ subject.name }} / Question List</h4>
     <hr class="line">
-
-    <!-- Bottom Actions (Create and Export) -->
     <div class="bottom-actions">
         <div>
             <a class="button button-create" (click)="navigateToAddQuestion()"><span class="mdi mdi-plus icon"></span>Create</a>
@@ -11,7 +9,6 @@
             <a class="button button-pdf" (click)="exportPDF()"><span class="mdi mdi-file-pdf icon"></span>Export PDF</a>
         </div>
     </div>
-
     <table class="table" id="example">
         <thead>
             <tr>
@@ -26,3 +23,13 @@
         </tbody>
     </table>
 </div>
+
+<!-- Popup xác nhận -->
+<app-dialog-popup
+  [isVisible]="isPopupDelete"
+  [title]="dialogTitle"
+  [message]="dialogMessage"
+  [isConfirmationPopup]="isConfirmationPopup"
+  (confirm)="confirmAction()"
+  (close)="closePopup()">
+</app-dialog-popup>

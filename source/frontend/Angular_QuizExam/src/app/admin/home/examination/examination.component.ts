@@ -1,66 +1,38 @@
 import { Component } from '@angular/core';
-import { AppComponent } from '../../../app.component';
-import { NavigationEnd, Router } from '@angular/router';
-import { filter } from 'rxjs/operators';
-import { AuthService } from '../../service/auth.service';
-import { HttpHeaders } from '@angular/common/http';
-import { HomeComponent } from '../home.component';
 
 @Component({
   selector: 'app-examination',
   templateUrl: './examination.component.html',
 })
 export class ExaminationComponent {
-  title = 'Angular_QuizExam';
-  thisRouter = '/admin/home'
-  windowScrolled = false;
-  scrollToTop(): void {
-    window.scrollTo(0, 0);
-  }
-  scrolled() : void {
-    this.windowScrolled = Math.round(window.scrollY) !=0;
-  }
-
-  httpOptions: any;
-
   step: boolean = false;
 
-  loadToken() {
-    if (this.authService.isLoggedIn()) {
-      const token = localStorage.getItem('jwtToken');
-      this.httpOptions = {
-        headers: new HttpHeaders({ 
-          'Content-Type': 'application/json' ,
-          'Authorization': `Bearer ${token}`,
-          'Accept': 'application/json'
-        }),
-        responeType: 'json',
-        withCredentials: true
-      };
+  autoGenerateExamSteps: { stepNumber: number, title: string, status: "active" | "disabled" | "complete" }[] = [
+    { stepNumber: 1, title: 'Create Exam', status: 'active' },
+    { stepNumber: 2, title: 'Add Student', status: 'disabled' },
+    { stepNumber: 3, title: 'Complete', status: 'disabled' },
+  ];
+
+  manualQuestionSelectionSteps: { stepNumber: number, title: string, status: "active" | "disabled" | "complete" }[] = [
+    { stepNumber: 1, title: 'Create Exam', status: 'active' },
+    { stepNumber: 2, title: 'Add Question', status: 'disabled' },
+    { stepNumber: 3, title: 'Add Student', status: 'disabled' },
+    { stepNumber: 4, title: 'Complete', status: 'disabled' },
+  ];
+
+  constructor() { }
+
+  handleNextStep(steps: { stepNumber: number, status: string }[], currentStepIndex: number) {
+    if (currentStepIndex < steps.length - 1) {
+      steps[currentStepIndex].status = 'complete';
+      steps[currentStepIndex + 1].status = 'active';
     }
-    else {
-      this.router.navigate(['admin/login']);
+  }
+
+  handleBackStep(steps: { stepNumber: number, status: string }[], currentStepIndex: number): void {
+    if (currentStepIndex > 0) {
+      steps[currentStepIndex].status = 'disabled';
+      steps[currentStepIndex - 1].status = 'active';
     }
-  }
-
-  constructor(public app : AppComponent, private router: Router,  public authService: AuthService, public home: HomeComponent) {
-    this.loadToken();
-    this.router.events.pipe(
-      filter(event => event instanceof NavigationEnd)
-    ).subscribe(() => {
-      this.currentRoute = this.router.url;
-      console.log(this.currentRoute)
-    });
-  }
-
-  currentRoute: string = '';
-
-  isActive(route: string): boolean {
-    return this.currentRoute ===  this.thisRouter + route;
-  }
-
-   // Logout process
-   onLogout() {
-    this.authService.logoutAdmin(); // call method logout
   }
 }

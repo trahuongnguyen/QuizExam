@@ -1,14 +1,16 @@
-
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { AuthService } from '../../../service/auth.service';
+import { AuthService } from '../../../../shared/service/auth.service';
 import { Title } from '@angular/platform-browser';
 import { AdminComponent } from '../../../admin.component';
 import { HomeComponent } from '../../home.component';
-import { HttpClient } from '@angular/common/http';
-import { ToastrService } from 'ngx-toastr';
+import { Sem, SubjectResponse } from '../../../../shared/models/subject.model';
+import { ChapterRequest, ChapterResponse } from '../../../../shared/models/chapter.model';
+import { ValidationError } from '../../../../shared/models/models';
+import { SubjectService } from '../../../../shared/service/subject/subject.service';
+import { ChapterService } from '../../../../shared/service/chapter/chapter.service';
 import { UrlService } from '../../../../shared/service/url.service';
 import { Router, ActivatedRoute } from '@angular/router';
-import { forkJoin, Observable } from 'rxjs';
+import { ToastrService } from 'ngx-toastr';
 declare var $: any;
 
 @Component({
@@ -20,78 +22,73 @@ declare var $: any;
   ]
 })
 export class ChapterComponent implements OnInit, OnDestroy {
+  subjectId: number;
+
+  dataTable: any;
+  sem: Sem;
+  subject: SubjectResponse;
+  chapterList: ChapterResponse[] = [];
+
+  chapterId: number = 0;
+  chapter: ChapterResponse;
+  chapterForm: ChapterRequest = { };
+  validationError: ValidationError = { };
+
+  createMode: boolean = false;
+  updateMode: boolean = false;
+  
+  isPopupDelete: boolean = false;
+
+  dialogTitle: string = '';
+  dialogMessage: string = '';
+  isConfirmationPopup: boolean = false;
+
   constructor(
     private authService: AuthService,
     private titleService: Title,
     public admin: AdminComponent,
-    private home: HomeComponent,
-    private http: HttpClient,
-    private toastr: ToastrService,
+    public home: HomeComponent,
+    private subjectService: SubjectService,
+    private chapterService: ChapterService,
     public urlService: UrlService,
     private router: Router,
-    private activatedRoute: ActivatedRoute
-  ) { }
-
-  dataTable: any;
-  apiData: any;
-  subjects: any;
-  sems: any;
-  _subjectId: any;
-  _subjectName: any;
-  _chapter: any = {
-    id: 0,
-    subject: {
-      id: 1,
-    },
-    name: '',
-    status: 0
-  };
-  chapterId: any;
-  semId: number = 1;
-  subjectId: number = 1;
-  name: String = '';
-  dialogTitle: string = '';
-  dialogMessage: string = '';
-  isConfirmationPopup: boolean = false;
-  isPopupDelete: boolean = false;
+    private activatedRoute: ActivatedRoute,
+    private toastr: ToastrService
+  ) {
+    this.subjectId = Number(this.activatedRoute.snapshot.params['subjectId']) ?? 0;
+    this.sem = { id: 0, name: '' };
+    this.subject = { id: 0, name: '', image: '', status: 0, sem: this.sem };
+    this.chapter = { id: 0, name: '', status: 0, subject: this.subject };
+  }
 
   ngOnInit(): void {
-    this.titleService.setTitle('Chapters');
+    this.titleService.setTitle('List of Chapter');
+    this.loadData();
+  }
 
-    // trả về trang subject
-    const returnSubject = document.getElementById('returnSubject');
-    if (returnSubject) {
-      returnSubject.addEventListener("click", () => {
-        this.router.navigate([this.urlService.subjectListUrl()]);
-      });
-    }
-
-    this._subjectId = Number(this.activatedRoute.snapshot.params['subjectId']) ?? 0;
-    if (this._subjectId > 0 && !Number.isNaN(this._subjectId)) {
-      this.http.get<any>(`${this.authService.apiUrl}/chapter/${this._subjectId}`, this.home.httpOptions).subscribe((data: any) => {
-        this.apiData = data;
-        this.subjectId = this._subjectId;
-        this.initializeDataTable();
-      });
-    }
-
-    this.http.get<any>(`${this.authService.apiUrl}/subject/${this._subjectId}`, this.home.httpOptions).subscribe((data: any) => {
-      this.semId = data.sem.id;
-      console.log(this.semId);
-      this.http.get<any>(`${this.authService.apiUrl}/subject/sem/${this.semId}`, this.home.httpOptions).subscribe(response => {
-        this.subjects = response;
-        for (let sub of this.subjects) {
-          if (sub.id == this._subjectId) {
-            this._subjectName = sub.name;
+  loadData(): void {
+    this.subjectService.getSubjectById(this.subjectId).subscribe({
+      next: (subjectResponse) => {
+        this.subject = subjectResponse;
+        this.chapterService.getChapterList(this.subjectId).subscribe({
+          next: (chapterResponse) => {
+            this.chapterList = chapterResponse;
+            this.initializeDataTable();
+          },
+          error: (err) => {
+            this.authService.handleError(err, undefined, '', 'load data');
           }
-        }
-      });
+        });
+      },
+      error: (err) => {
+        this.router.navigate([this.urlService.subjectListUrl()]);
+      }
     });
   }
 
   initializeDataTable(): void {
     this.dataTable = $('#example').DataTable({
-      data: this.apiData,
+      data: this.chapterList,
       autoWidth: false, // Bỏ width của table
       pageLength: 10, // Đặt số lượng mục hiển thị mặc định là 10
       lengthMenu: [10, 15, 20, 25], // Tùy chọn trong dropdown: 10, 15, 20, 25
@@ -112,60 +109,45 @@ export class ChapterComponent implements OnInit, OnDestroy {
           title: 'Action',
           data: null,
           render: function (data: any, type: any, row: any) {
-            return `<span data-bs-toggle="collapse" role="button" aria-expanded="false"
-                    aria-controls="collapseExample" class="mdi mdi-pencil icon-action edit-icon" title="Edit" data-id="${row.id}"></span>
+            return `<span class="mdi mdi-pencil icon-action edit-icon" title="Edit" data-id="${row.id}"></span>
             <span class="mdi mdi-delete-forever icon-action delete-icon" title="Delete" data-id="${row.id}"></span>`;
           }
         }
-
       ],
 
       drawCallback: () => {
-        // Sửa input search thêm button vào
-        if (!$('.dataTables_filter button').length) {
-          $('.dataTables_filter').append(`<button type="button"><i class="fa-solid fa-magnifying-glass search-icon"></i></button>`);
-        }
-
-        // Thêm placeholder vào input của DataTables
-        $('.dataTables_filter input[type="search"]').attr('placeholder', 'Search');
-        $('.edit-icon').on('click', (event: any) => {
-          this.chapterId = $(event.currentTarget).data('id');
-          this._chapter = this.apiData.find((item: any) => item.id === this.chapterId);
-          console.log(this._chapter);
-          $('#addChapter').removeClass('show');
-          $('#updateChapter').addClass('show');
-          setTimeout(() => {  // Cuộn xuống form mới thêm
-            const newLevelForm = document.getElementById('updateChapter');
-            if (newLevelForm) {
-              newLevelForm.scrollIntoView({ behavior: 'smooth' });
-            }
-          }, 0);
-
-        });
-        $('.delete-icon').on('click', (event: any) => {
-          const id = $(event.currentTarget).data('id');
-          this.chapterId = id;
-          this.dialogTitle = 'Are you sure?';
-          this.dialogMessage = 'Do you really want to delete this Level? This action cannot be undone.';
-          this.isConfirmationPopup = true;
-          this.isPopupDelete = true;
-        });
-        $('.btn-add').on('click', (event: any) => {
-          this.subjectId = this._subjectId;
-          this.name = '';
-          $('#updateChapter').removeClass('show');
-          setTimeout(() => {  // Cuộn xuống form mới thêm
-            const newLevelForm = document.getElementById('addChapter');
-            if (newLevelForm) {
-              newLevelForm.scrollIntoView({ behavior: 'smooth' });
-            }
-          }, 0);
-        });
+        this.addEventListeners();
       }
     });
   }
 
-  updateDataTable(newData: any[]): void {
+  addEventListeners(): void {
+    // Sửa input search thêm button vào
+    if (!$('.dataTables_filter button').length) {
+      $('.dataTables_filter').append(`<button type="button"><i class="fa-solid fa-magnifying-glass search-icon"></i></button>`);
+    }
+
+    // Thêm placeholder vào input của DataTables
+    $('.dataTables_filter input[type="search"]').attr('placeholder', 'Search');
+
+    $('.edit-icon').on('click', (event: any) => {
+      this.chapterId = $(event.currentTarget).data('id');
+      this.showFormUpdate(this.chapterId);
+    });
+
+    $('.delete-icon').on('click', (event: any) => {
+      this.chapterId = $(event.currentTarget).data('id');
+      this.loadChapterById(this.chapterId,
+        (success) => {
+          this.openPopupConfirm('Are you sure?', 'Do you really want to delete this Level? This action cannot be undone.');
+          this.isPopupDelete = true;
+        },
+        (error) => { }
+      );
+    });
+  }
+
+  updateDataTable(newData: any): void {
     if (this.dataTable) {
       this.dataTable.clear(); // Xóa dữ liệu hiện tại
       this.dataTable.rows.add(newData); // Thêm dữ liệu mới
@@ -173,116 +155,155 @@ export class ChapterComponent implements OnInit, OnDestroy {
     }
   }
 
-  reloadTable(id: number): void {
-    this.http.get<any>(`${this.authService.apiUrl}/chapter/${id}`, this.home.httpOptions).subscribe((data: any) => {
-      this.apiData = data;
-      this.updateDataTable(this.apiData); // Cập nhật bảng với dữ liệu mới
+  reloadTable(): void {
+    this.chapterService.getChapterList(this.subjectId).subscribe({
+      next: (chapterResponse) => {
+        this.chapterList = chapterResponse;
+        this.updateDataTable(this.chapterList);
+        this.hiddenForm();
+        this.closePopup();
+      },
+      error: (err) => {
+        this.authService.handleError(err, undefined, '', 'load data');
+      }
     });
-    this.closeform();
   }
 
-  createChapter(): void {
-    const chapter =
-    {
-      name: this.name,
-      subjectId: this.subjectId
+  loadChapterById(id: number, handler: (chapter: ChapterResponse) => void, errorHandler: (err: any) => void): void {
+    this.chapterService.getChapterById(id).subscribe({
+      next: (chapterResponse) => {
+        this.chapter = chapterResponse;
+        handler(this.chapter); // Chạy hàm handler sau khi lấy thông tin thành công
+      },
+      error: (err) => {
+        this.authService.handleError(err, this.validationError, 'chapter', 'load data', this.reloadTable.bind(this));
+        errorHandler(err); // Chạy hàm errorHandler nếu có lỗi
+      }
+    });
+  }
+
+  convertToRequest(): void {
+    this.chapterForm.subjectId = this.chapter.subject.id;
+    this.chapterForm.name = this.chapter.name;
+  }
+
+  backToSubject(): void {
+    this.router.navigate([this.urlService.subjectListUrl()]);
+  }
+
+  scrollToForm(): void {
+    const formElement = document.querySelector('#formSection');
+    if (formElement) {
+      setTimeout(() => { formElement.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 0);
     }
-
-    this.http.post(`${this.authService.apiUrl}/chapter`, chapter, this.home.httpOptions).subscribe(
-      response => {
-        this.toastr.success('Create new chapter Successful!', 'Success', {
-          timeOut: 2000,
-        });
-        this.reloadTable(this._subjectId);
-      },
-      error => {
-        if (error.status === 401) {
-          this.toastr.error('Not found', 'Failed', {
-            timeOut: 2000,
-          });
-        } else {
-          let msg = '';
-          if (error.error.message) {
-            msg = error.error.message;
-          } else {
-            error.error.forEach((err: any) => {
-              msg += ' ' + err.message;
-            })
-          }
-          this.toastr.error(msg, 'Failed', {
-            timeOut: 2000,
-          });
-        }
-        console.log('Error', error);
-      }
-    )
   }
 
-  updateChapter(): void {
-    const chapter =
-    {
-      name: this._chapter.name,
-      subjectId: this._chapter.subject.id,
-      id: this.chapterId
-    }
-
-    this.http.put(`${this.authService.apiUrl}/chapter/${this.chapterId}`, chapter, this.home.httpOptions).subscribe(
-      response => {
-        this.toastr.success('Create new chapter Successful!', 'Success', {
-          timeOut: 2000,
-        });
-        this.reloadTable(this._subjectId);
-      },
-      error => {
-        if (error.status === 401) {
-          this.toastr.error('Not found', 'Failed', {
-            timeOut: 2000,
-          });
-        } else {
-          let msg = '';
-          if (error.error.message) {
-            msg = error.error.message;
-          } else {
-            error.error.forEach((err: any) => {
-              msg += ' ' + err.message;
-            })
-          }
-          this.toastr.error(msg, 'Failed', {
-            timeOut: 2000,
-          });
-        }
-        console.log('Error', error);
-      }
-    )
+  showFormCreate(): void {
+    this.chapterForm = { subjectId: this.subjectId }
+    this.validationError = { };
+    this.checkFormErrors();
+    
+    this.updateMode = false;
+    this.createMode = true;
+    this.scrollToForm();
   }
 
-  deletingChapter: any;
+  showFormUpdate(id: number): void {
+    this.validationError = { };
+    this.checkFormErrors();
 
-  deleteChapter(id: number): void {
-    this.isPopupDelete = false;
-    this.http.put(`${this.authService.apiUrl}/chapter/remove/${id}`, {}, this.home.httpOptions).subscribe(
-      response => {
-        this.deletingChapter = response;
-        this.toastr.success(`Chapter with name ${this.deletingChapter.name} deleted successfully`, 'Success', {
-          timeOut: 2000,
-        });
-        this.reloadTable(this.subjectId);
+    this.loadChapterById(id,
+      (success) => {
+        this.convertToRequest();
+        this.createMode = false;
+        this.updateMode = true;
+        this.scrollToForm();
       },
-      error => {
-        this.toastr.error('Error deleting item!', 'Error', {
-          timeOut: 2000,
-        });
-      }
+      (error) => { this.updateMode = false; }
     );
   }
 
-  closeform() {
-    document.getElementById('addChapter')?.classList.remove('show');
-    document.getElementById('updateChapter')?.classList.remove('show');
+  formTitle(): string {
+    if (this.createMode) return 'Create';
+    if (this.updateMode) return 'Update';
+    return '';
+  }
+
+  hiddenForm(): void {
+    this.chapterId = 0;
+    this.chapterForm = { }
+    this.validationError = { };
+    this.checkFormErrors();
+    this.createMode = false;
+    this.updateMode = false;
+  }
+
+  openPopupConfirm(title: string, message: string): void {
+    this.dialogTitle = title;
+    this.dialogMessage = message;
+    this.isConfirmationPopup = true;
   }
 
   closePopup(): void {
+    this.chapterId = 0;
     this.isPopupDelete = false;
+  }
+
+  submitForm(): void {
+    this.validationError = { };
+    if (this.createMode) {
+      this.createChapter();
+    }
+    else if (this.updateMode) {
+      this.updateChapter();
+    }
+  }
+
+  checkFormErrors(): void {
+    if (Object.values(this.validationError).some(error => error?.trim())) {
+      document.querySelector('.form-section')?.classList.add('error-active');
+    }
+    else {
+      document.querySelector('.form-section')?.classList.remove('error-active');
+    }
+  }
+
+  createChapter(): void {
+    this.chapterService.createChapter(this.chapterForm).subscribe({
+      next: (chapterResponse) => {
+        this.toastr.success(`Chapter: ${chapterResponse.name} created successfully!`, 'Success', { timeOut: 3000 });
+        this.reloadTable();
+      },
+      error: (err) => {
+        this.authService.handleError(err, this.validationError, 'chapter', 'create chapter', this.reloadTable.bind(this));
+        this.checkFormErrors();
+      }
+    });
+  }
+
+  updateChapter(): void {
+    this.chapterService.updateChapter(this.chapterId, this.chapterForm).subscribe({
+      next: (chapterResponse) => {
+        this.toastr.success(`Chapter: ${chapterResponse.name} updated successfully!`, 'Success', { timeOut: 3000 });
+        this.reloadTable();
+      },
+      error: (err) => {
+        this.authService.handleError(err, this.validationError, 'chapter', 'update chapter', this.reloadTable.bind(this));
+        this.checkFormErrors();
+      }
+    });
+  }
+
+  deleteChapter(): void {
+    this.chapterService.deleteChapter(this.chapterId).subscribe({
+      next: (chapterResponse) => {
+        this.toastr.success(`Chapter: ${chapterResponse.name} has been deleted successfully!`, 'Success', { timeOut: 3000 });
+        this.reloadTable();
+      },
+      error: (err) => {
+        this.authService.handleError(err, this.validationError, 'chapter', 'delete chapter', this.reloadTable.bind(this));
+      }
+    });
   }
 
   ngOnDestroy(): void {

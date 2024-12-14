@@ -1,13 +1,14 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { AuthService } from '../../../service/auth.service';
+import { AuthService } from '../../../../shared/service/auth.service';
 import { Title } from '@angular/platform-browser';
 import { AdminComponent } from '../../../admin.component';
-import { HomeComponent } from '../../home.component';
-import { HttpClient } from '@angular/common/http';
-import { ToastrService } from 'ngx-toastr';
+import { Sem, SubjectResponse } from '../../../../shared/models/subject.model';
+import { QuestionResponse } from '../../../../shared/models/question.model';
+import { SubjectService } from '../../../../shared/service/subject/subject.service';
+import { QuestionService } from '../../../../shared/service/question/question.service';
 import { UrlService } from '../../../../shared/service/url.service';
 import { Router, ActivatedRoute } from '@angular/router';
-import { forkJoin, Observable } from 'rxjs';
+import { ToastrService } from 'ngx-toastr';
 declare var $: any;
 
 @Component({
@@ -18,58 +19,66 @@ declare var $: any;
     './question-list.component.css'
   ]
 })
-export class QuestionListComponent {
+export class QuestionListComponent implements OnInit, OnDestroy {
+  subjectId: number;
+
+  dataTable: any;
+  sem: Sem;
+  subject: SubjectResponse;
+  questionList: QuestionResponse[] = [];
+  questionId: number = 0;
+
+  isPopupDelete: boolean = false;
+
+  dialogTitle: string = '';
+  dialogMessage: string = '';
+  isConfirmationPopup: boolean = false;
+
   constructor(
     private authService: AuthService,
     private titleService: Title,
     public admin: AdminComponent,
-    private home: HomeComponent,
-    private http: HttpClient,
-    private toastr: ToastrService,
+    private subjectService: SubjectService,
+    private questionService: QuestionService,
     public urlService: UrlService,
     private router: Router,
-    private activatedRoute: ActivatedRoute
-  ) { }
-
-  dataTable: any;
-  apiData: any;
-  subjects: any;
-  sems: any;
-  _subjectId: any;
-  _subjectName: any;
-  _chapter: any = {
-    id: 0,
-    subject: {
-      id: 1,
-    },
-    name: ''
-  };
-  chapterId: any;
-  semId: number = 1;
-  subjectId: number = 1;
-  name: String = '';
+    private activatedRoute: ActivatedRoute,
+    private toastr: ToastrService
+  ) {
+    this.subjectId = Number(this.activatedRoute.snapshot.params['subjectId']) ?? 0;
+    this.sem = { id: 0, name: '' };
+    this.subject = { id: 0, name: '', image: '', status: 0, sem: this.sem };
+  }
 
   ngOnInit(): void {
     this.titleService.setTitle('List of Questions');
     this.authService.entityExporter = 'question';
-    this._subjectId = Number(this.activatedRoute.snapshot.params['subjectId']) ?? 0;
-    if (this._subjectId > 0 && !Number.isNaN(this._subjectId)) {
-      this.http.get<any>(`${this.authService.apiUrl}/question/${this._subjectId}`, this.home.httpOptions).subscribe((data: any) => {
-        this.apiData = data;
-        this.subjectId = this._subjectId;
-        this.authService.listExporter = data;
-        this.initializeDataTable();
-      });
-    }
+    this.loadData();
+  }
 
-    this.http.get<any>(`${this.authService.apiUrl}/subject/${this._subjectId}`, this.home.httpOptions).subscribe((data: any) => {
-      this._subjectName = data.name;
+  loadData(): void {
+    this.subjectService.getSubjectById(this.subjectId).subscribe({
+      next: (subjectResponse) => {
+        this.subject = subjectResponse;
+        this.questionService.getQuestionList(this.subjectId).subscribe({
+          next: (questionResponse) => {
+            this.questionList = questionResponse;
+            this.initializeDataTable();
+          },
+          error: (err) => {
+            this.authService.handleError(err, undefined, '', 'load data');
+          }
+        });
+      },
+      error: (err) => {
+        this.router.navigate([this.urlService.subjectListUrl()]);
+      }
     });
   }
 
   initializeDataTable(): void {
     this.dataTable = $('#example').DataTable({
-      data: this.apiData,
+      data: this.questionList,
       autoWidth: false, // Bỏ width của table
       pageLength: 10, // Đặt số lượng mục hiển thị mặc định là 10
       lengthMenu: [10, 15, 20, 25], // Tùy chọn trong dropdown: 10, 15, 20, 25
@@ -108,27 +117,54 @@ export class QuestionListComponent {
           title: 'Action',
           data: null,
           render: function (data: any, type: any, row: any) {
-            return `<span class="mdi mdi-pencil icon-action edit-icon" title="Edit" data-id="${row.id}"></span>`;
-
+            return `<span class="mdi mdi-pencil icon-action edit-icon" title="Edit" data-id="${row.id}"></span>
+            <span class="mdi mdi-delete-forever icon-action delete-icon" title="Remove" data-id="${row.id}"></span>`;
           }
         }
-
       ],
 
-      drawCallback: () => {
-        // Sửa input search thêm button vào
-        if (!$('.dataTables_filter button').length) {
-          $('.dataTables_filter').append(`<button type="button"><i class="fa-solid fa-magnifying-glass search-icon"></i></button>`);
-        }
+      drawCallback: () => this.addEventListeners()
+    });
+  }
 
-        // Thêm placeholder vào input của DataTables
-        $('.dataTables_filter input[type="search"]').attr('placeholder', 'Search');
-        
-        // Click vào info icon sẽ hiện ra popup
-        $('.edit-icon').on('click', (event: any) => {
-          const id = $(event.currentTarget).data('id');
-          this.router.navigate([this.urlService.editQuestionUrl(this.subjectId, id)]);
-        });
+  addEventListeners(): void {
+    // Sửa input search thêm button vào
+    if (!$('.dataTables_filter button').length) {
+      $('.dataTables_filter').append(`<button type="button"><i class="fa-solid fa-magnifying-glass search-icon"></i></button>`);
+    }
+
+    // Thêm placeholder vào input của DataTables
+    $('.dataTables_filter input[type="search"]').attr('placeholder', 'Search');
+    
+    $('.edit-icon').on('click', (event: any) => {
+      const id = $(event.currentTarget).data('id');
+      this.router.navigate([this.urlService.editQuestionUrl(this.subjectId, id)]);
+    });
+
+    $('.delete-icon').on('click', (event: any) => {
+      this.questionId = $(event.currentTarget).data('id');
+      this.openPopupConfirm('Are you sure?', 'Do you really want to delete this question?');
+      this.isPopupDelete = true;
+    });
+  }
+
+  updateDataTable(newData: any): void {
+    if (this.dataTable) {
+      this.dataTable.clear(); // Xóa dữ liệu hiện tại
+      this.dataTable.rows.add(newData); // Thêm dữ liệu mới
+      this.dataTable.draw(); // Vẽ lại bảng
+    }
+  }
+
+  reloadTable(): void {
+    this.questionService.getQuestionList(this.subjectId).subscribe({
+      next: (questionResponse) => {
+        this.questionList = questionResponse;
+        this.updateDataTable(this.questionList);
+        this.closePopup();
+      },
+      error: (err) => {
+        this.authService.handleError(err, undefined, '', 'load data');
       }
     });
   }
@@ -137,23 +173,56 @@ export class QuestionListComponent {
     this.router.navigate([this.urlService.addQuestionUrl(this.subjectId)]);
   }
 
-  exportPDF() {
-    this.authService.listExporter = this.apiData;
-    this.authService.exportDataPDF().subscribe(
-      (response) => {
-        const url = window.URL.createObjectURL(new Blob([response], { type: 'blob' }));
+  openPopupConfirm(title: string, message: string): void {
+    this.dialogTitle = title;
+    this.dialogMessage = message;
+    this.isConfirmationPopup = true;
+  }
+
+  closePopup(): void {
+    this.questionId = 0;
+    this.isPopupDelete = false;
+  }
+
+  confirmAction(): void {
+    if (this.isPopupDelete) {
+      this.deleteQuestion();
+    }
+  }
+
+  deleteQuestion(): void {
+    this.questionService.deleteQuestion(this.questionId).subscribe({
+      next: (questionResponse) => {
+        this.toastr.success(`Question has been deleted successfully!`, 'Success', { timeOut: 3000 });
+        this.reloadTable();
+      },
+      error: (err) => {
+        this.authService.handleError(err, undefined, 'question', 'delete question', this.reloadTable.bind(this));
+      }
+    });
+  }
+
+  exportPDF(): void {
+    this.authService.listExporter = this.questionList;
+    this.exportData(this.authService.exportDataPDF(), 'question_pdf.pdf');
+  }
+
+  exportData(exportFunction: any, fileName: string): void {
+    exportFunction.subscribe({
+      next: (response: any) => {
+        const url = window.URL.createObjectURL(new Blob([response], { type: 'application/octet-stream' }));
         const a = document.createElement('a');
         a.href = url;
-        a.download = 'question_pdf.pdf'; // Thay đổi tên file nếu cần
+        a.download = fileName;
         document.body.appendChild(a);
         a.click();
         window.URL.revokeObjectURL(url);
         document.body.removeChild(a);
       },
-      (error) => {
-        console.error('Export failed', error);
+      error: (err: any) => {
+        this.authService.handleError(err, undefined, '', 'export');
       }
-    );
+    });
   }
 
   ngOnDestroy(): void {

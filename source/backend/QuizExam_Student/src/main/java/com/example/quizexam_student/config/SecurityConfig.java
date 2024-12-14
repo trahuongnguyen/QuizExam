@@ -3,8 +3,10 @@ package com.example.quizexam_student.config;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -15,6 +17,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
 
@@ -33,21 +36,21 @@ public class SecurityConfig {
                 .and()
                 .authorizeRequests()
                 .requestMatchers("/api/auth/**").permitAll()
-                .requestMatchers("/api/user/**").hasAnyRole("ADMIN", "DIRECTOR", "SRO", "TEACHER")
-                .requestMatchers("/api/class/**").hasAnyRole("ADMIN", "SRO", "DIRECTOR", "TEACHER")
-                .requestMatchers("/api/subject/**").hasAnyRole("ADMIN", "DIRECTOR", "SRO", "TEACHER")
-                .requestMatchers("/api/sem/**").permitAll()
-                .requestMatchers("/api/student-management/**").hasAnyRole("ADMIN", "SRO", "TEACHER", "DIRECTOR")
-                .requestMatchers("/api/chapter/**").hasAnyRole("ADMIN", "TEACHER")
-                .requestMatchers("/api/question/**").hasAnyRole("ADMIN", "TEACHER")
-                .requestMatchers("/api/exam/**").permitAll()
-                .requestMatchers("/api/student-answers/**").hasRole("STUDENT")
-                .requestMatchers("/api/mark/**").permitAll()
-                .requestMatchers("/api/level/**").hasAnyRole("ADMIN", "SRO", "TEACHER")
                 .requestMatchers("/api/role/**").hasAnyRole("ADMIN", "DIRECTOR", "TEACHER", "SRO")
-                .requestMatchers("/api/question-record/**").hasRole("STUDENT")
-                .requestMatchers("/uploads/**").permitAll()
+                .requestMatchers("/api/user/**").hasAnyRole("ADMIN", "DIRECTOR", "TEACHER", "SRO")
                 .requestMatchers("/api/permission").hasAnyRole("ADMIN", "DIRECTOR", "TEACHER", "SRO")
+                .requestMatchers("/api/class/**").hasAnyRole("ADMIN", "DIRECTOR", "TEACHER", "SRO")
+                .requestMatchers("/api/student/**").hasAnyRole("ADMIN", "DIRECTOR", "TEACHER", "SRO")
+                .requestMatchers("/api/sem/**").hasAnyRole("ADMIN", "DIRECTOR", "TEACHER", "SRO", "STUDENT")
+                .requestMatchers("/api/subject/**").hasAnyRole("ADMIN", "DIRECTOR", "TEACHER", "SRO")
+                .requestMatchers("/api/chapter/**").hasAnyRole("ADMIN", "TEACHER")
+                .requestMatchers("/api/level/**").hasAnyRole("ADMIN", "TEACHER", "SRO")
+                .requestMatchers("/api/question/**").hasAnyRole("ADMIN", "TEACHER", "SRO")
+                .requestMatchers("/api/exam/**").hasAnyRole("ADMIN", "DIRECTOR", "TEACHER", "SRO", "STUDENT")
+                .requestMatchers("/api/question-record/**").hasRole("STUDENT")
+                .requestMatchers("/api/student-answers/**").hasRole("STUDENT")
+                .requestMatchers("/api/mark/**").hasAnyRole("ADMIN", "DIRECTOR", "TEACHER", "SRO", "STUDENT")
+                .requestMatchers("/uploads/**").hasAnyRole("ADMIN", "DIRECTOR", "TEACHER", "SRO", "STUDENT")
                 .anyRequest().authenticated()
                 
                 .and()
@@ -64,5 +67,12 @@ public class SecurityConfig {
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    private void configureSubjectApi(HttpSecurity http) throws Exception {
+        http.authorizeRequests()
+                .requestMatchers(HttpMethod.GET, "/api/subject/**").hasAnyRole("ADMIN", "DIRECTOR", "TEACHER", "SRO")
+                .requestMatchers(HttpMethod.POST, "/api/subject/**").hasAnyRole("ADMIN", "DIRECTOR")
+                .requestMatchers(HttpMethod.PUT, "/api/subject/**").hasAnyRole("ADMIN", "DIRECTOR");
     }
 }

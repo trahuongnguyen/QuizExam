@@ -1,8 +1,4 @@
-.bottom-actions span {
-    cursor: pointer;
-}
-
-.container.create-exam {
+.create-exam {
     margin-top: 50px;
     padding: 10px;
     max-width: 800px;
@@ -13,22 +9,22 @@
     transition: all 0.9s ease;
 }
 
-.container .title h3 {
+.create-exam .title h3 {
     font-weight: bold;
 }
 
-.container .content {
+.create-exam .content {
     padding: 0 20px 20px 20px;
 }
 
-.container .content label {
+.create-exam .content label {
     font-weight: bold;
     padding-bottom: 3px;
     padding-top: 30px;
 }
 
-.container .content .form-control,
-.container .content .form-select {
+.create-exam .content .form-control,
+.create-exam .content .form-select {
     width: 100%;
     min-height: 35px;
     background-color: var(--color-input-exam);
@@ -37,38 +33,26 @@
     border-radius: 5px;
 }
 
-.form-select {
-    text-align: left;
-    white-space: nowrap;
-    overflow: hidden;
+.create-exam .content .form-select {
     text-overflow: ellipsis;
-    display: inline-block;
 }
 
-.w-30 {
-    width: 30%;
-    margin: auto;
+.create-exam .content .error {
+    font-size: 0.875rem;
 }
 
-.w-30 .button {
+.create-exam .content .button-next {
+    width: 25%;
+    height: 38px;
+    font-size: 13px;
+    background-color: #aa1210;
     color: white;
-    background-color: #AA1210;
-    margin-right: 20px;
-    width: 100%;
 }
 
-input:-webkit-autofill,
-input:-webkit-autofill:hover,
-input:-webkit-autofill:focus,
-input:-webkit-autofill:active {
-    -webkit-box-shadow: 0 0 0 30px var(--color-input-exam) inset !important;
-    -webkit-text-fill-color: var(--color-text) !important;
-}
-
-.exam-detail {
+.add-question .exam-info {
     margin: 0 auto 20px auto;
     padding: 20px 10px 10px 10px;
-    width: 60%;
+    width: 80%;
     background-color: var(--color-card);
     color: var(--color-text);
     border-radius: 8px;
@@ -76,33 +60,38 @@ input:-webkit-autofill:active {
     transition: all 0.9s ease;
 }
 
-.exam-detail p {
-    margin-bottom: 0.5rem !important;
+.add-question .exam-info .exam-header {
+    display: flex;
+    margin-bottom: 20px;
 }
 
-.label {
+.add-question .exam-info .exam-header h4 {
+    font-weight: bold;
+}
+
+.add-question .exam-info .exam-header span {
+    margin-right: 5px;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+.add-question .exam-info p {
+    margin-bottom: 0.5rem;
+}
+
+.add-question .exam-info .label {
     font-weight: bold;
     margin-right: 10px;
     min-width: 100px;
     font-size: 14px;
 }
 
-.content {
+.add-question .exam-info .content {
     flex-grow: 1;
     font-size: 14px;
 }
 
-.mdi-arrow-right-thick {
-    margin-left: 4px;
-    margin-right: 0;
-}
-
-.mdi-arrow-left-thick {
-    margin-left: 0px;
-    margin-right: 4px;
-}
-
-.container.select-question {
+.add-question .select-question {
     margin-top: 50px;
     padding: 10px;
     box-shadow: 0 2px 4px rgba(0.1, 0.1, 0.1, 0.2);
@@ -112,7 +101,7 @@ input:-webkit-autofill:active {
     transition: background-color 0.9s ease, color 0.9s ease;
 }
 
-.question-container {
+.add-question .select-question .question-container {
     height: 400px;
     overflow-y: auto;
     border: 1px solid #ddd;
@@ -123,26 +112,18 @@ input:-webkit-autofill:active {
     transition: background-color 0.9s ease, color 0.9s ease;
 }
 
-.search-input {
+.add-question .select-question .question-container .search-input {
     width: 50%;
 }
 
-.question-item {
+.add-question .select-question .question-container .question-item {
     display: flex;
     align-items: center;
     margin-bottom: 20px;
 }
 
-.question-item .icon {
+.add-question .select-question .question-container .question-item .icon {
     margin-right: 10px;
     cursor: pointer;
     font-size: 1.2rem;
-}
-
-.text-success {
-    color: green;
-}
-
-.text-danger {
-    color: red;
 }

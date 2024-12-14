@@ -14,14 +14,22 @@ import java.util.Map;
 public class ExaminationRequest {
     @NotBlank(message = "Exam name is required")
     private String name;
+
     @NotNull(message = "Start time is required")
     private LocalDateTime startTime;
+
     @NotNull(message = "End time is required")
     @Future(message = "End time must be in the future")
     private LocalDateTime endTime;
+
     @NotNull(message = "Duration is required")
     private Integer duration;
+
     @NotNull(message = "Subject is required")
     private Integer subjectId;
+
     private Map<Integer, Integer> levels;
+
+    @NotNull(message = "Type is required")
+    private Integer type;
 }

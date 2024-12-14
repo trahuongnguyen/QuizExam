@@ -43,23 +43,4 @@ public class QuizExamStudentApplication {
             }
         };
     }
-
-    @Scheduled(fixedRate = 1000)
-    public void updateStatusForExamination() {
-        List<Examination> examinations = examinationRepository.findAllByStatus(1);
-        examinations = examinations.stream().peek(examination -> {
-            if (LocalDateTime.now().isAfter(examination.getEndTime())) {
-                examination.setStatus(2);
-                markRepository.findAllByExamination(examination).forEach(mark -> {
-                    if (mark.getBeginTime()==null && mark.getScore()==null) {
-                        mark.setScore(0.0);
-                        mark.setBeginTime(LocalDateTime.now());
-                        mark.setSubmittedTime(LocalDateTime.now());
-                        markRepository.save(mark);
-                    }
-                });
-                examinationRepository.save(examination);
-            }
-        }).toList();
-    }
 }

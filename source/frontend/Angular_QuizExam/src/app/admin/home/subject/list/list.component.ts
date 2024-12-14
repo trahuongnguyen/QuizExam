@@ -1,14 +1,14 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { AuthService } from '../../../service/auth.service';
+import { AuthService } from '../../../../shared/service/auth.service';
 import { Title } from '@angular/platform-browser';
 import { AdminComponent } from '../../../admin.component';
 import { HomeComponent } from '../../home.component';
-import { HttpClient } from '@angular/common/http';
-import { ToastrService } from 'ngx-toastr';
+import { Sem, SubjectRequest, SubjectResponse } from '../../../../shared/models/subject.model';
+import { ValidationError } from '../../../../shared/models/models';
+import { SubjectService } from '../../../../shared/service/subject/subject.service';
 import { UrlService } from '../../../../shared/service/url.service';
-import { Router, ActivatedRoute } from '@angular/router';
-import { forkJoin, Observable } from 'rxjs';
-import { Sem, Subject } from '../../../../shared/models/models';
+import { Router } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
 declare var $: any;
 
 @Component({
@@ -20,21 +20,17 @@ declare var $: any;
   ]
 })
 export class ListComponent implements OnInit, OnDestroy {
-  semList: Sem[] = [];
-  subjectList: Subject[] = [];
   dataTable: any;
+  semList: Sem[] = [];
+  subjectList: SubjectResponse[] = [];
 
-  subjectForm: Subject = {
-    id: 0,
-    sem: { id: 0, name: '' },
-    name: '',
-    image: null,
-    status: 0
-  };
-  selectedSem: number = 0;
+  subjectId: number = 0;
+  sem: Sem;
+  subject: SubjectResponse;
+  subjectForm: SubjectRequest = { };
+  validationError: ValidationError = { };
+
   changeImg: boolean = false;
-
-  nameError: String = '';
 
   isPopupCreate: boolean = false;
   isPopupUpdate: boolean = false;
@@ -49,12 +45,14 @@ export class ListComponent implements OnInit, OnDestroy {
     private titleService: Title,
     public admin: AdminComponent,
     public home: HomeComponent,
-    private http: HttpClient,
-    private toastr: ToastrService,
+    private subjectService: SubjectService,
     public urlService: UrlService,
     private router: Router,
-    private activatedRoute: ActivatedRoute
-  ) { }
+    private toastr: ToastrService
+  ) {
+    this.sem = { id: 0, name: '' };
+    this.subject = { id: 0, name: '', image: '', status: 0, sem: this.sem };
+  }
 
   ngOnInit(): void {
     this.titleService.setTitle('List of Subjects');
@@ -62,28 +60,29 @@ export class ListComponent implements OnInit, OnDestroy {
     this.loadData();
   }
 
-  getSemListApi(): Observable<Sem[]> {
-    return this.http.get<Sem[]>(`${this.authService.apiUrl}/sem`, this.home.httpOptions);
-  }
-
-  getSubjectListBySemApi(semId: number): Observable<Subject[]> {
-    return this.http.get<Subject[]>(`${this.authService.apiUrl}/subject/sem/${semId}`, this.home.httpOptions);
-  }
-
-  getSubjectByIdApi(id: number): Observable<Subject> {
-    return this.http.get<Subject>(`${this.authService.apiUrl}/subject/${id}`, this.home.httpOptions);
-  }
-
-  createSubjectApi(formData: FormData): Observable<FormData> {
-    return this.http.post<FormData>(`${this.authService.apiUrl}/subject`, formData, this.home.httpOptions);
-  }
-
-  updateSubjectApi(formData: FormData, subjectId: number): Observable<FormData> {
-    return this.http.put<FormData>(`${this.authService.apiUrl}/subject/${subjectId}`, formData, this.home.httpOptions);
-  }
-
-  deleteSubjectApi(subjectId: number): Observable<Subject> {
-    return this.http.put<Subject>(`${this.authService.apiUrl}/subject/remove/${subjectId}`, {}, this.home.httpOptions);
+  loadData(): void {
+    this.subjectService.getSemList().subscribe({
+      next: (semResponse) => {
+        this.semList = semResponse;
+        if (this.semList && this.semList.length > 0) {
+          // Nếu semList có dữ liệu thì setup semId của subjectForm mặc định bằng sem đầu tiên
+          this.sem.id = this.semList[0].id;
+          this.subjectForm.semId = this.sem.id;
+          this.subjectService.getSubjectListBySem(this.sem.id).subscribe({
+            next: (subjectResponse) => {
+              this.subjectList = subjectResponse;
+              this.initializeDataTable();
+            },
+            error: (err) => {
+              this.authService.handleError(err, undefined, '', 'load data');
+            }
+          });
+        }
+      },
+      error: (err) => {
+        this.authService.handleError(err, undefined, '', 'load data');
+      }
+    });
   }
 
   navigateToChapters(id: number): void {
@@ -92,30 +91,6 @@ export class ListComponent implements OnInit, OnDestroy {
 
   navigateToQuestions(id: number): void {
     this.router.navigate([this.urlService.questionListUrl(id)]);
-  }
-
-  loadData(): void {
-    this.getSemListApi().subscribe((semResponse: any) => {
-      this.semList = semResponse;
-
-      if (this.semList.length > 0) {
-        this.selectedSem = this.semList[0].id;
-        this.subjectForm.sem.id = this.selectedSem;
-        this.getSubjectListBySemApi(this.selectedSem).subscribe(
-          (subjectResponse: Subject[]) => {
-            this.subjectList = subjectResponse;
-            this.authService.listExporter = subjectResponse;
-            this.initializeDataTable();
-          },
-          (error) => {
-            console.error('Error:', error);
-          }
-        );
-      }
-      else {
-        this.toastr.error('No semesters available', 'Error', { timeOut: 2000 });
-      }
-    });
   }
 
   initializeDataTable(): void {
@@ -142,20 +117,18 @@ export class ListComponent implements OnInit, OnDestroy {
           data: null,
           render: (data: any, type: any, row: any) => {
             if (this.home.isActive(['TEACHER'])) {
-              return `<span class="mdi mdi-information-outline icon-action info-icon" title="Info" data-id="${row.id}"></span>
+              return `<span class="mdi mdi-information-outline icon-action info-icon" title="Chapters" data-id="${row.id}"></span>
                       <span class="mdi mdi-comment-question-outline icon-action question-icon" title="Question" data-id="${row.id}"></span>`;
             }
             if (this.home.isActive(['DIRECTOR'])) {
               return `<span class="mdi mdi-pencil icon-action edit-icon" title="Edit" data-id="${row.id}"></span>
                       <span class="mdi mdi-delete-forever icon-action delete-icon" title="Remove" data-id="${row.id}"></span>`
             }
-            return `<span class="mdi mdi-information-outline icon-action info-icon" title="Info" data-id="${row.id}"></span>
-                      <span class="mdi mdi-pencil icon-action edit-icon" title="Edit" data-id="${row.id}"></span>
-                      <span class="mdi mdi-comment-question-outline icon-action question-icon" title="Question" data-id="${row.id}"></span>
-                      <span class="mdi mdi-delete-forever icon-action delete-icon" title="Remove" data-id="${row.id}"></span>`;
+            return `<span class="mdi mdi-information-outline icon-action info-icon" title="Chapters" data-id="${row.id}"></span>
+                    <span class="mdi mdi-pencil icon-action edit-icon" title="Edit" data-id="${row.id}"></span>
+                    <span class="mdi mdi-comment-question-outline icon-action question-icon" title="Question" data-id="${row.id}"></span>
+                    <span class="mdi mdi-delete-forever icon-action delete-icon" title="Remove" data-id="${row.id}"></span>`;
           }
-
-
         }
       ],
 
@@ -172,89 +145,90 @@ export class ListComponent implements OnInit, OnDestroy {
     // Thêm placeholder vào input của DataTables
     $('.dataTables_filter input[type="search"]').attr('placeholder', 'Search');
 
-    $('.info-icon').on('click', (e: any) => this.navigateToChapters($(e.currentTarget).data('id')));
-    $('.edit-icon').on('click', (e: any) => this.showPopupEdit($(e.currentTarget).data('id')));
-    $('.question-icon').on('click', (e: any) => this.navigateToQuestions($(e.currentTarget).data('id')));
-    $('.delete-icon').on('click', (e: any) => this.showPopupDelete($(e.currentTarget).data('id')));
+    $('.info-icon').on('click', (e: any) => this.router.navigate([this.urlService.chapterListUrl($(e.currentTarget).data('id'))]));
+    $('.edit-icon').on('click', (e: any) => this.openPopupUpdate($(e.currentTarget).data('id')));
+    $('.question-icon').on('click', (e: any) => this.router.navigate([this.urlService.questionListUrl($(e.currentTarget).data('id'))]));
+    $('.delete-icon').on('click', (e: any) => this.openPopupDelete($(e.currentTarget).data('id')));
   }
 
   updateDataTable(newData: any): void {
     if (this.dataTable) {
       this.dataTable.clear(); // Xóa dữ liệu hiện tại
-      this.dataTable.rows.add(newData); // Gọi dữ liệu mới
+      this.dataTable.rows.add(newData); // Thêm dữ liệu mới
       this.dataTable.draw(); // Vẽ lại bảng
     }
   }
 
-  reloadTable(semId: number): void {
-    this.getSubjectListBySemApi(semId).subscribe(
-      (subjectResponse: Subject[]) => {
+  reloadTable(): void {
+    this.subjectService.getSubjectListBySem(this.sem.id).subscribe({
+      next: (subjectResponse) => {
         this.subjectList = subjectResponse;
-        this.authService.listExporter = subjectResponse;
         this.updateDataTable(this.subjectList);
+        this.closePopup();
       },
-      (error) => {
-        console.error('Error:', error);
+      error: (err) => {
+        this.authService.handleError(err, undefined, '', 'load data');
       }
-    );
-    this.closePopup();
+    });
+  }
+
+  loadSubjectById(id: number, callback: (subject: SubjectResponse) => void): void {
+    this.subjectService.getSubjectById(id).subscribe({
+      next: (subjectResponse) => {
+        this.subject = subjectResponse;
+        callback(this.subject); // Chạy hàm callback sau khi lấy thông tin thành công
+      },
+      error: (err) => {
+        this.authService.handleError(err, this.validationError, 'subject', 'load data', this.reloadTable.bind(this));
+      }
+    });
   }
 
   setSelectedSem(semId: number): void {
-    this.selectedSem = semId;
-    this.subjectForm.sem.id = this.selectedSem;
-    this.reloadTable(this.selectedSem);
+    this.sem.id = semId;
+    this.subjectForm.semId = this.sem.id;
+    this.reloadTable();
   }
 
-  showPopupCreate(): void {
+  convertToRequest(): void {
+    this.subjectForm.semId = this.subject.sem.id;
+    this.subjectForm.name = this.subject.name;
+    this.subjectForm.image = this.subject.image;
+  }
+
+  openPopupConfirm(title: string, message: string): void {
+    this.dialogTitle = title;
+    this.dialogMessage = message;
+    this.isConfirmationPopup = true;
+  }
+
+  openPopupCreate(): void {
     this.isPopupCreate = true;
   }
-
-  showPopupEdit(id: number): void {
-    this.getSubjectByIdApi(id).subscribe(
-      (subjectResponse: Subject) => {
-        this.subjectForm = subjectResponse;
-        this.isPopupUpdate = true;
-      },
-      (error) => {
-        this.toastr.error(error.error.message, 'Error', { timeOut: 4000 });
-        setTimeout(() => { this.reloadTable(this.selectedSem); }, 4000);
-      }
-    );
+  
+  openPopupUpdate(id: number): void {
+    this.loadSubjectById(id, () => {
+      this.subjectId = id;
+      this.convertToRequest();
+      this.isPopupUpdate = true;
+    });
   }
 
-  showPopupDelete(id: number): void {
-    this.getSubjectByIdApi(id).subscribe(
-      (subjectResponse: Subject) => {
-        this.subjectForm = subjectResponse;
-        this.dialogTitle = 'Are you sure?';
-        this.dialogMessage = 'Do you really want to delete this Subject? This action cannot be undone.';
-        this.isConfirmationPopup = true;
-        this.isPopupDelete = true;
-      },
-      (error) => {
-        this.toastr.error(error.error.message, 'Error', { timeOut: 4000 });
-        setTimeout(() => { window.location.reload(); }, 4000);
-      }
-    );
+  openPopupDelete(id: number): void {
+    this.loadSubjectById(id, () => {
+      this.subjectId = id;
+      this.openPopupConfirm('Are you sure?', 'Do you really want to delete this Subject? This action cannot be undone.');
+      this.isPopupDelete = true;
+    });
   }
 
-  closePopup(): void {
-    this.subjectForm = {
-      id: 0,
-      sem: { id: this.selectedSem, name: '' },
-      name: '',
-      image: null,
-      status: 0
-    };
-    this.nameError = '';
-    this.changeImg = false;
-    this.isPopupCreate = false;
-    this.isPopupUpdate = false;
-    this.isPopupDelete = false;
+  popupFormTitle(): string {
+    if (this.isPopupCreate) return 'Create';
+    if (this.isPopupUpdate) return 'Update';
+    return '';
   }
 
-  chooseImage(event: Event) {
+  chooseImage(event: Event): void {
     const file = (event.target as HTMLInputElement).files?.[0];
     const imgSubject = document.getElementById(`image-subject`) as HTMLImageElement;
     if (file) {
@@ -264,17 +238,19 @@ export class ListComponent implements OnInit, OnDestroy {
         imgSubject.style.display = 'block';
       };
       reader.readAsDataURL(file);
-      this.subjectForm.image = file;
+      this.subjectForm.file = file;
+      this.subjectForm.image = file.name;
       this.changeImg = true;
     }
   }
 
-  removeImage() {
+  removeImage(): void {
     const imgSubject = document.getElementById(`image-subject`) as HTMLImageElement;
     const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement;
 
     // Xóa ảnh
-    this.subjectForm.image = null;
+    this.subjectForm.file = null;
+    this.subjectForm.image = '';
     this.changeImg = true;
     imgSubject.src = '';
     imgSubject.style.display = 'none';
@@ -285,94 +261,87 @@ export class ListComponent implements OnInit, OnDestroy {
     }
   }
 
+  closePopup(): void {
+    this.subjectId = 0;
+    this.changeImg = false;
+    this.subjectForm = { semId: this.sem.id };
+    this.validationError = { };
+    this.isPopupCreate = false;
+    this.isPopupUpdate = false;
+    this.isPopupDelete = false;
+  }
+
+  submitForm(): void {
+    this.validationError = { };
+    if (this.isPopupCreate) {
+      this.createSubject();
+    }
+    else if (this.isPopupUpdate) {
+      this.updateSubject();
+    }
+  }
+
   createSubject(): void {
-    this.nameError = '';
-    const formData = new FormData();
-    const subject = { semId: this.subjectForm.sem.id, name: this.subjectForm.name }
-
-    formData.append('file', this.subjectForm.image || new Blob());
-    formData.append('subject', new Blob([JSON.stringify(subject)], { type: 'application/json' }));
-
-    this.createSubjectApi(formData).subscribe({
-      next: () => {
-        this.toastr.success('Create Successful!', 'Success', { timeOut: 2000 });
-        this.setSelectedSem(subject.semId);
+    this.subjectService.createSubject(this.subjectForm).subscribe({
+      next: (subjectResponse) => {
+        this.toastr.success(`Subject: ${subjectResponse.name} created successfully!`, 'Success', { timeOut: 3000 });
+        this.setSelectedSem(subjectResponse.sem.id);
       },
       error: (err) => {
-        this.toastr.error('Create Fail!', 'Error', { timeOut: 2000 });
-        this.nameError = err.error.message;
-        if (err.error.length > 0) {
-          err.error.forEach((e: any) => {
-            if (e.key == 'name') {
-              this.nameError = e.message;
-            }
-          });
-        }
+        this.authService.handleError(err, this.validationError, 'subject', 'create subject', this.reloadTable.bind(this));
       }
     });
   }
 
-  updateSubject() {
-    this.nameError = '';
-    const formData = new FormData();
-    const subject = { semId: this.subjectForm.sem.id, name: this.subjectForm.name }
-
-    if (this.changeImg) {
-      formData.append('file', this.subjectForm.image || new Blob());
-    }
-    formData.append('subject', new Blob([JSON.stringify(subject)], { type: 'application/json' }));
-
-    this.updateSubjectApi(formData, this.subjectForm.id).subscribe({
-      next: () => {
-        this.toastr.success('Update Successful!', 'Success', { timeOut: 2000 });
-        this.setSelectedSem(subject.semId);
+  updateSubject(): void {
+    this.subjectService.updateSubject(this.subjectId, this.subjectForm, this.changeImg).subscribe({
+      next: (subjectResponse) => {
+        this.toastr.success(`Subject: ${subjectResponse.name} updated successfully!`, 'Success', { timeOut: 3000 });
+        this.setSelectedSem(subjectResponse.sem.id);
       },
       error: (err) => {
-        this.toastr.error('Update Fail!', 'Error', { timeOut: 2000 });
-        this.nameError = err.error.message;
-        if (err.error.length > 0) {
-          err.error.forEach((e: any) => {
-            if (e.key == 'name') {
-              this.nameError = e.message;
-            }
-          });
-        }
+        this.authService.handleError(err, this.validationError, 'subject', 'update subject', this.reloadTable.bind(this));
       }
     });
   }
 
   deleteSubject(): void {
-    this.deleteSubjectApi(this.subjectForm.id).subscribe({
-      next: () => {
-        this.toastr.success('Delete Successful!', 'Success', { timeOut: 2000 });
-        this.reloadTable(this.subjectForm.sem.id);
+    this.subjectService.deleteSubject(this.subjectId).subscribe({
+      next: (subjectResponse) => {
+        this.toastr.success(`Subject: ${subjectResponse.name} has been deleted successfully!`, 'Success', { timeOut: 3000 });
+        this.reloadTable();
       },
-      error: () => {
-        this.toastr.error('Delete Fail!', 'Error', { timeOut: 2000 });
+      error: (err) => {
+        this.authService.handleError(err, this.validationError, 'subject', 'delete subject', this.reloadTable.bind(this));
       }
     });
   }
 
-  exportExcel() {
+  exportExcel(): void {
     this.authService.listExporter = this.subjectList;
     this.exportData(this.authService.exportDataExcel(), 'subject_excel.xlsx');
   }
 
-  exportPDF() {
+  exportPDF(): void {
     this.authService.listExporter = this.subjectList;
     this.exportData(this.authService.exportDataPDF(), 'subject_pdf.pdf');
   }
 
   exportData(exportFunction: any, fileName: string): void {
-    exportFunction.subscribe((response: any) => {
-      const url = window.URL.createObjectURL(new Blob([response], { type: 'application/octet-stream' }));
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = fileName;
-      document.body.appendChild(a);
-      a.click();
-      window.URL.revokeObjectURL(url);
-      document.body.removeChild(a);
+    exportFunction.subscribe({
+      next: (response: any) => {
+        const url = window.URL.createObjectURL(new Blob([response], { type: 'application/octet-stream' }));
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = fileName;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+      },
+      error: (err: any) => {
+        this.authService.handleError(err, undefined, '', 'export');
+      }
     });
   }
 

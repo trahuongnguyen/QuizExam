@@ -12,20 +12,8 @@ export class UrlService {
 
   subjectDefaultImageUrl: string = 'http://localhost:8080/uploads/img-subject/default.png';
 
-  authorizeListUrl(): string {
-    return `/admin/authorize`;
-  }
-
-  authorizeDetailUrl(): string {
-    return `/admin/authorize/detail`;
-  }
-
-  classDetailUrl(classId: number): string {
-    return `/admin/class/${classId}`;
-  }
-
-  studentListUrl(): string {
-    return `/admin/student`;
+  adminUrl(): string {
+    return `/admin`;
   }
 
   subjectListUrl(): string {
@@ -48,6 +36,18 @@ export class UrlService {
     return `/admin/subject/${subjectId}/edit-question/${id}`;
   }
 
+  classUrl(): string {
+    return `/admin/class`;
+  }
+
+  classDetailUrl(classId: number): string {
+    return `/admin/class/${classId}`;
+  }
+
+  studentListUrl(): string {
+    return `/admin/student`;
+  }
+
   examListUrl(): string {
     return `/admin/exam`;
   }
@@ -64,8 +64,20 @@ export class UrlService {
     return `/admin/exam/detail/${examId}`;
   }
 
-  editExamUrl(examId: number): string {
+  editExamInfoUrl(examId: number): string {
     return `/admin/exam/edit-exam/${examId}`;
+  }
+
+  levelUrl(): string {
+    return `/admin/level`;
+  }
+
+  authorizeListUrl(): string {
+    return `/admin/authorize`;
+  }
+
+  authorizeDetailUrl(): string {
+    return `/admin/authorize/detail`;
   }
 
   examPageUrl(): string {

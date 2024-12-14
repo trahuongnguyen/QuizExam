@@ -2,6 +2,7 @@ import { Component, OnInit, ElementRef, Renderer2 } from '@angular/core';
 import { AuthService } from '../../shared/service/auth.service';
 import { Title } from '@angular/platform-browser';
 import { HttpHeaders } from '@angular/common/http';
+import { TokenKey, RoleKey, Roles } from '../../shared/enums';
 import { LoginRequest } from '../../shared/models/models';
 import { UrlService } from '../../shared/service/url.service';
 import { Router } from '@angular/router';
@@ -24,24 +25,16 @@ export class LoginComponent implements OnInit {
     private toastr: ToastrService,
     private el: ElementRef,
     private renderer: Renderer2
-  ) { }
+  ) {
+    if (authService.loadToken(TokenKey.ADMIN)) {
+      this.router.navigate(['admin']);
+    }
+  }
 
   ngOnInit(): void {
     this.titleService.setTitle('Login');
-
-    if (this.isLocalStorageAvailable()) {
-      const role = localStorage.getItem('role');
-      if (role && role != 'STUDENT') {
-        this.router.navigate(['/admin']);
-      }
-    }
-
     const carouselElement = this.el.nativeElement.querySelector('#carouselExampleSlidesOnly');
     this.renderer.addClass(carouselElement, 'carousel');
-  }
-
-  isLocalStorageAvailable(): boolean {
-    return typeof localStorage !== 'undefined';
   }
 
   onSubmit() {
@@ -50,9 +43,9 @@ export class LoginComponent implements OnInit {
         const headers = new HttpHeaders().set('Email', this.loginForm.email || '');
         this.authService.takeRole(headers).subscribe({
           next: (roleResponse) => {
-            if (['ADMIN', 'DIRECTOR', 'TEACHER', 'SRO'].includes(roleResponse.name)) {
-              localStorage.setItem('jwtToken', JSON.stringify(loginResponse.token));
-              localStorage.setItem('role', roleResponse.name);
+            if ([Roles.ADMIN, Roles.DIRECTOR, Roles.TEACHER, Roles.SRO].includes(roleResponse.name as Roles)) {
+              localStorage.setItem(TokenKey.ADMIN, JSON.stringify(loginResponse.token));
+              localStorage.setItem(RoleKey.ADMIN, roleResponse.name);
               this.toastr.success('Login Successful!', 'Success', { timeOut: 2000 });
               this.router.navigate(['/admin']);
             }

@@ -3,7 +3,7 @@ import { AuthService } from '../../../../shared/service/auth.service';
 import { Title } from '@angular/platform-browser';
 import { AdminComponent } from '../../../admin.component';
 import { Role, Permission } from '../../../../shared/models/role.model';
-import { RoleService } from '../../../service/role/role.service';
+import { RoleService } from '../../../../shared/service/role/role.service';
 import { UrlService } from '../../../../shared/service/url.service';
 import { Router } from '@angular/router';
 import { forkJoin } from 'rxjs';
@@ -30,11 +30,7 @@ export class DetailComponent implements OnInit {
     public urlService: UrlService,
     private router: Router
   ) {
-    this.role = {
-      id: 0,
-      name: '',
-      description: ''
-    };
+    this.role = { id: 0, name: '', description: '' };
   }
 
   ngOnInit(): void {
@@ -55,7 +51,7 @@ export class DetailComponent implements OnInit {
           this.initializeDataTable();
         },
         error: (err) => {
-          this.authService.handleError(err, undefined, '', 'load data');
+          this.authService.handleError(err, undefined, 'role', 'load data');
         }
       }
     );

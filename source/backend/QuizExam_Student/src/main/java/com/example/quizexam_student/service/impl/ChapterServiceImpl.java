@@ -37,14 +37,23 @@ public class ChapterServiceImpl implements ChapterService {
     }
 
     @Override
+    public Chapter findChapterById(int id) {
+        Chapter chapter = chapterRepository.findByIdAndStatus(id, 1);
+        if (Objects.isNull(chapter)) {
+            throw new NotFoundException("chapter", "Chapter not found");
+        }
+        return chapter;
+    }
+
+    @Override
     public Chapter addChapter(ChapterRequest chapterRequest) {
         Subject subject = subjectRepository.findByIdAndStatus(chapterRequest.getSubjectId(),1);
         if (Objects.isNull(subject)) {
-            throw new NotFoundException("NotFoundSubject", "Subject id not found");
+            throw new NotFoundException("subject", "Subject not found");
         }
         Chapter checkChapter = chapterRepository.findByNameAndSubjectAndStatus(chapterRequest.getName(), subject, 1);
         if (!Objects.isNull(checkChapter)) {
-            throw new AlreadyExistException("ExistChapter", "Chapter name already exists");
+            throw new AlreadyExistException("name", "Chapter name already exists");
         }
         Chapter chapter = new Chapter();
         chapter.setName(chapterRequest.getName());
@@ -58,12 +67,12 @@ public class ChapterServiceImpl implements ChapterService {
     public Chapter updateChapter(int id, ChapterRequest chapterRequest) {
         Subject subject = subjectRepository.findByIdAndStatus(chapterRequest.getSubjectId(),1);
         if (Objects.isNull(subject)) {
-            throw new NotFoundException("NotFoundSubject", "Subject id not found");
+            throw new NotFoundException("subject", "Subject not found");
         }
-        Chapter oldChapter = chapterRepository.findById(id).orElseThrow(() -> new NotFoundException("NotFoundChapter", "Chapter not found"));
+        Chapter oldChapter = findChapterById(id);
         Chapter chapter = chapterRepository.findByNameAndSubjectAndStatusAndIdNot(chapterRequest.getName(), subject, 1, id);
         if (!Objects.isNull(chapter)) {
-            throw new AlreadyExistException("ExistChapter", "Chapter name already exists");
+            throw new AlreadyExistException("name", "Chapter name already exists");
         }
         oldChapter.setName(chapterRequest.getName());
         oldChapter.setSubject(subject);
@@ -72,7 +81,7 @@ public class ChapterServiceImpl implements ChapterService {
 
     @Override
     public Chapter deleteChapter(int id) {
-        Chapter oldChapter = chapterRepository.findByIdAndStatus(id,1);
+        Chapter oldChapter = findChapterById(id);
         oldChapter.setStatus(0);
         return chapterRepository.save(oldChapter);
     }

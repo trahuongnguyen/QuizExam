@@ -2,83 +2,13 @@
     <h4>Examination</h4>
     <hr class="line">
 
-    <div class="row bs-wizard bs-wizard-3" *ngIf="examsForm.type == 0">
-        <div class="col-xs-3 bs-wizard-step active">
-            <div class="text-center bs-wizard-stepnum">Step 1</div>
-            <div class="progress">
-                <div class="progress-bar"></div>
-            </div>
-            <a href="#" class="bs-wizard-dot"></a>
-            <div class="bs-wizard-info text-center">Create Exam</div>
-        </div>
+    <app-wizard-step *ngIf="examForm.type == 0" [steps]="examComponent.autoGenerateExamSteps">
+    </app-wizard-step>
 
-        <div class="col-xs-3 bs-wizard-step disabled">
-            <div class="text-center bs-wizard-stepnum">Step 2</div>
-            <div class="progress">
-                <div class="progress-bar"></div>
-            </div>
-            <a href="#" class="bs-wizard-dot"></a>
-            <div class="bs-wizard-info text-center">Add Student</div>
-        </div>
+    <app-wizard-step *ngIf="examForm.type == 1" [steps]="examComponent.manualQuestionSelectionSteps">
+    </app-wizard-step>
 
-        <div class="col-xs-3 bs-wizard-step disabled">
-            <div class="text-center bs-wizard-stepnum">Step 3</div>
-            <div class="progress">
-                <div class="progress-bar"></div>
-            </div>
-            <a href="#" class="bs-wizard-dot"></a>
-            <div class="bs-wizard-info text-center">Complete</div>
-        </div>
-    </div>
-
-    <div class="row bs-wizard bs-wizard-4" *ngIf="examsForm.type == 1">
-        <div class="col-xs-3 bs-wizard-step {{typeExam == 1 ? 'complete' : 'active'}}">
-            <div class="text-center bs-wizard-stepnum">Step 1</div>
-            <div class="progress">
-                <div class="progress-bar"></div>
-            </div>
-            <a href="#" class="bs-wizard-dot"></a>
-            <div class="bs-wizard-info text-center">Create Exam</div>
-        </div>
-
-        <div class="col-xs-3 bs-wizard-step {{typeExam == 1 ? 'active' : 'disabled'}}">
-            <div class="text-center bs-wizard-stepnum">Step 2</div>
-            <div class="progress">
-                <div class="progress-bar"></div>
-            </div>
-            <a href="#" class="bs-wizard-dot"></a>
-            <div class="bs-wizard-info text-center">Add Question</div>
-        </div>
-
-        <div class="col-xs-3 bs-wizard-step disabled">
-            <div class="text-center bs-wizard-stepnum">Step 3</div>
-            <div class="progress">
-                <div class="progress-bar"></div>
-            </div>
-            <a href="#" class="bs-wizard-dot"></a>
-            <div class="bs-wizard-info text-center">Add Student</div>
-        </div>
-
-        <div class="col-xs-3 bs-wizard-step disabled">
-            <div class="text-center bs-wizard-stepnum">Step 4</div>
-            <div class="progress">
-                <div class="progress-bar"></div>
-            </div>
-            <a href="#" class="bs-wizard-dot"></a>
-            <div class="bs-wizard-info text-center">Complete</div>
-        </div>
-    </div>
-
-    <div class="bottom-actions" *ngIf="typeExam == 1">
-        <div>
-            <a class="button button-pdf" (click)="backStep()"><span class="mdi mdi-arrow-left-thick"></span>Back</a>
-        </div>
-        <div>
-            <a class="button button-pdf" (click)="createExam()">Next<span class="mdi mdi-arrow-right-thick"></span></a>
-        </div>
-    </div>
-
-    <div class="container create-exam" *ngIf="typeExam == 0">
+    <div class="container create-exam" *ngIf="examType == 0">
         <div class="title">
             <h3 class="text-center mt-4">Create Examination</h3>
         </div>
@@ -87,106 +17,115 @@
                 <div class="row">
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label for="name">Name</label><br>
-                            <input type="text" class="form-control" name="name" [(ngModel)]="examsForm.name" id="name">
+                            <label for="name">Name</label>
+                            <input type="text" class="form-control" [(ngModel)]="examForm.name" name="name">
+                            <div class="text-danger error" *ngIf="validationError['name']">{{ validationError['name'] }}</div>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label for="duration">Duration(minutes)</label><br>
-                            <input type="number" class="form-control" name="duration" [(ngModel)]="examsForm.duration"
-                                id="duration">
+                            <label for="type">Type</label>
+                            <select class="form-select" [(ngModel)]="examForm.type" name="type">
+                                <option [value]="0">Auto-generate exam</option>
+                                <option [value]="1">Select questions</option>
+                            </select>
                         </div>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label for="startTime">Start Time</label><br>
-                            <input type="datetime-local" class="form-control" name="startTime"
-                                [(ngModel)]="examsForm.startTime" id="startTime">
+                            <label for="startTime">Start Time</label>
+                            <input type="datetime-local" class="form-control" [(ngModel)]="examForm.startTime" name="startTime">
+                            <div class="text-danger error" *ngIf="validationError['startTime']">{{ validationError['startTime'] }}</div>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label for="endTime">End Time</label><br>
-                            <input type="datetime-local" class="form-control" name="endTime"
-                                [(ngModel)]="examsForm.endTime" id="endTime">
+                            <label for="endTime">End Time</label>
+                            <input type="datetime-local" class="form-control" [(ngModel)]="examForm.endTime" name="endTime">
+                            <div class="text-danger error" *ngIf="validationError['endTime']">{{ validationError['endTime'] }}</div>
                         </div>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-md-6">
-                        <div class="form-group">
-                            <label for="">Subject</label><br>
-                            <select [(ngModel)]="examsForm.subjectId" class="form-select" name="subjectId" id="subject"
-                                (change)="selectSubject($event)">
-                                <option *ngFor="let sub of subjects" [value]="sub.id" value="">{{sub.name}}</option>
-                            </select>
+                        <div class="row">
+                            <div class="form-group col-md-7">
+                                <label for="duration">Duration (minutes)</label>
+                                <input type="number" class="form-control" [(ngModel)]="examForm.duration" name="duration">
+                                <div class="text-danger error" *ngIf="validationError['duration']">{{ validationError['duration'] }}</div>
+                            </div>
+                            <div class="form-group col-md-5">
+                                <label for="sem">Sem</label>
+                                <select class="form-select" [(ngModel)]="selectedSem" name="selectedSem" (change)="setSelectedSem(selectedSem)">
+                                    <option *ngFor="let sem of semList" [value]="sem.id">{{ sem.name }}</option>
+                                </select>
+                            </div>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label for="type">Type</label><br>
-                            <select class="form-select" [(ngModel)]="examsForm.type" name="examsForm.type">
-                                <option value=0>Gen đề tự động</option>
-                                <option value=1>Chọn câu hỏi</option>
+                            <label for="">Subject</label>
+                            <select class="form-select" [(ngModel)]="examForm.subjectId" name="subjectId" (change)="setSelectedSubject(examForm.subjectId)">
+                                <option *ngFor="let subject of subjectList" [value]="subject.id">{{ subject.name }}</option>
                             </select>
                         </div>
                     </div>
                 </div>
-                <div class="form-group">
-                    <label for="" class="label-title"></label>
-                    <div class="w-30">
-                        <button type="submit" class="btn button me-2">Next</button>
-                    </div>
+                <div class="form-group text-center mt-4">
+                    <button type="submit" class="btn button-next">Next</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <div class="container" *ngIf="typeExam == 1">
-        <div class="row exam-detail">
-            <div class="row justify-content-between">
+    <div class="container add-question" *ngIf="examType == 1">
+        <div class="row exam-info">
+            <div class="exam-header">
+                <h4 class="text-center flex-grow-1">Examination Info</h4>
+            </div>
+
+            <div class="row">
                 <div class="col-md-6">
-                    <div class="d-flex justify-content-between">
+                    <div class="d-flex justify-content-between mb-3">
                         <p class="label">Name:</p>
-                        <p class="content">{{examsForm.name}}</p>
+                        <p class="content">Name</p>
                     </div>
-                    <div class="d-flex justify-content-between">
+                    <div class="d-flex justify-content-between mb-3">
                         <p class="label">Subject:</p>
-                        <p class="content">{{subjectName}}</p>
+                        <p class="content">{{ subjectName }}</p>
                     </div>
-                    <div class="d-flex justify-content-between">
+                    <div class="d-flex justify-content-between mb-3">
                         <p class="label">Duration:</p>
-                        <p class="content">{{examsForm.duration}}</p>
+                        <p class="content">{{ examForm.duration }}</p>
                     </div>
                 </div>
-                <div class="col-md-6 d-flex flex-column align-items-end">
-                    <div class="d-flex">
-                        <p class="label me-2">Start Time:</p>
-                        <p class="content">{{examsForm.startTime | date:'dd/MM/yyyy HH:mm'}}</p>
+                <div class="col-md-6">
+                    <div class="d-flex justify-content-between mb-3">
+                        <p class="label">Start Time:</p>
+                        <p class="content">{{ convertDateFormat(examForm.startTime) }}</p>
                     </div>
-                    <div class="d-flex">
-                        <p class="label me-2">End Time:</p>
-                        <p class="content">{{examsForm.endTime | date:'dd/MM/yyyy HH:mm'}}</p>
+                    <div class="d-flex justify-content-between mb-3">
+                        <p class="label">End Time:</p>
+                        <p class="content">{{ convertDateFormat(examForm.endTime) }}</p>
                     </div>
                 </div>
             </div>
-            
         </div>
-        <div class="container select-question mt-3" >
+
+        <div class="select-question mt-3">
             <div class="row">
                 <div class="col-md-6">
                     <div class="question-container">
-                        <h3 class="text-center">List Question</h3>
+                        <h3 class="text-center">Question List</h3>
                         <div class="d-flex justify-content-start align-items-center mb-4">
-                            <input type="text" class="form-control search-input" [(ngModel)]="searchTextList"
+                            <input type="text" class="form-control search-input" [(ngModel)]="searchQuestionList"
                                 placeholder="Search" />
                         </div>
-                        <div *ngIf="filteredListQuestions.length > 0; else noListQuestions">
-                            <div *ngFor="let question of filteredListQuestions; let i = index" class="question-item">
-                                <span class="mdi mdi-plus-circle-outline icon" (click)="moveToExam(question)" style="cursor: pointer;" title="Add"></span>
+                        <div *ngIf="filteredQuestionList.length > 0; else noListQuestions">
+                            <div *ngFor="let question of filteredQuestionList; let i = index" class="question-item">
+                                <span class="mdi mdi-plus-circle-outline icon" (click)="moveToSelectedQuestions(question)" style="cursor: pointer;" title="Add"></span>
                                 <span><strong>Question {{ i + 1 }}:</strong> {{ question.content }}</span>
                             </div>
                         </div>
@@ -198,14 +137,14 @@
     
                 <div class="col-md-6">
                     <div class="question-container">
-                        <h3 class="text-center">Exam</h3>
+                        <h3 class="text-center">Selected Questions</h3>
                         <div class="d-flex justify-content-start mb-4">
-                            <input type="text" class="form-control search-input" [(ngModel)]="searchTextExam"
+                            <input type="text" class="form-control search-input" [(ngModel)]="searchSelectedQuestions"
                                 placeholder="Search" />
                         </div>
-                        <div *ngIf="filteredExamQuestions.length > 0; else noExamQuestions">
-                            <div *ngFor="let question of filteredExamQuestions; let i = index" class="question-item">
-                                <span class="mdi mdi-minus-circle-outline icon" (click)="moveToList(question)" style="cursor: pointer;" title="Remove"></span>
+                        <div *ngIf="filteredSelectedQuestions.length > 0; else noExamQuestions">
+                            <div *ngFor="let question of filteredSelectedQuestions; let i = index" class="question-item">
+                                <span class="mdi mdi-minus-circle-outline icon" (click)="moveToQuestionList(question)" style="cursor: pointer;" title="Remove"></span>
                                 <span><strong>Question {{ i + 1 }}:</strong> {{ question.content }}</span>
                             </div>
                         </div>
@@ -216,8 +155,12 @@
                 </div>
             </div>
         </div>
+
+        <div class="button text-center mt-3">
+            <a class="btn button-pdf me-3" (click)="backStep()"><span class="mdi mdi-arrow-left-thick icon"></span>Back</a>
+            <a class="btn button-pdf" (click)="createExam()">Next<span class="mdi mdi-arrow-right-thick icon-right"></span></a>
+        </div>
     </div>
-    
 </div>
 
 <div *ngIf="isPopupLevel" class="popup-container">
@@ -225,14 +168,13 @@
         <form class="form-popup" (ngSubmit)="createExam()">
             <div class="popup-header">
                 <span>Enter the number of questions by level</span>
-                <span class="close-icon" (click)="closePopup()">&times;</span>
+                <span class="close-icon" (click)="closePopupLevel()">&times;</span>
             </div>
             <div class="popup-body">
-                <div class="form-group" *ngFor="let level of listLevel">
+                <div class="form-group" *ngFor="let level of levelList">
                     <label for="level{{level.id}}" class="text-popup">{{ level.name }}:</label>
-                    <input type="number" class="form-control" [(ngModel)]="levelId[level.id]" name="{{level.id}}"
-                        placeholder="Enter number">
-                    <span class="text-danger error">{{errorMessageLevel[level.id]}}</span>
+                    <input type="number" class="form-control" [(ngModel)]="examForm.levels[level.id]" name="level{{level.id}}" placeholder="Enter number">
+                    <div class="text-danger error" *ngIf="validationError['level[' + level.id + ']']">{{ validationError['level[' + level.id + ']'] }}</div>
                 </div>
             </div>
             <div class="popup-footer">

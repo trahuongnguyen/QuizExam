@@ -5,8 +5,8 @@
     <div class="profile d-flex">
         <div class="profile-header">
             <img src="../../../../../img/profile.png" class="profile-img" alt="Profile Image">
-            <h3>{{ profile.fullName }}</h3>
-            <p>{{ profile.email }}</p>
+            <h3>{{ authService.employeeProfile.fullName }}</h3>
+            <p>{{ authService.employeeProfile.email }}</p>
             <div class="d-flex w-max m-auto">
                 <div>
                     <a (click)="showEditForm()" class="btn button-default me-2">Edit Info</a>
@@ -19,20 +19,20 @@
 
         <div class="content" [ngClass]="{'show': isViewInfo}">
             <div class="row align-items-center mb-4">
-                <label for="dob" class="label-title col-5">Date of Birth:</label>
-                <p class="col-7">{{ convertDateFormat(profile.dob) }}</p>
+                <label for="dob" class="label-title col-6">Date of Birth:</label>
+                <p class="col-6">{{ convertDateFormat(authService.employeeProfile.dob) }}</p>
             </div>
             <div class="row align-items-center mb-4">
-                <label for="dob" class="label-title col-5">Gender:</label>
-                <p class="col-7">{{ profile.gender == 1 ? "Male" : "Female" }}</p>
+                <label for="dob" class="label-title col-6">Gender:</label>
+                <p class="col-6">{{ authService.employeeProfile.gender == 1 ? "Male" : "Female" }}</p>
             </div>
             <div class="row align-items-center mb-4">
-                <label for="dob" class="label-title col-5">Phone Number:</label>
-                <p class="col-7">{{ profile.phoneNumber }}</p>
+                <label for="dob" class="label-title col-6">Phone Number:</label>
+                <p class="col-6">{{ authService.employeeProfile.phoneNumber }}</p>
             </div>
             <div class="row align-items-center mb-4">
-                <label for="dob" class="label-title col-5">Address:</label>
-                <p class="col-7">{{ profile.address }}</p>
+                <label for="dob" class="label-title col-6">Address:</label>
+                <p class="col-6">{{ authService.employeeProfile.address }}</p>
             </div>
         </div>
 

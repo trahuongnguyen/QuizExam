@@ -5,7 +5,8 @@ import { AdminComponent } from '../../admin.component';
 import { Role } from '../../../shared/models/role.model';
 import { UserResponse, UserRequest } from '../../../shared/models/user.model';
 import { ValidationError } from '../../../shared/models/models';
-import { EmployeeService } from '../../service/employee/employee.service';
+import { RoleService } from '../../../shared/service/role/role.service';
+import { EmployeeService } from '../../../shared/service/employee/employee.service';
 import { ToastrService } from 'ngx-toastr';
 import { DatePipe } from '@angular/common';
 import { forkJoin } from 'rxjs';
@@ -50,6 +51,7 @@ export class EmployeeComponent implements OnInit, OnDestroy {
     private authService: AuthService,
     private titleService: Title,
     public admin: AdminComponent,
+    private roleService: RoleService,
     private employeeService: EmployeeService,
     private toastr: ToastrService,
     private datePipe: DatePipe,
@@ -61,7 +63,7 @@ export class EmployeeComponent implements OnInit, OnDestroy {
     this.initializeEmployeeForm();
   }
 
-  initializeEmployeeForm() {
+  initializeEmployeeForm(): void {
     this.employeeForm = { gender: 1, roleId: 4 };
   }
 
@@ -72,12 +74,11 @@ export class EmployeeComponent implements OnInit, OnDestroy {
   }
 
   loadData(): void {
-    forkJoin([this.employeeService.getRoleList(), this.employeeService.getEmployeeList(this.statusId)])
+    forkJoin([this.roleService.getRoleListToEmployee(), this.employeeService.getEmployeeList(this.statusId)])
       .subscribe({
         next: ([roleResponse, employeeResponse]) => {
           this.roleList = roleResponse;
           this.employeeList = employeeResponse;
-          this.authService.listExporter = employeeResponse;
           this.initializeDataTable();
         },
         error: (err) => {
@@ -239,7 +240,7 @@ export class EmployeeComponent implements OnInit, OnDestroy {
   }
 
   convertDateFormat(dateObj: Date | undefined): string {
-    // Dùng DatePipe để chuyển đổi đối tượng Date sang định dạng 'yyyy-MM-dd'
+    // Dùng DatePipe để chuyển đổi đối tượng Date sang định dạng 'dd-MM-yyyy'
     return this.datePipe.transform(dateObj, 'dd-MM-yyyy')!;
   }
 
@@ -306,7 +307,7 @@ export class EmployeeComponent implements OnInit, OnDestroy {
     }
   }
 
-  confirmAction() {
+  confirmAction(): void {
     if (this.isPopupResetPassword) {
       this.resetPasswordEmployee();
     }
@@ -408,12 +409,12 @@ export class EmployeeComponent implements OnInit, OnDestroy {
     });
   }
 
-  exportExcel() {
+  exportExcel(): void {
     this.authService.listExporter = this.employeeList;
     this.exportData(this.authService.exportDataExcel(), 'employee_excel.xlsx');
   }
 
-  exportPDF() {
+  exportPDF(): void {
     this.authService.listExporter = this.employeeList;
     this.exportData(this.authService.exportDataPDF(), 'employee_pdf.pdf');
   }

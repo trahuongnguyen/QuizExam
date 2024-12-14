@@ -1,15 +1,14 @@
 package com.example.quizexam_student.service.impl;
 
 import com.example.quizexam_student.bean.response.MarkResponse;
+import com.example.quizexam_student.entity.Examination;
 import com.example.quizexam_student.entity.Mark;
 import com.example.quizexam_student.entity.StudentDetail;
 import com.example.quizexam_student.entity.User;
 import com.example.quizexam_student.exception.IncorrectEmailOrPassword;
 import com.example.quizexam_student.exception.NotFoundException;
 import com.example.quizexam_student.mapper.MarkMapper;
-import com.example.quizexam_student.repository.MarkRepository;
-import com.example.quizexam_student.repository.SubjectRepository;
-import com.example.quizexam_student.repository.UserRepository;
+import com.example.quizexam_student.repository.*;
 import com.example.quizexam_student.service.MarkService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -30,8 +29,18 @@ public class MarkServiceImpl implements MarkService {
 
     private final UserRepository userRepository;
 
+    private final ExaminationRepository examinationRepository;
+
+    private final StudentRepository studentRepository;
+
     @Override
-    public List<Map<String, Object>> getPassPercentageBySubject() {
+    public List<MarkResponse> findAllMarkByExam(Integer examId) {
+        List<Mark> marks = markRepository.findAllByExamination_Id(examId);
+        return marks.stream().map(MarkMapper::convertToFullResponse).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Map<String, Object>> getPassPercentageForSubject() {
         // Lấy tất cả các điểm (mark) có score khác null
         List<Mark> marks = markRepository.findAllByScoreIsNotNull();
 
@@ -83,29 +92,52 @@ public class MarkServiceImpl implements MarkService {
     }
 
     @Override
-    public List<MarkResponse> getListScoredPerSubject(StudentDetail studentDetail, int semId) {
-        List<MarkResponse> marks = markRepository.findAllByStudentDetailAndScoreIsNotNull(studentDetail)
+    public List<MarkResponse> getListScoredPerSubject(StudentDetail studentDetail, Integer semId) {
+        return markRepository.findAllByStudentDetailAndSubject_Sem_IdAndScoreIsNotNull(studentDetail, semId)
                 .stream().map(MarkMapper::convertToResponse).collect(Collectors.toList());
-        Map<String, MarkResponse> latestMarks = new HashMap<>();
-        for (MarkResponse mark : marks) {
-            String key = mark.getSubjectName();
-            if (!latestMarks.containsKey(key) || mark.getBeginTime().isAfter(latestMarks.get(key).getBeginTime())) {
-                latestMarks.put(key, mark);
-            }
+    }
+
+    @Override
+    public MarkResponse getOneScoredByExam(StudentDetail studentDetail, Integer examId) {
+        return MarkMapper.convertToResponse(markRepository.findByStudentDetailAndExamination_IdOrderByIdDesc(studentDetail, examId));
+    }
+
+    @Override
+    public List<MarkResponse> updateMark(Integer examId, List<Integer> studentIds) {
+        Examination examination = examinationRepository.findByIdAndStatus(examId,1);
+        if (Objects.isNull(examination)) {
+            throw new NotFoundException("exam", "Examination not found.");
         }
-        return new ArrayList<>(latestMarks.values())
-                .stream()
-                .filter(m -> subjectRepository.findByName(m.getSubjectName()).getSem().getId() == semId)
-                .collect(Collectors.toList());
+
+        List<Mark> marks = markRepository.findAllByExamination_IdAndBeginTimeIsNull(examId);
+        marks.forEach(mark -> {
+            mark.setStudentDetail(null);
+            mark.setExamination(null);
+        });
+        markRepository.deleteAll(marks);
+
+        studentIds.removeIf(studentId ->
+                markRepository.existsByExamination_IdAndStudentDetail_UserIdAndBeginTimeIsNotNull(examId, studentId));
+
+        // Lấy danh sách StudentDetail từ studentIds
+        List<StudentDetail> studentDetails = studentRepository.findAllById(studentIds);
+
+        // Tạo các đối tượng Mark mới cho từng sinh viên
+        List<Mark> newMarks = new ArrayList<>();
+        for (StudentDetail studentDetail : studentDetails) {
+            Mark mark = new Mark();
+            mark.setExamination(examination);
+            mark.setStudentDetail(studentDetail);
+            mark.setSubject(examination.getSubject());
+            newMarks.add(mark);
+        }
+
+        // Lưu các Mark mới vào cơ sở dữ liệu
+        return markRepository.saveAll(newMarks).stream().map(MarkMapper::convertToFullResponse).collect(Collectors.toList());
     }
 
     @Override
-    public MarkResponse getOneScoredByExam(StudentDetail studentDetail, int examId) {
-        return MarkMapper.convertToResponse(markRepository.findByStudentDetailAndExaminationId(studentDetail, examId));
-    }
-
-    @Override
-    public Mark updateBeginTime(int id) {
+    public Mark updateBeginTime(Integer id) {
         User user = getUserByEmail();
         Mark mark = markRepository.findById(id).orElse(null);
         if (Objects.isNull(mark) || mark.getStudentDetail().getUserId() != user.getId() || mark.getBeginTime() != null) {
@@ -116,7 +148,7 @@ public class MarkServiceImpl implements MarkService {
     }
 
     @Override
-    public Mark updateWarning(int id, Mark markInput) {
+    public Mark updateWarning(Integer id, Mark markInput) {
         User user = getUserByEmail();
         Mark mark = markRepository.findById(id).orElse(null);
         if (Objects.isNull(mark) || mark.getStudentDetail().getUserId() != user.getId() || mark.getScore() != null) {

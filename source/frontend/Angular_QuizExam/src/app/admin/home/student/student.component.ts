@@ -7,8 +7,8 @@ import { UserResponse } from '../../../shared/models/user.model';
 import { ClassResponse } from '../../../shared/models/class.model';
 import { StudentRequest, StudentResponse, UpdateStudentClassRequest } from '../../../shared/models/student.model';
 import { ValidationError } from '../../../shared/models/models';
-import { ClassService } from '../../service/class/class.service';
-import { StudentService } from '../../service/student/student.service';
+import { ClassService } from '../../../shared/service/class/class.service';
+import { StudentService } from '../../../shared/service/student/student.service';
 import { UrlService } from '../../../shared/service/url.service';
 import { Router, ActivatedRoute } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
@@ -25,7 +25,7 @@ declare var $: any;
   ]
 })
 export class StudentComponent implements OnInit, OnDestroy {
-  classId: number = 0;
+  classId: number;
   className: string = '';
   
   dataTable: any;
@@ -91,7 +91,7 @@ export class StudentComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.titleService.setTitle('List of Students');
-    this.authService.entityExporter = 'student-management';
+    this.authService.entityExporter = 'student';
     this.loadData();
   }
 
@@ -102,7 +102,6 @@ export class StudentComponent implements OnInit, OnDestroy {
           this.classList = (classResponse as ClassResponse[]);
           this.filterClass = (classResponse as ClassResponse[]);
           this.studentList = studentResponse;
-          this.authService.listExporter = studentResponse;
           this.className = this.classList.find(c => c.id == this.classId)?.name!;
           this.initializeDataTable();
         },
@@ -268,11 +267,6 @@ export class StudentComponent implements OnInit, OnDestroy {
     });
   }
 
-  convertDateFormat(dateObj: Date | undefined): string {
-    // Dùng DatePipe để chuyển đổi đối tượng Date sang định dạng 'yyyy-MM-dd'
-    return this.datePipe.transform(dateObj, 'dd-MM-yyyy')!;
-  }
-
   convertToRequest(): void {
     this.studentForm.userRequest.fullName = this.student.userResponse.fullName;
     this.studentForm.userRequest.dob = this.student.userResponse.dob;
@@ -355,7 +349,7 @@ export class StudentComponent implements OnInit, OnDestroy {
     }
   }
 
-  confirmAction() {
+  confirmAction(): void {
     if (this.isPopupResetPassword) {
       this.resetPasswordStudent();
     }
@@ -473,12 +467,12 @@ export class StudentComponent implements OnInit, OnDestroy {
     });
   }
 
-  exportExcel() {
+  exportExcel(): void {
     this.authService.listExporter = this.studentList;
     this.exportData(this.authService.exportDataExcel(), 'student_excel.xlsx');
   }
 
-  exportPDF() {
+  exportPDF(): void {
     this.authService.listExporter = this.studentList;
     this.exportData(this.authService.exportDataPDF(), 'student_pdf.pdf');
   }

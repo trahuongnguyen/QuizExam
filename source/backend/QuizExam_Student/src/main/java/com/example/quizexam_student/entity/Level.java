@@ -26,8 +26,7 @@ public class Level {
 
     @Column(name = "point", nullable = false)
     @NotNull(message = "Point is required.")
-    @DecimalMin(value = "0.25", message = "Point must be greater than or equal to 0.25")
-    @DecimalMax(value = "10.0", message = "Point must be less than or equal to 10")
+    @Positive(message = "Point must be greater than 0.")
     private Double point;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "level")

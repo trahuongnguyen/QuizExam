@@ -10,7 +10,6 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,7 +18,6 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/mark")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "http://localhost:4200")
 public class MarkController {
     private final MarkService markService;
 
@@ -27,11 +25,17 @@ public class MarkController {
 
     @PreAuthorize("hasAnyRole('ADMIN', 'DIRECTOR', 'SRO', 'TEACHER')")
     @GetMapping("/pass-percentage")
-    public List<Map<String, Object>> getPassPercentageBySubject() {
-        return markService.getPassPercentageBySubject();
+    public List<Map<String, Object>> getPassPercentageForSubject() {
+        return markService.getPassPercentageForSubject();
     }
 
-    @PreAuthorize("hasRole('STUDENT')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'SRO')")
+    @GetMapping("/find-all/{examId}")
+    public List<MarkResponse> getAllMarkByExam(@PathVariable int examId) {
+        return markService.findAllMarkByExam(examId);
+    }
+
+    @PreAuthorize("hasAnyRole('SRO', 'STUDENT')")
     @GetMapping("/sem/{semId}")
     public List<MarkResponse> getAllMarksByStudentDetailAndScoreNotNull(@PathVariable int semId){
         String email = ((org.springframework.security.core.userdetails.User)
@@ -47,6 +51,12 @@ public class MarkController {
                 SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
         User user = userService.findUserByEmail(email);
         return markService.getOneScoredByExam(user.getStudentDetail(), examId);
+    }
+
+    @PreAuthorize("hasAnyRole('ADMIN', 'SRO')")
+    @PutMapping("/{examId}")
+    public List<MarkResponse> updateMark(@PathVariable int examId, @RequestBody List<Integer> studentIds) {
+        return markService.updateMark(examId, studentIds);
     }
 
     @PreAuthorize("hasRole('STUDENT')")

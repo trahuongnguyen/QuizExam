@@ -19,14 +19,13 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/class")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "http://localhost:4200")
 @Validated
-
 public class ClassesController {
     private final ClassesService classesService;
+
     private final ExportService exportService;
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'SRO', 'DIRECTOR', 'TEACHER')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'DIRECTOR', 'TEACHER', 'SRO')")
     @GetMapping
     public List<Classes> getAllClasses(){
         return classesService.findAllClasses();

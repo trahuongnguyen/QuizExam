@@ -70,8 +70,11 @@
 }
 
 .button .icon {
-    line-height: normal;
     margin-right: 4px;
+}
+
+.button .icon-right {
+    margin-left: 4px;
 }
 
 .popup-container {
@@ -184,8 +187,7 @@
 }
 
 .popup-container .popup-content .form-popup .popup-body .form-group .image-preview #image-subject {
-    height: 100%;
-    max-width: 100%;
+    width: 100%;
 }
 
 .popup-container .popup-content .form-popup .popup-body .form-group .image-preview .remove-image {
@@ -250,13 +252,8 @@
 }
 
 .flex-container .item-container .form-section.show {
-    height: 233px;
     padding: 20px;
     border: 1px solid #ddd;
-}
-
-.flex-container .item-container .form-section.error-active {
-    height: auto; /* Tăng chiều cao khi có lỗi để chứa thông báo lỗi */
 }
 
 .flex-container .item-container .form-section .error {
@@ -289,7 +286,6 @@
 }
 
 .flex-container .btn-action {
-    height: 38px;
     border: 1px solid #ddd;
     text-align: center;
     position: fixed;
@@ -302,7 +298,8 @@
     color: grey;
 }
 
-.flex-container .btn-action .btn-add:hover {
+.flex-container .btn-action .btn-add:hover,
+.flex-container .btn-action .btn-back:hover {
     cursor: pointer;
     box-shadow: #e9ecef 0px 0px 3px 3px inset;
 }

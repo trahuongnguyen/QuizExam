@@ -7,16 +7,16 @@
             <table class="table" id="example">
                 <thead>
                     <tr>
-                        <th>STT</th>
-                        <th>Level</th>
-                        <th>Point</th>
-                        <th>Action</th>
+                        <th style="width: 10%;">STT</th>
+                        <th style="width: 55%;">Level</th>
+                        <th style="width: 25%;">Point</th>
+                        <th style="width: 10%;">Action</th>
                     </tr>
                 </thead>
                 <tbody>
                 </tbody>
             </table>
-            <form (ngSubmit)="submitForm()" class="form-section mt-3" [ngClass]="{'show': createMode || updateMode}">
+            <form (ngSubmit)="submitForm()" class="form-section mt-3" [ngClass]="{'show': createMode || updateMode}" id="formSection">
                 <h3 class="form-title mb-3">{{ formTitle() }} Level</h3>
                 <div class="row align-items-center mb-3">
                     <label for="name" class="col-sm-2">Level:</label>

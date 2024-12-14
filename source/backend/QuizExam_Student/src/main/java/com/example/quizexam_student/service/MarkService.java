@@ -10,13 +10,17 @@ import java.util.Map;
 
 @Service
 public interface MarkService {
-    List<MarkResponse> getListScoredPerSubject(StudentDetail studentDetail, int semId);
+    List<MarkResponse> findAllMarkByExam(Integer examId);
 
-    MarkResponse getOneScoredByExam(StudentDetail studentDetail, int examId);
+    List<MarkResponse> getListScoredPerSubject(StudentDetail studentDetail, Integer semId);
 
-    List<Map<String, Object>> getPassPercentageBySubject();
+    MarkResponse getOneScoredByExam(StudentDetail studentDetail, Integer examId);
 
-    Mark updateBeginTime(int id);
+    List<Map<String, Object>> getPassPercentageForSubject();
 
-    Mark updateWarning(int id, Mark mark);
+    List<MarkResponse> updateMark(Integer examId, List<Integer> studentIds);
+
+    Mark updateBeginTime(Integer id);
+
+    Mark updateWarning(Integer id, Mark mark);
 }

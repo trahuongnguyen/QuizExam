@@ -1,16 +1,19 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DialogPopupComponent } from './dialog-popup/dialog-popup.component';
+import { WizardStepComponent } from './wizard-step/wizard-step.component';
 
 @NgModule({
   declarations: [
-    DialogPopupComponent
+    DialogPopupComponent,
+    WizardStepComponent
   ],
   imports: [
     CommonModule
   ],
   exports: [
-    DialogPopupComponent
+    DialogPopupComponent,
+    WizardStepComponent
   ]
 })
 export class SharedModule { }

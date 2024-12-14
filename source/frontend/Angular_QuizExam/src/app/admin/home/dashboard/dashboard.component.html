@@ -59,11 +59,11 @@
                 <div class="col-auto">
                   <span>Subject by Sem</span>
                   <select class="form-select select-field" (change)="setSelectedSemChart($event)" style="width: 150px;">
-                    <option *ngFor="let sem of semester" [value]="sem.id">{{ sem.name }}</option>
+                    <option *ngFor="let sem of semList" [value]="sem.id">{{ sem.name }}</option>
                   </select>
                 </div>
                 <div class="col text-end">
-                  <h3 class="mb-0">{{ passPercentageSem || 0 | number: '1.0-1' }}%</h3>
+                  <h3 class="mb-0">{{ semStats.passPercentage || 0 | number: '1.0-1' }}%</h3>
                 </div>
               </div>
               <apx-chart *ngIf="chartOptions_1" [series]="chartOptions_1.series!" [chart]="chartOptions_1.chart!"
@@ -73,11 +73,11 @@
                 [tooltip]="chartOptions_1.tooltip!"></apx-chart>
               <div class="row mt-3 text-center">
                 <div class="col">
-                  <h3 class="m-0"><i class="fas fa-circle text-success"></i> {{ passCountSem + creditCountSem + distinctionCountSem }} </h3>
+                  <h3 class="m-0"><i class="fas fa-circle text-success"></i> {{ semStats.totalPass }} </h3>
                   <span class="ms-3">Pass</span>
                 </div>
                 <div class="col">
-                  <h3 class="m-0"><i class="fas fa-circle text-danger"></i> {{ reExamCountSem }} </h3>
+                  <h3 class="m-0"><i class="fas fa-circle text-danger"></i> {{ semStats.reExam }} </h3>
                   <span class="ms-3">Fail</span>
                 </div>
               </div>
@@ -96,7 +96,7 @@
                   </select>
                 </div>
                 <div class="col text-end">
-                  <h3 class="mb-0">{{ passPercentageSubject || 0 | number: '1.0-1' }}%</h3> <!-- Tỷ lệ Pass exam -->
+                  <h3 class="mb-0">{{ this.subjectStats.passPercentage || 0 | number: '1.0-1' }}%</h3> <!-- Tỷ lệ Pass exam -->
                 </div>
               </div>
 
@@ -110,12 +110,11 @@
 
               <div class="row mt-3 text-center">
                 <div class="col">
-                  <h3 class="m-0"><i class="fas fa-circle text-success"></i> {{ passCountSubject + creditCountSubject +
-                    distinctionCountSubject }} </h3>
+                  <h3 class="m-0"><i class="fas fa-circle text-success"></i> {{ this.subjectStats.totalPass }} </h3>
                   <span class="ms-3">Pass</span>
                 </div>
                 <div class="col">
-                  <h3 class="m-0"><i class="fas fa-circle text-danger"></i> {{ reExamCountSubject }} </h3>
+                  <h3 class="m-0"><i class="fas fa-circle text-danger"></i> {{ this.subjectStats.reExam }} </h3>
                   <span class="ms-3">Fail</span>
                 </div>
               </div>
@@ -132,24 +131,39 @@
           <h5 class="title">Score of each exam</h5>
         </div>
         <div class="card-body nav-fill">
-          <div class="d-flex">
-            <div class="form-group-row me-4">
-              <label for="level" class="me-2">Sem:</label>
-              <select class="form-select select-field" (change)="setSelectedSemTable($event)">
-                <option *ngFor="let sem of semester" [value]="sem.id">{{ sem.name }}</option>
-              </select>
+          <div class="row">
+            <div class="search-filter-column col-6">
+              <!-- Search Input -->
+              <div class="search-container mb-3">
+                <input type="text" class="form-control" [(ngModel)]="searchExam" (input)="filterExams()"
+                  placeholder="Search by name or code">
+                <i class="fa-solid fa-magnifying-glass search-icon"></i>
+              </div>
+              <div class="d-flex">
+                <div class="form-group-row me-4">
+                  <label for="sem" class="me-2">Sem:</label>
+                  <select class="form-select select-field" (change)="setSelectedSemTable($event)">
+                    <option *ngFor="let sem of semList" [value]="sem.id">{{ sem.name }}</option>
+                  </select>
+                </div>
+                <div class="form-group-row">
+                  <label for="subject" class="me-2">Subject:</label>
+                  <select class="form-select select-field" (change)="setSelectedSubjectTable($event)">
+                    <option *ngFor="let subject of subjectListTable" [value]="subject.id">{{ subject.name }}</option>
+                  </select>
+                </div>
+              </div>
             </div>
-            <div class="form-group-row">
-              <label for="subject" class="me-2">Subject:</label>
-              <select class="form-select select-field" (change)="setSelectedSubjectTable($event)">
-                <option *ngFor="let subject of subjectListTable" [value]="subject.id">{{ subject.name }}</option>
-              </select>
-            </div>
-            <!-- Search Input -->
-            <div class="search-container">
-              <input type="text" class="form-control" placeholder="Search by name" [(ngModel)]="searchTerm"
-                (input)="filterExam()">
-              <i class="fa-solid fa-magnifying-glass search-icon"></i>
+
+            <div class="col-6">
+                <div class="form-group-row mb-3">
+                  <label for="startTime" class="me-2">Start Time:</label>
+                  <input type="datetime-local" class="form-control" [(ngModel)]="startTime" name="startTime" (change)="filterExams()">
+                </div>
+                <div class="form-group-row">
+                  <label for="endTime" class="me-2">End Time:</label>
+                  <input type="datetime-local" class="form-control" [(ngModel)]="endTime" name="endTime" (change)="filterExams()">
+                </div>
             </div>
           </div>
         </div>
@@ -161,6 +175,7 @@
                 <tr>
                   <th>Name</th>
                   <th>Code</th>
+                  <th>Time</th>
                   <th>Re-Exam</th>
                   <th>Pass</th>
                   <th>Credit</th>
@@ -171,6 +186,7 @@
                 <tr *ngFor="let exam of examFilter | paginate: { itemsPerPage: 5, currentPage: currentPage }">
                   <td>{{ exam.name }}</td>
                   <td>{{ exam.code }}</td>
+                  <td>{{ convertDateFormat(exam.endTime) }}</td>
                   <td>{{ exam.reExamCount }}</td>
                   <td>{{ exam.passCount }}</td>
                   <td>{{ exam.creditCount }}</td>

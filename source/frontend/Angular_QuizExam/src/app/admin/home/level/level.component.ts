@@ -4,7 +4,7 @@ import { Title } from '@angular/platform-browser';
 import { AdminComponent } from '../../admin.component';
 import { LevelResponse, LevelRequest } from '../../../shared/models/level.model';
 import { ValidationError } from '../../../shared/models/models';
-import { LevelService } from '../../service/level/level.service';
+import { LevelService } from '../../../shared/service/level/level.service';
 import { ToastrService } from 'ngx-toastr';
 declare var $: any;
 
@@ -41,12 +41,7 @@ export class LevelComponent implements OnInit, OnDestroy {
     private levelService: LevelService,
     private toastr: ToastrService
   ) {
-    this.level = {
-      id: 0,
-      name: '',
-      point: 0,
-      status: 0
-    };
+    this.level = { id: 0, name: '', point: 0, status: 0 };
   }
 
   ngOnInit(): void {
@@ -168,16 +163,24 @@ export class LevelComponent implements OnInit, OnDestroy {
     this.levelForm.point = this.level.point;
   }
 
-  showFormCreate() {
+  scrollToForm(): void {
+    const formElement = document.querySelector('#formSection');
+    if (formElement) {
+      setTimeout(() => { formElement.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 0);
+    }
+  }
+
+  showFormCreate(): void {
     this.levelForm = { }
     this.validationError = { };
     this.checkFormErrors();
     
     this.updateMode = false;
     this.createMode = true;
+    this.scrollToForm();
   }
 
-  showFormUpdate(id: number) {
+  showFormUpdate(id: number): void {
     this.validationError = { };
     this.checkFormErrors();
 
@@ -186,6 +189,7 @@ export class LevelComponent implements OnInit, OnDestroy {
         this.convertToRequest();
         this.createMode = false;
         this.updateMode = true;
+        this.scrollToForm();
       },
       (error) => { this.updateMode = false; }
     );
@@ -197,7 +201,7 @@ export class LevelComponent implements OnInit, OnDestroy {
     return '';
   }
 
-  hiddenForm() {
+  hiddenForm(): void {
     this.levelId = 0;
     this.levelForm = { }
     this.validationError = { };

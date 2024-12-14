@@ -1,6 +1,7 @@
 package com.example.quizexam_student.service.impl;
 
 import com.example.quizexam_student.bean.request.*;
+import com.example.quizexam_student.bean.response.MarkResponse;
 import com.example.quizexam_student.entity.*;
 import com.example.quizexam_student.exception.*;
 import com.example.quizexam_student.mapper.*;
@@ -11,6 +12,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -25,10 +27,7 @@ public class StudentServiceImpl implements StudentService {
 
     private final PasswordEncoder passwordEncoder;
 
-    @Override
-    public List<StudentDetail> findAllStudents() {
-        return studentRepository.findAllByUser_StatusAndUser_Role_IdOrderByUserIdDesc(1, 5);
-    }
+    private final MarkRepository markRepository;
 
     @Override
     public List<StudentDetail> findAllStudentsNoneClass(Integer status) {
@@ -147,5 +146,33 @@ public class StudentServiceImpl implements StudentService {
         StudentDetail studentDetail = findStudentInactiveById(id);
         studentDetail.getUser().setStatus(1);
         return studentRepository.save(studentDetail);
+    }
+
+    @Override
+    public List<StudentDetail> findAllStudentsForExam(Integer status, Integer classId, Integer examId) {
+        Classes _class = classesRepository.findByIdAndStatus(classId, 1).orElse(null);
+        List<StudentDetail> students;
+        if (Objects.isNull(_class)) {
+            students = findAllStudentsNoneClass(status);
+        }
+        else {
+            students = findAllStudentsByClass(status, classId);
+        }
+        List<Integer> studentsParticipatingInExam = findAllStudentIdsByExam(examId);
+        return students.stream()
+                .filter(student -> !studentsParticipatingInExam.contains(student.getUserId()))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public Long countAllStudents() {
+        return studentRepository.countByUser_StatusAndUser_Role_Id(1, 5);
+    }
+
+    public List<Integer> findAllStudentIdsByExam(Integer examId) {
+        List<Mark> marks = markRepository.findAllByExamination_IdAndBeginTimeIsNotNull(examId);
+        return marks.stream()
+                .map(mark -> mark.getStudentDetail().getUserId()) // Lấy ID của StudentDetail
+                .collect(Collectors.toList());
     }
 }

@@ -11,16 +11,6 @@ public class StudentMapper {
         return studentDetail;
     }
 
-    public static StudentResponse convertToResponse1(UserResponse userResponse, StudentDetail studentDetail) {
-        StudentResponse studentResponse = new StudentResponse();
-        studentResponse.setUserResponse(userResponse);
-        studentResponse.setRollPortal(studentDetail.getRollPortal());
-        studentResponse.setRollNumber(studentDetail.getRollNumber());
-        studentResponse.setClasses(studentDetail.getClasses());
-        studentResponse.setMarks(studentDetail.getMarks().stream().toList());
-        return studentResponse;
-    }
-
     public static StudentResponse convertToResponse(StudentDetail studentDetail) {
         StudentResponse studentResponse = new StudentResponse();
         UserResponse userResponse = UserMapper.convertToResponse(studentDetail.getUser());

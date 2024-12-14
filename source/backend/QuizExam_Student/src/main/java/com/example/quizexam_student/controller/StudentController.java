@@ -19,27 +19,21 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/api/student-management")
+@RequestMapping("/api/student")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "http://localhost:4200")
 @Validated
 public class StudentController {
     private final StudentService studentService;
+
     private final ExportService exportService;
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'SRO', 'DIRECTOR', 'TEACHER')")
-    @GetMapping("/all-student")
-    public List<StudentResponse> getAllStudents() {
-        return studentService.findAllStudents().stream().map(StudentMapper::convertToResponse).collect(Collectors.toList());
-    }
-
-    @PreAuthorize("hasAnyRole('ADMIN', 'SRO', 'TEACHER')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'TEACHER', 'SRO')")
     @GetMapping("/{status}")
     public List<StudentResponse> getAllStudentsNoneClass(@PathVariable Integer status) {
         return studentService.findAllStudentsNoneClass(status).stream().map(StudentMapper::convertToResponse).collect(Collectors.toList());
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'SRO', 'TEACHER')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'TEACHER', 'SRO')")
     @GetMapping("/{status}/{classId}")
     public List<StudentResponse> getAllStudentsByClass(@PathVariable Integer status, @PathVariable Integer classId) {
         return studentService.findAllStudentsByClass(status, classId).stream().map(StudentMapper::convertToResponse).collect(Collectors.toList());
@@ -91,6 +85,18 @@ public class StudentController {
     @PutMapping("/restore/{id}")
     public StudentResponse restoreStudent(@PathVariable int id) {
         return StudentMapper.convertToResponse(studentService.restoreStudent(id));
+    }
+
+    @PreAuthorize("hasAnyRole('ADMIN', 'SRO')")
+    @GetMapping("/{status}/{classId}/{examId}")
+    public List<StudentResponse> getAllStudentsForExam(@PathVariable Integer status, @PathVariable Integer classId, @PathVariable Integer examId) {
+        return studentService.findAllStudentsForExam(status, classId, examId).stream().map(StudentMapper::convertToResponse).collect(Collectors.toList());
+    }
+
+    @PreAuthorize("hasAnyRole('ADMIN', 'DIRECTOR', 'TEACHER', 'SRO')")
+    @GetMapping("/count")
+    public Long countAllStudents() {
+        return studentService.countAllStudents();
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'SRO')")

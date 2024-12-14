@@ -1,5 +1,5 @@
 <div class="content-wrapper" [ngClass]="{'content-wrapper-collapsed': admin.isSidebarCollapsed}">
-    <h4>{{ subjectName }} / Edit Question</h4>
+    <h4>{{ subject.name }} / Edit Question</h4>
     <hr class="line">
     <form class="d-flex" (ngSubmit)="saveQuestion()">
         <div id="question-forms">
@@ -7,14 +7,14 @@
                 <div class="form-row">                    
                     <div class="form-group-row form-select-chapter col me-3">
                         <label for="chapter" class="label-fix">Chapter:</label>
-                        <button type="button" class="form-select button-chapter" (click)="openPopup()">
+                        <button type="button" class="form-select button-chapter" (click)="openPopupChapter()">
                             {{ getSelectedChaptersNames() }}
                         </button>
                     </div>
                     <div class="form-group-row form-select-level col me-0">
                         <label for="level">Level:</label>
                         <select class="form-select select-level" [(ngModel)]="questionForm.levelId" name="questionForm.levelId">
-                            <option *ngFor="let level of listLevel" [value]="level.id">{{ level.name }}</option>
+                            <option *ngFor="let level of levelList" [value]="level.id">{{ level.name + ' - (' + level.point + ' point)' }}</option>
                         </select>
                     </div>
                 </div>
@@ -23,16 +23,16 @@
                     <label for="question" class="label-fix">Question:</label>
                     <textarea class="form-control" [(ngModel)]="questionForm.content" name="questionForm.content" rows="3" style="flex-grow: 1" placeholder="Enter Question"></textarea>
                 </div>
-                <div class="text-danger content-error" *ngIf="contentError">{{ contentError }}</div>
+                <div class="text-danger content-error" *ngIf="validationError['content']">{{ validationError['content'] }}</div>
 
                 <div class="form-group form-image">
-                    <div class="img-preview mt-3 mb-3" [ngClass]="{'hidden-border': questionForm.imageFile}">
+                    <div class="img-preview mt-3 mb-3" [ngClass]="{'hidden-border': questionForm.image}">
                         <input type="file" name="file" class="form-control-file" accept="image/*" (change)="chooseImage($event)" />
-                        <button *ngIf="!questionForm.imageFile" class="choose-file-btn" type="button">Choose file</button>
-                        <img id="image-question" [src]="questionForm.imageFile ? ('http://localhost:8080/uploads/img-question/'+ questionForm.imageFile) : null"
-                            alt="Image Question" [style.display]="questionForm.imageFile ? 'block' : 'none'" />
+                        <button *ngIf="!questionForm.image" class="choose-file-btn" type="button">Choose file</button>
+                        <img id="image-question" [src]="questionForm.image ? (urlService.questionImageUrl + questionForm.image) : null"
+                            alt="Image Question" [style.display]="questionForm.image ? 'block' : 'none'" />
                         <!-- Dấu X để xóa ảnh -->
-                        <span *ngIf="questionForm.imageFile" class="remove-image" (click)="removeImage()"><b>&times;</b></span>
+                        <span *ngIf="questionForm.image" class="remove-image" (click)="removeImage()"><b>&times;</b></span>
                     </div>
                 </div>
 
@@ -41,12 +41,12 @@
                         <div *ngFor="let answer of questionForm.answers; let i = index" class="mb-2">
                             <div class="input-group">
                                 <div class="input-group-text">
-                                    <input type="checkbox" [(ngModel)]="answer.isCorrect" (change)="toggleIsCorrect(answer)" [checked]="answer.isCorrect == 1" />
+                                    <input type="checkbox" [(ngModel)]="answer.isCorrect" name="answer{{i}}.isCorrect"/>
                                 </div>
-                                <input type="text" [(ngModel)]="answer.content" name="answer.content{{i}}" class="form-control" placeholder="Enter Answer {{i + 1}}"/>
-                                <span class="remove-answer" (click)="showPopupDeleteAnswer(i)">&times;</span>
+                                <input type="text" [(ngModel)]="answer.content" name="answers{{i}}.content" class="form-control" placeholder="Enter Answer {{i + 1}}"/>
+                                <span class="remove-answer" (click)="openPopupDeleteAnswer(i)">&times;</span>
                             </div>
-                            <div class="text-danger answer-error" *ngIf="answersError[i]">{{ answersError[i] }}</div>
+                            <div class="text-danger answer-error" *ngIf="validationError['answers[' + i + '].content']">{{ validationError['answers[' + i + '].content'] }}</div>
                         </div>
                     </div>
                 </div>
@@ -89,27 +89,17 @@
         </div>
         <div class="btn-action">
             <button type="submit" class="mdi mdi-checkbox-marked-circle-outline icon-action" title="Save"></button>
-            <button type="button" class="mdi mdi-close-circle-outline icon-action" title="Cancel" (click)="showPopupConfirmCancel()"></button>
+            <button type="button" class="mdi mdi-close-circle-outline icon-action" title="Cancel" (click)="openPopupConfirmCancel()"></button>
         </div>
     </form>
 </div>
 
-<!-- Popup xác nhận xóa câu trả lời -->
+<!-- Popup xác nhận -->
 <app-dialog-popup
-  [isVisible]="isPopupDeleteAnswer"
+  [isVisible]="isPopupDeleteAnswer || isPopupCancel"
   [title]="dialogTitle"
   [message]="dialogMessage"
   [isConfirmationPopup]="isConfirmationPopup"
-  (confirm)="confirmDeleteAnswer()"
-  (close)="closePopupDialog()">
-</app-dialog-popup>
-
-<!-- Popup xác nhận hủy -->
-<app-dialog-popup
-  [isVisible]="isPopupConfirmCancel"
-  [title]="dialogTitle"
-  [message]="dialogMessage"
-  [isConfirmationPopup]="isConfirmationPopup"
-  (confirm)="confirmCancel()"
+  (confirm)="confirmAction()"
   (close)="closePopupDialog()">
 </app-dialog-popup>

@@ -1,5 +1,5 @@
-import { HttpErrorResponse, HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from "@angular/common/http";
 import { Injectable } from "@angular/core";
+import { HttpErrorResponse, HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from "@angular/common/http";
 import { catchError, Observable, throwError } from "rxjs";
 import { ToastrService } from "ngx-toastr";
 
@@ -15,6 +15,9 @@ export class ErrorInterceptor implements HttpInterceptor {
                 }
                 else if (error.status === 403) {
                     this.toastr.error('You do not have permission to access this resource.');
+                }
+                else if (error.status === 419) {
+                    this.toastr.error('Your session has expired. Please log in again.');
                 }
                 else if (error.status === 500) {
                     this.toastr.error('Server error. Please try again later.');

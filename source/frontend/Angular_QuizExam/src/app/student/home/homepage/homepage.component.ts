@@ -1,5 +1,4 @@
 import { Component} from '@angular/core';
-import { AuthService } from '../../service/auth.service';
 import { Title } from '@angular/platform-browser';
 
 @Component({
@@ -11,10 +10,7 @@ import { Title } from '@angular/platform-browser';
   ]
 })
 export class HomepageComponent {
-  constructor(
-    private authService: AuthService,
-    private titleService: Title,
-  ) {
+  constructor(private titleService: Title) {
     this.titleService.setTitle('Home');
   }
 }

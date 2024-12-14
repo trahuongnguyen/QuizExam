@@ -6,5 +6,5 @@ import { Component } from '@angular/core';
   styleUrl: './update-form.component.css'
 })
 export class UpdateFormComponent {
-
+  constructor() { }
 }

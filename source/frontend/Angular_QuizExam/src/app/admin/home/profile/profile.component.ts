@@ -2,10 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../../../shared/service/auth.service';
 import { Title } from '@angular/platform-browser';
 import { AdminComponent } from '../../admin.component';
-import { Role } from '../../../shared/models/role.model';
-import { UserResponse, UserRequest } from '../../../shared/models/user.model';
+import { TokenKey } from '../../../shared/enums';
+import { UserRequest } from '../../../shared/models/user.model';
 import { ChangePassword, ValidationError } from '../../../shared/models/models';
-import { EmployeeService } from '../../service/employee/employee.service';
+import { EmployeeService } from '../../../shared/service/employee/employee.service';
 import { ToastrService } from 'ngx-toastr';
 import { DatePipe } from '@angular/common';
 
@@ -18,8 +18,6 @@ import { DatePipe } from '@angular/common';
   ]
 })
 export class ProfileComponent implements OnInit {
-  role: Role;
-  profile: UserResponse;
   profileForm: UserRequest = { };
   changePasswordForm: ChangePassword = { };
   formError: ValidationError = { };
@@ -29,45 +27,17 @@ export class ProfileComponent implements OnInit {
   isChangePasswordMode: boolean = false;
 
   constructor(
-    private authService: AuthService,
+    public authService: AuthService,
     private titleService: Title,
     public admin: AdminComponent,
     private employeeService: EmployeeService,
     private toastr: ToastrService,
     private datePipe: DatePipe
   ) {
-    this.role = {
-      id: 0,
-      name: '',
-      description: ''
-    };
-
-    this.profile = {
-      id: 0,
-      fullName: '',
-      dob: new Date(),
-      gender: 0,
-      address: '',
-      phoneNumber: '',
-      email: '',
-      role: this.role
-    };
   }
 
   ngOnInit(): void {
     this.titleService.setTitle('Profile');
-    this.loadData();
-  }
-
-  loadData(): void {
-    this.authService.getProfile().subscribe({
-      next: (profileResponse) => {
-        this.profile = (profileResponse as UserResponse);
-      },
-      error: (err) => {
-        this.authService.handleError(err, undefined, '', 'load data');
-      }
-    });
   }
 
   convertDateFormat(dateObj: Date | undefined): string {
@@ -76,23 +46,23 @@ export class ProfileComponent implements OnInit {
   }
 
   convertToRequest(): void {
-    this.profileForm.fullName = this.profile.fullName;
-    this.profileForm.dob = this.profile.dob;
-    this.profileForm.gender = this.profile.gender;
-    this.profileForm.address = this.profile.address;
-    this.profileForm.phoneNumber = this.profile.phoneNumber;
-    this.profileForm.email = this.profile.email;
-    this.profileForm.roleId = this.profile.role?.id;
+    this.profileForm.fullName = this.authService.employeeProfile.fullName;
+    this.profileForm.dob = this.authService.employeeProfile.dob;
+    this.profileForm.gender = this.authService.employeeProfile.gender;
+    this.profileForm.address = this.authService.employeeProfile.address;
+    this.profileForm.phoneNumber = this.authService.employeeProfile.phoneNumber;
+    this.profileForm.email = this.authService.employeeProfile.email;
+    this.profileForm.roleId = this.authService.employeeProfile.role?.id;
   }
 
-  showInformation() {
-    this.loadData();
+  showInformation(): void {
+    this.authService.loadProfile(TokenKey.ADMIN);
     this.isViewInfo = true;
     this.isEditMode = false;
     this.isChangePasswordMode = false;
   }
 
-  showEditForm() {
+  showEditForm(): void {
     this.convertToRequest();
     this.formError = { };
     this.isViewInfo = false;
@@ -100,7 +70,7 @@ export class ProfileComponent implements OnInit {
     this.isChangePasswordMode = false;
   }
 
-  showPasswordForm() {
+  showPasswordForm(): void {
     this.changePasswordForm = { };
     this.formError = { };
     this.isViewInfo = false;
@@ -108,7 +78,7 @@ export class ProfileComponent implements OnInit {
     this.isChangePasswordMode = true;
   }
 
-  togglePasswordVisibility(inputId: string, iconId: string) {
+  togglePasswordVisibility(inputId: string, iconId: string): void {
     const inputElement = document.getElementById(inputId) as HTMLInputElement;
     const iconElement = document.getElementById(iconId) as HTMLElement;
 
@@ -123,9 +93,9 @@ export class ProfileComponent implements OnInit {
     }
   }
 
-  updateProfile() {
+  updateProfile(): void {
     this.formError = { };
-    this.employeeService.updateEmployee(this.profile.id, this.profileForm).subscribe({
+    this.employeeService.updateEmployee(this.authService.employeeProfile.id, this.profileForm).subscribe({
       next: () => {
         this.toastr.success(`Updated successfully!`, 'Success', { timeOut: 3000 });
         this.showInformation();
@@ -136,7 +106,7 @@ export class ProfileComponent implements OnInit {
     });
   }
 
-  chagePassword() {
+  chagePassword(): void {
     this.formError = { };
     this.authService.changePassword(this.changePasswordForm).subscribe({
       next: () => {

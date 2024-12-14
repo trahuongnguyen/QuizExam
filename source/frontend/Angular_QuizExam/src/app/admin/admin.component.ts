@@ -1,7 +1,5 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../shared/service/auth.service';
-import { ToastrService } from 'ngx-toastr';
-import { ValidationError } from '../shared/models/models';
 
 @Component({
 
@@ -15,22 +13,15 @@ export class AdminComponent implements OnInit {
   
   contentSidebar: boolean = true;
 
-  constructor(private authService: AuthService, private toastr: ToastrService, private cdr: ChangeDetectorRef) { }
+  constructor(private authService: AuthService) { }
 
   ngOnInit(): void {
-    this.authService.loadToken('ADMIN');
     this.loadTheme();
     this.loadSidebarState();
-    this.cdr.detectChanges();
-  }
-
-  // Kiểm tra xem localStorage có sẵn không trước khi sử dụng
-  private isLocalStorageAvailable(): boolean {
-    return typeof localStorage !== 'undefined';
   }
 
   saveTheme(isDarkMode: boolean): void {
-    if (this.isLocalStorageAvailable()) {
+    if (this.authService.isLocalStorageAvailable()) {
       localStorage.setItem('theme-admin', isDarkMode ? 'dark-admin' : 'light-admin');
       this.updateBodyClass(isDarkMode);
     }
@@ -38,7 +29,7 @@ export class AdminComponent implements OnInit {
 
   // Tải trạng thái chế độ từ localStorage
   loadTheme(): void {
-    if (this.isLocalStorageAvailable()) {
+    if (this.authService.isLocalStorageAvailable()) {
       const theme = localStorage.getItem('theme-admin');
       this.darkMode = theme === 'dark-admin';
       this.updateBodyClass(this.darkMode);
@@ -68,7 +59,7 @@ export class AdminComponent implements OnInit {
   }
 
   loadSidebarState(): void {
-    if (this.isLocalStorageAvailable()) {
+    if (this.authService.isLocalStorageAvailable()) {
       const sidebarState = localStorage.getItem('sidebar-collapsed');
       if (sidebarState !== null) {
         this.isSidebarCollapsed = JSON.parse(sidebarState);
@@ -87,7 +78,7 @@ export class AdminComponent implements OnInit {
         this.contentSidebar = true;
       }, 500);
     }
-    if (this.isLocalStorageAvailable()) {
+    if (this.authService.isLocalStorageAvailable()) {
       localStorage.setItem('sidebar-collapsed', JSON.stringify(this.isSidebarCollapsed));
     }
   }

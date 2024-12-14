@@ -15,11 +15,12 @@ import java.util.List;
 @RequiredArgsConstructor
 public class PermissionServiceImpl implements PermissionService {
     private final RoleRepository roleRepository;
+
     private final PermissionRepository permissionRepository;
 
     @Override
     public List<Permission> findPermissionsByRole(int id) {
-        Role role = roleRepository.findById(id).orElseThrow(() -> new NotFoundException("roleNotFound", "Role is not exist"));
+        Role role = roleRepository.findById(id).orElseThrow(() -> new NotFoundException("role", "Role is not exist"));
         return permissionRepository.findByRolesContains(role);
     }
 }

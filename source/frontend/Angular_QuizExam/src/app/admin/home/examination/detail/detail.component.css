@@ -1,9 +1,4 @@
-.bottom-actions span {
-    font-size: 18px;
-    cursor: pointer;
-}
-
-.exam-detail {
+.exam-info {
     margin: 0 auto 20px auto;
     padding: 20px 10px 10px 10px;
     width: 80%;
@@ -14,37 +9,39 @@
     transition: all 0.9s ease;
 }
 
-.exam-header {
+.exam-info .exam-header {
     display: flex;
-    margin-bottom: 10px;
+    margin-bottom: 20px;
 }
 
-.exam-header span {
+.exam-info .exam-header h4 {
+    font-weight: bold;
+}
+
+.exam-info .exam-header span {
     margin-right: 5px;
     font-size: 24px;
     cursor: pointer;
 }
 
-.exam-detail p {
+.exam-info p {
     margin-bottom: 0.5rem;
 }
 
-/* Adjust the label to align better */
-.label {
+.exam-info .label {
     font-weight: bold;
     margin-right: 10px;
     min-width: 100px;
     font-size: 14px;
 }
 
-/* Flex-grow the content to take the rest of the space */
-.content {
+.exam-info .content {
     flex-grow: 1;
     font-size: 14px;
 }
 
 /* Question section with box shadow (same as exam-details) */
-.question-section-container {
+.question-section {
     margin: 0 auto 0 auto;
     padding: 20px;
     width: 80%;
@@ -57,25 +54,35 @@
     transition: all 0.9s ease;
 }
 
-.question-section {
+.question-section .header {
+    position: sticky;
+    top: 0;
+}
+
+.question-section .header span {
+    font-size: 24px;
+    cursor: pointer;
+}
+
+.question-section .content {
     margin-bottom: 30px;
 }
 
-.question-section img {
+.question-section .content img {
     display: block;
     margin-left: auto;
     margin-right: auto;
     width: 50%;
 }
 
-.answer-option {
+.question-section .content .answer-option {
     display: flex;
     align-items: center;
     margin-bottom: 10px;
 }
 
-.answer-option input[type="radio"],
-.answer-option input[type="checkbox"] {
+.question-section .content .answer-option input[type="radio"],
+.question-section .content .answer-option input[type="checkbox"] {
     margin-right: 10px;
     width: 14px;
     height: 14px;
@@ -83,7 +90,7 @@
 }
 
 /* Style for the label */
-.answer-option label {
+.question-section .content .answer-option label {
     font-size: 16px;
     cursor: pointer;
     flex-grow: 1;
@@ -91,21 +98,21 @@
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
-    .question-section-container {
+    .question-section {
         padding: 15px;
     }
 
-    .question-section h6 {
-        font-size: 16px;
+    .question-section .content h6 {
+        font-size: 14px;
     }
 
-    .answer-option input[type="radio"],
-    .answer-option input[type="checkbox"] {
+    .question-section .content .answer-option input[type="radio"],
+    .question-section .content .answer-option input[type="checkbox"] {
         width: 16px;
         height: 16px;
     }
 
-    .answer-option label {
+    .question-section .content .answer-option label {
         font-size: 14px;
     }
 }
