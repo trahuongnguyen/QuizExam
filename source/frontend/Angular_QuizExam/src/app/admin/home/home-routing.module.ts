@@ -9,6 +9,7 @@ import { ProfileComponent } from './profile/profile.component';
 import { AuthGuard } from '../service/authguard.service';
 import { LevelComponent } from './level/level.component';
 import { Roles } from '../../shared/enums';
+import { MarkComponent } from './mark/mark.component';
 
 const routes: Routes = [
   {
@@ -42,6 +43,18 @@ const routes: Routes = [
       {
         path: 'class/:classId',
         component: StudentComponent,
+        canActivate: [AuthGuard],
+        data: { roles: [Roles.ADMIN, Roles.SRO] },
+      },
+      {
+        path: 'student/marks/:studentId',
+        component: MarkComponent,
+        canActivate: [AuthGuard],
+        data: { roles: [Roles.ADMIN, Roles.SRO] },
+      },
+      {
+        path: 'class/:classId/marks/:studentId',
+        component: MarkComponent,
         canActivate: [AuthGuard],
         data: { roles: [Roles.ADMIN, Roles.SRO] },
       },

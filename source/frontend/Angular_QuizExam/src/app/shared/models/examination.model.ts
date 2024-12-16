@@ -10,6 +10,7 @@ export interface ExaminationResponse {
     startTime: Date;
     endTime: Date;
     duration: number;
+    totalQuestion: number;
     maxScore: number;
     type: number;
     subject: SubjectResponse;

@@ -57,7 +57,7 @@
 .container button {
     background-color: #aa1210;
     color: #fff;
-    padding: 10px 45px;
+    padding: 6px 33px;
     border: 1px solid transparent;
     border-radius: 8px;
     font-weight: 600;
@@ -265,7 +265,9 @@ a.icon  {
 }
 
 .error {
+    width: 98%;
     color: red;
+    font-size: small;
 }
 /* .container.active .toogle-right{
     transform: translateX(200%);

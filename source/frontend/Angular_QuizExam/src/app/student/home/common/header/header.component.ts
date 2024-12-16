@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
-import { AuthService } from '../../../service/auth.service';
+import { AuthService } from '../../../../shared/service/auth.service';
 import { StudentComponent } from '../../../student.component';
-import { HomeComponent } from '../../home.component';
+import { TokenKey } from '../../../../shared/enums';
 
 @Component({
   selector: 'app-header',
@@ -9,12 +9,9 @@ import { HomeComponent } from '../../home.component';
   styleUrl: './header.component.css'
 })
 export class HeaderComponent {
-  darkMode: boolean = false;
+  constructor(public authService: AuthService, public student: StudentComponent) {}
 
-  constructor(public student: StudentComponent, public authService: AuthService, public home: HomeComponent) {}
-
-  // Logout process
   onLogout() {
-    this.authService.logout(); // call method logout
+    this.authService.logout(TokenKey.STUDENT);
   }
 }

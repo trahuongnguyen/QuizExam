@@ -9,6 +9,7 @@ import { ExaminationRoutingModule } from './examination-routing.module';
 import { AddStudentComponent } from './add-student/add-student.component';
 import { SharedModule } from '../../../shared/shared.module';
 import { EditExamInfoComponent } from './edit-exam-info/edit-exam-info.component';
+import { UpdateExamQuestionsComponent } from './update-exam-questions/update-exam-questions.component';
 
 @NgModule({
   declarations: [
@@ -18,6 +19,7 @@ import { EditExamInfoComponent } from './edit-exam-info/edit-exam-info.component
     DetailComponent,
     AddStudentComponent,
     EditExamInfoComponent,
+    UpdateExamQuestionsComponent,
   ],
   imports: [
     CommonModule,

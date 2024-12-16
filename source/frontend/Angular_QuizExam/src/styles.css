@@ -317,6 +317,10 @@
     color: royalblue;
 }
 
+.dataTables_wrapper .table .mark-icon {
+    color: #007bff;
+}
+
 .dataTables_wrapper .table .reset-password-icon {
     color: #9b59b6;
 }

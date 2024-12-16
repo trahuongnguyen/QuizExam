@@ -3,6 +3,7 @@ import { AuthService } from '../../../../shared/service/auth.service';
 import { Title } from '@angular/platform-browser';
 import { AdminComponent } from '../../../admin.component';
 import { HomeComponent } from '../../home.component';
+import { Roles } from '../../../../shared/enums';
 import { Sem, SubjectRequest, SubjectResponse } from '../../../../shared/models/subject.model';
 import { ValidationError } from '../../../../shared/models/models';
 import { SubjectService } from '../../../../shared/service/subject/subject.service';
@@ -16,6 +17,7 @@ declare var $: any;
   templateUrl: './list.component.html',
   styleUrls: [
     './../../../../shared/styles/admin/style.css',
+    './../../../../shared/styles/popup.css',
     './list.component.css'
   ]
 })
@@ -85,14 +87,6 @@ export class ListComponent implements OnInit, OnDestroy {
     });
   }
 
-  navigateToChapters(id: number): void {
-    this.router.navigate([this.urlService.chapterListUrl(id)]);
-  }
-
-  navigateToQuestions(id: number): void {
-    this.router.navigate([this.urlService.questionListUrl(id)]);
-  }
-
   initializeDataTable(): void {
     this.dataTable = $('#example').DataTable({
       data: this.subjectList,
@@ -116,12 +110,13 @@ export class ListComponent implements OnInit, OnDestroy {
           title: 'Action',
           data: null,
           render: (data: any, type: any, row: any) => {
-            if (this.home.isActive(['TEACHER'])) {
+            if (this.home.isActive([Roles.TEACHER])) {
               return `<span class="mdi mdi-information-outline icon-action info-icon" title="Chapters" data-id="${row.id}"></span>
                       <span class="mdi mdi-comment-question-outline icon-action question-icon" title="Question" data-id="${row.id}"></span>`;
             }
-            if (this.home.isActive(['DIRECTOR'])) {
+            if (this.home.isActive([Roles.DIRECTOR])) {
               return `<span class="mdi mdi-pencil icon-action edit-icon" title="Edit" data-id="${row.id}"></span>
+                      <span class="mdi mdi-comment-question-outline icon-action question-icon" title="Question" data-id="${row.id}"></span>
                       <span class="mdi mdi-delete-forever icon-action delete-icon" title="Remove" data-id="${row.id}"></span>`
             }
             return `<span class="mdi mdi-information-outline icon-action info-icon" title="Chapters" data-id="${row.id}"></span>
@@ -145,9 +140,9 @@ export class ListComponent implements OnInit, OnDestroy {
     // Thêm placeholder vào input của DataTables
     $('.dataTables_filter input[type="search"]').attr('placeholder', 'Search');
 
-    $('.info-icon').on('click', (e: any) => this.router.navigate([this.urlService.chapterListUrl($(e.currentTarget).data('id'))]));
+    $('.info-icon').on('click', (e: any) => this.router.navigate([this.urlService.getChapterListUrl('ADMIN', $(e.currentTarget).data('id'))]));
     $('.edit-icon').on('click', (e: any) => this.openPopupUpdate($(e.currentTarget).data('id')));
-    $('.question-icon').on('click', (e: any) => this.router.navigate([this.urlService.questionListUrl($(e.currentTarget).data('id'))]));
+    $('.question-icon').on('click', (e: any) => this.router.navigate([this.urlService.getQuestionListUrl('ADMIN', $(e.currentTarget).data('id'))]));
     $('.delete-icon').on('click', (e: any) => this.openPopupDelete($(e.currentTarget).data('id')));
   }
 

@@ -18,6 +18,7 @@ import { NgApexchartsModule } from "ng-apexcharts";
 import { NgScrollbarModule } from 'ngx-scrollbar';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { SharedModule } from '../../shared/shared.module';
+import { MarkComponent } from './mark/mark.component';
 
 @NgModule({
   declarations: [
@@ -27,7 +28,8 @@ import { SharedModule } from '../../shared/shared.module';
     ClassComponent,
     EmployeeComponent,
     ProfileComponent,
-    LevelComponent
+    LevelComponent,
+    MarkComponent
   ],
   imports: [
     CommonModule,

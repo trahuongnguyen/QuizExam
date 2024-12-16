@@ -1,9 +1,10 @@
-import { Component, Inject, Injectable, OnInit } from '@angular/core';
-import { CommonModule, DOCUMENT, NgForOf } from '@angular/common';
-import { AuthService } from '../../service/auth.service';
-import { HomeComponent } from '../home.component';
-import { HttpClient } from '@angular/common/http';
+import { Component, Injectable, OnInit } from '@angular/core';
+import { AuthService } from '../../../shared/service/auth.service';
 import { Title } from '@angular/platform-browser';
+import { Sem } from '../../../shared/models/subject.model';
+import { MarkResponse } from '../../../shared/models/mark.model';
+import { SubjectService } from '../../../shared/service/subject/subject.service';
+import { MarkService } from '../../../shared/service/mark/mark.service';
 
 @Component({
   selector: 'app-mark',
@@ -15,39 +16,53 @@ import { Title } from '@angular/platform-browser';
 })
 @Injectable()
 export class MarkComponent implements OnInit {
-  semesters: any;
-  selectedSem: number = 1; // Default chọn Sem 1
-  subjects: any[] = [];
+  semList: Sem[] = [];
+  markList: MarkResponse[] = [];
 
-  constructor(private authService: AuthService, private titleService: Title, private home: HomeComponent, private http: HttpClient) { }
+  constructor(
+    private authService: AuthService,
+    private titleService: Title,
+    private subjectService: SubjectService,
+    private markService: MarkService
+  ) { }
 
   ngOnInit(): void {
     this.titleService.setTitle('Mark');
-    this.selectSem(this.selectedSem);
-    this.http.get<any>(`${this.authService.apiUrl}/sem`, this.home.httpOptions).subscribe(response => {
-      this.semesters = response;
-    }, error => {
-      console.error('Error fetching semesters:', error);
+    this.loadData();
+  }
+
+  loadData(): void {
+    this.subjectService.getSemList().subscribe({
+      next: (semResponse) => {
+        this.semList = semResponse;
+        if (this.semList && this.semList.length > 0) {
+          // Nếu semList có dữ liệu thì setup chọn mặc định bằng sem đầu tiên
+          this.setSelectedSem(this.semList[0].id);
+        }
+      },
+      error: (err) => {
+        this.authService.handleError(err, undefined, '', 'load data');
+      }
     });
   }
 
-  selectSem(sem: number): void {
-    this.selectedSem = sem;
-    this.http.get<any>(`${this.authService.apiUrl}/mark/sem/${this.selectedSem}`, this.home.httpOptions).subscribe((data: any) => {
-      this.subjects = data;
-      console.log(this.subjects);
-    }, error => {
-      console.error('Error fetching semesters:', error);
+  setSelectedSem(semId: number): void {
+    this.markService.getMarkListBySem(semId).subscribe({
+      next: (markResponse) => {
+        this.markList = markResponse;
+      },
+      error: (err) => {
+        this.authService.handleError(err, undefined, '', 'load data');
+      }
     });
   }
 
   getOverall(index: number): number {
-    if (index >= this.subjects.length) {
+    if (index >= this.markList.length) {
       return 0;
     }
-
-    const score = this.subjects[index].score;
-    const maxScore = this.subjects[index].maxScore;
+    const score = this.markList[index].score;
+    const maxScore = this.markList[index].maxScore;
     return maxScore ? Math.round((score / maxScore) * 100) : 0;
   }
 
@@ -67,5 +82,3 @@ export class MarkComponent implements OnInit {
     }
   }
 }
-
-

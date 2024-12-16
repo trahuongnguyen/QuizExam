@@ -14,6 +14,10 @@ export class ExaminationService {
     this.examApi = `${this.authService.apiUrl}/exam`;
   }
 
+  getExamListForStudent(): Observable<ExaminationResponse[]> {
+    return this.http.get<ExaminationResponse[]>(`${this.examApi}`, this.authService.httpOptions);
+  }
+
   getExamListBySem(semId: number): Observable<ExaminationResponse[]> {
     return this.http.get<ExaminationResponse[]>(`${this.examApi}/sem/${semId}`, this.authService.httpOptions);
   }
@@ -35,6 +39,10 @@ export class ExaminationService {
 
   updateExamInfo(examId: number, examForm: ExaminationRequest): Observable<ExaminationResponse> {
     return this.http.put<ExaminationResponse>(`${this.examApi}/${examId}`, examForm, this.authService.httpOptions);
+  }
+
+  updateQuestionsInExam(examId: number, questionIds: number[]): Observable<ExaminationResponse> {
+    return this.http.put<ExaminationResponse>(`${this.examApi}/update-question/${examId}`, questionIds, this.authService.httpOptions);
   }
 
   countAllExams(): Observable<number> {

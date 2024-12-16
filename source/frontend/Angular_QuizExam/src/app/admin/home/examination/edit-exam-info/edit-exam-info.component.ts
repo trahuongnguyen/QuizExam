@@ -42,7 +42,7 @@ export class EditExamInfoComponent implements OnInit {
     this.sem = { id: 0, name: '' };
     this.subject = { id: 0, name: '', image: '', status: 0, sem: this.sem };
     this.exam = {
-      id: 0, name: '', code: '', startTime: new Date(), endTime: new Date(), duration: 0, maxScore: 0, type: 0,
+      id: 0, name: '', code: '', startTime: new Date(), endTime: new Date(), duration: 0, totalQuestion: 0, maxScore: 0, type: 0,
       subject: this.subject, markResponses: [], studentResponses: [],
       questionRecordResponses: []
     };

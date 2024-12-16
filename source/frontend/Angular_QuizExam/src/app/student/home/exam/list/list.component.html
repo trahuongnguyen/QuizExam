@@ -10,10 +10,11 @@
                             alt="Default image for {{exam.subject.name}}">
                     </div>
                     <div class="card-content">
-                        <p class="card-title">{{exam.subject.name}}</p>
+                        <p class="mb-1"><strong>{{exam.name}}</strong></p>
+                        <p><strong>Code:</strong> {{exam.code}}</p>
                         <span class="content-time">
-                            <i class="fa-regular fa-clock "></i> {{ exam.startTime | date: 'HH:mm dd/MM/yyyy' }} -
-                            {{exam.endTime | date: 'HH:mm dd/MM/yyyy' }}
+                            <i class="fa-regular fa-clock"></i>
+                            {{ exam.startTime | date: 'HH:mm dd/MM/yyyy' }} - {{exam.endTime | date: 'HH:mm dd/MM/yyyy' }}
                         </span>
                     </div>
                 </div>
@@ -25,50 +26,35 @@
 <div *ngIf="isPopupExam" class="popup-container">
     <div class="popup-content" (click)="$event.stopPropagation()">
         <div class="popup-header">
-            <span>{{selectedExam.subject.name}}</span>
+            <span>{{ exam.subject.name }}</span>
             <span class="close-icon" (click)="closePopup()">&times;</span>
         </div>
         <div class="popup-body">
             <table class="popup-table">
                 <tr>
-                    <td>
-                        <span class="mdi mdi-clock icon"></span>
-                        <span class="ms-1">Time limit</span>
-                    </td>
-                    <td>{{selectedExam.duration}} minutes</td>
+                    <td><strong><span class="mdi mdi-clock me-1"></span>Time limit</strong></td>
+                    <td>{{ exam.duration }} minutes</td>
                 </tr>
                 <tr>
-                    <td>
-                        <span class="mdi mdi-calendar-blank icon"></span>
-                        <span class="ms-1">Start time</span>
-                    </td>
-                    <td>{{selectedExam.startTime | date: 'dd/MM/yyyy HH:mm' }}</td>
+                    <td><strong><span class="mdi mdi-calendar-blank me-1"></span>Start time</strong></td>
+                    <td>{{ exam.startTime | date: 'dd/MM/yyyy HH:mm' }}</td>
                 </tr>
                 <tr>
-                    <td>
-                        <span class="mdi mdi-calendar-blank icon"></span>
-                        <span class="ms-1">End time</span>
-                    </td>
-                    <td>{{selectedExam.endTime | date: 'dd/MM/yyyy HH:mm'}}</td>
+                    <td><strong><span class="mdi mdi-calendar-blank me-1"></span>End time</strong></td>
+                    <td>{{ exam.endTime | date: 'dd/MM/yyyy HH:mm' }}</td>
                 </tr>
                 <tr>
-                    <td>
-                        <span class="mdi mdi-alert-circle-outline icon"></span>
-                        <span class="ms-1">Number of questions</span>
-                    </td>
-                    <td>{{selectedExam.totalQuestion}}</td>
+                    <td><strong><span class="mdi mdi-alert-circle-outline me-1"></span>Number of questions</strong></td>
+                    <td>{{ exam.totalQuestion }}</td>
                 </tr>
                 <tr>
-                    <td>
-                        <span class="mdi mdi-trophy-outline icon"></span>
-                        <span class="ms-1">Maximum score</span>
-                    </td>
-                    <td>{{selectedExam.maxScore}}</td>
+                    <td><strong><span class="mdi mdi-trophy-outline me-1"></span>Maximum score</strong></td>
+                    <td>{{ exam.maxScore }}</td>
                 </tr>
             </table>
         </div>
-        <div class="popup-footer">
-            <button (click)="startExam(selectedExam.id)" class="btn btn-primary button">Start the Exam</button>
+        <div class="popup-footer text-center">
+            <button (click)="startExam(exam.id)" class="btn btn-primary button">Start the Exam</button>
         </div>
     </div>
 </div>

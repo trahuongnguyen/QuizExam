@@ -1,12 +1,11 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { AuthService } from '../../../service/auth.service';
+import { Component, OnInit } from '@angular/core';
+import { AuthService } from '../../../../shared/service/auth.service';
 import { Title } from '@angular/platform-browser';
-import { HomeComponent } from '../../home.component';
-import { ExamComponent } from '../exam.component';
-import { HttpClient } from '@angular/common/http';
-import { ToastrService } from 'ngx-toastr';
+import { ExaminationResponse } from '../../../../shared/models/examination.model';
+import { ExaminationService } from '../../../../shared/service/examination/examination.service';
 import { UrlService } from '../../../../shared/service/url.service';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
 
 declare var $: any;
 
@@ -15,58 +14,54 @@ declare var $: any;
   templateUrl: './list.component.html',
   styleUrls: [
     './../../../../shared/styles/student/style.css',
+    './../../../../shared/styles/popup.css',
     './list.component.css'
   ]
 })
 export class ListComponent implements OnInit {
+  examList: ExaminationResponse[] = [];
+  exam: ExaminationResponse = { } as ExaminationResponse;
+
+  isPopupExam: boolean = false;
+  examIndex: number = 0;
+
   constructor(
     private authService: AuthService,
     private titleService: Title,
-    private home: HomeComponent,
-    public examComponent: ExamComponent,
-    private http: HttpClient,
-    private toastr: ToastrService,
+    private examService: ExaminationService,
     public urlService: UrlService,
     private router: Router,
-    private activatedRoute: ActivatedRoute
+    private toastr: ToastrService
   ) { }
-
-  semesters: any;
-  examList: any = [];
-  isPopupExam: any;
-  popupExamIndex: number = 0;
-  selectedExam: any;
 
   ngOnInit(): void {
     this.titleService.setTitle('List of Exams');
+    this.loadData();
+  }
 
-    this.http.get<any>(`${this.authService.apiUrl}/sem`, this.home.httpOptions).subscribe(response => {
-      this.semesters = response;
-    })
-
-    this.http.get<any>(`${this.authService.apiUrl}/exam`, this.home.httpOptions).subscribe((data: any) => {
-      this.examList = data;
-      this.examList.forEach((element: any) => {
-        let id = element.id;
-        this.isPopupExam = false;
-      });
-      console.log(this.isPopupExam);
+  loadData(): void {
+    this.examService.getExamListForStudent().subscribe({
+      next: (examResponse) => {
+        this.examList = examResponse;
+      },
+      error: (err) => {
+        this.authService.handleError(err, undefined, '', 'load data');
+      }
     });
   }
 
-  openPopupExam(exam: any) {
+  openPopupExam(examId: number) {
     this.isPopupExam = true;
-    this.selectedExam = this.examList.filter((examination: any) => examination.id == exam)[0];
-    console.log(this.selectedExam);
+    this.exam = this.examList.filter(exam => exam.id == examId)[0];
   }
 
   closePopup(): void {
     this.isPopupExam = false;
-    this.popupExamIndex = 0; // Reset khi đóng popup
+    this.examIndex = 0; // Reset khi đóng popup
   }
 
-  startExam(examId: any): void {
-    const startTime = new Date(this.selectedExam.startTime); // Chuyển đổi startTime sang Date
+  startExam(examId: number): void {
+    const startTime = new Date(this.exam.startTime); // Chuyển đổi startTime sang Date
     const currentTime = new Date(); // Lấy thời gian hiện tại
 
     if (startTime > currentTime) {

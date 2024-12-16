@@ -10,5 +10,5 @@ import java.util.Map;
 public interface StudentAnswerService {
     StudentAnswerRequest saveStudentAnswers(StudentAnswerRequest studentAnswerRequest);
 
-    Map<String, Double> scoreByLevel(StudentDetail studentDetail, Integer examinationId);
+    Map<String, Double> getScoreByLevelOfStudentInExam(StudentDetail studentDetail, Integer examinationId);
 }

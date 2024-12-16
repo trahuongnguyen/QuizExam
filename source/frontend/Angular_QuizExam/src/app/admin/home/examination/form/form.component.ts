@@ -23,6 +23,7 @@ import { forkJoin } from 'rxjs';
   templateUrl: './form.component.html',
   styleUrls: [
     './../../../../shared/styles/admin/style.css',
+    './../../../../shared/styles/popup.css',
     './form.component.css'
   ]
 })
@@ -133,7 +134,7 @@ export class FormComponent implements OnInit {
 
   convertDateFormat(dateObj: Date | undefined): string {
     // Dùng DatePipe để chuyển đổi đối tượng Date sang định dạng 'dd/MM/yyyy HH:mm'
-    return this.datePipe.transform(dateObj, 'dd/MM/yyyy (HH:mm)')!;
+    return this.datePipe.transform(dateObj, 'dd/MM/yyyy HH:mm')!;
   }
 
   validateForm(): boolean {

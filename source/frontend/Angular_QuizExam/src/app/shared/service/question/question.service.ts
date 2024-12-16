@@ -43,4 +43,8 @@ export class QuestionService {
   deleteQuestion(id: number): Observable<QuestionResponse> {
     return this.http.put<QuestionResponse>(`${this.questionApi}/remove/${id}`, {}, this.authService.httpOptions);
   }
+
+  getQuestionListByExam(examId: number): Observable<QuestionResponse[]> {
+    return this.http.get<QuestionResponse[]>(`${this.questionApi}/exam/${examId}`, this.authService.httpOptions);
+  }
 }

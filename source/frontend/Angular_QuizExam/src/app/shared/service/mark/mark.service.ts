@@ -18,8 +18,28 @@ export class MarkService {
     return this.http.get<MarkResponse[]>(`${this.markApi}/find-all/${examId}`, this.authService.httpOptions);
   }
 
+  getMarkListBySem(semId: number): Observable<MarkResponse[]> {
+    return this.http.get<MarkResponse[]>(`${this.markApi}/sem/${semId}`, this.authService.httpOptions);
+  }
+
+  getMarkListBySemAndStudent(semId: number, studentId: number): Observable<MarkResponse[]> {
+    return this.http.get<MarkResponse[]>(`${this.markApi}/sem-and-student/${semId}/${studentId}`, this.authService.httpOptions);
+  }
+
+  getMarkByExam(examId: number): Observable<MarkResponse> {
+    return this.http.get<MarkResponse>(`${this.markApi}/${examId}`, this.authService.httpOptions);
+  }
+
   updateMark(examId: number, studentIds: number[]): Observable<MarkResponse[]> {
     return this.http.put<MarkResponse[]>(`${this.markApi}/${examId}`, studentIds, this.authService.httpOptions);
+  }
+
+  updateBeginTime(id: number): Observable<MarkResponse> {
+    return this.http.put<MarkResponse>(`${this.markApi}/begin-time/${id}`, {}, this.authService.httpOptions);
+  }
+
+  updateWarning(id: number, warningCount: number): Observable<MarkResponse> {
+    return this.http.put<MarkResponse>(`${this.markApi}/warning/${id}`, { warning: warningCount }, this.authService.httpOptions);
   }
 
   getPassPercentageBySubject(): Observable<PassPercentage[]> {

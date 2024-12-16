@@ -26,7 +26,7 @@
             </label>
             <div class="d-flex" (click)="student.menuToggle()">
                 <div class="user-info">
-                    <span>Hi, {{ authService.myUser.userResponse.fullName }}</span>
+                    <span>Hi, {{ authService.studentProfile.userResponse.fullName }}</span>
                     <i class="fa-regular fa-circle-user"></i>
                 </div>
                 <div class="menu" id="menuToggle">
@@ -38,8 +38,7 @@
                             <i class="fa-solid fa-book"></i><a href="/mark">Mark</a>
                         </li>
                         <li>
-                            <i class="fa-solid fa-arrow-right-from-bracket"></i><a href="#"
-                                (click)="onLogout()">Logout</a>
+                            <i class="fa-solid fa-arrow-right-from-bracket"></i><a href="#" (click)="onLogout()">Logout</a>
                         </li>
                     </ul>
                 </div>

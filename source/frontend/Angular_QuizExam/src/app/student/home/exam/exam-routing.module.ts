@@ -5,13 +5,14 @@ import { ExamComponent } from './exam.component';
 import { ListComponent } from './list/list.component';
 import { DetailComponent } from './detail/detail.component';
 import { ResultComponent } from './result/result.component';
+import { Roles } from '../../../shared/enums';
 
 const routes: Routes = [
   {
     path: '',
     component: ExamComponent,
     canActivate: [AuthGuard],
-    data: { roles: ['STUDENT'] },
+    data: { roles: [Roles.STUDENT] },
     children: [
       {
         path: '',
@@ -25,7 +26,6 @@ const routes: Routes = [
         path: 'result/:examId',
         component: ResultComponent,
       },
-
     ],
   },
 ];

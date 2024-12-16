@@ -6,6 +6,7 @@ export interface MarkResponse {
     submittedTime: Date;
     score: number;
     maxScore: number;
+    warning: number;
     subjectName: string;
     studentResponse: StudentResponse;
 }

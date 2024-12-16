@@ -30,7 +30,7 @@ const routes: Routes = [
         path: ':subjectId/question-list',
         component: QuestionListComponent,
         canActivate: [AuthGuard],
-        data: { roles: [Roles.ADMIN, Roles.TEACHER] },
+        data: { roles: [Roles.ADMIN, Roles.DIRECTOR, Roles.TEACHER] },
       },
       {
         path: ':subjectId/add-new-question',

@@ -5,6 +5,7 @@ import { HomepageComponent } from './homepage/homepage.component';
 import { ProfileComponent } from './profile/profile.component';
 import { MarkComponent } from './mark/mark.component';
 import { AuthGuard } from '../service/authguard.service';
+import { Roles } from '../../shared/enums';
 
 const routes: Routes = [
   {
@@ -13,26 +14,28 @@ const routes: Routes = [
     children: [
       {
         path: '',
-        component: HomepageComponent
+        component: HomepageComponent,
+        canActivate: [AuthGuard],
+        data: { roles: [Roles.STUDENT] },
       },
       {
         path: 'profile',
         component: ProfileComponent,
         canActivate: [AuthGuard],
-        data: { roles: ['STUDENT'] },
+        data: { roles: [Roles.STUDENT] },
       },
       {
         path: 'mark',
         component: MarkComponent,
         canActivate: [AuthGuard],
-        data: { roles: ['STUDENT'] },
+        data: { roles: [Roles.STUDENT] },
       },
       {
         path: 'exam',
         loadChildren: () => import('./exam/exam.module')
           .then(m => m.ExamModule),
         canActivate: [AuthGuard],
-        data: { roles: ['STUDENT'] },
+        data: { roles: [Roles.STUDENT] },
       },
     ]
   },

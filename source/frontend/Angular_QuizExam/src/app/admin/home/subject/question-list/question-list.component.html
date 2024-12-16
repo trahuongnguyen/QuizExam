@@ -24,6 +24,27 @@
     </table>
 </div>
 
+<div *ngIf="isPopupDetail" class="popup-container">
+    <div class="popup-content" (click)="$event.stopPropagation()">
+        <div class="popup-header">
+            <span>Question Detail</span>
+            <span class="close-icon" (click)="closePopup()">&times;</span>
+        </div>
+        <div class="popup-body">
+            <div class="form-popup">
+                <div class="checkbox-group">
+                    <p><b>Content: </b><span [innerHTML]="transformTextWithNewlines(question.content)"></span></p>
+                    <div class="checkbox-input" *ngFor="let answers of question.answers; let i = index">
+                        <label><b>{{ getOptionLabel(i) }}. </b>{{ answers.content }}</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="popup-footer">
+        </div>
+    </div>
+</div>
+
 <!-- Popup xác nhận -->
 <app-dialog-popup
   [isVisible]="isPopupDelete"

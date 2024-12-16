@@ -129,14 +129,17 @@ export class AuthService {
         next: (profileResponse) => {
           // Kiểm tra nếu profileResponse có thuộc tính 'userResponse', tức là nó là student
           if (this.isStudentResponse(profileResponse)) {
+            console.log('student');
             this.handleStudentProfile(tokenKey, token, profileResponse);
           }
           else {
+            console.log('employee');
             this.handleEmployeeProfile(tokenKey, token, profileResponse);
           }
         },
         error: (err) => {
-          this.logout(tokenKey);
+          //this.logout(tokenKey);
+          console.log('Error: ', err);
         }
       });
     }
@@ -159,7 +162,7 @@ export class AuthService {
       return;
     }
     this.studentProfile = profileResponse;
-    localStorage.setItem(RoleKey.ADMIN, profileResponse.userResponse.role.name);
+    localStorage.setItem(RoleKey.STUDENT, profileResponse.userResponse.role.name);
   }
   
   handleEmployeeProfile(tokenKey: TokenKey, token: string | null, profileResponse: UserResponse): void {

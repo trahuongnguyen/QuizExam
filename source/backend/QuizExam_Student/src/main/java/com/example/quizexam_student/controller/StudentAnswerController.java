@@ -22,15 +22,15 @@ public class StudentAnswerController {
     private final UserService userService;
 
     @PostMapping
-    public StudentAnswerRequest submitAnswer(@RequestBody StudentAnswerRequest studentAnswerRequest) {
+    public StudentAnswerRequest submitAnswers(@RequestBody StudentAnswerRequest studentAnswerRequest) {
         return studentAnswerService.saveStudentAnswers(studentAnswerRequest);
     }
 
     @GetMapping("/score-level/{examId}")
-    public Map<String, Double> scoreByLevel(@PathVariable int examId) {
+    public Map<String, Double> getScoreByLevelOfStudentInExam(@PathVariable int examId) {
         String email = ((org.springframework.security.core.userdetails.User)
                 SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
         User user = userService.findUserByEmail(email);
-        return studentAnswerService.scoreByLevel(user.getStudentDetail(), examId);
+        return studentAnswerService.getScoreByLevelOfStudentInExam(user.getStudentDetail(), examId);
     }
 }

@@ -2,6 +2,8 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { AuthService } from '../../../../shared/service/auth.service';
 import { Title } from '@angular/platform-browser';
 import { AdminComponent } from '../../../admin.component';
+import { HomeComponent } from '../../home.component';
+import { Roles } from '../../../../shared/enums';
 import { Sem, SubjectResponse } from '../../../../shared/models/subject.model';
 import { QuestionResponse } from '../../../../shared/models/question.model';
 import { SubjectService } from '../../../../shared/service/subject/subject.service';
@@ -16,6 +18,7 @@ declare var $: any;
   templateUrl: './question-list.component.html',
   styleUrls: [
     './../../../../shared/styles/admin/style.css',
+    './../../../../shared/styles/popup.css',
     './question-list.component.css'
   ]
 })
@@ -26,8 +29,10 @@ export class QuestionListComponent implements OnInit, OnDestroy {
   sem: Sem;
   subject: SubjectResponse;
   questionList: QuestionResponse[] = [];
+  question: QuestionResponse = {} as QuestionResponse;
   questionId: number = 0;
 
+  isPopupDetail: boolean = false;
   isPopupDelete: boolean = false;
 
   dialogTitle: string = '';
@@ -38,6 +43,7 @@ export class QuestionListComponent implements OnInit, OnDestroy {
     private authService: AuthService,
     private titleService: Title,
     public admin: AdminComponent,
+    public home: HomeComponent,
     private subjectService: SubjectService,
     private questionService: QuestionService,
     public urlService: UrlService,
@@ -71,7 +77,7 @@ export class QuestionListComponent implements OnInit, OnDestroy {
         });
       },
       error: (err) => {
-        this.router.navigate([this.urlService.subjectListUrl()]);
+        this.router.navigate([this.urlService.getSubjectListUrl('ADMIN')]);
       }
     });
   }
@@ -116,8 +122,12 @@ export class QuestionListComponent implements OnInit, OnDestroy {
         {
           title: 'Action',
           data: null,
-          render: function (data: any, type: any, row: any) {
-            return `<span class="mdi mdi-pencil icon-action edit-icon" title="Edit" data-id="${row.id}"></span>
+          render: (data: any, type: any, row: any) => {
+            if (this.home.isActive([Roles.DIRECTOR])) {
+              return `<span class="mdi mdi-information-outline icon-action info-icon" title="Detail" data-id="${row.id}"></span>`
+            }
+            return `<span class="mdi mdi-information-outline icon-action info-icon" title="Detail" data-id="${row.id}"></span>
+            <span class="mdi mdi-pencil icon-action edit-icon" title="Edit" data-id="${row.id}"></span>
             <span class="mdi mdi-delete-forever icon-action delete-icon" title="Remove" data-id="${row.id}"></span>`;
           }
         }
@@ -135,10 +145,15 @@ export class QuestionListComponent implements OnInit, OnDestroy {
 
     // Thêm placeholder vào input của DataTables
     $('.dataTables_filter input[type="search"]').attr('placeholder', 'Search');
+
+    $('.info-icon').on('click', (event: any) => {
+      this.questionId = $(event.currentTarget).data('id');
+      this.openPopupDetail(this.questionId);
+    });
     
     $('.edit-icon').on('click', (event: any) => {
       const id = $(event.currentTarget).data('id');
-      this.router.navigate([this.urlService.editQuestionUrl(this.subjectId, id)]);
+      this.router.navigate([this.urlService.getEditQuestionUrl('ADMIN', this.subjectId, id)]);
     });
 
     $('.delete-icon').on('click', (event: any) => {
@@ -169,8 +184,28 @@ export class QuestionListComponent implements OnInit, OnDestroy {
     });
   }
 
+  loadQuestionById(id: number, callback: (question: QuestionResponse) => void): void {
+    this.questionService.getQuestionById(id).subscribe({
+      next: (questionResponse) => {
+        this.question = questionResponse;
+        callback(this.question); // Chạy hàm callback sau khi lấy thông tin thành công
+      },
+      error: (err) => {
+        this.authService.handleError(err, undefined, 'question', 'load data', this.reloadTable.bind(this));
+      }
+    });
+  }
+
   navigateToAddQuestion(): void {
-    this.router.navigate([this.urlService.addQuestionUrl(this.subjectId)]);
+    this.router.navigate([this.urlService.getAddQuestionUrl('ADMIN', this.subjectId)]);
+  }
+
+  transformTextWithNewlines(text: string): string {
+    return text.replace(/\n/g, '<br>');
+  }
+
+  getOptionLabel(index: number): string {
+    return String.fromCharCode(65 + index); // 65 là mã ASCII cho 'A'
   }
 
   openPopupConfirm(title: string, message: string): void {
@@ -179,8 +214,15 @@ export class QuestionListComponent implements OnInit, OnDestroy {
     this.isConfirmationPopup = true;
   }
 
+  openPopupDetail(id: number): void {
+    this.loadQuestionById(id, () => {
+      this.isPopupDetail = true;
+    });
+  }
+
   closePopup(): void {
     this.questionId = 0;
+    this.isPopupDetail = false;
     this.isPopupDelete = false;
   }
 

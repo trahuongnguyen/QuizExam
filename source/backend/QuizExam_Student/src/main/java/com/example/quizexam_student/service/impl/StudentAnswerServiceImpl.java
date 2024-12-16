@@ -76,22 +76,16 @@ public class StudentAnswerServiceImpl implements StudentAnswerService {
     }
 
     @Override
-    public Map<String, Double> scoreByLevel(StudentDetail studentDetail, Integer examinationId) {
+    public Map<String, Double> getScoreByLevelOfStudentInExam(StudentDetail studentDetail, Integer examinationId) {
         Mark mark = markRepository.findByStudentDetailAndExamination_IdOrderByIdDesc(studentDetail, examinationId);
         if (Objects.isNull(mark)) {
             throw new NotFoundException("mark", "Mark not found");
         }
 
         // Lấy danh sách câu hỏi và câu trả lời liên quan đến bài thi
-        List<QuestionRecord> questionRecords = questionRecordRepository.findQuestionRecordsByExaminationId(mark.getExamination().getId());
-        List<StudentAnswer> studentAnswers = studentAnswerRepository.findByMarkId(mark.getId());
-        List<Level> levels = levelRepository.findAllByStatus(1);
+        List<QuestionRecord> questionRecords = questionRecordRepository.findAllByExamination_Id(mark.getExamination().getId());
+        List<StudentAnswer> studentAnswers = studentAnswerRepository.findAllByMark_Id(mark.getId());
         Map<String, Double> scoreByLevel = new HashMap<>();
-
-        // Khởi tạo điểm cho từng level
-        for (Level level : levels) {
-            scoreByLevel.put(level.getName(), 0.0); // Gán điểm khởi tạo là 0
-        }
 
         // Duyệt qua từng câu hỏi
         for (QuestionRecord questionRecord : questionRecords) {

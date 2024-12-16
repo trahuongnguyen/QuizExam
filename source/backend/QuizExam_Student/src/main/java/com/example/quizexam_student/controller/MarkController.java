@@ -2,9 +2,11 @@ package com.example.quizexam_student.controller;
 
 import com.example.quizexam_student.bean.response.MarkResponse;
 import com.example.quizexam_student.entity.Mark;
+import com.example.quizexam_student.entity.StudentDetail;
 import com.example.quizexam_student.entity.User;
 import com.example.quizexam_student.mapper.MarkMapper;
 import com.example.quizexam_student.service.MarkService;
+import com.example.quizexam_student.service.StudentService;
 import com.example.quizexam_student.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +25,8 @@ public class MarkController {
 
     private final UserService userService;
 
+    private final StudentService studentService;
+
     @PreAuthorize("hasAnyRole('ADMIN', 'DIRECTOR', 'SRO', 'TEACHER')")
     @GetMapping("/pass-percentage")
     public List<Map<String, Object>> getPassPercentageForSubject() {
@@ -35,13 +39,20 @@ public class MarkController {
         return markService.findAllMarkByExam(examId);
     }
 
-    @PreAuthorize("hasAnyRole('SRO', 'STUDENT')")
+    @PreAuthorize("hasAnyRole('STUDENT')")
     @GetMapping("/sem/{semId}")
     public List<MarkResponse> getAllMarksByStudentDetailAndScoreNotNull(@PathVariable int semId){
         String email = ((org.springframework.security.core.userdetails.User)
                 SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
         User user = userService.findUserByEmail(email);
         return markService.getListScoredPerSubject(user.getStudentDetail(), semId);
+    }
+
+    @PreAuthorize("hasAnyRole('ADMIN', 'SRO', 'STUDENT')")
+    @GetMapping("/sem-and-student/{semId}/{studentId}")
+    public List<MarkResponse> getAllMarksBySemAndStudentDetail(@PathVariable int semId, @PathVariable int studentId) {
+        StudentDetail studentDetail = studentService.findStudentById(studentId);
+        return markService.getListScoredPerSubject(studentDetail, semId);
     }
 
     @PreAuthorize("hasRole('STUDENT')")

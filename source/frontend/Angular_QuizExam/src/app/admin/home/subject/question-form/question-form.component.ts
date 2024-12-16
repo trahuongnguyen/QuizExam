@@ -22,6 +22,7 @@ import { forkJoin } from 'rxjs';
   styleUrls: [
     './../../../../shared/styles/admin/style.css',
     './../../../../shared/styles/admin/question-form.css',
+    './../../../../shared/styles/popup.css',
     './question-form.component.css'
   ]
 })
@@ -88,7 +89,7 @@ export class QuestionFormComponent implements OnInit {
           next: ([chapterResponse, levelResponse]) => {
             if (!Array.isArray(levelResponse) || levelResponse.length <= 0) {
               this.toastr.warning('Level not found', 'Warning');
-              this.router.navigate([this.urlService.questionListUrl(this.subjectId)]);
+              this.router.navigate([this.urlService.getQuestionListUrl('ADMIN', this.subjectId)]);
               return;
             }
             this.chapterList = chapterResponse; // Lưu dữ liệu chapters
@@ -101,7 +102,7 @@ export class QuestionFormComponent implements OnInit {
         });
       },
       error: (err) => {
-        this.router.navigate([this.urlService.subjectListUrl()]);
+        this.router.navigate([this.urlService.getSubjectListUrl('ADMIN')]);
       }
     });
   }
@@ -255,7 +256,7 @@ export class QuestionFormComponent implements OnInit {
 
   confirmCancel(): void {
     this.closePopupDialog();
-    this.router.navigate([this.urlService.questionListUrl(this.subjectId)]);
+    this.router.navigate([this.urlService.getQuestionListUrl('ADMIN', this.subjectId)]);
   }
 
   confirmAction(): void {
@@ -388,7 +389,7 @@ export class QuestionFormComponent implements OnInit {
     this.questionService.createQuestion(this.questionForms).subscribe({
       next: (questionResponse) => {
         this.toastr.success(`Question has been saved successfully!`, 'Success', { timeOut: 3000 });
-        this.router.navigate([this.urlService.questionListUrl(this.subjectId)]);
+        this.router.navigate([this.urlService.getQuestionListUrl('ADMIN', this.subjectId)]);
       },
       error: (err) => {
         this.authService.handleError(err, this.validationError, 'question', 'create question');

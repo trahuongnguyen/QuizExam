@@ -10,6 +10,7 @@ import com.example.quizexam_student.service.QuestionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -21,6 +22,7 @@ public class QuestionServiceImpl implements QuestionService {
     private final LevelRepository levelRepository;
     private final ChapterRepository chapterRepository;
     private final AnswerRepository answerRepository;
+    private final ExaminationRepository examinationRepository;
 
     @Override
     public List<Question> findAllQuestionsBySubjectId(int subjectId) {
@@ -55,6 +57,9 @@ public class QuestionServiceImpl implements QuestionService {
 
     @Override
     public Question updateQuestion(int id, QuestionRequest questionRequest) {
+        if (questionRequest.getLevelId() == 0) {
+            throw new NotFoundException("question", "Level is required.");
+        }
         Question question = findQuestionById(id);
         assert question != null;
         question.setContent(questionRequest.getContent());
@@ -98,5 +103,17 @@ public class QuestionServiceImpl implements QuestionService {
         Question question = findQuestionById(id);
         question.setStatus(0);
         return questionRepository.save(question);
+    }
+
+    @Override
+    public List<QuestionResponse> findAllQuestionsByExam(int examId) {
+        Examination examination = examinationRepository.findByIdAndStatusAndType(examId, 1, 1);
+        if (Objects.isNull(examination)) {
+            throw new NotFoundException("exam", "Examination not found.");
+        }
+        if (examination.getStartTime().isBefore(LocalDateTime.now())) {
+            throw new InvalidTimeException("exam", "Cannot update examination as it has already started.");
+        }
+        return examination.getQuestions().stream().map(QuestionMapper::convertToResponse).toList();
     }
 }

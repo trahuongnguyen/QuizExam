@@ -5,7 +5,9 @@ import com.example.quizexam_student.entity.Examination;
 import com.example.quizexam_student.entity.Mark;
 import com.example.quizexam_student.entity.StudentDetail;
 import com.example.quizexam_student.entity.User;
+import com.example.quizexam_student.exception.AlreadyExistException;
 import com.example.quizexam_student.exception.IncorrectEmailOrPassword;
+import com.example.quizexam_student.exception.InvalidTimeException;
 import com.example.quizexam_student.exception.NotFoundException;
 import com.example.quizexam_student.mapper.MarkMapper;
 import com.example.quizexam_student.repository.*;
@@ -99,7 +101,11 @@ public class MarkServiceImpl implements MarkService {
 
     @Override
     public MarkResponse getOneScoredByExam(StudentDetail studentDetail, Integer examId) {
-        return MarkMapper.convertToResponse(markRepository.findByStudentDetailAndExamination_IdOrderByIdDesc(studentDetail, examId));
+        Mark mark = markRepository.findByStudentDetailAndExamination_IdOrderByIdDesc(studentDetail, examId);
+        if (Objects.isNull(mark)) {
+            throw new NotFoundException("exam", "Examination not found.");
+        }
+        return MarkMapper.convertToResponse(mark);
     }
 
     @Override
@@ -140,8 +146,11 @@ public class MarkServiceImpl implements MarkService {
     public Mark updateBeginTime(Integer id) {
         User user = getUserByEmail();
         Mark mark = markRepository.findById(id).orElse(null);
-        if (Objects.isNull(mark) || mark.getStudentDetail().getUserId() != user.getId() || mark.getBeginTime() != null) {
+        if (Objects.isNull(mark) || mark.getStudentDetail().getUserId() != user.getId()) {
             throw new NotFoundException("mark", "Mark not found.");
+        }
+        if (mark.getBeginTime() != null) {
+            throw new InvalidTimeException("mark", "Update begin time failed.");
         }
         mark.setBeginTime(LocalDateTime.now());
         return markRepository.save(mark);
@@ -151,8 +160,11 @@ public class MarkServiceImpl implements MarkService {
     public Mark updateWarning(Integer id, Mark markInput) {
         User user = getUserByEmail();
         Mark mark = markRepository.findById(id).orElse(null);
-        if (Objects.isNull(mark) || mark.getStudentDetail().getUserId() != user.getId() || mark.getScore() != null) {
+        if (Objects.isNull(mark) || mark.getStudentDetail().getUserId() != user.getId()) {
             throw new NotFoundException("mark", "Mark not found.");
+        }
+        if (mark.getScore() != null) {
+            throw new AlreadyExistException("mark", "The score is available.");
         }
         mark.setWarning(markInput.getWarning());
         return markRepository.save(mark);

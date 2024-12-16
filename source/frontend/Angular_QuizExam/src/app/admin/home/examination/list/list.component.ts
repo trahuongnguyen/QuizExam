@@ -25,8 +25,8 @@ export class ListComponent implements OnInit {
 
   examList: ExaminationResponse[] = [];
   filteredExamList: ExaminationResponse[] = [];
+  pagedExamList: ExaminationResponse[] = [];
   searchExam: string = '';
-  pagedExamList: any = [];
   currentPage: number = 1; // Trang hiện tại
   itemsPerPage: number = 4; // Số phần tử trên mỗi trang
   totalPages: number = 0; // Tổng số trang
@@ -97,6 +97,7 @@ export class ListComponent implements OnInit {
   onSearch(): void {
     this.currentPage = 1;
     this.filteredExamList = this.examList.filter(exam =>
+      exam.name.toLowerCase().includes(this.searchExam.toLowerCase()) ||
       exam.subject.name.toLowerCase().includes(this.searchExam.toLowerCase()) ||
       exam.code.toLowerCase().includes(this.searchExam.toLowerCase())
     );

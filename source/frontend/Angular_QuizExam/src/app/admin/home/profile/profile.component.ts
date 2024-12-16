@@ -33,16 +33,15 @@ export class ProfileComponent implements OnInit {
     private employeeService: EmployeeService,
     private toastr: ToastrService,
     private datePipe: DatePipe
-  ) {
-  }
+  ) { }
 
   ngOnInit(): void {
     this.titleService.setTitle('Profile');
   }
 
   convertDateFormat(dateObj: Date | undefined): string {
-    // Dùng DatePipe để chuyển đổi đối tượng Date sang định dạng 'yyyy-MM-dd'
-    return this.datePipe.transform(dateObj, 'dd-MM-yyyy')!;
+    // Dùng DatePipe để chuyển đổi đối tượng Date sang định dạng 'dd/MM/yyyy'
+    return this.datePipe.transform(dateObj, 'dd/MM/yyyy')!;
   }
 
   convertToRequest(): void {
@@ -106,7 +105,7 @@ export class ProfileComponent implements OnInit {
     });
   }
 
-  chagePassword(): void {
+  changePassword(): void {
     this.formError = { };
     this.authService.changePassword(this.changePasswordForm).subscribe({
       next: () => {
@@ -114,7 +113,7 @@ export class ProfileComponent implements OnInit {
         this.showInformation();
       },
       error: (err) => {
-        this.authService.handleError(err, this.formError, '', 'update');
+        this.authService.handleError(err, this.formError, '', 'change password');
       }
     });
   }

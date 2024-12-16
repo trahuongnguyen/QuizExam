@@ -15,7 +15,7 @@
                         <small class="error" *ngIf="(password.touched || password.dirty) && !loginForm.password?.trim()">Password is required.</small>
                     </div>
                     <div class="sign-in-submit mt-3">
-                        <button type="submit" class="sign-in" [disabled]="!this.loginForm.email?.trim() || !this.loginForm.password?.trim()" value="Sign In">Sign In</button>
+                        <button type="submit" class="sign-in" [disabled]="!this.loginForm.email?.trim() || !this.loginForm.password?.trim()">Sign In</button>
                     </div>
                 </div>
             </div>

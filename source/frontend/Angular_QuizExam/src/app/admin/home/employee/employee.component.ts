@@ -17,6 +17,7 @@ declare var $: any;
   templateUrl: './employee.component.html',
   styleUrls: [
     './../../../shared/styles/admin/style.css',
+    './../../../shared/styles/popup.css',
     './employee.component.css'
   ]
 })
@@ -240,8 +241,8 @@ export class EmployeeComponent implements OnInit, OnDestroy {
   }
 
   convertDateFormat(dateObj: Date | undefined): string {
-    // Dùng DatePipe để chuyển đổi đối tượng Date sang định dạng 'dd-MM-yyyy'
-    return this.datePipe.transform(dateObj, 'dd-MM-yyyy')!;
+    // Dùng DatePipe để chuyển đổi đối tượng Date sang định dạng 'dd/MM/yyyy'
+    return this.datePipe.transform(dateObj, 'dd/MM/yyyy')!;
   }
 
   convertToRequest(): void {

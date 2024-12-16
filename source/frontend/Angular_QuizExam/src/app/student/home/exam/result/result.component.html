@@ -3,8 +3,8 @@
         <!-- Result Section -->
         <div class="result">
             <h2><b>Result</b></h2>
-            <h2 class="violation" *ngIf="examComponent.mark.warning" title="Violation: {{ examComponent.mark.warning }}">
-                <span class="mdi mdi-alert-outline"></span>{{ examComponent.mark.warning }}
+            <h2 class="violation" *ngIf="mark.warning" title="Violation: {{ mark.warning }}">
+                <span class="mdi mdi-alert-outline"></span>{{ mark.warning }}
             </h2>
         </div>
         <hr class="line">
@@ -15,14 +15,14 @@
                     <div class="icon">
                         <span class="mdi mdi-library-books"></span>
                     </div>
-                    <p>{{ subjectName }}</p>
+                    <p>{{ mark.subjectName }}</p>
                 </div>
                 <div class="col-4">
                     <div class="icon-chart">
                         <canvas id="doughnutChart" height="100px"></canvas>
                         <div id="percentageLabel" ></div>
                     </div>
-                    <p>{{ score }}/{{ maxScore }}</p>
+                    <p>{{ mark.score }}/{{ mark.maxScore }}</p>
                 </div>
                 <div class="col-4">
                     <div class="icon">

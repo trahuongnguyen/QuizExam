@@ -21,6 +21,7 @@ declare var $: any;
   templateUrl: './student.component.html',
   styleUrls: [
     './../../../shared/styles/admin/style.css',
+    './../../../shared/styles/popup.css',
     './student.component.css'
   ]
 })
@@ -99,8 +100,8 @@ export class StudentComponent implements OnInit, OnDestroy {
     forkJoin([this.classService.getClassList(), this.studentService.getStudentList(this.classId, this.statusId)])
       .subscribe({
         next: ([classResponse, studentResponse]) => {
-          this.classList = (classResponse as ClassResponse[]);
-          this.filterClass = (classResponse as ClassResponse[]);
+          this.classList = classResponse;
+          this.filterClass = classResponse;
           this.studentList = studentResponse;
           this.className = this.classList.find(c => c.id == this.classId)?.name!;
           this.initializeDataTable();
@@ -142,6 +143,7 @@ export class StudentComponent implements OnInit, OnDestroy {
             if (this.statusId == 1) {
               return `<input type="checkbox" class="icon-action chk_box" data-id="${row.userResponse.id}">
               <span class="mdi mdi-pencil icon-action edit-icon" title="Edit" data-id="${row.userResponse.id}"></span>
+              <span class="mdi mdi-clipboard-text icon-action mark-icon" title="Mark" data-id="${row.userResponse.id}"></span>
               <span class="mdi mdi-lock-reset icon-action reset-password-icon" title="Reset Password" data-id="${row.userResponse.id}"></span>
               <span class="mdi mdi-delete-forever icon-action delete-icon" title="Delete" data-id="${row.userResponse.id}"></span>`;
             }
@@ -177,6 +179,14 @@ export class StudentComponent implements OnInit, OnDestroy {
     $('.edit-icon').on('click', (event: any) => {
       this.studentId = $(event.currentTarget).data('id');
       this.openPopupUpdate(this.studentId);
+    });
+
+    $('.mark-icon').on('click', (event: any) => {
+      this.studentId = $(event.currentTarget).data('id');
+      const url = this.isClassIdValid()
+        ? this.urlService.getMarkUrl('ADMIN', this.studentId)
+        : this.urlService.getMarkUrl('ADMIN', this.studentId, this.classId);
+      this.router.navigate([url]);
     });
 
     $('.reset-password-icon').on('click', (event: any) => {
@@ -405,8 +415,8 @@ export class StudentComponent implements OnInit, OnDestroy {
       next: (studentResponse) => {
         this.toastr.success(`Student: Update student class successfully!`, 'Success', { timeOut: 3000 });
         let url = this.studentClassForm.classId == 0
-        ? this.urlService.studentListUrl()
-        : this.urlService.classDetailUrl(this.studentClassForm.classId);
+        ? this.urlService.getStudentListUrl('ADMIN')
+        : this.urlService.getClassDetailUrl('ADMIN', this.studentClassForm.classId);
         this.router.navigate([url]);
       },
       error: (err) => {

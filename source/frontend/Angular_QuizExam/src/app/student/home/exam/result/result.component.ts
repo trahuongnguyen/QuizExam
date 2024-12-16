@@ -1,10 +1,10 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { AuthService } from '../../../service/auth.service';
+import { Component, OnInit } from '@angular/core';
+import { AuthService } from '../../../../shared/service/auth.service';
 import { Title } from '@angular/platform-browser';
-import { HomeComponent } from '../../home.component';
-import { ExamComponent } from '../exam.component';
-import { HttpClient } from '@angular/common/http';
-import { ToastrService } from 'ngx-toastr';
+import { MarkResponse } from '../../../../shared/models/mark.model';
+import { MarkService } from '../../../../shared/service/mark/mark.service';
+import { QuestionRecordService } from '../../../../shared/service/question-record/question-record.service';
+import { StudentAnswerService } from '../../../../shared/service/student-answer/student-answer.service';
 import { UrlService } from '../../../../shared/service/url.service';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Chart } from 'chart.js/auto';
@@ -21,70 +21,65 @@ import { forkJoin } from 'rxjs';
 export class ResultComponent implements OnInit {
   examId: number = 0; // ID của bài kiểm tra
 
-  subjectName: string = ''; // Tên môn học
-  listLevel: any; // Danh sách các cấp độ
+  mark: MarkResponse = { } as MarkResponse;
 
-  score: number = 0; // Điểm của sinh viên
-  maxScore: number = 0; // Điểm tối đa
-  
-  scoreByLevel: any; // Điểm theo từng cấp độ
-  maxScoreByLevel: any; // Điểm tối đa theo từng cấp độ
-  percentageScoreByLevel: any; // Tỉ lệ điểm theo cấp độ
+  percentagesByLevel: { [key: string]: number } = { };
+  levelNames: string[] = [];
+  levelPercentageScores: number[] = [];
 
   timeTaken: string = ''; // Thời gian làm bài
 
   constructor(
     private authService: AuthService,
     private titleService: Title,
-    private home: HomeComponent,
-    public examComponent: ExamComponent,
-    private http: HttpClient,
-    private toastr: ToastrService,
+    private markService: MarkService,
+    private questionRecordService: QuestionRecordService,
+    private studentAnswerService: StudentAnswerService,
     public urlService: UrlService,
     private router: Router,
     private activatedRoute: ActivatedRoute
-  ) {}
+  ) {
+    this.examId = Number(this.activatedRoute.snapshot.paramMap.get('examId')); // Lấy examId từ route
+  }
 
   ngOnInit(): void {
     this.titleService.setTitle('Result');
+    this.loadData();
+  }
 
-    // Lấy examId từ route
-    this.examId = Number(this.activatedRoute.snapshot.paramMap.get('examId'));
-
-    const markRequest = this.http.get<any>(`${this.authService.apiUrl}/mark/${this.examId}`, this.home.httpOptions);
-    const levelRequest = this.http.get<any>(`${this.authService.apiUrl}/question-record/max-score-level/${this.examId}`, this.home.httpOptions);
-    const scoreByLevelRequest = this.http.get<any>(`${this.authService.apiUrl}/student-answers/score-level/${this.examId}`, this.home.httpOptions);
-
-    // Thực hiện các yêu cầu đồng thời
-    forkJoin([markRequest, levelRequest, scoreByLevelRequest]).subscribe(([markData, levelData, scoreByLevelData]) => {
-      // Lưu dữ liệu bài kiểm tra
-      this.examComponent.mark = markData;
-      if (this.examComponent.mark.score == null) {
-        this.router.navigate([this.urlService.examPageUrl()]);
-        return;
+  loadData(): void {
+    forkJoin([
+      this.markService.getMarkByExam(this.examId),
+      this.questionRecordService.getMaxScoreByLevelForExam(this.examId), // Lấy điểm tối đa theo các cấp độ có trong bài thi
+      this.studentAnswerService.getScoreByLevelOfStudentInExam(this.examId) // Lấy điểm của học sinh theo các cấp độ có trong bài thi
+    ])
+    .subscribe({
+      next: ([markResponse, questionRecordResponse, studentAnswerResponse]) => {
+        if (markResponse.score == null) {
+          this.router.navigate([this.urlService.examPageUrl()]);
+          return;
+        }
+        // Lưu dữ liệu điểm của học sinh trong bài thi
+        this.mark = markResponse;
+        
+        // Tính toán thời gian làm bài
+        this.calculateTimeTaken(this.mark.submittedTime, this.mark.beginTime);
+        
+        // Tính toán tỉ lệ điểm theo cấp độ
+        this.percentagesByLevel = this.calculatePercentagesByLevel(questionRecordResponse, studentAnswerResponse);
+        this.levelNames = Object.keys(this.percentagesByLevel); // Lấy tên các cấp độ
+        this.levelPercentageScores = Object.values(this.percentagesByLevel); // Lấy điểm % các cấp độ đó
+        
+        // Vẽ biểu đồ
+        this.drawCharts();
+      },
+      error: (err) => {
+        this.authService.handleError(err, undefined, '', 'load data');
       }
-
-      this.listLevel = Object.keys(levelData); // Lấy danh sách các cấp độ
-      this.maxScoreByLevel = levelData;
-      this.scoreByLevel = scoreByLevelData;
-
-      // Lấy tên môn học và điểm
-      this.subjectName = this.examComponent.mark.subjectName;
-      this.score = this.examComponent.mark.score;
-      this.maxScore = this.examComponent.mark.maxScore;
-      
-      // Tính toán thời gian làm bài
-      this.calculateTimeTaken(this.examComponent.mark.submittedTime, this.examComponent.mark.beginTime);
-      
-      // Tính toán tỉ lệ điểm theo cấp độ
-      this.calculatePercentageByLevel();
-      
-      // Vẽ biểu đồ
-      this.drawCharts();
     });
   }
 
-  calculateTimeTaken(submittedTime: string, beginTime: string): void {
+  calculateTimeTaken(submittedTime: Date, beginTime: Date): void {
     // Tính toán thời gian làm bài và chuyển đổi thành định dạng hh:mm:ss
     const timeTakenInMs = new Date(submittedTime).getTime() - new Date(beginTime).getTime();
     const totalSeconds = Math.floor(timeTakenInMs / 1000); // Chuyển đổi milliseconds thành giây
@@ -95,15 +90,20 @@ export class ResultComponent implements OnInit {
     this.timeTaken = `${hours < 10 ? '0' + hours : hours}:${minutes < 10 ? '0' + minutes : minutes}:${seconds < 10 ? '0' + seconds : seconds}`;
   }
 
-  calculatePercentageByLevel(): void {
-    // Tính toán tỉ lệ điểm cho từng cấp độ
-    const percentageByLevel = this.listLevel.reduce((total: any, level: any) => {
-      const score = this.scoreByLevel[level] || 0;
-      const maxScore = this.maxScoreByLevel[level] || 1; // Tránh chia cho 0
-      total[level] = ((score / maxScore) * 100).toFixed(2);
-      return total;
-    }, {});
-    this.percentageScoreByLevel = Object.values(percentageByLevel).map(Number); // Chuyển đổi thành số
+  calculatePercentagesByLevel(maxScores: { [key: string]: number }, scores: { [key: string]: number }): { [key: string]: number } {
+    const percentages: { [key: string]: number } = {};
+  
+    for (const level in maxScores) {
+      if (maxScores.hasOwnProperty(level)) {
+        const maxScore = maxScores[level];
+        const score = scores[level];
+        // Tính tỷ lệ phần trăm cho cấp độ
+        const percentage = (score / maxScore) * 100;
+        percentages[level] = percentage;
+      }
+    }
+  
+    return percentages;
   }
 
   drawCharts(): void {
@@ -118,7 +118,7 @@ export class ResultComponent implements OnInit {
       data: {
         labels: ['Score', 'Remain Score'],
         datasets: [{
-          data: [0, this.maxScore], // Khởi đầu với điểm 0
+          data: [0, this.mark.maxScore], // Khởi đầu với điểm 0
           backgroundColor: ['#26AA10', '#DDDDDD'],
           borderWidth: 0,
         }]
@@ -137,18 +137,18 @@ export class ResultComponent implements OnInit {
 
     let currentScore = 0;
     const totalFrames = 20; // 1 giây với 20 fps
-    const scoreIncrement = this.score / totalFrames;
+    const scoreIncrement = this.mark.score / totalFrames;
 
     const updateChart = () => {
-      currentScore = Math.min(currentScore + scoreIncrement, this.score);
-      doughnutChart.data.datasets[0].data = [currentScore, this.maxScore - currentScore];
+      currentScore = Math.min(currentScore + scoreIncrement, this.mark.score);
+      doughnutChart.data.datasets[0].data = [currentScore, this.mark.maxScore - currentScore];
       doughnutChart.update();
     
       // Cập nhật phần trăm vào phần tử HTML
-      const percentage = Math.round((currentScore / this.maxScore) * 100);
+      const percentage = Math.round((currentScore / this.mark.maxScore) * 100);
       document.getElementById('percentageLabel')!.innerText = `${percentage}%`;
     
-      if (currentScore < this.score) {
+      if (currentScore < this.mark.score) {
         requestAnimationFrame(updateChart);
       }
     };
@@ -157,7 +157,7 @@ export class ResultComponent implements OnInit {
 
   drawBarChart(): void {
     // Vẽ biểu đồ cột
-    const barColors = this.percentageScoreByLevel.map((score: any) => {
+    const barColors = this.levelPercentageScores.map(score => {
       if (score < 30) {
         return '#EE0906'; // Đỏ cho điểm dưới 30%
       }
@@ -170,8 +170,8 @@ export class ResultComponent implements OnInit {
     new Chart(document.getElementById('progressChart') as HTMLCanvasElement, {
       type: 'bar',
       data: {
-        labels: this.listLevel,
-        datasets: [{ data: this.percentageScoreByLevel, backgroundColor: barColors, barThickness: 30 }]
+        labels: this.levelNames,
+        datasets: [{ data: this.levelPercentageScores, backgroundColor: barColors, barThickness: 30 }]
       },
       options: {
         indexAxis: 'y',

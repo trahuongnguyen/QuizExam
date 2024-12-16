@@ -16,6 +16,7 @@ declare var $: any;
   templateUrl: './class.component.html',
   styleUrls: [
     './../../../shared/styles/admin/style.css',
+    './../../../shared/styles/popup.css',
     './class.component.css'
   ]
 })
@@ -129,7 +130,7 @@ export class ClassComponent implements OnInit, OnDestroy {
 
     $('.info-icon').on('click', (event: any) => {
       this.classId = $(event.currentTarget).data('id');
-      this.router.navigate([this.urlService.classDetailUrl(this.classId)])
+      this.router.navigate([this.urlService.getClassDetailUrl('ADMIN', this.classId)])
     });
 
     $('.edit-icon').on('click', (event: any) => {
@@ -178,8 +179,8 @@ export class ClassComponent implements OnInit, OnDestroy {
   }
 
   convertDateFormat(dateObj: Date | undefined): string {
-    // Dùng DatePipe để chuyển đổi đối tượng Date sang định dạng 'yyyy-MM-dd'
-    return this.datePipe.transform(dateObj, 'dd-MM-yyyy')!;
+    // Dùng DatePipe để chuyển đổi đối tượng Date sang định dạng 'dd/MM/yyyy'
+    return this.datePipe.transform(dateObj, 'dd/MM/yyyy')!;
   }
 
   convertToRequest(): void {

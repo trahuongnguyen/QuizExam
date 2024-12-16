@@ -10,6 +10,7 @@ import { DetailComponent } from './detail/detail.component';
 import { AddStudentComponent } from './add-student/add-student.component';
 import { EditExamInfoComponent } from './edit-exam-info/edit-exam-info.component';
 import { Roles } from '../../../shared/enums';
+import { UpdateExamQuestionsComponent } from './update-exam-questions/update-exam-questions.component';
 
 const routes: Routes = [
   {
@@ -35,6 +36,10 @@ const routes: Routes = [
       {
         path: 'edit-exam/:examId',
         component: EditExamInfoComponent
+      },
+      {
+        path: 'update-questions/:examId',
+        component: UpdateExamQuestionsComponent
       },
     ],
     canActivate: [AuthGuard],

@@ -11,41 +11,45 @@ export class UrlService {
   questionImageUrl: string = 'http://localhost:8080/uploads/img-question/';
 
   subjectDefaultImageUrl: string = 'http://localhost:8080/uploads/img-subject/default.png';
-
-  adminUrl(): string {
-    return `/admin`;
+  
+  getPageUrl(pageType: 'ADMIN' | 'STUDENT'): string {
+    return pageType === 'ADMIN' ? '/admin' : '';
   }
 
-  subjectListUrl(): string {
-    return `/admin/subject`;
+  getSubjectListUrl(pageType: 'ADMIN' | 'STUDENT'): string {
+    return pageType === 'ADMIN' ? `/admin/subject` : '';
   }
 
-  chapterListUrl(subjectId: number): string {
-    return `/admin/subject/${subjectId}`;
+  getChapterListUrl(pageType: 'ADMIN' | 'STUDENT', subjectId?: number): string {
+    return pageType === 'ADMIN' ? `/admin/subject/${subjectId}` : '';
   }
 
-  questionListUrl(subjectId: number): string {
-    return `/admin/subject/${subjectId}/question-list`;
+  getQuestionListUrl(pageType: 'ADMIN' | 'STUDENT', subjectId?: number): string {
+    return pageType === 'ADMIN' ? `/admin/subject/${subjectId}/question-list` : '';
   }
 
-  addQuestionUrl(subjectId: number): string {
-    return `/admin/subject/${subjectId}/add-new-question`;
+  getAddQuestionUrl(pageType: 'ADMIN' | 'STUDENT', subjectId?: number): string {
+    return pageType === 'ADMIN' ? `/admin/subject/${subjectId}/add-new-question` : '';
   }
 
-  editQuestionUrl(subjectId: number, id: number): string {
-    return `/admin/subject/${subjectId}/edit-question/${id}`;
+  getEditQuestionUrl(pageType: 'ADMIN' | 'STUDENT', subjectId?: number, id?: number): string {
+    return pageType === 'ADMIN' ? `/admin/subject/${subjectId}/edit-question/${id}` : '';
   }
 
-  classUrl(): string {
-    return `/admin/class`;
+  getClassUrl(pageType: 'ADMIN' | 'STUDENT'): string {
+    return pageType === 'ADMIN' ? '/admin/class' : '';
   }
 
-  classDetailUrl(classId: number): string {
-    return `/admin/class/${classId}`;
+  getClassDetailUrl(pageType: 'ADMIN' | 'STUDENT', classId?: number): string {
+    return pageType === 'ADMIN' ? `/admin/class/${classId}` : '';
   }
 
-  studentListUrl(): string {
-    return `/admin/student`;
+  getStudentListUrl(pageType: 'ADMIN' | 'STUDENT'): string {
+    return pageType === 'ADMIN' ? `/admin/student` : '';
+  }
+
+  getMarkUrl(pageType: 'ADMIN' | 'STUDENT', studentId?: number, classId?: number): string {
+    return pageType === 'ADMIN' ? `/admin/${classId ? `class/${classId}` : 'student'}/marks/${studentId}` : '/marks';
   }
 
   examListUrl(): string {
@@ -66,6 +70,10 @@ export class UrlService {
 
   editExamInfoUrl(examId: number): string {
     return `/admin/exam/edit-exam/${examId}`;
+  }
+
+  updateExamQuestion(examId: number): string {
+    return `/admin/exam/update-questions/${examId}`;
   }
 
   levelUrl(): string {

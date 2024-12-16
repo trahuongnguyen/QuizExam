@@ -22,6 +22,7 @@ import { forkJoin } from 'rxjs';
   styleUrls: [
     './../../../../shared/styles/admin/style.css',
     './../../../../shared/styles/admin/question-form.css',
+    './../../../../shared/styles/popup.css',
     './question-update.component.css'
   ]
 })
@@ -92,17 +93,17 @@ export class QuestionUpdateComponent implements OnInit {
       next: ([subjectResponse, chapterResponse, levelResponse, questionResponse]) => {
         if (!subjectResponse || !subjectResponse.id) {
           this.toastr.warning('Subject not found', 'Warning');
-          this.router.navigate([this.urlService.subjectListUrl()]);
+          this.router.navigate([this.urlService.getSubjectListUrl('ADMIN')]);
           return;
         }
         if (!Array.isArray(levelResponse) || levelResponse.length <= 0) {
           this.toastr.warning('Level not found', 'Warning');
-          this.router.navigate([this.urlService.questionListUrl(this.subjectId)]);
+          this.router.navigate([this.urlService.getQuestionListUrl('ADMIN', this.subjectId)]);
           return;
         }
         if (!questionResponse || !questionResponse.id) {
           this.toastr.warning('Question not found', 'Warning');
-          this.router.navigate([this.urlService.questionListUrl(this.subjectId)]);
+          this.router.navigate([this.urlService.getQuestionListUrl('ADMIN', this.subjectId)]);
           return;
         }
   
@@ -118,9 +119,11 @@ export class QuestionUpdateComponent implements OnInit {
   }
 
   convertToRequest(question: QuestionResponse): void {
+    const levelExists = this.levelList.some(level => level.id == question.level.id);
+    
     this.questionForm.subjectId = question.subject.id;
     this.questionForm.chapters = question.chapters.map(chapter => chapter.id);
-    this.questionForm.levelId = question.level.id;
+    this.questionForm.levelId = levelExists ? question.level.id : 0;
     this.questionForm.content = question.content;
     this.questionForm.answers = question.answers.map(answer => ({
       content: answer.content,
@@ -217,7 +220,7 @@ export class QuestionUpdateComponent implements OnInit {
 
   confirmCancel(): void {
     this.closePopupDialog();
-    this.router.navigate([this.urlService.questionListUrl(this.subjectId)]);
+    this.router.navigate([this.urlService.getQuestionListUrl('ADMIN', this.subjectId)]);
   }
 
   confirmAction(): void {
@@ -273,7 +276,7 @@ export class QuestionUpdateComponent implements OnInit {
     this.questionService.updateQuestion(this.questionId, this.questionForm, this.changeImg).subscribe({
       next: (questionResponse) => {
         this.toastr.success(`Question has been saved successfully!`, 'Success', { timeOut: 3000 });
-        this.router.navigate([this.urlService.questionListUrl(this.subjectId)]);
+        this.router.navigate([this.urlService.getQuestionListUrl('ADMIN', this.subjectId)]);
       },
       error: (err) => {
         this.authService.handleError(err, this.validationError, 'question', 'update question');

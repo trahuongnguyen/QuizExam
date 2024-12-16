@@ -37,7 +37,7 @@ export class LoginComponent implements OnInit {
     this.renderer.addClass(carouselElement, 'carousel');
   }
 
-  onSubmit() {
+  onSubmit(): void {
     this.authService.login(this.loginForm).subscribe({
       next: (loginResponse) => {
         const headers = new HttpHeaders().set('Email', this.loginForm.email || '');
@@ -50,7 +50,7 @@ export class LoginComponent implements OnInit {
               this.router.navigate(['/admin']);
             }
             else {
-              this.toastr.error('Full authentication is required to access this resource', 'Failed', { timeOut: 3000 });
+              this.toastr.error('You do not have permission to access this page.', 'Failed', { timeOut: 3000 });
             }
           },
           error: (err) => {
@@ -59,7 +59,7 @@ export class LoginComponent implements OnInit {
         });
       },
       error: (err) => {
-        this.authService.handleError(err, undefined, '', 'load data');
+        this.authService.handleError(err, undefined, '', 'login');
       }
     });
   }

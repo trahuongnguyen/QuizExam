@@ -1,15 +1,14 @@
 import { NgModule } from '@angular/core';
 import { StudentRoutingModule } from './student-routing.module';
 
-import { FormsModule, NgModel, ReactiveFormsModule } from '@angular/forms';
-import {ToastrModule, ToastrService} from 'ngx-toastr';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { ToastrModule } from 'ngx-toastr';
 import { StudentComponent } from './student.component';
 import { LoginComponent } from './login/login.component';
 import { CommonModule } from '@angular/common';
 import { AuthGuard } from './service/authguard.service';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
-import { ErrorInterceptor } from './service/error.interceptor';
-
+import { ErrorInterceptor } from '../shared/service/error.interceptor';
 
 @NgModule({
   declarations: [

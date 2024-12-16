@@ -1,10 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { AuthService } from '../../service/auth.service';
-import { HttpClient } from '@angular/common/http';
-import { ToastrService } from 'ngx-toastr';
-import { Router } from '@angular/router';
-import { HomeComponent } from '../home.component';
+import { AuthService } from '../../../shared/service/auth.service';
 import { Title } from '@angular/platform-browser';
+import { ChangePassword, ValidationError } from '../../../shared/models/models';
+import { ToastrService } from 'ngx-toastr';
+import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-profile',
@@ -15,69 +14,46 @@ import { Title } from '@angular/platform-browser';
   ]
 })
 export class ProfileComponent implements OnInit {
+  changePasswordForm: ChangePassword = { };
+  formError: ValidationError = { };
 
-  constructor(public authService: AuthService, private titleService: Title, private http: HttpClient, public toastr: ToastrService, private router: Router, public home: HomeComponent) { }
+  showPasswordChangeForm: boolean = false;
+  isChangePasswordButtonVisible: boolean = true;
+
+  constructor(
+    public authService: AuthService,
+    private titleService: Title,
+    private toastr: ToastrService,
+    private datePipe: DatePipe
+  ) { }
 
   ngOnInit(): void {
     this.titleService.setTitle('Profile');
   }
 
-  currentPassword: any;
-  newPassword: any;
-  confirmPassword: any;
+  convertDateFormat(dateObj: Date | undefined): string {
+    // Dùng DatePipe để chuyển đổi đối tượng Date sang định dạng 'dd/MM/yyyy'
+    return this.datePipe.transform(dateObj, 'dd/MM/yyyy')!;
+  }
 
-  isPasswordChangeOpen: boolean = false;
-  isChangePasswordButtonVisible: boolean = true;
-
-  changePassword() {
-    const passwordRequest = {
-      currentPassword: this.currentPassword,
-      newPassword: this.newPassword,
-      confirmPassword: this.confirmPassword,
-    }
-
-    this.http.put(`${this.authService.apiUrl}/auth/change-password`, passwordRequest, this.home.httpOptions).subscribe(
-      response => {
-        this.toastr.success('Change password Successful!', 'Success', { timeOut: 2000, });
-        this.currentPassword = '';
-        this.newPassword = '';
-        this.confirmPassword = '';
-      },
-      error => {
-        if (error.status === 401) {
-          this.toastr.error('Unauthorized', 'Failed', {
-            timeOut: 2000,
-          });
-        } else {
-          let msg = '';
-          if (error.error.message) {
-            msg = error.error.message;
-          } else {
-            error.error.forEach((err: any) => {
-              msg += ' ' + err.message;
-            })
-          }
-          this.toastr.error(msg, 'Failed', {
-            timeOut: 5000,
-          });
-        }
-        console.log('Error', error);
-      }
-    );
+  initializeForm(): void {
+    this.formError = { };
+    this.changePasswordForm = { };
+    this.checkFormErrors();
   }
 
   // Hiển thị form đổi mật khẩu
   showChangePasswordForm(): void {
-    this.isPasswordChangeOpen = true;
+    this.initializeForm();
+    this.showPasswordChangeForm = true;
     this.isChangePasswordButtonVisible = false;
   }
 
   // Ẩn form đổi mật khẩu
   hideChangePasswordForm(): void {
-    this.isPasswordChangeOpen = false;
-    setTimeout(() => {
-      this.isChangePasswordButtonVisible = true;
-    }, 500);
+    this.initializeForm();
+    this.showPasswordChangeForm = false;
+    setTimeout(() => { this.isChangePasswordButtonVisible = true; }, 500);
   }
   
   visiblePassword(inputId: string, iconId: string): void {
@@ -101,7 +77,28 @@ export class ProfileComponent implements OnInit {
     } else {
       console.error(`Element with id ${inputId} or ${iconId} not found.`);
     }
+  }
 
+  checkFormErrors(): void {
+    if (Object.values(this.formError).some(error => error?.trim())) {
+      document.querySelector('.change-password-form')?.classList.add('error-active');
+    }
+    else {
+      document.querySelector('.change-password-form')?.classList.remove('error-active');
+    }
+  }
+
+  changePassword(): void {
+    this.formError = { };
+    this.authService.changePassword(this.changePasswordForm).subscribe({
+      next: () => {
+        this.toastr.success(`Change password successfully!`, 'Success', { timeOut: 3000 });
+        this.hideChangePasswordForm();
+      },
+      error: (err) => {
+        this.authService.handleError(err, this.formError, '', 'change password');
+        this.checkFormErrors();
+      }
+    });
   }
 }
-

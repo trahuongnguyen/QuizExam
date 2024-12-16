@@ -41,28 +41,18 @@
                         </div>
                     </div>
                     <hr class="w-100 my-3">
-                    <button class="btn submit-btn w-100" (click)="openPopupConfirm()">Submit</button>
+                    <button class="btn submit-btn w-100" (click)="openPopupConfirmSubmit()">Submit</button>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Popup xác nhận -->
 <app-dialog-popup
-    [isVisible]="isPopupConfirm"
+    [isVisible]="isPopupConfirm || isPopupWarning"
     [title]="dialogTitle"
     [message]="dialogMessage"
     [isConfirmationPopup]="isConfirmationPopup"
-    (confirm)="submitExam()"
-    (close)="closePopup()">
-</app-dialog-popup>
-
-<!-- Popup cảnh báo -->
-<app-dialog-popup
-    [isVisible]="isPopupWarning"
-    [title]="dialogTitle"
-    [message]="dialogMessage"
-    [isConfirmationPopup]="isConfirmationPopup"
+    (confirm)="confirmAction()"
     (close)="closePopup()">
 </app-dialog-popup>

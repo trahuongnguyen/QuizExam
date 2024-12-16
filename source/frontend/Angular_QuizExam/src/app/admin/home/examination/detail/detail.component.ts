@@ -42,7 +42,7 @@ export class DetailComponent implements OnInit {
     this.sem = { id: 0, name: '' };
     this.subject = { id: 0, name: '', image: '', status: 0, sem: this.sem };
     this.exam = {
-      id: 0, name: '', code: '', startTime: new Date(), endTime: new Date(), duration: 0, maxScore: 0, type: 0,
+      id: 0, name: '', code: '', startTime: new Date(), endTime: new Date(), duration: 0, totalQuestion: 0, maxScore: 0, type: 0,
       subject: this.subject, markResponses: [], studentResponses: [],
       questionRecordResponses: []
     }
@@ -71,9 +71,18 @@ export class DetailComponent implements OnInit {
     });
   }
 
+  isTimeValidToUpdateQuestion(): boolean {
+    const currentTime = new Date();
+    const startTime = new Date(this.exam.startTime);
+    if (currentTime < startTime) {
+      return true; // Thời gian hợp lệ, có thể vào cập nhật
+    }
+    return false; // Thời gian không hợp lệ, không thể cập nhật
+  }
+
   convertDateFormat(dateObj: Date | undefined): string {
     // Dùng DatePipe để chuyển đổi đối tượng Date sang định dạng 'dd/MM/yyyy HH:mm'
-    return this.datePipe.transform(dateObj, 'dd/MM/yyyy - HH:mm')!;
+    return this.datePipe.transform(dateObj, 'dd/MM/yyyy HH:mm')!;
   }
 
   transformTextWithNewlines(text: string): string {
@@ -92,8 +101,8 @@ export class DetailComponent implements OnInit {
     this.router.navigate([this.urlService.addStudentForExamlUrl(this.examId)]);
   }
 
-  navigateToEditQuestionExam(): void {
-    this.router.navigate([]);
+  navigateToUpdateExamQuestion(): void {
+    this.router.navigate([this.urlService.updateExamQuestion(this.examId)]);
   }
 
   exportPDF(): void {

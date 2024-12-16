@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { AuthService } from '../shared/service/auth.service';
+import { TokenKey } from '../shared/enums';
 
 @Component({
 
@@ -7,23 +9,16 @@ import { Component, OnInit } from '@angular/core';
   styleUrl: './student.component.css'
 })
 export class StudentComponent implements OnInit {
-  title = 'Angular_QuizExam';
-
   darkMode: boolean = false;
 
-  constructor() { }
+  constructor(private authService: AuthService) { }
 
   ngOnInit(): void {
     this.loadTheme();
   }
 
-  // Kiểm tra xem localStorage có sẵn không trước khi sử dụng
-  private isLocalStorageAvailable(): boolean {
-    return typeof localStorage !== 'undefined';
-  }
-
   saveTheme(isDarkMode: boolean): void {
-    if (this.isLocalStorageAvailable()) {
+    if (this.authService.isLocalStorageAvailable()) {
       localStorage.setItem('theme', isDarkMode ? 'dark' : 'light');
       this.updateBodyClass(isDarkMode);
     }
@@ -31,7 +26,7 @@ export class StudentComponent implements OnInit {
 
   // Tải trạng thái chế độ từ localStorage
   loadTheme(): void {
-    if (this.isLocalStorageAvailable()) {
+    if (this.authService.isLocalStorageAvailable()) {
       const theme = localStorage.getItem('theme');
       this.darkMode = theme === 'dark';
       this.updateBodyClass(this.darkMode);

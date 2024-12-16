@@ -2,11 +2,6 @@
     max-width: 50%;
 }
 
-.profile-info {
-    margin-bottom: 20px;
-    margin-left: 10%;
-}
-
 .profile-info p {
     font-size: 1.1rem;
 }
@@ -42,14 +37,17 @@
     background-color: var(--color-change-password-form);
     padding: 0 20px;
     border-radius: 8px;
-    max-width: 600px;
-    margin-left: 10%;
+    max-width: 90%;
     transition: height 0.5s ease-out, padding 0.5s ease-out, background-color 0.9s ease;
 }
 
-.change-password-form.open {
+.change-password-form.show {
     height: 350px;
     padding: 20px;
+}
+
+.change-password-form.error-active {
+    height: auto; /* Tăng chiều cao khi có lỗi để chứa thông báo lỗi */
 }
 
 .eye {

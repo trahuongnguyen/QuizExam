@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { AuthService } from '../../shared/service/auth.service';
 import { AdminComponent } from '../admin.component';
-import { RoleKey, Roles, TokenKey } from '../../shared/enums';
+import { Roles, TokenKey } from '../../shared/enums';
 import { Router } from '@angular/router';
 
 @Component({

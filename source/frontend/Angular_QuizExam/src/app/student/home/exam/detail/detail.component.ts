@@ -1,12 +1,15 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { AuthService } from '../../../service/auth.service';
+import { AuthService } from '../../../../shared/service/auth.service';
 import { Title } from '@angular/platform-browser';
-import { HomeComponent } from '../../home.component';
-import { ExamComponent } from '../exam.component';
-import { HttpClient } from '@angular/common/http';
-import { ToastrService } from 'ngx-toastr';
+import { MarkResponse } from '../../../../shared/models/mark.model';
+import { ExaminationResponse } from '../../../../shared/models/examination.model';
+import { StudentAnswerRequest, StudentQuestionAnswer } from '../../../../shared/models/student-answer.model';
+import { MarkService } from '../../../../shared/service/mark/mark.service';
+import { ExaminationService } from '../../../../shared/service/examination/examination.service';
+import { StudentAnswerService } from '../../../../shared/service/student-answer/student-answer.service';
 import { UrlService } from '../../../../shared/service/url.service';
 import { Router, ActivatedRoute } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
 import { forkJoin } from 'rxjs';
 
 @Component({
@@ -18,16 +21,20 @@ import { forkJoin } from 'rxjs';
   ]
 })
 export class DetailComponent implements OnInit, OnDestroy {
-  examId: number = 0;
+  examId: number;
 
-  examStartTime: any;
+  mark: MarkResponse = { } as MarkResponse;
+  examDetail: ExaminationResponse = { } as ExaminationResponse;
+
+  questionStatus: boolean[] = [];
+  studentQuestionAnswer: StudentQuestionAnswer[] = [];
+  submitAnswer: StudentAnswerRequest = {};
+
+  selectedAnswers: string = 'selectedAnswers';
+
+  beginTime: Date = new Date();
   remainingTime: string = '';
   countdown: any;
-
-  examDetail: any;
-  questionStatus: boolean[] = [];
-  studentAnswers: { questionRecordId: number; selectedAnswerIds: number[] }[] = [];
-
   autoSubmitTimer: any;
 
   isPopupConfirm: boolean = false;
@@ -40,14 +47,16 @@ export class DetailComponent implements OnInit, OnDestroy {
   constructor(
     private authService: AuthService,
     private titleService: Title,
-    private home: HomeComponent,
-    public examComponent: ExamComponent,
-    private http: HttpClient,
-    private toastr: ToastrService,
+    private markService: MarkService,
+    private examService: ExaminationService,
+    private studentAnswerService: StudentAnswerService,
     public urlService: UrlService,
     private router: Router,
-    private activatedRoute: ActivatedRoute
-  ) {}
+    private activatedRoute: ActivatedRoute,
+    private toastr: ToastrService
+  ) {
+    this.examId = Number(this.activatedRoute.snapshot.paramMap.get('examId')); // Lấy examId từ route
+  }
 
   ngOnInit(): void {
     this.titleService.setTitle('Exam');
@@ -58,56 +67,60 @@ export class DetailComponent implements OnInit, OnDestroy {
   }
 
   loadData(): void {
-    const markRequest = this.http.get<any>(`${this.authService.apiUrl}/mark/${this.examId}`, this.home.httpOptions);
-    const examRequest = this.http.get<any>(`${this.authService.apiUrl}/exam/${this.examId}`, this.home.httpOptions);
+    forkJoin([this.markService.getMarkByExam(this.examId), this.examService.getExamDetailById(this.examId)])
+      .subscribe({
+        next: ([markResponse, examResponse]) => {
+          const startTime = new Date(examResponse.startTime);
+          const endTime = new Date(examResponse.endTime);
+          const currentTime = new Date(); // Lấy thời gian hiện tại
 
-    forkJoin([markRequest, examRequest]).subscribe(([markData, examData]) => {
-      this.examComponent.mark = markData;
-      this.examDetail = examData;
+          if (startTime > currentTime) {
+            this.router.navigate([this.urlService.examPageUrl()]);
+            return;
+          }
+          if (markResponse.score != null) {
+            this.router.navigate([this.urlService.resultExamPageUrl(this.examId)]);
+            return;
+          }
+          if (markResponse.beginTime == null) {
+            if (currentTime > endTime) {
+              this.router.navigate([this.urlService.examPageUrl()]);
+              return;
+            }
+            this.updateBeginTime(markResponse.id);
+          }
 
-      if (this.examDetail == null) {
-        this.router.navigate([this.urlService.examPageUrl()]);
-        return;
-      }
+          if (markResponse.warning != null) {
+            this.openWarningPopup();
+            this.autoSubmit();
+          }
 
-      const startTime = new Date(this.examDetail.startTime);
-      const endTime = new Date(this.examDetail.endTime);
-      const currentTime = new Date(); // Lấy thời gian hiện tại
-
-      if (startTime > currentTime) {
-        this.router.navigate([this.urlService.examPageUrl()]);
-        return;
-      }
-
-      if (this.examComponent.mark.score != null) {
-        this.router.navigate([this.urlService.resultExamPageUrl(this.examId)]);
-        return;
-      }
-      
-      if (this.examComponent.mark.beginTime == null) {
-        if (currentTime > endTime) {
+          this.mark = markResponse;
+          this.examDetail = examResponse;
+          this.questionStatus = Array(examResponse.questionRecordResponses.length).fill(false);
+          this.calculateNewDuration();
+          this.loadFromSession();
+        },
+        error: (err) => {
+          this.authService.handleError(err, undefined, 'exam', 'load data');
           this.router.navigate([this.urlService.examPageUrl()]);
-          return;
         }
-        this.http.put(`${this.authService.apiUrl}/mark/begin-time/${this.examComponent.mark.id}`, {}, this.home.httpOptions).subscribe({
-          next: (response) => { console.log('Update Begin Time successful: ', response); },
-          error: (err) => { console.log('Update Begin Time fail: ', err); }
-        });
       }
+    );
+  }
 
-      if (this.examComponent.mark.warning != null) {
-        this.setupWarnings();
-        this.autoSubmit();
+  updateBeginTime(markId: number): void {
+    this.markService.updateBeginTime(markId).subscribe({
+      next: () => { },
+      error: (err) => {
+        this.authService.handleError(err, undefined, 'mark', 'update begin time');
       }
-      this.examStartTime = new Date();
-      this.questionStatus = Array(this.examDetail.questionRecordResponses.length).fill(false);
-      this.calculateNewDuration();
-      this.loadFromSession();
     });
   }
 
   calculateNewDuration(): void {
-    const beginTime = this.examComponent.mark.beginTime ? new Date(this.examComponent.mark.beginTime) : this.examStartTime; // Chuyển đổi string thành Date
+    // Kiểm tra nếu đã có beginTime thì lấy dữ liệu đó, không thì lấy thời gian hiện tại.
+    const beginTime = this.mark.beginTime ? new Date(this.mark.beginTime) : new Date();
     const durationMinutes = this.examDetail.duration;
 
     // Tính toán endTime.
@@ -129,7 +142,7 @@ export class DetailComponent implements OnInit, OnDestroy {
   
     this.countdown = setInterval(() => {
       if (remainingSeconds <= 0) {
-        this.submitExam(); // Optionally submit answers when time is up
+        this.submitAnswers(); // Optionally submit answers when time is up
         return;
       }
 
@@ -152,24 +165,6 @@ export class DetailComponent implements OnInit, OnDestroy {
 
   padNumber(num: number): string {
     return num < 10 ? '0' + num : num.toString();
-  }
-
-  setupWarnings(): void {
-    this.dialogTitle = 'Warning';
-    this.dialogMessage =
-    `Please do not click outside the exam.<br>
-    <b class="text-danger">Note: The system will automatically submit the exam after 3 violations.</b><br>
-    <i class="text-danger">(Current violations: ${this.examComponent.mark.warning})</i>`;
-    this.isConfirmationPopup = false;
-    this.isPopupWarning = true;
-  }
-
-  updateWarning(): void {
-    const mark = { warning: this.examComponent.mark.warning }
-    this.http.put(`${this.authService.apiUrl}/mark/warning/${this.examComponent.mark.id}`, mark, this.home.httpOptions).subscribe({
-      next: () => { this.autoSubmit(); },
-      error: () => {}
-    });
   }
 
   transformTextWithNewlines(text: string): string {
@@ -206,9 +201,9 @@ export class DetailComponent implements OnInit, OnDestroy {
   };
 
   handleBlur = () => {
-    if (this.examComponent.mark.warning == null || this.examComponent.mark.warning < 3) {
-      this.examComponent.mark.warning++;
-      this.setupWarnings();
+    if (this.mark.warning == null || this.mark.warning < 3) {
+      this.mark.warning++;
+      this.openWarningPopup();
       this.updateWarning();
     }
   };
@@ -264,7 +259,7 @@ export class DetailComponent implements OnInit, OnDestroy {
   getSelectedAnswerIds(index: number): number[] {
     return this.examDetail.questionRecordResponses[index].answerRecords.filter((answer: any) => 
       (document.getElementById(answer.id) as HTMLInputElement)?.checked
-    ).map((answer: any) => answer.id);
+    ).map(answer => answer.id);
   }
 
   markQuestionAsCompleted(index: number): void {
@@ -274,7 +269,7 @@ export class DetailComponent implements OnInit, OnDestroy {
       : this.getSelectedAnswerIds(index);
     
     // Kiểm tra xem questionRecordId đã tồn tại chưa
-    const existingAnswer = this.studentAnswers.find(answer => answer.questionRecordId === question.id);
+    const existingAnswer = this.studentQuestionAnswer.find(answer => answer.questionRecordId === question.id);
 
     if (existingAnswer) {
       if (question.type === 1) {
@@ -291,13 +286,13 @@ export class DetailComponent implements OnInit, OnDestroy {
         }
       }
       if (selectedAnswerIds.length === 0) {
-        // Nếu không có lựa chọn nào, xóa hẳn entry trong studentAnswers
-        this.studentAnswers = this.studentAnswers.filter(answer => answer.questionRecordId !== question.id);
+        // Nếu không có lựa chọn nào, xóa hẳn entry trong studentQuestionAnswer
+        this.studentQuestionAnswer = this.studentQuestionAnswer.filter(answer => answer.questionRecordId !== question.id);
       }
     }
     else {
       // Nếu chưa tồn tại, thêm mới
-      this.studentAnswers.push({ questionRecordId: question.id, selectedAnswerIds });
+      this.studentQuestionAnswer.push({ questionRecordId: question.id, selectedAnswerIds });
     }
 
     this.updateQuestionStatus();
@@ -306,15 +301,15 @@ export class DetailComponent implements OnInit, OnDestroy {
 
   updateQuestionStatus() {
     // Cập nhật questionStatus dựa trên questionRecordId
-    this.questionStatus = this.examDetail.questionRecordResponses.map((q: any) => 
-      this.studentAnswers.some(answer => answer.questionRecordId === q.id)
+    this.questionStatus = this.examDetail.questionRecordResponses.map(question => 
+      this.studentQuestionAnswer.some(answer => answer.questionRecordId === question.id)
     );
   }
 
   isSelectedAnswer(questionId: number, answerId: number): boolean {
     const questionIndex = this.examDetail.questionRecordResponses.findIndex((q: any) => q.id === questionId);
     if (questionIndex !== -1) {
-      const studentAnswer = this.studentAnswers.find(answer => answer.questionRecordId === questionId);
+      const studentAnswer = this.studentQuestionAnswer.find(answer => answer.questionRecordId === questionId);
       if (studentAnswer) {
         return studentAnswer.selectedAnswerIds.includes(answerId);
       }
@@ -331,53 +326,82 @@ export class DetailComponent implements OnInit, OnDestroy {
   }
 
   saveToSession(): void {
-    localStorage.setItem('studentAnswers', JSON.stringify({ studentAnswers: this.studentAnswers }));
+    localStorage.setItem(this.selectedAnswers, JSON.stringify({ selectedAnswers: this.studentQuestionAnswer }));
   }
 
   loadFromSession(): void {
-    const sessionData = localStorage.getItem('studentAnswers');
+    const sessionData = localStorage.getItem(this.selectedAnswers);
     if (sessionData) {
-      const { studentAnswers } = JSON.parse(sessionData);
-      this.studentAnswers = studentAnswers;
+      const { selectedAnswers } = JSON.parse(sessionData);
+      this.studentQuestionAnswer = selectedAnswers;
       this.updateQuestionStatus();
     }
   }
 
-  openPopupConfirm(): void {
-    this.dialogTitle = 'Confirm submission';
-    this.dialogMessage = 'Are you sure you want to submit?';
+  openPopup(title: string, message: string): void {
+    this.dialogTitle = title;
+    this.dialogMessage = message;
+  }
+
+  openWarningPopup(): void {
+    this.openPopup(
+      'Warning',
+      `Please do not click outside the exam.<br>
+      <b class="text-danger">Note: The system will automatically submit the exam after 3 violations.</b><br>
+      <i class="text-danger">(Current violations: ${this.mark.warning})</i>`
+    );
+    this.isConfirmationPopup = false;
+    this.isPopupWarning = true;
+  }
+
+  openPopupConfirmSubmit(): void {
+    this.openPopup('Confirm submission', 'Are you sure you want to submit?');
     this.isConfirmationPopup = true;
     this.isPopupConfirm = true;
   }
 
   closePopup(): void {
-    this.dialogTitle = '';
-    this.dialogMessage = '';
-    this.isConfirmationPopup = true;
     this.isPopupConfirm = false;
     this.isPopupWarning = false;
   }
 
-  autoSubmit(): void {
-    if (this.examComponent.mark.warning >= 3) {
-      this.dialogMessage =
-      `<b class="text-danger">The exam will be automatically submitted in 5 seconds</b><br>
-      <i class="text-danger">(Current violations: ${this.examComponent.mark.warning})</i>`;
-
-      this.autoSubmitTimer = setTimeout(() => {
-        this.submitExam();
-      }, 5000);
+  confirmAction(): void {
+    if (this.isPopupConfirm) {
+      this.submitAnswers();
     }
   }
 
-  submitExam(): void {
-    const body = { markId: this.examComponent.mark.id, studentQuestionAnswers: this.studentAnswers };
-    this.http.post(`${this.authService.apiUrl}/student-answers`, body, this.home.httpOptions).subscribe({
+  autoSubmit(): void {
+    if (this.mark.warning >= 3) {
+      this.dialogMessage =
+      `<b class="text-danger">The exam will be automatically submitted in 5 seconds</b><br>
+      <i class="text-danger">(Current violations: ${this.mark.warning})</i>`;
+      this.autoSubmitTimer = setTimeout(() => { this.submitAnswers(); }, 5000);
+    }
+  }
+
+  updateWarning(): void {
+    this.markService.updateWarning(this.mark.id, this.mark.warning).subscribe({
       next: () => {
-        localStorage.removeItem('studentAnswers');
+        this.autoSubmit();
+      },
+      error: (err) => {
+        this.authService.handleError(err, undefined, 'mark', 'update warning');
+      }
+    });
+  }
+
+  submitAnswers(): void {
+    this.submitAnswer.markId = this.mark.id;
+    this.submitAnswer.studentQuestionAnswers = this.studentQuestionAnswer;
+    this.studentAnswerService.submitAnswers(this.submitAnswer).subscribe({
+      next: () => {
+        localStorage.removeItem(this.selectedAnswers);
         this.router.navigate([this.urlService.resultExamPageUrl(this.examId)]);
       },
-      error: () => { this.toastr.error('Submission failed'); }
+      error: (err) => {
+        this.authService.handleError(err, undefined, 'mark', 'submit');
+      }
     });
   }
 

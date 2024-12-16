@@ -81,7 +81,7 @@ export class ChapterComponent implements OnInit, OnDestroy {
         });
       },
       error: (err) => {
-        this.router.navigate([this.urlService.subjectListUrl()]);
+        this.router.navigate([this.urlService.getSubjectListUrl('ADMIN')]);
       }
     });
   }
@@ -188,7 +188,7 @@ export class ChapterComponent implements OnInit, OnDestroy {
   }
 
   backToSubject(): void {
-    this.router.navigate([this.urlService.subjectListUrl()]);
+    this.router.navigate([this.urlService.getSubjectListUrl('ADMIN')]);
   }
 
   scrollToForm(): void {
