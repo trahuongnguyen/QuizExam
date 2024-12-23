@@ -10,4 +10,10 @@ public interface SemService {
     List<Sem> getAllSem();
     Sem getSemById(int id);
     Sem getSemByName(String name);
+
+    Sem addSem(Sem sem);
+
+    Sem updateSem(int id, Sem sem);
+
+    Sem deleteSem(Sem sem);
 }

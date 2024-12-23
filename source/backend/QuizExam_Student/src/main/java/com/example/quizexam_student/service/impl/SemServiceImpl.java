@@ -1,6 +1,7 @@
 package com.example.quizexam_student.service.impl;
 
 import com.example.quizexam_student.entity.Sem;
+import com.example.quizexam_student.exception.AlreadyExistException;
 import com.example.quizexam_student.exception.NotFoundException;
 import com.example.quizexam_student.repository.SemRepository;
 import com.example.quizexam_student.service.SemService;
@@ -22,11 +23,34 @@ public class SemServiceImpl implements SemService {
 
     @Override
     public Sem getSemById(int id) {
-        return semRepository.findById(id).orElseThrow(() -> new NotFoundException("EmptySem","Semester not found"));
+        return semRepository.findById(id).orElseThrow(() -> new NotFoundException("sem","Semester not found"));
     }
 
     @Override
     public Sem getSemByName(String name) {
         return semRepository.findByName(name);
+    }
+
+    @Override
+    public Sem addSem(Sem sem) {
+        if (semRepository.existsByName(sem.getName())) {
+            throw new AlreadyExistException("name", "Sem already exists.");
+        }
+        return semRepository.save(sem);
+    }
+
+    @Override
+    public Sem updateSem(int id, Sem sem) {
+        Sem semUpdate = getSemById(id);
+        if (semRepository.existsByName(sem.getName())) {
+            throw new AlreadyExistException("name", "Sem already exists.");
+        }
+        semUpdate.setName(sem.getName());
+        return semRepository.save(semUpdate);
+    }
+
+    @Override
+    public Sem deleteSem(Sem sem) {
+        return null;
     }
 }
