@@ -61,8 +61,8 @@
         </div>
 
         <div class="question-section">
-            <div class="header text-end" *ngIf="exam.type == 1 && isTimeValidToUpdateQuestion()">
-                <span class="mdi mdi-pencil-box-outline" title="Edit Questions" (click)="navigateToUpdateExamQuestion()"></span>
+            <div class="header text-end" *ngIf="isTimeValidToUpdateQuestion()">
+                <span class="mdi mdi-pencil-box-outline" title="Edit Questions" (click)="navigateToUpdateExamQuestions()"></span>
             </div>
             <div class="content" *ngFor="let question of exam.questionRecordResponses; let i = index">
                 <h6><b>Question {{ i + 1 }}: </b><span [innerHTML]="transformTextWithNewlines(question.content)"></span></h6>

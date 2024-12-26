@@ -37,6 +37,10 @@
         <span class="mdi mdi-chart-bar icon"></span>
         <span class="link-text" *ngIf="admin.contentSidebar">Dashboard</span>
     </a>
+    <a [routerLink]="'sem'" *ngIf="isActive([role.ADMIN, role.DIRECTOR])" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: false }" class="sidebar-link">
+        <span class="mdi mdi-school icon"></span>
+        <span class="link-text" *ngIf="admin.contentSidebar">Semester</span>
+    </a>
     <a [routerLink]="'subject'" *ngIf="isActive([role.ADMIN, role.DIRECTOR, role.TEACHER])" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: false }" class="sidebar-link">
         <span class="mdi mdi-book-open-variant icon"></span>
         <span class="link-text" *ngIf="admin.contentSidebar">Subject</span>

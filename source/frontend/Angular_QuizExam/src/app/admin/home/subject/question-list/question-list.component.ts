@@ -4,7 +4,8 @@ import { Title } from '@angular/platform-browser';
 import { AdminComponent } from '../../../admin.component';
 import { HomeComponent } from '../../home.component';
 import { Roles } from '../../../../shared/enums';
-import { Sem, SubjectResponse } from '../../../../shared/models/subject.model';
+import { Sem } from '../../../../shared/models/sem.model';
+import { SubjectResponse } from '../../../../shared/models/subject.model';
 import { QuestionResponse } from '../../../../shared/models/question.model';
 import { SubjectService } from '../../../../shared/service/subject/subject.service';
 import { QuestionService } from '../../../../shared/service/question/question.service';
@@ -77,7 +78,7 @@ export class QuestionListComponent implements OnInit, OnDestroy {
         });
       },
       error: (err) => {
-        this.router.navigate([this.urlService.getSubjectListUrl('ADMIN')]);
+        this.router.navigate([this.urlService.getSubjectUrl('ADMIN')]);
       }
     });
   }

@@ -66,7 +66,7 @@
 }
 
 .card .card-body.nav-fill .form-group-row {
-    width: 100%;
+    width: 86%;
 }
 
 .card .card-body.nav-fill label {
@@ -81,26 +81,6 @@
     border-right: #888 1px solid;
 }
 
-/* pagination */
-.pagination-container {
-    display: flex;
-    justify-content: center;
-}
-
-pagination-controls {
-    display: inline-block;
-}
-
-.pagination-controls .ngx-pagination {
-    margin: 0;
-}
-
-.pagination-controls .ngx-pagination .current {
-    font-weight: bold;
-    color: #aa1210; /* Màu cho trang hiện tại */
-}
-
-.pagination-controls .ngx-pagination .disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
+.card .table tbody tr {
+    cursor: pointer;
 }

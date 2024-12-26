@@ -3,7 +3,8 @@ import { AuthService } from '../../../../shared/service/auth.service';
 import { Title } from '@angular/platform-browser';
 import { AdminComponent } from '../../../admin.component';
 import { ExaminationComponent } from '../examination.component';
-import { Sem, SubjectResponse } from '../../../../shared/models/subject.model';
+import { Sem } from '../../../../shared/models/sem.model';
+import { SubjectResponse } from '../../../../shared/models/subject.model';
 import { ExaminationResponse } from '../../../../shared/models/examination.model';
 import { ClassResponse } from '../../../../shared/models/class.model';
 import { MarkResponse } from '../../../../shared/models/mark.model';
@@ -101,7 +102,7 @@ export class AddStudentComponent implements OnInit, OnDestroy {
       next: ([examResponse, classResponse, markResponse, studentResponse]) => {
         if (new Date() >= new Date(examResponse.endTime)) {
           this.toastr.warning('The exam has ended', 'Warning', { timeOut: 3000 });
-          this.router.navigate([this.urlService.examListUrl()]);
+          this.router.navigate([this.urlService.getExamUrl('ADMIN')]);
           return;
         }
         
@@ -115,7 +116,7 @@ export class AddStudentComponent implements OnInit, OnDestroy {
       },
       error: (err) => {
         this.authService.handleError(err, undefined, 'exam', 'load data');
-        this.router.navigate([this.urlService.examListUrl()]);
+        this.router.navigate([this.urlService.getExamUrl('ADMIN')]);
       }
     });
   }
@@ -178,7 +179,7 @@ export class AddStudentComponent implements OnInit, OnDestroy {
   }
 
   navigateExamDetail() {
-    this.router.navigate([this.urlService.examDetailUrl(this.examId)]);
+    this.router.navigate([this.urlService.getExamDetailUrl('ADMIN', this.examId)]);
   }
 
   openPopupConfirm(title: string, message: string): void {
@@ -318,14 +319,14 @@ export class AddStudentComponent implements OnInit, OnDestroy {
           if (this.examComponent.step) {
             this.examComponent.step = true;
             if (this.exam.type == 0) {
-              this.examComponent.handleNextStep(this.examComponent.autoGenerateExamSteps, 1);
+              this.examComponent.handleNextStep(this.examComponent.autoGenerateExamSteps, 2);
             }
             else {
               this.examComponent.handleNextStep(this.examComponent.manualQuestionSelectionSteps, 2);
             }
           }
           this.toastr.success(`Register Students for Exam Successful!`, 'Success', { timeOut: 3000 });
-          this.router.navigate([this.urlService.examDetailUrl(this.examId)]);
+          this.router.navigate([this.urlService.getExamDetailUrl('ADMIN', this.examId)]);
         },
         error: (err) => {
           this.authService.handleError(err, undefined, 'mark', 'register students');

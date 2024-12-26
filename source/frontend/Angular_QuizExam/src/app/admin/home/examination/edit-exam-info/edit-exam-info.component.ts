@@ -3,7 +3,8 @@ import { AuthService } from '../../../../shared/service/auth.service';
 import { Title } from '@angular/platform-browser';
 import { AdminComponent } from '../../../admin.component';
 import { ExaminationComponent } from '../examination.component';
-import { Sem, SubjectResponse } from '../../../../shared/models/subject.model';
+import { Sem } from '../../../../shared/models/sem.model';
+import { SubjectResponse } from '../../../../shared/models/subject.model';
 import { ExaminationResponse, ExaminationRequest } from '../../../../shared/models/examination.model';
 import { ValidationError } from '../../../../shared/models/models';
 import { ExaminationService } from '../../../../shared/service/examination/examination.service';
@@ -59,7 +60,7 @@ export class EditExamInfoComponent implements OnInit {
       next: (examResponse) => {
         if (new Date() >= new Date(examResponse.endTime)) {
           this.toastr.warning('The exam has ended', 'Warning', { timeOut: 3000 });
-          this.router.navigate([this.urlService.examListUrl()]);
+          this.router.navigate([this.urlService.getExamUrl('ADMIN')]);
           return;
         }
         this.exam = examResponse;
@@ -133,7 +134,7 @@ export class EditExamInfoComponent implements OnInit {
     this.examService.updateExamInfo(this.examId, this.examForm).subscribe({
       next: (examResponse) => {
         this.toastr.success(`Update exam info successfully!`, 'Success', { timeOut: 3000 });
-        this.router.navigate([this.urlService.examDetailUrl(this.examId)]);
+        this.router.navigate([this.urlService.getExamDetailUrl('ADMIN', this.examId)]);
       },
       error: (err) => {
         this.authService.handleError(err, this.validationError, 'exam', 'update exam');

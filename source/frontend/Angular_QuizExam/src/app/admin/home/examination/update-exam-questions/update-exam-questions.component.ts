@@ -69,14 +69,9 @@ export class UpdateExamQuestionsComponent implements OnInit {
   loadData(): void {
     this.examService.getExamDetailById(this.examId).subscribe({
       next: (examResponse) => {
-        if (examResponse.type == 0) {
-          this.toastr.error('This exam cannot be update questions.', 'Error', { timeOut: 3000 });
-          this.router.navigate([this.urlService.examDetailUrl(this.examId)]);
-          return;
-        }
         if (new Date() >= new Date(examResponse.startTime)) {
           this.toastr.warning('Cannot update examination as it has already started.', 'Warning', { timeOut: 3000 });
-          this.router.navigate([this.urlService.examDetailUrl(this.examId)]);
+          this.router.navigate([this.urlService.getExamDetailUrl('ADMIN', this.examId)]);
           return;
         }
         this.exam = examResponse;
@@ -84,7 +79,7 @@ export class UpdateExamQuestionsComponent implements OnInit {
       },
       error: (err) => {
         this.authService.handleError(err, undefined, 'exam', 'load data');
-        this.router.navigate([this.urlService.examListUrl()]);
+        this.router.navigate([this.urlService.getExamUrl('ADMIN')]);
       }
     });
   }
@@ -143,7 +138,7 @@ export class UpdateExamQuestionsComponent implements OnInit {
       this.isPopupBack = true;
     }
     else {
-      this.router.navigate([this.urlService.examDetailUrl(this.examId)]);
+      this.router.navigate([this.urlService.getExamDetailUrl('ADMIN', this.examId)]);
     }
   }
 
@@ -157,7 +152,7 @@ export class UpdateExamQuestionsComponent implements OnInit {
       this.updateQuestionsInExam();
     }
     else if (this.isPopupBack) {
-      this.router.navigate([this.urlService.examDetailUrl(this.examId)]);
+      this.router.navigate([this.urlService.getExamDetailUrl('ADMIN', this.examId)]);
     }
   }
 
@@ -166,7 +161,7 @@ export class UpdateExamQuestionsComponent implements OnInit {
     this.examService.updateQuestionsInExam(this.examId, questionIds).subscribe({
       next: (examResponse) => {
         this.toastr.success(`Update questions in exam successfully!`, 'Success', { timeOut: 3000 });
-        this.router.navigate([this.urlService.examDetailUrl(examResponse.id)]);
+        this.router.navigate([this.urlService.getExamDetailUrl('ADMIN', examResponse.id)]);
       },
       error: (err) => {
         this.authService.handleError(err, undefined, 'exam', 'update questions in exam');

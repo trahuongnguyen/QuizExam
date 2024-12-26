@@ -9,13 +9,14 @@ export class ExaminationComponent {
 
   autoGenerateExamSteps: { stepNumber: number, title: string, status: "active" | "disabled" | "complete" }[] = [
     { stepNumber: 1, title: 'Create Exam', status: 'active' },
-    { stepNumber: 2, title: 'Add Student', status: 'disabled' },
-    { stepNumber: 3, title: 'Complete', status: 'disabled' },
+    { stepNumber: 2, title: 'Check Questions', status: 'disabled' },
+    { stepNumber: 3, title: 'Add Student', status: 'disabled' },
+    { stepNumber: 4, title: 'Complete', status: 'disabled' },
   ];
 
   manualQuestionSelectionSteps: { stepNumber: number, title: string, status: "active" | "disabled" | "complete" }[] = [
     { stepNumber: 1, title: 'Create Exam', status: 'active' },
-    { stepNumber: 2, title: 'Add Question', status: 'disabled' },
+    { stepNumber: 2, title: 'Add Questions', status: 'disabled' },
     { stepNumber: 3, title: 'Add Student', status: 'disabled' },
     { stepNumber: 4, title: 'Complete', status: 'disabled' },
   ];

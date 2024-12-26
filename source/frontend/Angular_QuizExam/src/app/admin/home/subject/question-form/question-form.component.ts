@@ -2,7 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../../../../shared/service/auth.service';
 import { Title } from '@angular/platform-browser';
 import { AdminComponent } from '../../../admin.component';
-import { Sem, SubjectResponse } from '../../../../shared/models/subject.model';
+import { Sem } from '../../../../shared/models/sem.model';
+import { SubjectResponse } from '../../../../shared/models/subject.model';
 import { ChapterResponse } from '../../../../shared/models/chapter.model';
 import { LevelResponse } from '../../../../shared/models/level.model';
 import { QuestionRequest, AnswerRequest } from '../../../../shared/models/question.model';
@@ -89,7 +90,7 @@ export class QuestionFormComponent implements OnInit {
           next: ([chapterResponse, levelResponse]) => {
             if (!Array.isArray(levelResponse) || levelResponse.length <= 0) {
               this.toastr.warning('Level not found', 'Warning');
-              this.router.navigate([this.urlService.getQuestionListUrl('ADMIN', this.subjectId)]);
+              this.router.navigate([this.urlService.getQuestionUrl('ADMIN', this.subjectId)]);
               return;
             }
             this.chapterList = chapterResponse; // Lưu dữ liệu chapters
@@ -102,7 +103,7 @@ export class QuestionFormComponent implements OnInit {
         });
       },
       error: (err) => {
-        this.router.navigate([this.urlService.getSubjectListUrl('ADMIN')]);
+        this.router.navigate([this.urlService.getSubjectUrl('ADMIN')]);
       }
     });
   }
@@ -256,7 +257,7 @@ export class QuestionFormComponent implements OnInit {
 
   confirmCancel(): void {
     this.closePopupDialog();
-    this.router.navigate([this.urlService.getQuestionListUrl('ADMIN', this.subjectId)]);
+    this.router.navigate([this.urlService.getQuestionUrl('ADMIN', this.subjectId)]);
   }
 
   confirmAction(): void {
@@ -389,7 +390,7 @@ export class QuestionFormComponent implements OnInit {
     this.questionService.createQuestion(this.questionForms).subscribe({
       next: (questionResponse) => {
         this.toastr.success(`Question has been saved successfully!`, 'Success', { timeOut: 3000 });
-        this.router.navigate([this.urlService.getQuestionListUrl('ADMIN', this.subjectId)]);
+        this.router.navigate([this.urlService.getQuestionUrl('ADMIN', this.subjectId)]);
       },
       error: (err) => {
         this.authService.handleError(err, this.validationError, 'question', 'create question');

@@ -2,23 +2,17 @@ import { Injectable } from '@angular/core';
 import { AuthService } from '../auth.service';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Sem, SubjectRequest, SubjectResponse } from '../../models/subject.model';
+import { Sem } from '../../models/sem.model';
+import { SubjectRequest, SubjectResponse } from '../../models/subject.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class SubjectService {
-  private semApi: string;
-
   private subjectApi: string;
 
   constructor(private authService: AuthService, private http: HttpClient) {
     this.subjectApi = `${this.authService.apiUrl}/subject`;
-    this.semApi = `${this.authService.apiUrl}/sem`;
-  }
-
-  getSemList(): Observable<Sem[]> {
-    return this.http.get<Sem[]>(`${this.semApi}`, this.authService.httpOptions);
   }
 
   getAllSubjectList(): Observable<SubjectResponse[]> {

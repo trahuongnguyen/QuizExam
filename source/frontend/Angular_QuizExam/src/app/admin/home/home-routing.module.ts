@@ -10,6 +10,8 @@ import { AuthGuard } from '../service/authguard.service';
 import { LevelComponent } from './level/level.component';
 import { Roles } from '../../shared/enums';
 import { MarkComponent } from './mark/mark.component';
+import { SemComponent } from './sem/sem.component';
+import { ExamResultsComponent } from './exam-results/exam-results.component';
 
 const routes: Routes = [
   {
@@ -21,6 +23,12 @@ const routes: Routes = [
         component: DashboardComponent,
         canActivate: [AuthGuard],
         data: { roles: [Roles.ADMIN, Roles.DIRECTOR, Roles.TEACHER, Roles.SRO] },
+      },
+      {
+        path: 'exam-results/:examId',
+        component: ExamResultsComponent,
+        canActivate: [AuthGuard],
+        data: { roles: [Roles.ADMIN, Roles.SRO] },
       },
       {
         path: 'employee',
@@ -69,6 +77,12 @@ const routes: Routes = [
         component: ProfileComponent,
         canActivate: [AuthGuard],
         data: { roles: [Roles.ADMIN, Roles.DIRECTOR, Roles.TEACHER, Roles.SRO] },
+      },
+      {
+        path: 'sem',
+        component: SemComponent,
+        canActivate: [AuthGuard],
+        data: { roles: [Roles.ADMIN, Roles.DIRECTOR] },
       },
       {
         path: 'subject',

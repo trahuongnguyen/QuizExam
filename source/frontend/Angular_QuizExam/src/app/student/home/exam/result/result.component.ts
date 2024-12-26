@@ -55,8 +55,8 @@ export class ResultComponent implements OnInit {
     ])
     .subscribe({
       next: ([markResponse, questionRecordResponse, studentAnswerResponse]) => {
-        if (markResponse.score == null) {
-          this.router.navigate([this.urlService.examPageUrl()]);
+        if (!markResponse || markResponse.score == null) {
+          this.router.navigate([this.urlService.getExamUrl('STUDENT')]);
           return;
         }
         // Lưu dữ liệu điểm của học sinh trong bài thi
@@ -75,6 +75,7 @@ export class ResultComponent implements OnInit {
       },
       error: (err) => {
         this.authService.handleError(err, undefined, '', 'load data');
+        this.router.navigate([this.urlService.getExamUrl('STUDENT')]);
       }
     });
   }

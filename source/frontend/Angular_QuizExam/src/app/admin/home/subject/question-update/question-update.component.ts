@@ -2,7 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../../../../shared/service/auth.service';
 import { Title } from '@angular/platform-browser';
 import { AdminComponent } from '../../../admin.component';
-import { Sem, SubjectResponse } from '../../../../shared/models/subject.model';
+import { Sem } from '../../../../shared/models/sem.model';
+import { SubjectResponse } from '../../../../shared/models/subject.model';
 import { ChapterResponse } from '../../../../shared/models/chapter.model';
 import { LevelResponse } from '../../../../shared/models/level.model';
 import { QuestionResponse, QuestionRequest, AnswerRequest } from '../../../../shared/models/question.model';
@@ -93,17 +94,17 @@ export class QuestionUpdateComponent implements OnInit {
       next: ([subjectResponse, chapterResponse, levelResponse, questionResponse]) => {
         if (!subjectResponse || !subjectResponse.id) {
           this.toastr.warning('Subject not found', 'Warning');
-          this.router.navigate([this.urlService.getSubjectListUrl('ADMIN')]);
+          this.router.navigate([this.urlService.getSubjectUrl('ADMIN')]);
           return;
         }
         if (!Array.isArray(levelResponse) || levelResponse.length <= 0) {
           this.toastr.warning('Level not found', 'Warning');
-          this.router.navigate([this.urlService.getQuestionListUrl('ADMIN', this.subjectId)]);
+          this.router.navigate([this.urlService.getQuestionUrl('ADMIN', this.subjectId)]);
           return;
         }
         if (!questionResponse || !questionResponse.id) {
           this.toastr.warning('Question not found', 'Warning');
-          this.router.navigate([this.urlService.getQuestionListUrl('ADMIN', this.subjectId)]);
+          this.router.navigate([this.urlService.getQuestionUrl('ADMIN', this.subjectId)]);
           return;
         }
   
@@ -220,7 +221,7 @@ export class QuestionUpdateComponent implements OnInit {
 
   confirmCancel(): void {
     this.closePopupDialog();
-    this.router.navigate([this.urlService.getQuestionListUrl('ADMIN', this.subjectId)]);
+    this.router.navigate([this.urlService.getQuestionUrl('ADMIN', this.subjectId)]);
   }
 
   confirmAction(): void {
@@ -276,7 +277,7 @@ export class QuestionUpdateComponent implements OnInit {
     this.questionService.updateQuestion(this.questionId, this.questionForm, this.changeImg).subscribe({
       next: (questionResponse) => {
         this.toastr.success(`Question has been saved successfully!`, 'Success', { timeOut: 3000 });
-        this.router.navigate([this.urlService.getQuestionListUrl('ADMIN', this.subjectId)]);
+        this.router.navigate([this.urlService.getQuestionUrl('ADMIN', this.subjectId)]);
       },
       error: (err) => {
         this.authService.handleError(err, this.validationError, 'question', 'update question');

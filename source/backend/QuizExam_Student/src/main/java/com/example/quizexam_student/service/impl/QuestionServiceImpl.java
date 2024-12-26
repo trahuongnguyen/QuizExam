@@ -107,7 +107,7 @@ public class QuestionServiceImpl implements QuestionService {
 
     @Override
     public List<QuestionResponse> findAllQuestionsByExam(int examId) {
-        Examination examination = examinationRepository.findByIdAndStatusAndType(examId, 1, 1);
+        Examination examination = examinationRepository.findByIdAndStatus(examId, 1);
         if (Objects.isNull(examination)) {
             throw new NotFoundException("exam", "Examination not found.");
         }

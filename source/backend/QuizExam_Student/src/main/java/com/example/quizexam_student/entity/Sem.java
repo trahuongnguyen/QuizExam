@@ -2,6 +2,8 @@ package com.example.quizexam_student.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 
 import java.util.Set;
@@ -22,6 +24,8 @@ public class Sem {
     private int id;
 
     @Column(name = "name", length = 10, nullable = false)
+    @NotBlank(message = "Sem Name is required")
+    @Size(max = 10, message = "Sem Name must be less than or equal to 10 characters")
     private String name;
 
     @OneToMany(mappedBy = "sem")

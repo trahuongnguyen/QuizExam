@@ -36,7 +36,7 @@ export class DetailComponent implements OnInit {
   ngOnInit(): void {
     this.titleService.setTitle('Authorize Details');
     if (this.roleService.getId() == 0) {
-      this.router.navigate([this.urlService.authorizeListUrl()]);
+      this.router.navigate([this.urlService.getAuthorizeUrl('ADMIN')]);
       return;
     }
     this.loadData();

@@ -19,6 +19,8 @@ import { NgScrollbarModule } from 'ngx-scrollbar';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { SharedModule } from '../../shared/shared.module';
 import { MarkComponent } from './mark/mark.component';
+import { SemComponent } from './sem/sem.component';
+import { ExamResultsComponent } from './exam-results/exam-results.component';
 
 @NgModule({
   declarations: [
@@ -29,7 +31,9 @@ import { MarkComponent } from './mark/mark.component';
     EmployeeComponent,
     ProfileComponent,
     LevelComponent,
-    MarkComponent
+    MarkComponent,
+    SemComponent,
+    ExamResultsComponent
   ],
   imports: [
     CommonModule,

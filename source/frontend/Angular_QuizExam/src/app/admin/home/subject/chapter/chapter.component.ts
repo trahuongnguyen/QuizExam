@@ -3,7 +3,8 @@ import { AuthService } from '../../../../shared/service/auth.service';
 import { Title } from '@angular/platform-browser';
 import { AdminComponent } from '../../../admin.component';
 import { HomeComponent } from '../../home.component';
-import { Sem, SubjectResponse } from '../../../../shared/models/subject.model';
+import { Sem } from '../../../../shared/models/sem.model';
+import { SubjectResponse } from '../../../../shared/models/subject.model';
 import { ChapterRequest, ChapterResponse } from '../../../../shared/models/chapter.model';
 import { ValidationError } from '../../../../shared/models/models';
 import { SubjectService } from '../../../../shared/service/subject/subject.service';
@@ -81,7 +82,7 @@ export class ChapterComponent implements OnInit, OnDestroy {
         });
       },
       error: (err) => {
-        this.router.navigate([this.urlService.getSubjectListUrl('ADMIN')]);
+        this.router.navigate([this.urlService.getSubjectUrl('ADMIN')]);
       }
     });
   }
@@ -188,7 +189,7 @@ export class ChapterComponent implements OnInit, OnDestroy {
   }
 
   backToSubject(): void {
-    this.router.navigate([this.urlService.getSubjectListUrl('ADMIN')]);
+    this.router.navigate([this.urlService.getSubjectUrl('ADMIN')]);
   }
 
   scrollToForm(): void {

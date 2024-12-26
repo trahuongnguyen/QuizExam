@@ -75,16 +75,16 @@ export class DetailComponent implements OnInit, OnDestroy {
           const currentTime = new Date(); // Lấy thời gian hiện tại
 
           if (startTime > currentTime) {
-            this.router.navigate([this.urlService.examPageUrl()]);
+            this.router.navigate([this.urlService.getExamUrl('STUDENT')]);
             return;
           }
           if (markResponse.score != null) {
-            this.router.navigate([this.urlService.resultExamPageUrl(this.examId)]);
+            this.router.navigate([this.urlService.getExamResultsUrl('STUDENT', this.examId)]);
             return;
           }
           if (markResponse.beginTime == null) {
             if (currentTime > endTime) {
-              this.router.navigate([this.urlService.examPageUrl()]);
+              this.router.navigate([this.urlService.getExamUrl('STUDENT')]);
               return;
             }
             this.updateBeginTime(markResponse.id);
@@ -103,7 +103,7 @@ export class DetailComponent implements OnInit, OnDestroy {
         },
         error: (err) => {
           this.authService.handleError(err, undefined, 'exam', 'load data');
-          this.router.navigate([this.urlService.examPageUrl()]);
+          this.router.navigate([this.urlService.getExamUrl('STUDENT')]);
         }
       }
     );
@@ -397,7 +397,7 @@ export class DetailComponent implements OnInit, OnDestroy {
     this.studentAnswerService.submitAnswers(this.submitAnswer).subscribe({
       next: () => {
         localStorage.removeItem(this.selectedAnswers);
-        this.router.navigate([this.urlService.resultExamPageUrl(this.examId)]);
+        this.router.navigate([this.urlService.getExamResultsUrl('STUDENT', this.examId)]);
       },
       error: (err) => {
         this.authService.handleError(err, undefined, 'mark', 'submit');

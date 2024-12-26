@@ -29,7 +29,7 @@
                                 <th>Max Mark</th>
                                 <th>Rate</th>
                                 <th>Violations</th>
-                                <th>Status</th>
+                                <th>Result</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -40,7 +40,7 @@
                                     <td>{{ mark.maxScore }}</td>
                                     <td>{{ getOverall(subIndex) }}%</td>
                                     <td [ngClass]="mark.warning ? 'text-danger' : ''">{{ mark.warning ? mark.warning : 0 }}</td>
-                                    <td>{{ getStatus(mark.score, mark.maxScore) }}</td>
+                                    <td>{{ getResult(mark.score, mark.maxScore) }}</td>
                                 </tr>
                             </ng-template>
                         </tbody>

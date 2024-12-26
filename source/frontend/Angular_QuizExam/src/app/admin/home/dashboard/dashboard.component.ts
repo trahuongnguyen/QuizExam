@@ -3,15 +3,19 @@ import { AuthService } from '../../../shared/service/auth.service';
 import { Title } from '@angular/platform-browser';
 import { AdminComponent } from '../../admin.component';
 import { ChartOptions } from '../../../shared/models/models';
-import { Sem, SubjectResponse } from '../../../shared/models/subject.model';
+import { Sem } from '../../../shared/models/sem.model';
+import { SubjectResponse } from '../../../shared/models/subject.model';
 import { ExaminationResponse } from '../../../shared/models/examination.model';
 import { PassPercentage } from '../../../shared/models/mark.model';
+import { SemService } from '../../../shared/service/sem/sem.service';
 import { SubjectService } from '../../../shared/service/subject/subject.service';
 import { ClassService } from '../../../shared/service/class/class.service';
 import { StudentService } from '../../../shared/service/student/student.service';
 import { EmployeeService } from '../../../shared/service/employee/employee.service';
 import { ExaminationService } from '../../../shared/service/examination/examination.service';
 import { MarkService } from '../../../shared/service/mark/mark.service';
+import { UrlService } from '../../../shared/service/url.service';
+import { Router } from '@angular/router';
 import { DatePipe } from '@angular/common';
 import { forkJoin } from 'rxjs';
 
@@ -77,8 +81,11 @@ export class DashboardComponent implements OnInit {
     private classService: ClassService,
     private employeeService: EmployeeService,
     private studentService: StudentService,
+    private semService: SemService,
     private subjectService: SubjectService,
     private markService: MarkService,
+    public urlService: UrlService,
+    private router: Router,
     private datePipe: DatePipe
   ) { }
 
@@ -93,7 +100,7 @@ export class DashboardComponent implements OnInit {
       this.classService.getClassList(),
       this.employeeService.countAllEmployees(),
       this.studentService.countAllStudents(),
-      this.subjectService.getSemList(),
+      this.semService.getSemList(),
       this.subjectService.getAllSubjectList(),
       this.markService.getPassPercentageBySubject()
     ])
@@ -408,12 +415,24 @@ export class DashboardComponent implements OnInit {
     return this.datePipe.transform(dateObj, 'dd/MM/yyyy - HH:mm')!;
   }
 
+  navigateExamResults(examId: number) {
+    this.router.navigate([this.urlService.getExamResultsUrl('ADMIN', examId)]);
+  }
+
   filterExams(): void {
+    this.currentPage = 1;
     this.examFilter = this.examListTable.filter(exam =>
       (exam.name.toLowerCase().includes(this.searchExam.toLowerCase()) ||
       exam.code.toLowerCase().includes(this.searchExam.toLowerCase())) &&
       (!this.startTime || new Date(this.startTime) <= new Date(exam.endTime)) &&
       (!this.endTime || new Date(this.endTime) >= new Date(exam.endTime))
     );
+  }
+
+  resetFilter(): void {
+    this.searchExam = '';
+    this.startTime = '';
+    this.endTime = '';
+    this.filterExams();
   }
 }

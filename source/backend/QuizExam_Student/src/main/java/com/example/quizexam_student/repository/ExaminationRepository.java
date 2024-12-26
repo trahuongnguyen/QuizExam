@@ -23,6 +23,4 @@ public interface ExaminationRepository extends JpaRepository<Examination, Intege
     Examination findByMarksContainingAndStatus(Mark marks, int status);
 
     Examination findByIdAndStatus(int id, int status);
-
-    Examination findByIdAndStatusAndType(int id, int status, int type);
 }

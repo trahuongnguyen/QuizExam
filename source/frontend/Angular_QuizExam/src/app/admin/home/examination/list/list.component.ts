@@ -3,9 +3,9 @@ import { AuthService } from '../../../../shared/service/auth.service';
 import { Title } from '@angular/platform-browser';
 import { AdminComponent } from '../../../admin.component';
 import { ExaminationComponent } from '../examination.component';
-import { Sem } from '../../../../shared/models/subject.model';
+import { Sem } from '../../../../shared/models/sem.model';
 import { ExaminationResponse } from '../../../../shared/models/examination.model';
-import { SubjectService } from '../../../../shared/service/subject/subject.service';
+import { SemService } from '../../../../shared/service/sem/sem.service';
 import { ExaminationService } from '../../../../shared/service/examination/examination.service';
 import { UrlService } from '../../../../shared/service/url.service';
 import { Router } from '@angular/router';
@@ -37,7 +37,7 @@ export class ListComponent implements OnInit {
     private titleService: Title,
     public admin: AdminComponent,
     public examComponent: ExaminationComponent,
-    private subjectService: SubjectService,
+    private semService: SemService,
     private examService: ExaminationService,
     public urlService: UrlService,
     private router: Router,
@@ -50,7 +50,7 @@ export class ListComponent implements OnInit {
   }
 
   loadData(): void {
-    this.subjectService.getSemList().subscribe({
+    this.semService.getSemList().subscribe({
       next: (semResponse) => {
         this.semList = semResponse;
         if (this.semList && this.semList.length > 0) {
@@ -128,10 +128,10 @@ export class ListComponent implements OnInit {
 
   getExamDetail(id: any): void {
     this.examComponent.step = false;
-    this.router.navigate([this.urlService.examDetailUrl(id)]);
+    this.router.navigate([this.urlService.getExamDetailUrl('ADMIN', id)]);
   }
 
   navigateToCreateExam(): void {
-    this.router.navigate([this.urlService.createExamUrl()]);
+    this.router.navigate([this.urlService.getCreateExamUrl('ADMIN')]);
   }
 }

@@ -3,11 +3,13 @@ import { AuthService } from '../../../../shared/service/auth.service';
 import { Title } from '@angular/platform-browser';
 import { AdminComponent } from '../../../admin.component';
 import { ExaminationComponent } from '../examination.component';
-import { Sem, SubjectResponse } from '../../../../shared/models/subject.model';
+import { Sem } from '../../../../shared/models/sem.model';
+import { SubjectResponse } from '../../../../shared/models/subject.model';
 import { LevelResponse } from '../../../../shared/models/level.model';
 import { QuestionResponse } from '../../../../shared/models/question.model';
 import { ExaminationRequest } from '../../../../shared/models/examination.model';
 import { ValidationError } from '../../../../shared/models/models';
+import { SemService } from '../../../../shared/service/sem/sem.service';
 import { SubjectService } from '../../../../shared/service/subject/subject.service';
 import { LevelService } from '../../../../shared/service/level/level.service';
 import { QuestionService } from '../../../../shared/service/question/question.service';
@@ -39,9 +41,13 @@ export class FormComponent implements OnInit {
   examForm: ExaminationRequest;
   validationError: ValidationError = { };
 
-  examType: number = 0;
+  step: number = 0;
 
   isPopupLevel = false;
+
+  hasChanges: boolean = false;
+
+  examId: number = 0;
 
   questionList: QuestionResponse[] = [];
   selectedQuestions: QuestionResponse[] = [];
@@ -61,6 +67,7 @@ export class FormComponent implements OnInit {
     private titleService: Title,
     public admin: AdminComponent,
     public examComponent: ExaminationComponent,
+    private semService: SemService,
     private subjectService: SubjectService,
     private levelService: LevelService,
     private questionService: QuestionService,
@@ -79,17 +86,17 @@ export class FormComponent implements OnInit {
   }
 
   loadData(): void {
-    forkJoin([this.subjectService.getSemList(), this.levelService.getLevelList()])
+    forkJoin([this.semService.getSemList(), this.levelService.getLevelList()])
       .subscribe({
         next: ([semResponse, levelResponse]) => {
           if (!Array.isArray(semResponse) || semResponse.length == 0) {
             this.toastr.warning('No semesters available', 'Warning');
-            this.router.navigate([this.urlService.examListUrl()]);
+            this.router.navigate([this.urlService.getExamUrl('ADMIN')]);
             return;
           }
           if (!Array.isArray(levelResponse) || levelResponse.length == 0) {
             this.toastr.warning('At least one level is required', 'Warning');
-            this.router.navigate([this.urlService.examListUrl()]);
+            this.router.navigate([this.urlService.getExamUrl('ADMIN')]);
             return;
           }
           this.semList = semResponse;
@@ -130,6 +137,10 @@ export class FormComponent implements OnInit {
     this.levelList.forEach(level => {
       this.examForm.levels[level.id] = 0;
     });
+  }
+
+  transformTextWithNewlines(text: string): string {
+    return text.replace(/\n/g, '<br>');
   }
 
   convertDateFormat(dateObj: Date | undefined): string {
@@ -183,17 +194,16 @@ export class FormComponent implements OnInit {
       return;
     }
     
-    this.examType = this.examForm.type;
-    if (this.examType == 0) {
+    if (this.examForm.type == 0) {
       this.openPopupLevel();
     }
     else {
-      this.loadDataQuestions();
+      this.loadDataQuestionsForSelect();
     }
   }
 
   backStep(): void {
-    this.examType = 0;
+    this.step = 0;
     this.selectedQuestions = [];
     this.examComponent.handleBackStep(this.examComponent.manualQuestionSelectionSteps, 1);
   }
@@ -216,23 +226,65 @@ export class FormComponent implements OnInit {
       }
       totalQuestions += this.examForm.levels[level.id];
     });
-    if (totalQuestions < 16 || totalQuestions > 25) {
-      this.toastr.error('Total of number questions must be between 16 and 25 (Level).', 'Error', { timeOut: 2000 });
+    if (totalQuestions < 10 || totalQuestions > 50) {
+      this.toastr.error('Total number of questions must be between 10 and 50.', 'Error', { timeOut: 3000 });
       error = true;
     }
     return error;
   }
 
-  loadDataQuestions(): void {
+  autoGenerateExam(): void {
+    this.validationError = { };
+    if (this.validateLevel()) {
+      return
+    }
+    this.examService.createAutoExam(this.examForm).subscribe({
+      next: (examResponse) => {
+        this.examId = examResponse.id;
+        this.loadDataQuestionsForGenerate(this.examId);
+        this.toastr.success(`Create exam successfully!`, 'Success', { timeOut: 3000 });
+      },
+      error: (err) => {
+        this.authService.handleError(err, this.validationError, 'exam', 'create exam');
+      }
+    });
+  }
+
+  loadDataQuestionsForGenerate(examId: number): void {
+    // Chuyển sang bước 2 (Check Questions)
+    forkJoin([this.questionService.getQuestionListByExam(examId), this.questionService.getQuestionList(this.examForm.subjectId)])
+      .subscribe({
+        next: ([questionExamResponse, questionResponse]) => {
+          this.selectedQuestions = questionExamResponse;
+
+          // Lọc ra những câu hỏi trong questionList mà chưa có trong selectedQuestions
+          this.questionList = questionResponse.filter(question => 
+            !this.selectedQuestions.some(selected => selected.id === question.id)
+          );
+
+          this.step = 1;
+          this.closePopupLevel();
+          this.examComponent.handleNextStep(this.examComponent.autoGenerateExamSteps, 0);
+        },
+        error: (err) => {
+          this.authService.handleError(err, undefined, '', 'load data');
+        }
+      }
+    );
+  }
+
+  loadDataQuestionsForSelect(): void {
+    // Chuyển sang bước 2 (Add Questions)
     this.questionService.getQuestionList(this.examForm.subjectId).subscribe({
       next: (questionResponse) => {
+        this.step = 1;
         this.questionList = questionResponse;
+        this.examComponent.handleNextStep(this.examComponent.manualQuestionSelectionSteps, 0);
       },
       error: (err) => {
         this.authService.handleError(err, undefined, '', 'load data');
       }
     });
-    this.examComponent.handleNextStep(this.examComponent.manualQuestionSelectionSteps, 0);
   }
 
   moveToSelectedQuestions(question: any): void {
@@ -240,6 +292,7 @@ export class FormComponent implements OnInit {
     if (index !== -1) {
       this.selectedQuestions.push(this.questionList[index]); // Thêm vào Exam
       this.questionList.splice(index, 1); // Xóa khỏi List Question
+      this.hasChanges = true; // Đánh dấu là có thay đổi
     }
   }
   
@@ -248,6 +301,7 @@ export class FormComponent implements OnInit {
     if (index !== -1) {
       this.questionList.push(this.selectedQuestions[index]); // Thêm vào List Question
       this.selectedQuestions.splice(index, 1); // Xóa khỏi Exam
+      this.hasChanges = true; // Đánh dấu là có thay đổi
     }
   }
 
@@ -261,41 +315,55 @@ export class FormComponent implements OnInit {
     return false;
   }
 
-  createExam() {
-    this.validationError = { };
-    
-    if (this.examForm.type == 0) {
-      if (this.validateLevel()) {
-        return
-      }
-      this.examService.createAutoExam(this.examForm).subscribe({
+  createAutoExam(): void {
+    if (this.hasChanges) {
+      // Nếu mà có thay đổi thì update lại câu hỏi trong bài thi
+      let questionIds = this.selectedQuestions.map(question => question.id);
+      this.examService.updateQuestionsInExam(this.examId, questionIds).subscribe({
         next: (examResponse) => {
           this.examComponent.step = true;
-          this.examComponent.handleNextStep(this.examComponent.autoGenerateExamSteps, 0);
-          this.toastr.success(`Create exam successfully!`, 'Success', { timeOut: 3000 });
-          this.router.navigate([this.urlService.addStudentForExamlUrl(examResponse.id)]);
+          this.examComponent.handleNextStep(this.examComponent.autoGenerateExamSteps, 1);
+          this.toastr.success(`Update questions in exam successfully!`, 'Success', { timeOut: 3000 });
+          this.router.navigate([this.urlService.getAddStudentForExamUrl('ADMIN', this.examId)]);
         },
         error: (err) => {
-          this.authService.handleError(err, this.validationError, 'exam', 'create exam');
+          this.authService.handleError(err, undefined, 'exam', 'update questions in exam');
         }
       });
     }
     else {
-      if (this.validateNumberQuestion()) {
-        return;
+      this.examComponent.step = true;
+      this.examComponent.handleNextStep(this.examComponent.autoGenerateExamSteps, 1);
+      this.router.navigate([this.urlService.getAddStudentForExamUrl('ADMIN', this.examId)]);
+    }
+  }
+
+  createExamWithQuestions() {
+    if (this.validateNumberQuestion()) {
+      return;
+    }
+    let questionIds = this.selectedQuestions.map(question => question.id);
+    this.examService.createExamWithQuestions(this.examForm, questionIds).subscribe({
+      next: (examResponse) => {
+        this.examComponent.step = true;
+        this.examComponent.handleNextStep(this.examComponent.manualQuestionSelectionSteps, 1);
+        this.toastr.success(`Create exam successfully!`, 'Success', { timeOut: 3000 });
+        this.router.navigate([this.urlService.getAddStudentForExamUrl('ADMIN', examResponse.id)]);
+      },
+      error: (err) => {
+        this.authService.handleError(err, this.validationError, 'exam', 'create exam');
       }
-      let questionIds = this.selectedQuestions.map(question => question.id);
-      this.examService.createExamWithQuestions(this.examForm, questionIds).subscribe({
-        next: (examResponse) => {
-          this.examComponent.step = true;
-          this.examComponent.handleNextStep(this.examComponent.manualQuestionSelectionSteps, 1);
-          this.toastr.success(`Create exam successfully!`, 'Success', { timeOut: 3000 });
-          this.router.navigate([this.urlService.addStudentForExamlUrl(examResponse.id)]);
-        },
-        error: (err) => {
-          this.authService.handleError(err, this.validationError, 'exam', 'create exam');
-        }
-      });
+    });
+  }
+
+  createExam() {
+    this.validationError = { };
+    
+    if (this.examForm.type == 0) {
+      this.createAutoExam();
+    }
+    else {
+      this.createExamWithQuestions();
     }
   }
 }

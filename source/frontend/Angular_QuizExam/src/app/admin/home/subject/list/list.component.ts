@@ -4,8 +4,10 @@ import { Title } from '@angular/platform-browser';
 import { AdminComponent } from '../../../admin.component';
 import { HomeComponent } from '../../home.component';
 import { Roles } from '../../../../shared/enums';
-import { Sem, SubjectRequest, SubjectResponse } from '../../../../shared/models/subject.model';
+import { Sem } from '../../../../shared/models/sem.model';
+import { SubjectRequest, SubjectResponse } from '../../../../shared/models/subject.model';
 import { ValidationError } from '../../../../shared/models/models';
+import { SemService } from '../../../../shared/service/sem/sem.service';
 import { SubjectService } from '../../../../shared/service/subject/subject.service';
 import { UrlService } from '../../../../shared/service/url.service';
 import { Router } from '@angular/router';
@@ -47,6 +49,7 @@ export class ListComponent implements OnInit, OnDestroy {
     private titleService: Title,
     public admin: AdminComponent,
     public home: HomeComponent,
+    private semService: SemService,
     private subjectService: SubjectService,
     public urlService: UrlService,
     private router: Router,
@@ -63,7 +66,7 @@ export class ListComponent implements OnInit, OnDestroy {
   }
 
   loadData(): void {
-    this.subjectService.getSemList().subscribe({
+    this.semService.getSemList().subscribe({
       next: (semResponse) => {
         this.semList = semResponse;
         if (this.semList && this.semList.length > 0) {
@@ -140,9 +143,9 @@ export class ListComponent implements OnInit, OnDestroy {
     // Thêm placeholder vào input của DataTables
     $('.dataTables_filter input[type="search"]').attr('placeholder', 'Search');
 
-    $('.info-icon').on('click', (e: any) => this.router.navigate([this.urlService.getChapterListUrl('ADMIN', $(e.currentTarget).data('id'))]));
+    $('.info-icon').on('click', (e: any) => this.router.navigate([this.urlService.getChapterUrl('ADMIN', $(e.currentTarget).data('id'))]));
     $('.edit-icon').on('click', (e: any) => this.openPopupUpdate($(e.currentTarget).data('id')));
-    $('.question-icon').on('click', (e: any) => this.router.navigate([this.urlService.getQuestionListUrl('ADMIN', $(e.currentTarget).data('id'))]));
+    $('.question-icon').on('click', (e: any) => this.router.navigate([this.urlService.getQuestionUrl('ADMIN', $(e.currentTarget).data('id'))]));
     $('.delete-icon').on('click', (e: any) => this.openPopupDelete($(e.currentTarget).data('id')));
   }
 

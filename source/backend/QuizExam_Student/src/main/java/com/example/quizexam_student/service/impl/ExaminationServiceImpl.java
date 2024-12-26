@@ -220,7 +220,7 @@ public class ExaminationServiceImpl implements ExaminationService {
     @Override
     @Transactional
     public Examination updateQuestionsInExam(int examinationId, List<Integer> questionIds) {
-        Examination examination = examinationRepository.findByIdAndStatusAndType(examinationId, 1, 1);
+        Examination examination = examinationRepository.findByIdAndStatus(examinationId, 1);
         if (Objects.isNull(examination)) {
             throw new NotFoundException("exam", "Examination not found.");
         }

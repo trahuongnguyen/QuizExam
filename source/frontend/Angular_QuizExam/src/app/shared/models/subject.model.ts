@@ -1,7 +1,4 @@
-export interface Sem {
-    id: number;
-    name: string;
-}
+import { Sem } from "./sem.model";
 
 export interface SubjectResponse {
     id: number;

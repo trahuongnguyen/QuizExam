@@ -68,7 +68,7 @@ export class ListComponent implements OnInit {
       this.toastr.warning('The exam has not started yet. Please come back later.');
     }
     else {
-      this.router.navigate([this.urlService.examDetailPageUrl(examId)]);
+      this.router.navigate([this.urlService.getExamDetailUrl('STUDENT', examId)]);
     }
   };
 }

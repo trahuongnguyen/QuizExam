@@ -3,7 +3,8 @@ import { AuthService } from '../../../../shared/service/auth.service';
 import { Title } from '@angular/platform-browser';
 import { AdminComponent } from '../../../admin.component';
 import { ExaminationComponent } from '../examination.component';
-import { Sem, SubjectResponse } from '../../../../shared/models/subject.model';
+import { Sem } from '../../../../shared/models/sem.model';
+import { SubjectResponse } from '../../../../shared/models/subject.model';
 import { ExaminationResponse } from '../../../../shared/models/examination.model';
 import { ExaminationService } from '../../../../shared/service/examination/examination.service';
 import { UrlService } from '../../../../shared/service/url.service';
@@ -59,7 +60,7 @@ export class DetailComponent implements OnInit {
       next: (examResponse) => {
         if (new Date() >= new Date(examResponse.endTime)) {
           this.toastr.warning('The exam has ended', 'Warning', { timeOut: 3000 });
-          this.router.navigate([this.urlService.examListUrl()]);
+          this.router.navigate([this.urlService.getExamUrl('ADMIN')]);
           return;
         }
         this.exam = examResponse;
@@ -90,19 +91,19 @@ export class DetailComponent implements OnInit {
   }
 
   navigateToExamList(): void {
-    this.router.navigate([this.urlService.examListUrl()]);
+    this.router.navigate([this.urlService.getExamUrl('ADMIN')]);
   }
 
   navigateToEditExam(): void {
-    this.router.navigate([this.urlService.editExamInfoUrl(this.examId)]);
+    this.router.navigate([this.urlService.getEditExamInfoUrl('ADMIN', this.examId)]);
   }
 
   navigateToExamParticipants(): void {
-    this.router.navigate([this.urlService.addStudentForExamlUrl(this.examId)]);
+    this.router.navigate([this.urlService.getAddStudentForExamUrl('ADMIN', this.examId)]);
   }
 
-  navigateToUpdateExamQuestion(): void {
-    this.router.navigate([this.urlService.updateExamQuestion(this.examId)]);
+  navigateToUpdateExamQuestions(): void {
+    this.router.navigate([this.urlService.getUpdateExamQuestionsUrl('ADMIN', this.examId)]);
   }
 
   exportPDF(): void {

@@ -45,6 +45,6 @@ export class ListComponent implements OnInit{
 
   getPermission(id: number): void {
     this.roleService.setId(id);
-    this.router.navigate([this.urlService.authorizeDetailUrl()]);
+    this.router.navigate([this.urlService.getAuthorizeDetailUrl('ADMIN')]);
   }
 }

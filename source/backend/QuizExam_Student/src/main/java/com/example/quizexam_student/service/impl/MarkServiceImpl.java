@@ -95,8 +95,21 @@ public class MarkServiceImpl implements MarkService {
 
     @Override
     public List<MarkResponse> getListScoredPerSubject(StudentDetail studentDetail, Integer semId) {
-        return markRepository.findAllByStudentDetailAndSubject_Sem_IdAndScoreIsNotNull(studentDetail, semId)
-                .stream().map(MarkMapper::convertToResponse).collect(Collectors.toList());
+        List<Mark> marks = markRepository.findAllByStudentDetailAndSubject_Sem_IdAndScoreIsNotNull(studentDetail, semId);
+        Map<String, Mark> latestMarksPerSubject = new HashMap<>();
+
+        for (Mark mark : marks) {
+            String subjectName = mark.getSubject().getName();
+            if (!latestMarksPerSubject.containsKey(subjectName) || mark.getBeginTime().isAfter(latestMarksPerSubject.get(subjectName).getBeginTime())) {
+                latestMarksPerSubject.put(subjectName, mark);
+            }
+        }
+
+        List<Mark> latestMarks = new ArrayList<>(latestMarksPerSubject.values());
+        latestMarks.sort(Comparator.comparing(mark -> mark.getSubject().getId()));
+        return latestMarks.stream()
+                .map(MarkMapper::convertToResponse)
+                .collect(Collectors.toList());
     }
 
     @Override

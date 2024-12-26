@@ -11,9 +11,7 @@ public interface SemService {
     Sem getSemById(int id);
     Sem getSemByName(String name);
 
-    Sem addSem(Sem sem);
+    Sem createSem(Sem sem);
 
     Sem updateSem(int id, Sem sem);
-
-    Sem deleteSem(Sem sem);
 }

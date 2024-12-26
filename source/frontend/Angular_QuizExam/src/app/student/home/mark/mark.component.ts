@@ -1,9 +1,9 @@
 import { Component, Injectable, OnInit } from '@angular/core';
 import { AuthService } from '../../../shared/service/auth.service';
 import { Title } from '@angular/platform-browser';
-import { Sem } from '../../../shared/models/subject.model';
+import { Sem } from '../../../shared/models/sem.model';
 import { MarkResponse } from '../../../shared/models/mark.model';
-import { SubjectService } from '../../../shared/service/subject/subject.service';
+import { SemService } from '../../../shared/service/sem/sem.service';
 import { MarkService } from '../../../shared/service/mark/mark.service';
 
 @Component({
@@ -22,7 +22,7 @@ export class MarkComponent implements OnInit {
   constructor(
     private authService: AuthService,
     private titleService: Title,
-    private subjectService: SubjectService,
+    private semService: SemService,
     private markService: MarkService
   ) { }
 
@@ -32,7 +32,7 @@ export class MarkComponent implements OnInit {
   }
 
   loadData(): void {
-    this.subjectService.getSemList().subscribe({
+    this.semService.getSemList().subscribe({
       next: (semResponse) => {
         this.semList = semResponse;
         if (this.semList && this.semList.length > 0) {
@@ -66,7 +66,7 @@ export class MarkComponent implements OnInit {
     return maxScore ? Math.round((score / maxScore) * 100) : 0;
   }
 
-  getStatus(score: number, maxScore: number): string {
+  getResult(score: number, maxScore: number): string {
     if (maxScore === 0) return 'N/A'; 
 
     const percentage = (score / maxScore) * 100;

@@ -32,7 +32,7 @@ public class SemServiceImpl implements SemService {
     }
 
     @Override
-    public Sem addSem(Sem sem) {
+    public Sem createSem(Sem sem) {
         if (semRepository.existsByName(sem.getName())) {
             throw new AlreadyExistException("name", "Sem already exists.");
         }
@@ -42,15 +42,10 @@ public class SemServiceImpl implements SemService {
     @Override
     public Sem updateSem(int id, Sem sem) {
         Sem semUpdate = getSemById(id);
-        if (semRepository.existsByName(sem.getName())) {
+        if (semRepository.existsByNameAndIdNot(sem.getName(), id)) {
             throw new AlreadyExistException("name", "Sem already exists.");
         }
         semUpdate.setName(sem.getName());
         return semRepository.save(semUpdate);
-    }
-
-    @Override
-    public Sem deleteSem(Sem sem) {
-        return null;
     }
 }

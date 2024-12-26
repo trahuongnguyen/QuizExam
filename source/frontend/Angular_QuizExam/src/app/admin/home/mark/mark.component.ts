@@ -3,10 +3,10 @@ import { AuthService } from '../../../shared/service/auth.service';
 import { Title } from '@angular/platform-browser';
 import { AdminComponent } from '../../admin.component';
 import { StudentResponse } from '../../../shared/models/student.model';
-import { Sem } from '../../../shared/models/subject.model';
+import { Sem } from '../../../shared/models/sem.model';
 import { MarkResponse } from '../../../shared/models/mark.model';
 import { StudentService } from '../../../shared/service/student/student.service';
-import { SubjectService } from '../../../shared/service/subject/subject.service';
+import { SemService } from '../../../shared/service/sem/sem.service';
 import { MarkService } from '../../../shared/service/mark/mark.service';
 import { UrlService } from '../../../shared/service/url.service';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -38,7 +38,7 @@ export class MarkComponent implements OnInit, OnDestroy {
     private titleService: Title,
     public admin: AdminComponent,
     private studentService: StudentService,
-    private subjectService: SubjectService,
+    private semService: SemService,
     private markService: MarkService,
     private urlService: UrlService,
     private router: Router,
@@ -54,7 +54,7 @@ export class MarkComponent implements OnInit, OnDestroy {
   }
 
   loadData(): void {
-    forkJoin([this.subjectService.getSemList(), this.studentService.getStudentById(this.studentId)])
+    forkJoin([this.semService.getSemList(), this.studentService.getStudentById(this.studentId)])
       .subscribe({
         next: ([semResponse, studentResponse]) => {
           this.semList = semResponse;
@@ -122,10 +122,10 @@ export class MarkComponent implements OnInit, OnDestroy {
           }
         },
         {
-          title: 'Status', // Trạng thái (RE-EXAM/PASS/...)
+          title: 'Result', // Trạng thái (RE-EXAM/PASS/...)
           data: null, // Không có dữ liệu trực tiếp
           render: (data: any, type: any, row: MarkResponse) => {
-            return this.getStatus(row.score, row.maxScore); // Gọi hàm tính trạng thái
+            return this.getResult(row.score, row.maxScore); // Gọi hàm tính trạng thái
           }
         }
       ],
@@ -167,7 +167,7 @@ export class MarkComponent implements OnInit, OnDestroy {
     return '0%';
   }
 
-  getStatus(score: number, maxScore: number): string {
+  getResult(score: number, maxScore: number): string {
     if (maxScore === 0) return 'N/A'; 
 
     const percentage = (score / maxScore) * 100;

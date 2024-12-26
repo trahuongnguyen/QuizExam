@@ -8,7 +8,7 @@
     <app-wizard-step *ngIf="examForm.type == 1" [steps]="examComponent.manualQuestionSelectionSteps">
     </app-wizard-step>
 
-    <div class="container create-exam" *ngIf="examType == 0">
+    <div class="container create-exam" *ngIf="step == 0">
         <div class="title">
             <h3 class="text-center mt-4">Create Examination</h3>
         </div>
@@ -80,8 +80,8 @@
         </div>
     </div>
 
-    <div class="container add-question" *ngIf="examType == 1">
-        <div class="row exam-info">
+    <div class="container add-question" *ngIf="step == 1">
+        <!-- <div class="row exam-info">
             <div class="exam-header">
                 <h4 class="text-center flex-grow-1">Examination Info</h4>
             </div>
@@ -112,7 +112,7 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div> -->
 
         <div class="select-question mt-3">
             <div class="row">
@@ -126,7 +126,11 @@
                         <div *ngIf="filteredQuestionList.length > 0; else noListQuestions">
                             <div *ngFor="let question of filteredQuestionList; let i = index" class="question-item">
                                 <span class="mdi mdi-plus-circle-outline icon" (click)="moveToSelectedQuestions(question)" style="cursor: pointer;" title="Add"></span>
-                                <span><strong>Question {{ i + 1 }}:</strong> {{ question.content }}</span>
+                                <span>
+                                    <strong>Question {{ i + 1 }}: </strong>
+                                    <span [innerHTML]="transformTextWithNewlines(question.content)"></span><br>
+                                    <strong> ({{ question.level.name }})</strong>
+                                </span>
                             </div>
                         </div>
                         <ng-template #noListQuestions>
@@ -145,7 +149,11 @@
                         <div *ngIf="filteredSelectedQuestions.length > 0; else noExamQuestions">
                             <div *ngFor="let question of filteredSelectedQuestions; let i = index" class="question-item">
                                 <span class="mdi mdi-minus-circle-outline icon" (click)="moveToQuestionList(question)" style="cursor: pointer;" title="Remove"></span>
-                                <span><strong>Question {{ i + 1 }}:</strong> {{ question.content }}</span>
+                                <span>
+                                    <strong>Question {{ i + 1 }}: </strong>
+                                    <span [innerHTML]="transformTextWithNewlines(question.content)"></span><br>
+                                    <strong> ({{ question.level.name }})</strong>
+                                </span>
                             </div>
                         </div>
                         <ng-template #noExamQuestions>
@@ -157,7 +165,7 @@
         </div>
 
         <div class="button text-center mt-3">
-            <a class="btn button-pdf me-3" (click)="backStep()"><span class="mdi mdi-arrow-left-thick icon"></span>Back</a>
+            <a class="btn button-pdf me-3" *ngIf="examForm.type == 1" (click)="backStep()"><span class="mdi mdi-arrow-left-thick icon"></span>Back</a>
             <a class="btn button-pdf" (click)="createExam()">Next<span class="mdi mdi-arrow-right-thick icon-right"></span></a>
         </div>
     </div>
@@ -165,7 +173,7 @@
 
 <div *ngIf="isPopupLevel" class="popup-container">
     <div class="popup-content" (click)="$event.stopPropagation()">
-        <form class="form-popup" (ngSubmit)="createExam()">
+        <form class="form-popup" (ngSubmit)="autoGenerateExam()">
             <div class="popup-header">
                 <span>Enter the number of questions by level</span>
                 <span class="close-icon" (click)="closePopupLevel()">&times;</span>
@@ -178,7 +186,7 @@
                 </div>
             </div>
             <div class="popup-footer">
-                <button type="button" class="btn btn-primary button" (click)="createExam()">Save</button>
+                <button type="submit" class="btn btn-primary button">Save</button>
             </div>
         </form>
     </div>
