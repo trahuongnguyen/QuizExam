@@ -1,32 +1,18 @@
 .card {
-    margin: auto;
     cursor: pointer;
-    width: 300px;
-    height: 300px;
-    background-color: var(--color-background);
+    height: 320px;
     color: var(--color-text);
+    background-color: var(--color-card);
     transition: all 0.9s ease;
 }
 
 .card-content {
-    padding: 20px;
+    padding: 20px 20px 0 20px;
 }
 
-.card-content p {
+.card-content p,
+.card-content .content-time {
     font-size: smaller;
-}
-
-.card-title {
-    font-size: smaller;
-    font-weight: bold;
-}
-
-.content-time {
-    font-size: smaller;
-}
-
-.card-content .card-title {
-    margin-bottom: 10px;
 }
 
 .card-image {
@@ -41,36 +27,4 @@
     height: 100%;
     border-radius: 5px;
     object-fit: contain;
-}
-
-.font-text {
-    font-size: small;
-}
-
-@media (min-width: 1400px) {
-    .col-lg-3 {
-        flex: 0 0 auto;
-        width: 25%;
-    }
-}
-
-@media (max-width: 1400px) {
-    .col-md-4 {
-        flex: 0 0 auto;
-        width: 33.33%;
-    }
-}
-
-@media (max-width: 1100px) {
-    .col-sm-6 {
-        flex: 0 0 auto;
-        width: 50%;
-    }
-}
-
-@media (max-width: 800px) {
-    .col-xs-12 {
-        flex: 0 0 auto;
-        width: 100%;
-    }
 }

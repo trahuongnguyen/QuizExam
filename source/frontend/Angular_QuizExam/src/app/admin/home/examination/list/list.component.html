@@ -2,11 +2,11 @@
     <h4>Examination</h4>
     <hr class="line">
 
-    <div class="bottom-actions">
-        <div class="sem-container">
+    <div class="bottom-actions row">
+        <div class="sem-container col-12 col-md-6">
             <a class="btn btn-outline-light" *ngFor="let sem of semList" [ngClass]="{'active': selectedSem === sem.id}" (click)="setSelectedSem(sem.id)">{{ sem.name }}</a>
         </div>
-        <div class="search-container">
+        <div class="search-container col-12 col-md-6">
             <input type="text" class="form-control" [(ngModel)]="searchExam" (input)="onSearch()"
                 placeholder="Search by subject or code" >
             <i class="fa-solid fa-magnifying-glass search-icon"></i>
@@ -20,7 +20,7 @@
     
     <div class="row">
         <!-- Card 1 -->
-        <div class="col-12 col-sm-6 col-lg-4 col-xl-3 mb-5" *ngFor="let exam of pagedExamList">
+        <div class="custom-col mb-5" *ngFor="let exam of pagedExamList">
             <div class="card" (click)="getExamDetail(exam.id)">
                 <div class="card-image">
                     <img [src]="exam.subject.image ? (urlService.subjectImageUrl + exam.subject.image) : urlService.subjectDefaultImageUrl"

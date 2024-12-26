@@ -28,7 +28,7 @@ export class ListComponent implements OnInit {
   pagedExamList: ExaminationResponse[] = [];
   searchExam: string = '';
   currentPage: number = 1; // Trang hiện tại
-  itemsPerPage: number = 4; // Số phần tử trên mỗi trang
+  itemsPerPage: number = 5; // Số phần tử trên mỗi trang
   totalPages: number = 0; // Tổng số trang
   pages: number[] = []; // Mảng số trang
 

@@ -2,14 +2,14 @@
     <div class="container">
         <h2>Your Exams</h2>
         <hr class="line">
-        <div class="row mt-4">
-            <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12 mb-5" *ngFor="let exam of examList">
+        <div class="row">
+            <div class="col-12 col-md-6 col-lg-4 col-xl-3 mb-5" *ngFor="let exam of examList">
                 <div class="card" (click)="openPopupExam(exam.id)">
                     <div class="card-image">
                         <img [src]="exam.subject.image ? (urlService.subjectImageUrl + exam.subject.image) : urlService.subjectDefaultImageUrl"
                             alt="Default image for {{exam.subject.name}}">
                     </div>
-                    <div class="card-content">
+                    <div class="card-content mb-3">
                         <p class="mb-1"><strong>{{exam.name}}</strong></p>
                         <p><strong>Code:</strong> {{exam.code}}</p>
                         <span class="content-time">
