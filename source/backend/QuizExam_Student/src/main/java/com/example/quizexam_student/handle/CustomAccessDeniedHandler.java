@@ -17,8 +17,8 @@ import java.io.IOException;
 public class CustomAccessDeniedHandler implements AccessDeniedHandler {
     @Override
     public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException, ServletException {
-        ErrorResponse errorResponse = new ErrorResponse(HttpStatus.FORBIDDEN, "token", accessDeniedException.getMessage());
-        response.setStatus(HttpStatus.FORBIDDEN.value());
+        ErrorResponse errorResponse = new ErrorResponse(HttpStatus.UNAUTHORIZED, "token", accessDeniedException.getMessage());
+        response.setStatus(HttpStatus.UNAUTHORIZED.value());
         response.setContentType("text/json");
         response.setCharacterEncoding("UTF-8");
         ResponseEntity responseEntity = ResponseEntity.ofNullable(errorResponse);

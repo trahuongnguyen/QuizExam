@@ -1,11 +1,13 @@
 package com.example.quizexam_student.config;
 
+import com.example.quizexam_student.bean.response.ErrorResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
@@ -19,8 +21,13 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
-        response.setStatus(HttpStatus.UNAUTHORIZED.value());
-        response.setContentType("application/json");
-        response.getWriter().write(authException.getMessage());
+        ErrorResponse errorResponse = new ErrorResponse(HttpStatus.FORBIDDEN, "token", authException.getMessage());
+        response.setStatus(HttpStatus.FORBIDDEN.value());
+        response.setContentType("text/json");
+        response.setCharacterEncoding("UTF-8");
+        ResponseEntity responseEntity = ResponseEntity.ofNullable(errorResponse);
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.writeValue(response.getWriter(), responseEntity);
+        response.getWriter().write(mapper.writeValueAsString(errorResponse));
     }
 }

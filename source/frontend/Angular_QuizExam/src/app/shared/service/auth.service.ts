@@ -69,6 +69,9 @@ export class AuthService {
     if (err.status === 401) {
       this.toastr.error('Unauthorized access. Please check your login credentials.', 'Failed', { timeOut: 5000 });
     }
+    else if (err.status === 403) {
+      this.toastr.error('You do not have permission to access this resource.', 'Error', { timeOut: 5000 });
+    }
     else if (err.status === 0) {
       // Nếu status là 0, có thể là lỗi mạng hoặc API không phản hồi
       this.toastr.error('Cannot connect to the server. Please check your connection or try again later.', 'Error', { timeOut: 5000 });
