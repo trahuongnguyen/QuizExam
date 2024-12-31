@@ -17,6 +17,7 @@ jobs:
         uses: actions/setup-java@v2
         with:
           java-version: '17'  # Cài đặt JDK 17
+          distribution: 'zulu'
 
       - name: Set up environment variables
         run: |
