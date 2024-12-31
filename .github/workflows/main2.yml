@@ -17,7 +17,7 @@ jobs:
         uses: actions/setup-java@v2
         with:
           java-version: '17'  # Cài đặt JDK 17
-          distribution: 'zulu'  # Có thể thay thế 'zulu' bằng 'oraclejdk' nếu bạn muốn sử dụng Oracle JDK
+          distribution: 'zulu'  # Sử dụng Oracle JDK hoặc Zulu
 
       - name: Set up environment variables
         run: |
@@ -27,8 +27,11 @@ jobs:
 
       - name: Build and test the application
         run: |
-          # Di chuyển đến thư mục chứa dự án Spring Boot
-          cd source\backend\QuizExam_Student  # Đảm bảo đường dẫn chính xác
+          # Di chuyển vào thư mục chứa tệp pom.xml của dự án
+          cd source\backend\QuizExam_Student  # Đảm bảo đường dẫn chính xác đến thư mục chứa pom.xml
+
+          # Kiểm tra xem tệp pom.xml có tồn tại trong thư mục không
+          dir  # Lệnh này sẽ liệt kê các tệp trong thư mục để bạn có thể kiểm tra có tệp pom.xml hay không
 
           # Chạy Maven Wrapper (mvnw.cmd) để build và test ứng dụng
-          .\mvnw.cmd clean test  # Đảm bảo dùng mvnw.cmd cho Windows
+          .\mvnw.cmd clean test  # Dùng mvnw.cmd cho Windows
