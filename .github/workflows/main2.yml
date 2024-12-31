@@ -13,15 +13,11 @@ jobs:
       - name: Checkout the code
         uses: actions/checkout@v2  # Checkout mã nguồn từ GitHub
 
-      - name: Set up Oracle JDK 17
-        run: |
-          # Tải Oracle JDK 17
-          Invoke-WebRequest -Uri "https://download.oracle.com/java/17/latest/jdk-17_windows-x64_bin.exe" -OutFile "jdk-17_windows-x64_bin.exe"
-          Start-Process "jdk-17_windows-x64_bin.exe" -ArgumentList "/s", "/v/qn" -Wait
-          # Thiết lập JDK 17 như môi trường mặc định
-          $env:JAVA_HOME="C:\Program Files\Java\jdk-17"
-          echo "JAVA_HOME=$env:JAVA_HOME" >> $env:GITHUB_ENV
-          echo "PATH=$env:JAVA_HOME\bin;$env:PATH" >> $env:GITHUB_ENV
+      - name: Set up JDK 17
+        uses: actions/setup-java@v2
+        with:
+          java-version: '17'  # Cài đặt JDK 17
+          distribution: 'zulu'  # Có thể thay thế 'zulu' bằng 'oraclejdk' nếu bạn muốn sử dụng Oracle JDK
 
       - name: Set up environment variables
         run: |
@@ -36,4 +32,3 @@ jobs:
 
           # Chạy Maven Wrapper (mvnw.cmd) để build và test ứng dụng
           .\mvnw.cmd clean test  # Đảm bảo dùng mvnw.cmd cho Windows
-
