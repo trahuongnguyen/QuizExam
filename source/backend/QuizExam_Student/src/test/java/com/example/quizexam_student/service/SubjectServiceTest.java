@@ -231,7 +231,7 @@ public class SubjectServiceTest {
     @WithMockUser(username = "admin@example.com", roles = {"ADMIN"})
     void updateSubject_success(){
         // GIVEN
-            Mockito.when(subjectRepository.findById(1)).thenReturn(Optional.ofNullable(subject));
+        Mockito.when(subjectRepository.findSubjectByIdAndStatus(1, 1)).thenReturn(Optional.ofNullable(subject));
             Mockito.when(subjectRepository.save(ArgumentMatchers.any())).thenReturn(subject);
         // WHEN
         var response = subjectService.update(1, subjectRequest);
@@ -262,7 +262,7 @@ public class SubjectServiceTest {
     @WithMockUser(username = "admin@example.com", roles = {"ADMIN"})
     void updateSubject_alreadyExist_fail(){
         // GIVEN
-        Mockito.when(subjectRepository.findById(1)).thenReturn(Optional.ofNullable(subject));
+        Mockito.when(subjectRepository.findSubjectByIdAndStatus(1, 1)).thenReturn(Optional.ofNullable(subject));
         subjectRequest.setName("Java I");
         Mockito.when(subjectRepository.findByName("Java I")).thenReturn(new Subject());
         // WHEN

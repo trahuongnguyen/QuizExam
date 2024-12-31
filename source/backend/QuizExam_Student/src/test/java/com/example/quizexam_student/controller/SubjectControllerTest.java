@@ -25,9 +25,12 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.cache.support.NullValue;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.mock.web.MockPart;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -107,13 +110,20 @@ public class SubjectControllerTest {
         // GIVEN
         ObjectMapper objectMapper = new ObjectMapper();
         String content = objectMapper.writeValueAsString(subjectRequest);
+
+        // Tạo một file giả (file rỗng trong trường hợp này)
+        MockMultipartFile file = new MockMultipartFile("file", "test-image.jpg", "image/jpeg", new byte[0]);
+
+        // Giả lập hành vi của service (mock)
         Mockito.when(subjectService.save(ArgumentMatchers.any())).thenReturn(subject);
 
-        // WHEN
+        // Gửi POST request với multipart (file và JSON)
         mockMvc.perform(MockMvcRequestBuilders
-                .post("/api/subject/save")
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .content(content))
+                        .multipart("/api/subject")  // Gửi request POST với đường dẫn
+                        .file(file)  // Gửi file
+                        .part(new MockPart("subject", "subject", content.getBytes(), MediaType.APPLICATION_JSON))  // Gửi JSON qua tham số "subject"
+                        .contentType(MediaType.MULTIPART_FORM_DATA)  // Chỉ định rằng đây là multipart request
+                        .accept(MediaType.APPLICATION_JSON))  // Chấp nhận response dưới dạng JSON
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("id").value(1))
                 .andExpect(MockMvcResultMatchers.jsonPath("name").value("Java I"))
@@ -131,15 +141,25 @@ public class SubjectControllerTest {
     void createSubject_nameBlank_fail() throws Exception {
         // GIVEN
         subjectRequest.setName("");
+        // GIVEN
         ObjectMapper objectMapper = new ObjectMapper();
         String content = objectMapper.writeValueAsString(subjectRequest);
 
-        // WHEN
+        // Tạo một file giả (file rỗng trong trường hợp này)
+        MockMultipartFile file = new MockMultipartFile("file", "test-image.jpg", "image/jpeg", new byte[0]);
+
+        // Giả lập hành vi của service (mock)
+        Mockito.when(subjectService.save(ArgumentMatchers.any())).thenReturn(subject);
+
+        // Gửi POST request với multipart (file và JSON)
         mockMvc.perform(MockMvcRequestBuilders
-                        .post("/api/subject/save")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(content))
+                        .multipart("/api/subject")  // Gửi request POST với đường dẫn
+                        .file(file)  // Gửi file
+                        .part(new MockPart("subject", "subject", content.getBytes(), MediaType.APPLICATION_JSON))  // Gửi JSON qua tham số "subject"
+                        .contentType(MediaType.MULTIPART_FORM_DATA)  // Chỉ định rằng đây là multipart request
+                        .accept(MediaType.APPLICATION_JSON))  // Chấp nhận response dưới dạng JSON
                 .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].status").value("BAD_REQUEST"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].key").value("name"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].message").value("Subject name is required"))
         ;
@@ -154,14 +174,23 @@ public class SubjectControllerTest {
         ObjectMapper objectMapper = new ObjectMapper();
         String content = objectMapper.writeValueAsString(subjectRequest);
 
-        // WHEN
+        // Tạo một file giả (file rỗng trong trường hợp này)
+        MockMultipartFile file = new MockMultipartFile("file", "test-image.jpg", "image/jpeg", new byte[0]);
+
+        // Giả lập hành vi của service (mock)
+        Mockito.when(subjectService.save(ArgumentMatchers.any())).thenReturn(subject);
+
+        // Gửi POST request với multipart (file và JSON)
         mockMvc.perform(MockMvcRequestBuilders
-                        .post("/api/subject/save")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(content))
+                        .multipart("/api/subject")  // Gửi request POST với đường dẫn
+                        .file(file)  // Gửi file
+                        .part(new MockPart("subject", "subject", content.getBytes(), MediaType.APPLICATION_JSON))  // Gửi JSON qua tham số "subject"
+                        .contentType(MediaType.MULTIPART_FORM_DATA)  // Chỉ định rằng đây là multipart request
+                        .accept(MediaType.APPLICATION_JSON))  // Chấp nhận response dưới dạng JSON
                 .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].status").value("BAD_REQUEST"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].key").value("semId"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[0].message").value("Semeter is required"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].message").value("Semester is required"))
         ;
         // THEN
     }
@@ -263,13 +292,20 @@ public class SubjectControllerTest {
         // GIVEN
         ObjectMapper objectMapper = new ObjectMapper();
         String content = objectMapper.writeValueAsString(subjectRequest);
-        Mockito.when(subjectService.update(1, subjectRequest)).thenReturn(subject);
 
-        // WHEN
+        // Tạo một file giả (file rỗng trong trường hợp này)
+        MockMultipartFile file = new MockMultipartFile("file", "test-image.jpg", "image/jpeg", new byte[0]);
+
+        // Giả lập hành vi của service (mock)
+        Mockito.when(subjectService.update(ArgumentMatchers.anyInt(), ArgumentMatchers.any())).thenReturn(subject);
+
+        // Gửi POST request với multipart (file và JSON)
         mockMvc.perform(MockMvcRequestBuilders
-                        .put("/api/subject/{id}", 1)
-                        .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .content(content))
+                        .multipart(HttpMethod.PUT, "/api/subject/{id}", 1)  // Gửi request POST với đường dẫn
+                        .file(file)  // Gửi file
+                        .part(new MockPart("subject", "subject", content.getBytes(), MediaType.APPLICATION_JSON))  // Gửi JSON qua tham số "subject"
+                        .contentType(MediaType.MULTIPART_FORM_DATA)  // Chỉ định rằng đây là multipart request
+                        .accept(MediaType.APPLICATION_JSON))  // Chấp nhận response dưới dạng JSON
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("id").value(1))
                 .andExpect(MockMvcResultMatchers.jsonPath("name").value("Java I"))
@@ -289,14 +325,22 @@ public class SubjectControllerTest {
         subjectRequest.setName("");
         ObjectMapper objectMapper = new ObjectMapper();
         String content = objectMapper.writeValueAsString(subjectRequest);
-        //Mockito.when(subjectService.update(1, subjectRequest)).thenReturn(subject);
 
-        // WHEN
+        // Tạo một file giả (file rỗng trong trường hợp này)
+        MockMultipartFile file = new MockMultipartFile("file", "test-image.jpg", "image/jpeg", new byte[0]);
+
+        // Giả lập hành vi của service (mock)
+        Mockito.when(subjectService.update(ArgumentMatchers.anyInt(), ArgumentMatchers.any())).thenReturn(subject);
+
+        // Gửi POST request với multipart (file và JSON)
         mockMvc.perform(MockMvcRequestBuilders
-                        .put("/api/subject/{id}", 1)
-                        .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .content(content))
+                        .multipart(HttpMethod.PUT, "/api/subject/{id}", 1)    // Gửi request POST với đường dẫn
+                        .file(file)  // Gửi file
+                        .part(new MockPart("subject", "subject", content.getBytes(), MediaType.APPLICATION_JSON))  // Gửi JSON qua tham số "subject"
+                        .contentType(MediaType.MULTIPART_FORM_DATA)  // Chỉ định rằng đây là multipart request
+                        .accept(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].status").value("BAD_REQUEST"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].key").value("name"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].message").value("Subject name is required"))
         ;
@@ -312,14 +356,23 @@ public class SubjectControllerTest {
         ObjectMapper objectMapper = new ObjectMapper();
         String content = objectMapper.writeValueAsString(subjectRequest);
 
-        // WHEN
+        // Tạo một file giả (file rỗng trong trường hợp này)
+        MockMultipartFile file = new MockMultipartFile("file", "test-image.jpg", "image/jpeg", new byte[0]);
+
+        // Giả lập hành vi của service (mock)
+        Mockito.when(subjectService.update(ArgumentMatchers.anyInt(), ArgumentMatchers.any())).thenReturn(subject);
+
+        // Gửi POST request với multipart (file và JSON)
         mockMvc.perform(MockMvcRequestBuilders
-                        .put("/api/subject/{id}", 1)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(content))
+                        .multipart(HttpMethod.PUT, "/api/subject/{id}", 1)  // Gửi request POST với đường dẫn
+                        .file(file)  // Gửi file
+                        .part(new MockPart("subject", "subject", content.getBytes(), MediaType.APPLICATION_JSON))  // Gửi JSON qua tham số "subject"
+                        .contentType(MediaType.MULTIPART_FORM_DATA)  // Chỉ định rằng đây là multipart request
+                        .accept(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].status").value("BAD_REQUEST"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].key").value("semId"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[0].message").value("Semeter is required"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].message").value("Semester is required"))
         ;
         // THEN
     }
@@ -328,19 +381,27 @@ public class SubjectControllerTest {
     @WithMockUser(username = "admin@example.com", roles = {"ADMIN"})
     void updateSubject_nameDuplicate_fail() throws Exception {
         // GIVEN
+        subjectRequest.setId(1);
         ObjectMapper objectMapper = new ObjectMapper();
         String content = objectMapper.writeValueAsString(subjectRequest);
-        Mockito.when(subjectService.update(1, subjectRequest))
-                .thenThrow(new AlreadyExistException("AlreadyExistSubject", "Subject already exist"));
 
-        // WHEN
+        // Tạo một file giả (file rỗng trong trường hợp này)
+        MockMultipartFile file = new MockMultipartFile("file", "test-image.jpg", "image/jpeg", new byte[0]);
+
+        // Giả lập hành vi của service (mock)
+        Mockito.when(subjectService.update(ArgumentMatchers.anyInt(), ArgumentMatchers.any())).thenThrow(new AlreadyExistException("subjectName", "Subject Name already exists."));;
+
+        // Gửi POST request với multipart (file và JSON)
         mockMvc.perform(MockMvcRequestBuilders
-                        .put("/api/subject/{id}", 1)
-                        .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .content(content))
+                        .multipart(HttpMethod.PUT, "/api/subject/{id}", 1)  // Gửi request POST với đường dẫn
+                        .file(file)  // Gửi file
+                        .part(new MockPart("subject", "subject", content.getBytes(), MediaType.APPLICATION_JSON))  // Gửi JSON qua tham số "subject"
+                        .contentType(MediaType.MULTIPART_FORM_DATA)  // Chỉ định rằng đây là multipart request
+                        .accept(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest())
-                .andExpect(MockMvcResultMatchers.jsonPath("key").value("AlreadyExistSubject"))
-                .andExpect(MockMvcResultMatchers.jsonPath("message").value("Subject already exist"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.status").value("BAD_REQUEST"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.key").value("subjectName"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Subject Name already exists."))
         ;
         // THEN
 
@@ -367,7 +428,8 @@ public class SubjectControllerTest {
 
         // WHEN
         mockMvc.perform(MockMvcRequestBuilders
-                        .delete("/api/subject/{id}", 1))
+                .put("/api/subject/remove/{id}", 1)
+                .contentType("application/json"))
                 .andExpect(MockMvcResultMatchers.status().isNotFound())
                 .andExpect(MockMvcResultMatchers.jsonPath("key").value("NotFoundSubject"))
                 .andExpect(MockMvcResultMatchers.jsonPath("message").value("Subject not found"))
