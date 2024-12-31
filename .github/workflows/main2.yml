@@ -28,4 +28,4 @@ jobs:
       - name: Build and test the application
         run: |
           cd source\backend\QuizExam_Student  # Di chuyển vào thư mục dự án Spring Boot
-          mvnw.cmd clean test  # Sử dụng mvnw.cmd (dành cho Windows) để build và test ứng dụng
+          .\mvnw.cmd clean test  # Sử dụng mvnw.cmd (dành cho Windows) để build và test ứng dụng
