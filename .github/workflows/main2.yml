@@ -33,5 +33,8 @@ jobs:
           # Kiểm tra xem tệp pom.xml có tồn tại trong thư mục không
           dir  # Lệnh này sẽ liệt kê các tệp trong thư mục để bạn có thể kiểm tra có tệp pom.xml hay không
 
-          # Chạy Maven Wrapper (mvnw.cmd) để build và test ứng dụng
+          # Kiểm tra tệp mvnw.cmd có tồn tại không
+          dir mvnw.cmd  # Kiểm tra tệp mvnw.cmd có trong thư mục không
+
+          # Chạy Maven Wrapper cho Windows (mvnw.cmd)
           .\mvnw.cmd clean test  # Dùng mvnw.cmd cho Windows
