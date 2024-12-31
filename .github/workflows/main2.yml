@@ -37,4 +37,4 @@ jobs:
           dir mvnw.cmd  # Kiểm tra tệp mvnw.cmd có trong thư mục không
 
           # Chạy Maven Wrapper cho Windows (mvnw.cmd)
-          .\mvnw.cmd clean test  # Dùng mvnw.cmd cho Windows
+          .\mvnw.cmd clean test -X  # Sử dụng mvnw.cmd cho Windows và bật chế độ debug
