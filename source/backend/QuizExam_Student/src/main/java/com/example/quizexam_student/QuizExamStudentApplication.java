@@ -22,9 +22,7 @@ public class QuizExamStudentApplication {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
-                        .allowedOrigins("https://quizexam-fe.netlify.app")
-                        .allowedOrigins("https://www.quizexam.io.vn")
-                        .allowedOrigins("http://quizexam.io.vn")
+                        .allowedOrigins("https://quizexam-fe.netlify.app", "https://www.quizexam.io.vn", "http://quizexam.io.vn")
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                         .allowedHeaders("*")
                         .allowCredentials(true);
