@@ -13,7 +13,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class AuthService {
-  apiUrl = 'http://localhost:8080/api';
+  apiUrl = 'https://quizexam-production.up.railway.app/api';
 
   employeeProfile: UserResponse = { } as UserResponse;
 
