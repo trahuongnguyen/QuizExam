@@ -6,11 +6,11 @@ import { Injectable } from '@angular/core';
 export class UrlService {
   constructor() { }
 
-  subjectImageUrl: string = 'http://localhost:8080/uploads/img-subject/';
+  subjectImageUrl: string = 'https://quizexam-production.up.railway.app/uploads/img-subject/';
 
-  questionImageUrl: string = 'http://localhost:8080/uploads/img-question/';
+  questionImageUrl: string = 'https://quizexam-production.up.railway.app/uploads/img-question/';
 
-  subjectDefaultImageUrl: string = 'http://localhost:8080/uploads/img-subject/default.png';
+  subjectDefaultImageUrl: string = 'https://quizexam-production.up.railway.app/uploads/img-subject/default.png';
   
   getPageUrl(pageType: 'ADMIN' | 'STUDENT'): string {
     return pageType === 'ADMIN' ? '/admin' : '';
